@@ -43,7 +43,9 @@ local function CreateButton()
 end
 
 function LuckyGrabbag.Quickbuy:ApplySetting()
-    if auctionHouseOpen and db.showQuickbuy then
+    local req = LuckyGrabbag.Quickbuy.requires
+    local depOk = LuckyGrabbag.Dependencies.Check(req.addon, req.minVersion)
+    if auctionHouseOpen and db.showQuickbuy and depOk then
         CreateButton()
         quickbuyButton:Show()
     elseif quickbuyButton then

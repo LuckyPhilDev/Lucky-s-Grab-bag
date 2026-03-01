@@ -31,7 +31,6 @@ function LuckyGrabbag.Settings:Init(db)
     panel.name = "Lucky's Grab-bag"
 
     local category = Settings.RegisterCanvasLayoutCategory(panel, panel.name, panel.name)
-    category.ID = panel.name
     Settings.RegisterAddOnCategory(category)
 
     SLASH_LUCKYGB1 = "/grabbag"
