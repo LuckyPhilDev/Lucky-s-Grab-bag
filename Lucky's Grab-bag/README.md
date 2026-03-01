@@ -22,8 +22,6 @@ Adds a coin icon button just outside the top-right corner of the Auction House w
 2. Open settings via `/grabbag` or **Escape → Options → Lucky's Grab-bag**.
 3. Toggle individual features on or off as needed.
 
-That's it — no profiles, no item IDs, no configuration required.
-
 ---
 
 ## ⚙️ Settings

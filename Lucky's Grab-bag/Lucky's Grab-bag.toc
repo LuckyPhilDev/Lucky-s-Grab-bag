@@ -9,3 +9,5 @@ Dependencies.lua
 Settings.lua
 Quickbuy.lua
 Lucky's Grab-bag.lua
+
+## X-Curse-Project-ID: 1474964
