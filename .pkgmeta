@@ -1,0 +1,8 @@
+package-as: Lucky's Grab-bag
+
+move-folders:
+  Lucky's Grab-bag/Lucky's Grab-bag: Lucky's Grab-bag
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown
