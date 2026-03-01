@@ -1,6 +1,8 @@
 -- Lucky's Grab-bag: CraftSim Quickbuy button
 LuckyGrabbag = LuckyGrabbag or {}
-LuckyGrabbag.Quickbuy = {}
+LuckyGrabbag.Quickbuy = {
+    requires = { addon = "CraftSim", minVersion = "19.7.0" },
+}
 
 local db
 local quickbuyButton

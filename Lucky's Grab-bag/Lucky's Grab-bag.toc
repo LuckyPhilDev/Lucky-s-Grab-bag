@@ -5,6 +5,7 @@
 ## Author: Lucky Phil
 ## SavedVariables: LuckyGrabbagDB
 
+Dependencies.lua
 Settings.lua
 Quickbuy.lua
 Lucky's Grab-bag.lua

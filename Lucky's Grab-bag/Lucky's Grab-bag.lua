@@ -4,8 +4,7 @@ LuckyGrabbag = LuckyGrabbag or {}
 local ADDON_NAME = "Lucky's Grab-bag"
 
 local DB_DEFAULTS = {
-    devMode      = false,
-    showQuickbuy = true,
+    devMode = false,
 }
 
 local eventFrame = CreateFrame("Frame")
@@ -19,6 +18,11 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
             if db[key] == nil then
                 db[key] = default
             end
+        end
+
+        -- Re-evaluate showQuickbuy automatically until the user explicitly changes it.
+        if db.showQuickbuyAutoDefault ~= false then
+            db.showQuickbuy = LuckyGrabbag.Dependencies.IsEnabled(LuckyGrabbag.Quickbuy.requires.addon)
         end
 
         LuckyGrabbag.Settings:Init(db)
