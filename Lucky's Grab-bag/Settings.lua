@@ -2,10 +2,10 @@
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.Settings = {}
 
-local function AddDependencyWarning(panel, anchor, requires)
+local function AddDependencyWarning(panel, posAnchor, controlAnchor, requires)
     local warning = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    warning:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 20, -2)
-    warning:SetWidth(400)
+    warning:SetPoint("TOPLEFT", posAnchor, "BOTTOMLEFT", 0, -4)
+    warning:SetWidth(420)
     warning:SetJustifyH("LEFT")
     warning:SetTextColor(1, 0.3, 0.3)
     warning:Hide()
@@ -15,15 +15,41 @@ local function AddDependencyWarning(panel, anchor, requires)
         warning:SetShown(not ok)
         if not ok then
             warning:SetText(msg)
-            anchor:Disable()
-            anchor.text:SetFontObject("GameFontDisable")
+            controlAnchor:Disable()
+            controlAnchor.text:SetFontObject("GameFontDisable")
         else
-            anchor:Enable()
-            anchor.text:SetFontObject("GameFontNormal")
+            controlAnchor:Enable()
+            controlAnchor.text:SetFontObject("GameFontNormal")
         end
     end)
 
     return warning
+end
+
+-- Adds a labelled section with a heading, checkbox, and descriptive blurb.
+-- Returns the checkbox and blurb so callers can anchor the next section to the blurb.
+local function AddFeatureSection(panel, prevAnchor, opts)
+    local heading = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    heading:SetPoint("LEFT", panel, "LEFT", 16, 0)
+    heading:SetPoint("TOP", prevAnchor, "BOTTOM", 0, -24)
+    heading:SetText(opts.heading)
+
+    local check = CreateFrame("CheckButton", nil, panel, "UICheckButtonTemplate")
+    check:SetPoint("TOPLEFT", heading, "BOTTOMLEFT", 0, -6)
+    check:SetChecked(opts.checked)
+    check.text:SetText(opts.checkLabel)
+    check:SetScript("OnClick", function(btn)
+        opts.onToggle(btn:GetChecked())
+    end)
+
+    local blurb = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    blurb:SetPoint("TOPLEFT", check, "BOTTOMLEFT", 20, -4)
+    blurb:SetWidth(420)
+    blurb:SetJustifyH("LEFT")
+    blurb:SetTextColor(0.7, 0.7, 0.7)
+    blurb:SetText(opts.blurb)
+
+    return check, blurb
 end
 
 function LuckyGrabbag.Settings:Init(db)
@@ -41,24 +67,26 @@ function LuckyGrabbag.Settings:Init(db)
     title:SetText("Lucky's Grab-bag")
 
     -- Dev Mode
-    local devCheck = CreateFrame("CheckButton", nil, panel, "UICheckButtonTemplate")
-    devCheck:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -16)
-    devCheck:SetChecked(db.devMode)
-    devCheck.text:SetText("Dev Mode")
-    devCheck:SetScript("OnClick", function(btn)
-        db.devMode = btn:GetChecked()
-    end)
+    local _, devBlurb = AddFeatureSection(panel, title, {
+        heading    = "Developer Tools",
+        checkLabel = "Enable Dev Mode",
+        blurb      = "Enables development-only logging and diagnostics. Has no visible effect for regular users.",
+        checked    = db.devMode,
+        onToggle   = function(checked) db.devMode = checked end,
+    })
 
-    -- CraftSim Quickbuy toggle
-    local quickbuyCheck = CreateFrame("CheckButton", nil, panel, "UICheckButtonTemplate")
-    quickbuyCheck:SetPoint("TOPLEFT", devCheck, "BOTTOMLEFT", 0, -8)
-    quickbuyCheck:SetChecked(db.showQuickbuy)
-    quickbuyCheck.text:SetText("Show CraftSim Quickbuy button")
-    quickbuyCheck:SetScript("OnClick", function(btn)
-        db.showQuickbuy = btn:GetChecked()
-        db.showQuickbuyAutoDefault = false
-        LuckyGrabbag.Quickbuy:ApplySetting()
-    end)
+    -- CraftSim Quickbuy
+    local quickbuyCheck, quickbuyBlurb = AddFeatureSection(panel, devBlurb, {
+        heading    = "CraftSim Quickbuy",
+        checkLabel = "Show Quickbuy button",
+        blurb      = "Places a shortcut button next to the Auction House window. Each click purchases one row of items from your CraftSim crafting queue's shopping list.",
+        checked    = db.showQuickbuy,
+        onToggle   = function(checked)
+            db.showQuickbuy = checked
+            db.showQuickbuyAutoDefault = false
+            LuckyGrabbag.Quickbuy:ApplySetting()
+        end,
+    })
 
-    AddDependencyWarning(panel, quickbuyCheck, LuckyGrabbag.Quickbuy.requires)
+    AddDependencyWarning(panel, quickbuyBlurb, quickbuyCheck, LuckyGrabbag.Quickbuy.requires)
 end
