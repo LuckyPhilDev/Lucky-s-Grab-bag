@@ -20,13 +20,8 @@ local TREATISES = {
 
 local db
 
-local PREFIX = "|cff00cc00Lucky:|r"
-local DEV    = "|cffaaaaaa[Treatise]|r"
-
 local function DevLog(msg)
-    if db.devMode then
-        print(PREFIX .. " " .. DEV .. " " .. msg)
-    end
+    LuckyGrabbag.DevLog("Treatise", msg)
 end
 
 -- Returns a map of skillLineID -> profession name for the current character's professions.
@@ -112,7 +107,7 @@ local function FindAndWithdrawTreatise(itemID, profName)
                         if destBag then
                             DevLog("    Placing into bag=" .. destBag .. " slot=" .. destSlot)
                             C_Container.PickupContainerItem(destBag, destSlot)
-                            print(PREFIX .. " Withdrawn " .. profName .. " treatise.")
+                            print(LuckyGrabbag.PREFIX .. " Withdrawn " .. profName .. " treatise.")
                         else
                             DevLog("    No empty bag slot — clearing cursor")
                             ClearCursor()

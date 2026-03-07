@@ -27,6 +27,8 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
             db.showQuickbuy = LuckyGrabbag.Dependencies.IsEnabled(LuckyGrabbag.Quickbuy.requires.addon)
         end
 
+        LuckyGrabbag.db = db
+
         LuckyGrabbag.Settings:Init(db)
         LuckyGrabbag.Quickbuy:Init(db)
         LuckyGrabbag.Treatise:Init(db)

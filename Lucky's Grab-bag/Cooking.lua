@@ -13,13 +13,8 @@ local campfireCooldown
 local chefsHatButton
 local chefsHatGlow
 
-local PREFIX = "|cff00cc00Lucky:|r"
-local DEV    = "|cffaaaaaa[Cooking]|r"
-
 local function DevLog(msg)
-    if db.devMode then
-        print(PREFIX .. " " .. DEV .. " " .. msg)
-    end
+    LuckyGrabbag.DevLog("Cooking", msg)
 end
 
 local function UpdateCampfireCooldown()
@@ -94,21 +89,17 @@ local function CreateButtons()
 
     -- Campfire button
     -- type="spell" with spell attribute avoids the ADDON_ACTION_FORBIDDEN restriction on CastSpellByID.
-    campfireButton = CreateFrame("Button", "LGB_CampfireButton", parent, "SecureActionButtonTemplate")
-    campfireButton:SetSize(42, 42)
+    campfireButton = LuckyGrabbag.CreateIconButton({
+        name     = "LGB_CampfireButton",
+        parent   = parent,
+        template = "SecureActionButtonTemplate",
+        texture  = C_Spell.GetSpellTexture(CAMPFIRE_SPELL_ID),
+        tooltip  = function() GameTooltip:SetSpellByID(CAMPFIRE_SPELL_ID) end,
+    })
     campfireButton:SetPoint("TOP", parent, "TOP", 0, 0)
     campfireButton:RegisterForClicks("AnyDown", "AnyUp")
     campfireButton:SetAttribute("type", "spell")
     campfireButton:SetAttribute("spell", CAMPFIRE_SPELL_ID)
-    campfireButton:SetNormalTexture(C_Spell.GetSpellTexture(CAMPFIRE_SPELL_ID))
-    campfireButton:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
-    campfireButton:GetHighlightTexture():SetBlendMode("ADD") ---@diagnostic disable-line: param-type-mismatch
-    campfireButton:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetSpellByID(CAMPFIRE_SPELL_ID)
-        GameTooltip:Show()
-    end)
-    campfireButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
     -- Campfire cooldown overlay
     campfireCooldown = CreateFrame("Cooldown", nil, campfireButton, "CooldownFrameTemplate")
@@ -118,23 +109,17 @@ local function CreateButtons()
     -- Chef's Hat button
     -- type="toy" with "*toy1" (modified attribute for left-click) is required in TWW.
     -- RegisterForClicks must include "AnyDown" for the secure action to fire.
-    chefsHatButton = CreateFrame("Button", "LGB_ChefsHatButton", parent, "SecureActionButtonTemplate")
-    chefsHatButton:SetSize(42, 42)
+    chefsHatButton = LuckyGrabbag.CreateIconButton({
+        name     = "LGB_ChefsHatButton",
+        parent   = parent,
+        template = "SecureActionButtonTemplate",
+        texture  = C_Item.GetItemIconByID(CHEFS_HAT_ITEM_ID) or C_Spell.GetSpellTexture(CHEFS_HAT_SPELL_ID),
+        tooltip  = function() GameTooltip:SetToyByItemID(CHEFS_HAT_ITEM_ID) end,
+    })
     chefsHatButton:SetPoint("TOP", campfireButton, "BOTTOM", 0, -5)
     chefsHatButton:RegisterForClicks("AnyDown", "AnyUp")
     chefsHatButton:SetAttribute("type", "toy")
     chefsHatButton:SetAttribute("*toy1", CHEFS_HAT_ITEM_ID)
-
-    local hatIcon = C_Item.GetItemIconByID(CHEFS_HAT_ITEM_ID) or C_Spell.GetSpellTexture(CHEFS_HAT_SPELL_ID)
-    chefsHatButton:SetNormalTexture(hatIcon)
-    chefsHatButton:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
-    chefsHatButton:GetHighlightTexture():SetBlendMode("ADD") ---@diagnostic disable-line: param-type-mismatch
-    chefsHatButton:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetToyByItemID(CHEFS_HAT_ITEM_ID)
-        GameTooltip:Show()
-    end)
-    chefsHatButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
     chefsHatButton:SetScript("PostClick", function()
         DevLog("Chef's Hat clicked")
     end)

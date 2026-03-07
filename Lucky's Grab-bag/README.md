@@ -21,17 +21,14 @@ Adds two buttons alongside the Cooking profession window for quick access to com
 - Both buttons are hidden when the Cooking window is closed.
 - Can be toggled in the addon settings.
 
----
-
 ### 🪙 CraftSim Quickbuy Button
+> Requires: **CraftSim v19.7.0** or later.
 Adds a coin icon button just outside the top-right corner of the Auction House window. One click invokes CraftSim's Quickbuy feature — no need to have a dedicated macro.
 
 - Appears automatically when you open the Auction House.
 - Hidden when the Auction House is closed.
 - Enabled by default if CraftSim is installed; disabled by default if it isn't.
 - Can be toggled on or off in the addon settings.
-
-> Requires: **CraftSim v19.7.0** or later.
 
 ---
 

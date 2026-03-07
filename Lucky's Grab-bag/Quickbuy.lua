@@ -20,26 +20,15 @@ end
 local function CreateButton()
     if quickbuyButton then return end
 
-    local button = CreateFrame("Button", nil, UIParent)
-    quickbuyButton = button
-    button:SetSize(42, 42)
-    button:SetPoint("TOPLEFT", AuctionHouseFrame, "TOPRIGHT", 5, 0)
-
-    button:SetNormalTexture("Interface\\Icons\\INV_Misc_Coin_01")
-    button:SetPushedTexture("Interface\\Icons\\INV_Misc_Coin_01")
-    button:GetPushedTexture():SetVertexColor(0.8, 0.8, 0.8)
-    button:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
-    button:GetHighlightTexture():SetBlendMode("ADD") ---@diagnostic disable-line: param-type-mismatch
-
-    button:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText("CraftSim Quickbuy")
-        GameTooltip:Show()
-    end)
-    button:SetScript("OnLeave", function()
-        GameTooltip:Hide()
-    end)
-    button:SetScript("OnClick", OnQuickbuyClick)
+    quickbuyButton = LuckyGrabbag.CreateIconButton({
+        parent  = AuctionHouseFrame, ---@diagnostic disable-line: undefined-global
+        texture = "Interface\\Icons\\INV_Misc_Coin_01",
+        tooltip = function() GameTooltip:SetText("CraftSim Quickbuy") end,
+    })
+    quickbuyButton:SetPoint("TOPLEFT", AuctionHouseFrame, "TOPRIGHT", 5, 0) ---@diagnostic disable-line: undefined-global
+    quickbuyButton:SetPushedTexture("Interface\\Icons\\INV_Misc_Coin_01")
+    quickbuyButton:GetPushedTexture():SetVertexColor(0.8, 0.8, 0.8, 1)
+    quickbuyButton:SetScript("OnClick", OnQuickbuyClick)
 end
 
 function LuckyGrabbag.Quickbuy:ApplySetting()

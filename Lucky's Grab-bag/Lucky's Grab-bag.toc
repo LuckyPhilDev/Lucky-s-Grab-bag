@@ -6,6 +6,7 @@
 ## SavedVariables: LuckyGrabbagDB
 
 Dependencies.lua
+Utils.lua
 Settings.lua
 Quickbuy.lua
 Treatise.lua
