@@ -91,11 +91,20 @@ function LuckyGrabbag.Settings:Init(db)
     AddDependencyWarning(panel, quickbuyBlurb, quickbuyCheck, LuckyGrabbag.Quickbuy.requires)
 
     -- Thalassian Treatises
-    AddFeatureSection(panel, quickbuyBlurb, {
+    local _, treatiseBlurb = AddFeatureSection(panel, quickbuyBlurb, {
         heading    = "Thalassian Treatises",
         checkLabel = "Auto-withdraw treatises from Warband Bank",
         blurb      = "When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.",
         checked    = db.showTreatise,
         onToggle   = function(checked) db.showTreatise = checked end,
+    })
+
+    -- Cooking Buttons
+    AddFeatureSection(panel, treatiseBlurb, {
+        heading    = "Cooking",
+        checkLabel = "Show cooking utility buttons",
+        blurb      = "Adds a Campfire button and a Chef's Hat toggle button alongside the Cooking profession window. The Chef's Hat button glows when the buff is active; clicking it again cancels the buff.",
+        checked    = db.showCookingButtons,
+        onToggle   = function(checked) db.showCookingButtons = checked end,
     })
 end

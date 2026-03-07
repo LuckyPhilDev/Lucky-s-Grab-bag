@@ -13,6 +13,16 @@ Automatically withdraws Thalassian Treatises for your current professions from t
 - Prints a confirmation message for each treatise withdrawn.
 - Enabled by default; can be toggled in the addon settings.
 
+### 🍳 Cooking Utility Buttons
+Adds two buttons alongside the Cooking profession window for quick access to common cooking prep.
+
+- **Campfire** — casts Basic Campfire so you can cook anywhere.
+- **Chef's Hat** — uses the Chef's Hat toy to put it on. If the buff is already active, clicking the button cancels it instead (the button glows while active).
+- Both buttons are hidden when the Cooking window is closed.
+- Can be toggled in the addon settings.
+
+---
+
 ### 🪙 CraftSim Quickbuy Button
 Adds a coin icon button just outside the top-right corner of the Auction House window. One click invokes CraftSim's Quickbuy feature — no need to have a dedicated macro.
 
@@ -46,6 +56,9 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 
 **Thalassian Treatises**
 - *Auto-withdraw treatises from Warband Bank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
+
+**Cooking**
+- *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.
 
 Settings are saved per account.
 

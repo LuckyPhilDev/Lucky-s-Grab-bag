@@ -4,8 +4,9 @@ LuckyGrabbag = LuckyGrabbag or {}
 local ADDON_NAME = "Lucky's Grab-bag"
 
 local DB_DEFAULTS = {
-    devMode      = false,
-    showTreatise = true,
+    devMode            = false,
+    showTreatise       = true,
+    showCookingButtons = true,
 }
 
 local eventFrame = CreateFrame("Frame")
@@ -29,6 +30,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.Settings:Init(db)
         LuckyGrabbag.Quickbuy:Init(db)
         LuckyGrabbag.Treatise:Init(db)
+        LuckyGrabbag.Cooking:Init(db)
 
         eventFrame:UnregisterEvent("ADDON_LOADED")
     end

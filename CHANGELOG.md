@@ -1,4 +1,13 @@
-## [0.0.2] - 2026-03-01
+## [0.0.3] - 2026-03-07
+
+### Added
+- Cooking utility buttons: a Campfire button and a Chef's Hat toggle button appear alongside the Cooking profession window.
+  - Chef's Hat button glows when the buff is active; clicking it again cancels the buff.
+  - Campfire button casts Basic Campfire.
+  - Both buttons are hidden when the Cooking window is closed.
+  - Can be toggled in addon settings.
+
+## [0.0.2] - 2026-03-05
 
 ### Added
 - Thalassian Treatise auto-withdrawal — when the Warband Bank is opened, automatically withdraws treatises for the character's active professions if the weekly cooldown hasn't been used
