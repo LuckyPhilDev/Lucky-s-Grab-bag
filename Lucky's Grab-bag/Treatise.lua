@@ -75,7 +75,7 @@ local function IsItemInBags(itemID)
     return false
 end
 
-local function FindAndWithdrawTreatise(itemID, profName)
+local function FindAndWithdrawTreatise(itemID, profName, onDone)
     if IsItemInBags(itemID) then
         DevLog("  " .. profName .. " treatise already in bags — skipping")
         return false
@@ -112,6 +112,7 @@ local function FindAndWithdrawTreatise(itemID, profName)
                             DevLog("    No empty bag slot — clearing cursor")
                             ClearCursor()
                         end
+                        if onDone then onDone() end
                     end)
                     return true
                 end
@@ -125,16 +126,33 @@ end
 local function WithdrawEligibleTreatises()
     DevLog("Scanning for eligible treatises")
     local skillLines = GetCharacterSkillLines()
+
+    -- Build a queue of eligible treatises to avoid cursor race conditions
+    -- when multiple treatises need withdrawing.
+    local queue = {}
     for _, treatise in ipairs(TREATISES) do
         if skillLines[treatise.skillLineID] then
             DevLog("Checking " .. treatise.name .. " (itemID=" .. treatise.itemID .. " questID=" .. treatise.questID .. ")")
             if IsEligibleThisWeek(treatise.questID, treatise.name) then
-                FindAndWithdrawTreatise(treatise.itemID, treatise.name)
+                table.insert(queue, treatise)
             else
                 DevLog("  Skipping " .. treatise.name .. " — already used this week")
             end
         end
     end
+
+    -- Process one treatise at a time; each withdrawal's onDone callback starts the next.
+    local function processNext()
+        if #queue == 0 then return end
+        local treatise = table.remove(queue, 1)
+        local withdrawn = FindAndWithdrawTreatise(treatise.itemID, treatise.name, function()
+            C_Timer.After(0.3, processNext)  -- brief pause to let inventory settle before next withdrawal
+        end)
+        if not withdrawn then
+            processNext()  -- nothing to wait for, move on immediately
+        end
+    end
+    processNext()
 end
 
 function LuckyGrabbag.Treatise:Init(database)

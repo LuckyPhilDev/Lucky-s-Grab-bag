@@ -1,3 +1,8 @@
+## [0.0.4] - 2026-03-07
+
+### Fixed
+- Treatise auto-withdrawal now correctly handles characters with two eligible professions — withdrawals are processed sequentially with a short delay between each, preventing a cursor clash that caused only the first treatise to be withdrawn
+
 ## [0.0.3] - 2026-03-07
 
 ### Added
