@@ -1,3 +1,9 @@
+## [0.0.2] - 2026-03-01
+
+### Added
+- Thalassian Treatise auto-withdrawal — when the Warband Bank is opened, automatically withdraws treatises for the character's active professions if the weekly cooldown hasn't been used
+---
+
 ## [0.0.1] - 2026-03-01
 
 ### Added

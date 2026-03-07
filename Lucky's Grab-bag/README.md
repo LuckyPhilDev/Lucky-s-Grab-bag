@@ -4,6 +4,15 @@
 
 ## ✨ Features
 
+### 📜 Thalassian Treatise Auto-Withdrawal
+Automatically withdraws Thalassian Treatises for your current professions from the Warband Bank whenever you open it — but only if you haven't already used them this week.
+
+- Checks your character's active professions and only withdraws the relevant treatises.
+- Skips any treatise whose weekly cooldown has already been used.
+- Skips withdrawal if the treatise is already in your bags (prevents duplicates).
+- Prints a confirmation message for each treatise withdrawn.
+- Enabled by default; can be toggled in the addon settings.
+
 ### 🪙 CraftSim Quickbuy Button
 Adds a coin icon button just outside the top-right corner of the Auction House window. One click invokes CraftSim's Quickbuy feature — no need to have a dedicated macro.
 
@@ -34,6 +43,9 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 **CraftSim Quickbuy**
 - *Show Quickbuy button* — Places a shortcut button next to the Auction House window. Each click purchases one row of items from your CraftSim crafting queue's shopping list.
   - Greyed out with an explanatory message if CraftSim v19.7.0+ is not installed.
+
+**Thalassian Treatises**
+- *Auto-withdraw treatises from Warband Bank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
 
 Settings are saved per account.
 

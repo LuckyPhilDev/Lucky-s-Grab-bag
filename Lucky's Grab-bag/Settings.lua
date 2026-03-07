@@ -89,4 +89,13 @@ function LuckyGrabbag.Settings:Init(db)
     })
 
     AddDependencyWarning(panel, quickbuyBlurb, quickbuyCheck, LuckyGrabbag.Quickbuy.requires)
+
+    -- Thalassian Treatises
+    AddFeatureSection(panel, quickbuyBlurb, {
+        heading    = "Thalassian Treatises",
+        checkLabel = "Auto-withdraw treatises from Warband Bank",
+        blurb      = "When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.",
+        checked    = db.showTreatise,
+        onToggle   = function(checked) db.showTreatise = checked end,
+    })
 end
