@@ -56,11 +56,10 @@ function LuckyGrabbag.Settings:Init(db)
     local panel = CreateFrame("Frame")
     panel.name = "Lucky's Grab-bag"
 
-    local category = Settings.RegisterCanvasLayoutCategory(panel, panel.name, panel.name)
-    Settings.RegisterAddOnCategory(category)
+    local category = LuckySettings:Register(panel, panel.name)
 
     SLASH_LUCKYGB1 = "/grabbag"
-    SlashCmdList["LUCKYGB"] = function() Settings.OpenToCategory(category.ID) end
+    SlashCmdList["LUCKYGB"] = function() LuckySettings:Open(category) end
 
     local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 16, -16)

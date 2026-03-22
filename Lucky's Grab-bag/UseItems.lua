@@ -10,6 +10,10 @@ local ITEM_NAME_PATTERNS = {
     "Thalassian Treatise on",
 }
 
+-- Weekly profession quest rewards use "Thalassian <profession> <suffix>" naming.
+-- We match the prefix + suffix separately to avoid hardcoding each profession name.
+local THALASSIAN_SUFFIXES = { "Folio", "Notebook", "Journal" }
+
 local BUTTON_SIZE = 42
 local BUTTON_SPACING = 4
 local MAX_BUTTONS = 12
@@ -28,6 +32,14 @@ local function IsMatchingItem(itemName)
     for _, pattern in ipairs(ITEM_NAME_PATTERNS) do
         if string.find(itemName, pattern, 1, true) then
             return true
+        end
+    end
+    -- Match "Thalassian <profession> Folio/Notebook/Journal"
+    if string.find(itemName, "Thalassian", 1, true) then
+        for _, suffix in ipairs(THALASSIAN_SUFFIXES) do
+            if string.find(itemName, suffix, 1, true) then
+                return true
+            end
         end
     end
     return false
