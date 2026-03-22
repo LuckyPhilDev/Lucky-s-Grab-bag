@@ -21,6 +21,16 @@ Adds two buttons alongside the Cooking profession window for quick access to com
 - Both buttons are hidden when the Cooking window is closed.
 - Can be toggled in the addon settings.
 
+### 📦 Use Items Popup
+Displays a floating bar of buttons when you have consumable profession items in your bags — click each one to use it.
+
+- Detects **Artisan's Consortium Payouts**, **Glimmers of Midnight Knowledge**, **Flickers of Midnight Knowledge**, and **Thalassian Treatises** (all professions).
+- One button per item type; shows stack count when you have multiples.
+- Draggable via right-click drag; position is saved account-wide and persists across reloads.
+- Auto-hides when no matching items remain in your bags.
+- Respects combat lockdown — buttons won't change mid-combat.
+- Can be toggled in the addon settings.
+
 ### 🪙 CraftSim Quickbuy Button
 > Requires: **CraftSim v19.7.0** or later.
 Adds a coin icon button just outside the top-right corner of the Auction House window. One click invokes CraftSim's Quickbuy feature — no need to have a dedicated macro.
@@ -53,6 +63,9 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 
 **Thalassian Treatises**
 - *Auto-withdraw treatises from Warband Bank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
+
+**Use Items**
+- *Show use-item buttons* — Displays a floating row of buttons when consumable profession items are in your bags (Artisan's Consortium Payouts, Glimmers/Flickers of Midnight Knowledge, Thalassian Treatises). The bar is draggable and hides automatically when empty.
 
 **Cooking**
 - *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.

@@ -7,6 +7,7 @@ local DB_DEFAULTS = {
     devMode            = false,
     showTreatise       = true,
     showCookingButtons = true,
+    showUseItems       = true,
 }
 
 local eventFrame = CreateFrame("Frame")
@@ -33,6 +34,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.Quickbuy:Init(db)
         LuckyGrabbag.Treatise:Init(db)
         LuckyGrabbag.Cooking:Init(db)
+        LuckyGrabbag.UseItems:Init(db)
 
         eventFrame:UnregisterEvent("ADDON_LOADED")
     end

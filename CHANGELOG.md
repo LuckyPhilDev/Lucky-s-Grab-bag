@@ -1,3 +1,12 @@
+## [0.0.5] - 2026-03-22
+
+### Added
+- Use Items popup: a floating bar of buttons appears when consumable profession items are in your bags (Artisan's Consortium Payouts, Glimmers/Flickers of Midnight Knowledge, Thalassian Treatises). Click each button to use the item.
+  - Draggable via right-click drag; position is saved account-wide across reloads.
+  - Auto-hides when no matching items remain.
+  - Respects combat lockdown — buttons update after combat ends.
+  - Can be toggled in addon settings.
+
 ## [0.0.4] - 2026-03-07
 
 ### Fixed

@@ -99,8 +99,20 @@ function LuckyGrabbag.Settings:Init(db)
         onToggle   = function(checked) db.showTreatise = checked end,
     })
 
+    -- Use Items
+    local _, useItemsBlurb = AddFeatureSection(panel, treatiseBlurb, {
+        heading    = "Use Items",
+        checkLabel = "Show use-item buttons",
+        blurb      = "Displays a floating row of buttons when you have consumable profession items in your bags (Artisan's Consortium Payouts, Glimmers/Flickers of Midnight Knowledge, Thalassian Treatises). Click each button to use the item. The bar is draggable and hides automatically when empty.",
+        checked    = db.showUseItems,
+        onToggle   = function(checked)
+            db.showUseItems = checked
+            LuckyGrabbag.UseItems:ApplySetting()
+        end,
+    })
+
     -- Cooking Buttons
-    AddFeatureSection(panel, treatiseBlurb, {
+    AddFeatureSection(panel, useItemsBlurb, {
         heading    = "Cooking",
         checkLabel = "Show cooking utility buttons",
         blurb      = "Adds a Campfire button and a Chef's Hat toggle button alongside the Cooking profession window. The Chef's Hat button glows when the buff is active; clicking it again cancels the buff.",
