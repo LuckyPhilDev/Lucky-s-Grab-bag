@@ -3,6 +3,9 @@ package-as: Lucky's Grab-bag
 move-folders:
   Lucky's Grab-bag/Lucky's Grab-bag: Lucky's Grab-bag
 
+externals:
+  Lucky's Grab-bag/Luckys_Utils: https://github.com/LuckyPhilDev/LuckyUtils
+
 manual-changelog:
   filename: CHANGELOG.md
   markup-type: markdown

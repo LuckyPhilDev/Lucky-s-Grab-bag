@@ -4,6 +4,9 @@
 ## Version: 0.0.1
 ## Author: Lucky Phil
 ## SavedVariables: LuckyGrabbagDB
+## OptionalDeps: Luckys_Utils
+
+Luckys_Utils\embeds.xml
 
 Dependencies.lua
 Utils.lua

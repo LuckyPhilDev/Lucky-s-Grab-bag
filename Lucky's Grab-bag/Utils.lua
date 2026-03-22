@@ -4,14 +4,16 @@ LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.PREFIX = "|cff00cc00Lucky:|r"
 local PREFIX = LuckyGrabbag.PREFIX
 
---- Dev logging. Reads db.devMode from the shared namespace (set in Lucky's Grab-bag.lua on ADDON_LOADED).
+--- Dev logging via LuckyLog. Reads db.devMode from the shared namespace.
+local _devLog = LuckyLog:New(PREFIX, function()
+    local db = LuckyGrabbag.db
+    return db and db.devMode
+end)
+
 ---@param tag string
 ---@param msg string
 function LuckyGrabbag.DevLog(tag, msg)
-    local db = LuckyGrabbag.db
-    if db and db.devMode then
-        print(PREFIX .. " |cffaaaaaa[" .. tag .. "]|r " .. msg)
-    end
+    _devLog("|cffaaaaaa[" .. tag .. "]|r " .. msg)
 end
 
 --- Creates a standard icon button with highlight texture and optional tooltip.
