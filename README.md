@@ -4,6 +4,17 @@
 
 ## ✨ Features
 
+### 📦 Use Items Popup
+Displays a floating bar of buttons when you have consumable profession items in your bags — click each one to use it.
+
+- Detects **Artisan's Consortium Payouts**, **Glimmers of Midnight Knowledge**, **Flickers of Midnight Knowledge**, and **Thalassian Treatises** (all professions).
+- Thalassian Treatises are automatically hidden if already used this week on the current character.
+- One button per item type; shows stack count when you have multiples.
+- Draggable via right-click drag; position is saved account-wide and persists across reloads.
+- Auto-hides when no matching items remain in your bags.
+- Respects combat lockdown — buttons won't change mid-combat.
+- Can be toggled in the addon settings.
+
 ### 📜 Thalassian Treatise Auto-Withdrawal
 Automatically withdraws Thalassian Treatises for your current professions from the Warband Bank whenever you open it — but only if you haven't already used them this week.
 
@@ -21,16 +32,6 @@ Adds two buttons alongside the Cooking profession window for quick access to com
 - Both buttons are hidden when the Cooking window is closed.
 - Can be toggled in the addon settings.
 
-### 📦 Use Items Popup
-Displays a floating bar of buttons when you have consumable profession items in your bags — click each one to use it.
-
-- Detects **Artisan's Consortium Payouts**, **Glimmers of Midnight Knowledge**, **Flickers of Midnight Knowledge**, and **Thalassian Treatises** (all professions).
-- One button per item type; shows stack count when you have multiples.
-- Draggable via right-click drag; position is saved account-wide and persists across reloads.
-- Auto-hides when no matching items remain in your bags.
-- Respects combat lockdown — buttons won't change mid-combat.
-- Can be toggled in the addon settings.
-
 ### 🪙 CraftSim Quickbuy Button
 > Requires: **CraftSim v19.7.0** or later.
 Adds a coin icon button just outside the top-right corner of the Auction House window. One click invokes CraftSim's Quickbuy feature — no need to have a dedicated macro.
@@ -40,12 +41,19 @@ Adds a coin icon button just outside the top-right corner of the Auction House w
 - Enabled by default if CraftSim is installed; disabled by default if it isn't.
 - Can be toggled on or off in the addon settings.
 
+### 🗺️ Minimap Button
+A minimap button for quick access to the addon.
+
+- **Left-click** or **Right-click** — open settings.
+- **Middle-click** — toggle dev mode on/off.
+- **Shift+drag** — reposition the button around the minimap edge; position is saved across reloads.
+
 ---
 
 ## 📋 Setup
 
 1. Install the addon and reload your UI.
-2. Open settings via `/grabbag` or **Escape → Options → Lucky's Grab-bag**.
+2. Open settings via `/grabbag`, the **minimap button**, or **Escape → Options → Lucky's Grab-bag**.
 3. Toggle individual features on or off as needed.
 
 ---
