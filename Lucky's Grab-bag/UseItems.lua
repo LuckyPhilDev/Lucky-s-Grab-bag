@@ -65,8 +65,10 @@ local function ScanBags()
                     DevLog("  Bag " .. bag .. " slot " .. slot .. ": itemID=" .. info.itemID .. " itemName was nil, C_Item fallback=" .. tostring(itemName))
                 end
                 if itemName and IsMatchingItem(itemName) then
-                    DevLog("  MATCH: " .. itemName .. " (itemID=" .. info.itemID .. ") in bag " .. bag .. " slot " .. slot)
-                    if not found[info.itemID] then
+                    -- Skip treatises already used this week (only check items matching the treatise name pattern)
+                    if string.find(itemName, "Thalassian Treatise on", 1, true) and LuckyGrabbag.Treatise:IsUsedThisWeek(info.itemID) then
+                        DevLog("  SKIP (used this week): " .. itemName .. " (itemID=" .. info.itemID .. ")")
+                    elseif not found[info.itemID] then
                         found[info.itemID] = {
                             itemID = info.itemID,
                             itemName = itemName,

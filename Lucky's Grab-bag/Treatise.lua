@@ -8,7 +8,7 @@ local TREATISES = {
     { name = "Alchemy",        skillLineID = 171, itemID = 245755, questID = 95127 },
     { name = "Blacksmithing",  skillLineID = 164, itemID = 245763, questID = 95128 },
     { name = "Enchanting",     skillLineID = 333, itemID = 245759, questID = 95129 },
-    { name = "Engineering",    skillLineID = 202, itemID = 245809, questID = 83728  },
+    { name = "Engineering",    skillLineID = 202, itemID = 245809, questID = 95138 },
     { name = "Herbalism",      skillLineID = 182, itemID = 245761, questID = 95130 },
     { name = "Inscription",    skillLineID = 773, itemID = 245757, questID = 95131 },
     { name = "Jewelcrafting",  skillLineID = 755, itemID = 245760, questID = 95133 },
@@ -153,6 +153,20 @@ local function WithdrawEligibleTreatises()
         end
     end
     processNext()
+end
+
+-- Returns true if the given itemID is a treatise whose weekly quest is already completed.
+-- Used by UseItems to hide buttons for treatises that can't be used again this week.
+function LuckyGrabbag.Treatise:IsUsedThisWeek(itemID)
+    for _, treatise in ipairs(TREATISES) do
+        if treatise.itemID == itemID then
+            local completed = C_QuestLog.IsQuestFlaggedCompleted(treatise.questID)
+            DevLog("IsUsedThisWeek: " .. treatise.name .. " itemID=" .. itemID .. " questID=" .. treatise.questID .. " completed=" .. tostring(completed))
+            return completed
+        end
+    end
+    DevLog("IsUsedThisWeek: itemID=" .. tostring(itemID) .. " not found in TREATISES table")
+    return false
 end
 
 function LuckyGrabbag.Treatise:Init(database)
