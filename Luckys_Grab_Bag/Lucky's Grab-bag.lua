@@ -1,7 +1,7 @@
 -- Lucky's Grab-bag: A collection of small quality-of-life features.
 LuckyGrabbag = LuckyGrabbag or {}
 
-local ADDON_NAME = "Lucky's Grab-bag"
+local ADDON_NAME = "Luckys_Grab_Bag"
 
 local DB_DEFAULTS = {
     devMode            = false,
