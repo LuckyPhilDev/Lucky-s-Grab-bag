@@ -1,10 +1,10 @@
-package-as: Lucky's Grab-bag
-
-move-folders:
-  Lucky's Grab-bag/Lucky's Grab-bag: Lucky's Grab-bag
+package-as: Luckys_Grab_Bag
 
 externals:
-  Lucky's Grab-bag/Luckys_Utils: https://github.com/LuckyPhilDev/LuckyUtils
+  Luckys_Grab_Bag/Luckys_Utils: https://github.com/LuckyPhilDev/LuckyUtils
+
+move-folders:
+  Luckys_Grab_Bag/Luckys_Grab_Bag: Luckys_Grab_Bag
 
 manual-changelog:
   filename: CHANGELOG.md

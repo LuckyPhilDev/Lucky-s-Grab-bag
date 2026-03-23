@@ -57,6 +57,7 @@ function LuckyGrabbag.Settings:Init(db)
     panel.name = "Lucky's Grab-bag"
 
     local category = LuckySettings:Register(panel, panel.name)
+    LuckyGrabbag.Settings.category = category
 
     SLASH_LUCKYGB1 = "/grabbag"
     SlashCmdList["LUCKYGB"] = function() LuckySettings:Open(category) end

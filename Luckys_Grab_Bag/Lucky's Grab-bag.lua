@@ -36,6 +36,31 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.Cooking:Init(db)
         LuckyGrabbag.UseItems:Init(db)
 
+        -- Minimap button
+        LuckyGrabbag.minimapButton = LuckyMinimap:Create({
+            name    = "LuckyGrabbagMinimapButton",
+            icon    = "Interface\\Icons\\INV_Misc_Bag_36",
+            dbKey   = "minimap",
+            db      = db,
+            onClick = function(_, mouseBtn)
+                if mouseBtn == "MiddleButton" then
+                    db.devMode = not db.devMode
+                    local state = db.devMode and "ON" or "OFF"
+                    print(LuckyGrabbag.PREFIX .. " Dev mode " .. state)
+                else
+                    LuckySettings:Open(LuckyGrabbag.Settings.category)
+                end
+            end,
+            tooltip = function(tt)
+                tt:AddLine(LuckyUI.WC.goldPrimary .. "Lucky's Grab-bag" .. LuckyUI.WC.reset)
+                tt:AddLine(" ")
+                tt:AddLine("Left-click: Open settings", 0.91, 0.86, 0.78)
+                tt:AddLine("Right-click: Open settings", 0.91, 0.86, 0.78)
+                tt:AddLine("Middle-click: Toggle dev mode", 0.91, 0.86, 0.78)
+                tt:AddLine("Shift+drag: Move button", 0.54, 0.49, 0.42)
+            end,
+        })
+
         eventFrame:UnregisterEvent("ADDON_LOADED")
     end
 end)
