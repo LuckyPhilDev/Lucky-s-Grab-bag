@@ -44,3 +44,55 @@ function LuckyGrabbag.CreateIconButton(opts)
     end
     return btn
 end
+
+--- Makes a container frame draggable via right-click on its child buttons.
+--- Position is saved relative to an anchor frame so buttons follow the window.
+---
+--- After calling this, use `container:RegisterDraggable(button)` on each child.
+--- Call `container:RestorePosition()` when the anchor frame is shown, to re-anchor
+--- after the anchor moves (e.g. when the Auction House reopens).
+---
+---@param container Frame       the group container to move
+---@param anchorFrame Frame     the window to anchor relative to (e.g. AuctionHouseFrame)
+---@param dbKey string          key in LuckyGrabbagDB for the saved offset table {x, y}
+---@param defaultX number       default x offset from anchor's TOPRIGHT
+---@param defaultY number       default y offset from anchor's TOPRIGHT
+function LuckyGrabbag.EnableGroupDrag(container, anchorFrame, dbKey, defaultX, defaultY)
+    container:SetMovable(true)
+    container:SetClampedToScreen(true)
+
+    local function Restore()
+        container:ClearAllPoints()
+        local pos = LuckyGrabbag.db and LuckyGrabbag.db[dbKey]
+        container:SetPoint("TOPLEFT", anchorFrame, "TOPRIGHT",
+            pos and pos.x or defaultX,
+            pos and pos.y or defaultY)
+    end
+
+    local function Save()
+        if not LuckyGrabbag.db then return end
+        local left = container:GetLeft()
+        local top  = container:GetTop()
+        local aRight = anchorFrame:GetRight()
+        local aTop   = anchorFrame:GetTop()
+        if left and top and aRight and aTop then
+            LuckyGrabbag.db[dbKey] = { x = left - aRight, y = top - aTop }
+        end
+    end
+
+    function container:RestorePosition()
+        Restore()
+    end
+
+    function container:RegisterDraggable(button)
+        button:RegisterForDrag("RightButton")
+        button:HookScript("OnDragStart", function() container:StartMoving() end)
+        button:HookScript("OnDragStop", function()
+            container:StopMovingOrSizing()
+            Save()
+            Restore() -- re-anchor so the group continues to follow the window
+        end)
+    end
+
+    Restore()
+end

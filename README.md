@@ -30,6 +30,7 @@ Adds two buttons alongside the Cooking profession window for quick access to com
 - **Campfire** — casts Basic Campfire so you can cook anywhere.
 - **Chef's Hat** — uses the Chef's Hat toy to put it on. If the buff is already active, clicking the button cancels it instead (the button glows while active).
 - Both buttons are hidden when the Cooking window is closed.
+- Right-click drag any button to reposition the group; position is saved relative to the Cooking window.
 - Can be toggled in the addon settings.
 
 ### 🪙 CraftSim Quickbuy Button
@@ -39,6 +40,7 @@ Adds a coin icon button just outside the top-right corner of the Auction House w
 - Appears automatically when you open the Auction House.
 - Hidden when the Auction House is closed.
 - Enabled by default if CraftSim is installed; disabled by default if it isn't.
+- Right-click drag either button to reposition the group; position is saved relative to the Auction House window.
 - Can be toggled on or off in the addon settings.
 
 ### 🛒 TestFlight Buy Next Button

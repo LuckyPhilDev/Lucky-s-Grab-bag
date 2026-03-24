@@ -8,6 +8,7 @@ local CHEFS_HAT_SPELL_ID    = 67556
 local CAMPFIRE_SPELL_ID     = 818
 
 local db
+local parentFrame
 local campfireButton
 local campfireCooldown
 local chefsHatButton
@@ -38,7 +39,7 @@ local function UpdateChefsHatButton()
     if active then
         if chefsHatGlow then chefsHatGlow:Show() end
         if not InCombatLockdown() then
-            chefsHatButton:SetAttribute("type", "cancelaura")
+            chefsHatButton:SetAttribute("type1", "cancelaura")
             chefsHatButton:SetAttribute("spell", aura and aura.name)
             chefsHatButton:SetAttribute("*toy1", nil)
         end
@@ -46,7 +47,7 @@ local function UpdateChefsHatButton()
     else
         if chefsHatGlow then chefsHatGlow:Hide() end
         if not InCombatLockdown() then
-            chefsHatButton:SetAttribute("type", "toy")
+            chefsHatButton:SetAttribute("type1", "toy")
             chefsHatButton:SetAttribute("*toy1", CHEFS_HAT_ITEM_ID)
             chefsHatButton:SetAttribute("spell", nil)
         end
@@ -55,7 +56,8 @@ local function UpdateChefsHatButton()
 end
 
 local function ShowButtons()
-    if campfireButton then
+    if parentFrame then
+        parentFrame:RestorePosition()
         campfireButton:Show()
         chefsHatButton:Show()
         UpdateChefsHatButton()
@@ -80,26 +82,26 @@ local function CreateButtons()
     if not frame then return end
 
     -- Shared parent anchored next to the Professions frame.
-    -- Plain Frame parented to UIParent keeps the secure frame hierarchy clean.
-    local parent = CreateFrame("Frame", "LGB_CookingButtonsParent", UIParent) ---@diagnostic disable-line: undefined-global
-    parent:SetFrameStrata("MEDIUM")
-    parent:SetSize(42, 89) -- two 42px buttons + 5px gap
-    parent:SetPoint("TOPLEFT", frame, "TOPRIGHT", 5, 0)
-    parent:EnableMouse(false)
+    parentFrame = CreateFrame("Frame", "LGB_CookingButtonsParent", UIParent) ---@diagnostic disable-line: undefined-global
+    parentFrame:SetFrameStrata("MEDIUM")
+    parentFrame:SetSize(1, 1)
+    parentFrame:EnableMouse(false)
+    LuckyGrabbag.EnableGroupDrag(parentFrame, frame, "cookingButtonPos", 5, 0)
 
     -- Campfire button
-    -- type="spell" with spell attribute avoids the ADDON_ACTION_FORBIDDEN restriction on CastSpellByID.
+    -- type1="spell" fires only on left-click; right-click is free for dragging.
     campfireButton = LuckyGrabbag.CreateIconButton({
         name     = "LGB_CampfireButton",
-        parent   = parent,
+        parent   = parentFrame,
         template = "SecureActionButtonTemplate",
         texture  = C_Spell.GetSpellTexture(CAMPFIRE_SPELL_ID),
         tooltip  = function() GameTooltip:SetSpellByID(CAMPFIRE_SPELL_ID) end,
     })
-    campfireButton:SetPoint("TOP", parent, "TOP", 0, 0)
-    campfireButton:RegisterForClicks("AnyDown", "AnyUp")
-    campfireButton:SetAttribute("type", "spell")
+    campfireButton:SetPoint("TOPLEFT", parentFrame, "TOPLEFT", 0, 0)
+    campfireButton:RegisterForClicks("LeftButtonDown", "LeftButtonUp")
+    campfireButton:SetAttribute("type1", "spell")
     campfireButton:SetAttribute("spell", CAMPFIRE_SPELL_ID)
+    parentFrame:RegisterDraggable(campfireButton)
 
     -- Campfire cooldown overlay
     campfireCooldown = CreateFrame("Cooldown", nil, campfireButton, "CooldownFrameTemplate")
@@ -107,25 +109,24 @@ local function CreateButtons()
     campfireCooldown:SetHideCountdownNumbers(false)
 
     -- Chef's Hat button
-    -- type="toy" with "*toy1" (modified attribute for left-click) is required in TWW.
-    -- RegisterForClicks must include "AnyDown" for the secure action to fire.
+    -- type1="toy" fires only on left-click; right-click is free for dragging.
     chefsHatButton = LuckyGrabbag.CreateIconButton({
         name     = "LGB_ChefsHatButton",
-        parent   = parent,
+        parent   = parentFrame,
         template = "SecureActionButtonTemplate",
         texture  = C_Item.GetItemIconByID(CHEFS_HAT_ITEM_ID) or C_Spell.GetSpellTexture(CHEFS_HAT_SPELL_ID),
         tooltip  = function() GameTooltip:SetToyByItemID(CHEFS_HAT_ITEM_ID) end,
     })
-    chefsHatButton:SetPoint("TOP", campfireButton, "BOTTOM", 0, -5)
-    chefsHatButton:RegisterForClicks("AnyDown", "AnyUp")
-    chefsHatButton:SetAttribute("type", "toy")
+    chefsHatButton:SetPoint("TOPLEFT", campfireButton, "BOTTOMLEFT", 0, -5)
+    chefsHatButton:RegisterForClicks("LeftButtonDown", "LeftButtonUp")
+    chefsHatButton:SetAttribute("type1", "toy")
     chefsHatButton:SetAttribute("*toy1", CHEFS_HAT_ITEM_ID)
     chefsHatButton:SetScript("PostClick", function()
         DevLog("Chef's Hat clicked")
     end)
+    parentFrame:RegisterDraggable(chefsHatButton)
 
     -- Active-buff glow: a bright border overlay shown when the buff is up.
-    -- Drawn in OVERLAY so it sits above the icon but below tooltips.
     chefsHatGlow = chefsHatButton:CreateTexture(nil, "OVERLAY")
     chefsHatGlow:SetTexture("Interface\\Buttons\\CheckButtonHilight")
     chefsHatGlow:SetBlendMode("ADD")

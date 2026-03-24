@@ -18,14 +18,17 @@ end
 local function CreateButton()
     if buyButton then return end
 
+    local container = LuckyGrabbag.Quickbuy:GetContainer()
     buyButton = LuckyGrabbag.CreateIconButton({
-        parent  = AuctionHouseFrame, ---@diagnostic disable-line: undefined-global
+        parent  = container,
         texture = "Interface\\Icons\\INV_Misc_Coin_18",
         tooltip = function() GameTooltip:SetText("TestFlight Buy Next") end,
     })
     buyButton:SetPushedTexture("Interface\\Icons\\INV_Misc_Coin_18")
     buyButton:GetPushedTexture():SetVertexColor(0.8, 0.8, 0.8, 1)
     buyButton:SetScript("OnClick", OnClick)
+
+    container:RegisterDraggable(buyButton)
 end
 
 local function AnchorButton()
@@ -34,7 +37,7 @@ local function AnchorButton()
     if quickbuyButton and quickbuyButton:IsShown() then
         buyButton:SetPoint("TOPLEFT", quickbuyButton, "BOTTOMLEFT", 0, -5)
     else
-        buyButton:SetPoint("TOPLEFT", AuctionHouseFrame, "TOPRIGHT", 5, 0) ---@diagnostic disable-line: undefined-global
+        buyButton:SetPoint("TOPLEFT", LuckyGrabbag.Quickbuy:GetContainer(), "TOPLEFT", 0, 0)
     end
 end
 
