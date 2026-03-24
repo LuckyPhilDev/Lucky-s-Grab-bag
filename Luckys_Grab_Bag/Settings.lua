@@ -2,54 +2,118 @@
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.Settings = {}
 
-local function AddDependencyWarning(panel, posAnchor, controlAnchor, requires)
-    local warning = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    warning:SetPoint("TOPLEFT", posAnchor, "BOTTOMLEFT", 0, -4)
-    warning:SetWidth(420)
+local function AddDependencyWarning(content, check, requires)
+    local warning = content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    warning:SetPoint("TOPLEFT", check.desc, "BOTTOMLEFT", 0, -2)
+    warning:SetWidth(400)
     warning:SetJustifyH("LEFT")
     warning:SetTextColor(1, 0.3, 0.3)
     warning:Hide()
 
-    panel:HookScript("OnShow", function()
+    content:GetParent():GetParent():HookScript("OnShow", function()
         local ok, msg = LuckyGrabbag.Dependencies.Check(requires.addon, requires.minVersion)
         warning:SetShown(not ok)
         if not ok then
             warning:SetText(msg)
-            controlAnchor:Disable()
-            controlAnchor.text:SetFontObject("GameFontDisable")
+            check:Disable()
+            check.text:SetFontObject("GameFontDisable")
         else
-            controlAnchor:Enable()
-            controlAnchor.text:SetFontObject("GameFontNormal")
+            check:Enable()
+            check.text:SetFontObject("GameFontNormal")
         end
     end)
 
     return warning
 end
 
--- Adds a labelled section with a heading, checkbox, and descriptive blurb.
--- Returns the checkbox and blurb so callers can anchor the next section to the blurb.
-local function AddFeatureSection(panel, prevAnchor, opts)
-    local heading = panel:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    heading:SetPoint("LEFT", panel, "LEFT", 16, 0)
-    heading:SetPoint("TOP", prevAnchor, "BOTTOM", 0, -24)
-    heading:SetText(opts.heading)
+-- Adds a group heading with a horizontal rule that extends from the text to the right edge.
+-- Returns the heading so the next element can anchor to it.
+local function AddGroupHeading(content, prevAnchor, text)
+    local anchor = prevAnchor.desc or prevAnchor
+    local heading = content:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    heading:SetPoint("LEFT", content, "LEFT", 16, 0)
+    heading:SetPoint("TOP", anchor, "BOTTOM", 0, -20)
+    heading:SetTextColor(0.79, 0.66, 0.30) -- gold-accent
+    heading:SetText(text)
 
-    local check = CreateFrame("CheckButton", nil, panel, "UICheckButtonTemplate")
-    check:SetPoint("TOPLEFT", heading, "BOTTOMLEFT", 0, -6)
+    local rule = content:CreateTexture(nil, "ARTWORK")
+    rule:SetHeight(1)
+    rule:SetPoint("LEFT", heading, "RIGHT", 8, 0)
+    rule:SetPoint("RIGHT", content, "RIGHT", -16, 0)
+    rule:SetColorTexture(0.23, 0.18, 0.10) -- section divider (#3a2e1a)
+
+    return heading
+end
+
+-- Adds a checkbox with a short description underneath.
+-- Hovering the checkbox shows the full tooltip.
+-- Returns the checkbox (use as anchor for the next item).
+local function AddFeatureToggle(content, prevAnchor, opts)
+    local anchor = prevAnchor.desc or prevAnchor
+    local check = CreateFrame("CheckButton", nil, content, "UICheckButtonTemplate")
+    check:SetPoint("LEFT", content, "LEFT", 16, 0)
+    check:SetPoint("TOP", anchor, "BOTTOM", 0, -(opts.gap or 8))
     check:SetChecked(opts.checked)
-    check.text:SetText(opts.checkLabel)
+    check.text:SetText(opts.label)
     check:SetScript("OnClick", function(btn)
         opts.onToggle(btn:GetChecked())
     end)
 
-    local blurb = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    blurb:SetPoint("TOPLEFT", check, "BOTTOMLEFT", 20, -4)
-    blurb:SetWidth(420)
-    blurb:SetJustifyH("LEFT")
-    blurb:SetTextColor(0.7, 0.7, 0.7)
-    blurb:SetText(opts.blurb)
+    if opts.tooltip then
+        check:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:AddLine(opts.label, 1, 1, 1)
+            GameTooltip:AddLine(opts.tooltip, 0.7, 0.7, 0.7, true)
+            GameTooltip:Show()
+        end)
+        check:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    end
 
-    return check, blurb
+    local desc = content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    desc:SetPoint("TOPLEFT", check, "BOTTOMLEFT", 26, -2)
+    desc:SetWidth(400)
+    desc:SetJustifyH("LEFT")
+    desc:SetTextColor(0.54, 0.49, 0.42) -- text-muted
+    desc:SetText(opts.desc)
+
+    check.desc = desc
+    return check
+end
+
+local function CreateScrollFrame(panel)
+    local scrollFrame = CreateFrame("ScrollFrame", nil, panel, "UIPanelScrollFrameTemplate")
+    scrollFrame:SetPoint("TOPLEFT", 0, 0)
+    scrollFrame:SetPoint("BOTTOMRIGHT", -26, 0)
+
+    local content = CreateFrame("Frame", nil, scrollFrame)
+    content:SetWidth(scrollFrame:GetWidth() or 500)
+    scrollFrame:SetScrollChild(content)
+
+    scrollFrame:HookScript("OnSizeChanged", function(self, width)
+        content:SetWidth(width)
+    end)
+
+    return scrollFrame, content
+end
+
+-- Update content height to fit all children so the scroll range is correct.
+local function UpdateContentHeight(content)
+    local bottom = 0
+    for _, child in pairs({ content:GetRegions() }) do
+        local _, _, _, _, y = child:GetPoint()
+        if y then
+            local childBottom = -y + (child.GetHeight and child:GetHeight() or 0)
+            if childBottom > bottom then bottom = childBottom end
+        end
+    end
+    for _, child in pairs({ content:GetChildren() }) do
+        local _, _, _, _, y = child:GetPoint()
+        if y then
+            local childBottom = -y + child:GetHeight()
+            if childBottom > bottom then bottom = childBottom end
+        end
+    end
+    content:SetHeight(bottom + 24)
 end
 
 function LuckyGrabbag.Settings:Init(db)
@@ -62,76 +126,95 @@ function LuckyGrabbag.Settings:Init(db)
     SLASH_LUCKYGB1 = "/grabbag"
     SlashCmdList["LUCKYGB"] = function() LuckySettings:Open(category) end
 
-    local title = panel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+    local scrollFrame, content = CreateScrollFrame(panel)
+
+    local title = content:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
     title:SetPoint("TOPLEFT", 16, -16)
     title:SetText("Lucky's Grab-bag")
 
-    -- Dev Mode
-    local _, devBlurb = AddFeatureSection(panel, title, {
-        heading    = "Developer Tools",
-        checkLabel = "Enable Dev Mode",
-        blurb      = "Enables development-only logging and diagnostics. Has no visible effect for regular users.",
-        checked    = db.devMode,
-        onToggle   = function(checked) db.devMode = checked end,
+    ---------------------------------------------------------------------------
+    -- General
+    ---------------------------------------------------------------------------
+    local devCheck = AddFeatureToggle(content, title, {
+        label    = "Dev Mode",
+        desc     = "Development logging and diagnostics.",
+        tooltip  = "Enables verbose debug output via LuckyLog. Has no visible effect for regular users.",
+        checked  = db.devMode,
+        gap      = 16,
+        onToggle = function(checked) db.devMode = checked end,
     })
 
-    -- CraftSim Quickbuy
-    local quickbuyCheck, quickbuyBlurb = AddFeatureSection(panel, devBlurb, {
-        heading    = "CraftSim Quickbuy",
-        checkLabel = "Show Quickbuy button",
-        blurb      = "Places a shortcut button next to the Auction House window. Each click purchases one row of items from your CraftSim crafting queue's shopping list.",
-        checked    = db.showQuickbuy,
-        onToggle   = function(checked)
+    ---------------------------------------------------------------------------
+    -- Auctionator Enhancements
+    ---------------------------------------------------------------------------
+    local ahHeading = AddGroupHeading(content, devCheck, "Auctionator Enhancements")
+
+    local quickbuyCheck = AddFeatureToggle(content, ahHeading, {
+        label    = "CraftSim Quickbuy",
+        desc     = "One-click purchasing from your CraftSim shopping list.",
+        tooltip  = "Adds a button next to the Auction House window. Each click purchases one row of items from your CraftSim crafting queue's shopping list.",
+        checked  = db.showQuickbuy,
+
+        onToggle = function(checked)
             db.showQuickbuy = checked
             db.showQuickbuyAutoDefault = false
             LuckyGrabbag.Quickbuy:ApplySetting()
         end,
     })
 
-    AddDependencyWarning(panel, quickbuyBlurb, quickbuyCheck, LuckyGrabbag.Quickbuy.requires)
+    AddDependencyWarning(content, quickbuyCheck, LuckyGrabbag.Quickbuy.requires)
 
-    -- TestFlight Buy Next
-    local tfBuyCheck, tfBuyBlurb = AddFeatureSection(panel, quickbuyBlurb, {
-        heading    = "TestFlight Buy Next",
-        checkLabel = "Show Buy Next button",
-        blurb      = "Places a shortcut button next to the Auction House window. Each click advances through Auctionator's purchase workflow — selecting the next item, buying it, and confirming — to quickly buy all items on a shopping list.",
-        checked    = db.showTestflightBuy,
-        onToggle   = function(checked)
+    local tfBuyCheck = AddFeatureToggle(content, quickbuyCheck, {
+        label    = "TestFlight Buy Next",
+        desc     = "Step through Auctionator purchases one click at a time.",
+        tooltip  = "Adds a button next to the Auction House window. Each click advances through Auctionator's purchase workflow — selecting the next item, buying it, and confirming — to quickly buy all items on a shopping list.",
+        checked  = db.showTestflightBuy,
+
+        onToggle = function(checked)
             db.showTestflightBuy = checked
             db.showTestflightBuyAutoDefault = false
             LuckyGrabbag.TestflightBuy:ApplySetting()
         end,
     })
 
-    AddDependencyWarning(panel, tfBuyBlurb, tfBuyCheck, LuckyGrabbag.TestflightBuy.requires)
+    AddDependencyWarning(content, tfBuyCheck, LuckyGrabbag.TestflightBuy.requires)
 
-    -- Thalassian Treatises
-    local _, treatiseBlurb = AddFeatureSection(panel, tfBuyBlurb, {
-        heading    = "Thalassian Treatises",
-        checkLabel = "Auto-withdraw treatises from Warband Bank",
-        blurb      = "When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.",
-        checked    = db.showTreatise,
-        onToggle   = function(checked) db.showTreatise = checked end,
+    ---------------------------------------------------------------------------
+    -- Professions
+    ---------------------------------------------------------------------------
+    local profHeading = AddGroupHeading(content, tfBuyCheck, "Professions")
+
+    local treatiseCheck = AddFeatureToggle(content, profHeading, {
+        label    = "Thalassian Treatise Auto-Withdrawal",
+        desc     = "Withdraws unread treatises from Warband Bank when opened.",
+        tooltip  = "When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.",
+        checked  = db.showTreatise,
+
+        onToggle = function(checked) db.showTreatise = checked end,
     })
 
-    -- Use Items
-    local _, useItemsBlurb = AddFeatureSection(panel, treatiseBlurb, {
-        heading    = "Use Items",
-        checkLabel = "Show use-item buttons",
-        blurb      = "Displays a floating row of buttons when you have consumable profession items in your bags (Artisan's Consortium Payouts, Glimmers/Flickers of Midnight Knowledge, Thalassian Treatises). Click each button to use the item. The bar is draggable and hides automatically when empty.",
-        checked    = db.showUseItems,
-        onToggle   = function(checked)
+    local useItemsCheck = AddFeatureToggle(content, treatiseCheck, {
+        label    = "Use Items Popup",
+        desc     = "Floating buttons for consumable profession items in your bags.",
+        tooltip  = "Shows buttons for Artisan's Consortium Payouts, Glimmers/Flickers of Midnight Knowledge, and Thalassian Treatises. Draggable, auto-hides when empty, respects combat lockdown.",
+        checked  = db.showUseItems,
+
+        onToggle = function(checked)
             db.showUseItems = checked
             LuckyGrabbag.UseItems:ApplySetting()
         end,
     })
 
-    -- Cooking Buttons
-    AddFeatureSection(panel, useItemsBlurb, {
-        heading    = "Cooking",
-        checkLabel = "Show cooking utility buttons",
-        blurb      = "Adds a Campfire button and a Chef's Hat toggle button alongside the Cooking profession window. The Chef's Hat button glows when the buff is active; clicking it again cancels the buff.",
-        checked    = db.showCookingButtons,
-        onToggle   = function(checked) db.showCookingButtons = checked end,
+    local cookingCheck = AddFeatureToggle(content, useItemsCheck, {
+        label    = "Cooking Utility Buttons",
+        desc     = "Campfire and Chef's Hat buttons on the Cooking window.",
+        tooltip  = "Adds a Campfire button (casts Basic Campfire) and a Chef's Hat toggle (glows when active, click again to cancel) alongside the Cooking profession window.",
+        checked  = db.showCookingButtons,
+
+        onToggle = function(checked) db.showCookingButtons = checked end,
     })
+
+    panel:HookScript("OnShow", function()
+        UpdateContentHeight(content)
+    end)
 end

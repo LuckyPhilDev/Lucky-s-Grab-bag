@@ -74,19 +74,13 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 **Developer Tools**
 - *Enable Dev Mode* — Enables development-only logging and diagnostics. Has no visible effect for regular users.
 
-**CraftSim Quickbuy**
+**Auctionator Enhancements**
 - *Show Quickbuy button* — Places a shortcut button next to the Auction House window. Each click purchases one row of items from your CraftSim crafting queue's shopping list.
-
-**TestFlight Buy Next**
 - *Show Buy Next button* — Places a shortcut button next to the Auction House window. Each click advances through Auctionator's purchase workflow to quickly buy all items on a shopping list.
 
-**Thalassian Treatises**
+**Professions**
 - *Auto-withdraw treatises from Warband Bank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
-
-**Use Items**
 - *Show use-item buttons* — Displays a floating row of buttons when consumable profession items are in your bags (Artisan's Consortium Payouts, Glimmers/Flickers of Midnight Knowledge, Thalassian Treatises). The bar is draggable and hides automatically when empty.
-
-**Cooking**
 - *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.
 
 Settings are saved per account.
