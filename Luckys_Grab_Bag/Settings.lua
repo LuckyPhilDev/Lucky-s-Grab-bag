@@ -90,8 +90,23 @@ function LuckyGrabbag.Settings:Init(db)
 
     AddDependencyWarning(panel, quickbuyBlurb, quickbuyCheck, LuckyGrabbag.Quickbuy.requires)
 
+    -- TestFlight Buy Next
+    local tfBuyCheck, tfBuyBlurb = AddFeatureSection(panel, quickbuyBlurb, {
+        heading    = "TestFlight Buy Next",
+        checkLabel = "Show Buy Next button",
+        blurb      = "Places a shortcut button next to the Auction House window. Each click advances through Auctionator's purchase workflow — selecting the next item, buying it, and confirming — to quickly buy all items on a shopping list.",
+        checked    = db.showTestflightBuy,
+        onToggle   = function(checked)
+            db.showTestflightBuy = checked
+            db.showTestflightBuyAutoDefault = false
+            LuckyGrabbag.TestflightBuy:ApplySetting()
+        end,
+    })
+
+    AddDependencyWarning(panel, tfBuyBlurb, tfBuyCheck, LuckyGrabbag.TestflightBuy.requires)
+
     -- Thalassian Treatises
-    local _, treatiseBlurb = AddFeatureSection(panel, quickbuyBlurb, {
+    local _, treatiseBlurb = AddFeatureSection(panel, tfBuyBlurb, {
         heading    = "Thalassian Treatises",
         checkLabel = "Auto-withdraw treatises from Warband Bank",
         blurb      = "When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.",

@@ -1,3 +1,10 @@
+## [0.0.6] - 2026-03-24
+
+### Added
+- TestFlight Buy Next button — places a shortcut button next to the Auction House window that steps through Auctionator's purchase workflow one click at a time, buying each item on the shopping list in sequence.
+  - Stacks below the CraftSim Quickbuy button when both are visible.
+  - Enabled by default if TestFlight is installed; can be toggled independently in settings.
+
 ## [0.0.5] - 2026-03-23
 
 ### Added

@@ -41,6 +41,15 @@ Adds a coin icon button just outside the top-right corner of the Auction House w
 - Enabled by default if CraftSim is installed; disabled by default if it isn't.
 - Can be toggled on or off in the addon settings.
 
+### 🛒 TestFlight Buy Next Button
+> Requires: **TestFlight v5.07** or later (and **Auctionator**).
+Adds a button next to the Auction House window that steps through Auctionator's purchase workflow one click at a time — selecting the next item, buying it, and confirming each dialog.
+
+- Each click advances to the next step: select result, buy, confirm price warnings, and move on to the next item.
+- Stacks below the CraftSim Quickbuy button when both are visible; takes its position when Quickbuy is hidden.
+- Enabled by default if TestFlight is installed; disabled by default if it isn't.
+- Can be toggled on or off in the addon settings.
+
 ### 🗺️ Minimap Button
 A minimap button for quick access to the addon.
 
@@ -67,7 +76,9 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 
 **CraftSim Quickbuy**
 - *Show Quickbuy button* — Places a shortcut button next to the Auction House window. Each click purchases one row of items from your CraftSim crafting queue's shopping list.
-  - Greyed out with an explanatory message if CraftSim v19.7.0+ is not installed.
+
+**TestFlight Buy Next**
+- *Show Buy Next button* — Places a shortcut button next to the Auction House window. Each click advances through Auctionator's purchase workflow to quickly buy all items on a shopping list.
 
 **Thalassian Treatises**
 - *Auto-withdraw treatises from Warband Bank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
@@ -90,5 +101,4 @@ Settings are saved per account.
 
 ## 🛑 Notes
 
-- The Quickbuy button requires **CraftSim** to be installed and enabled. If it isn't, the setting will be disabled and a message will explain what's needed.
 - More features will be added over time — hence the name.

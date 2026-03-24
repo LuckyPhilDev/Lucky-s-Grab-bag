@@ -12,6 +12,7 @@ Dependencies.lua
 Utils.lua
 Settings.lua
 Quickbuy.lua
+TestflightBuy.lua
 Treatise.lua
 Cooking.lua
 UseItems.lua

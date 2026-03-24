@@ -40,6 +40,7 @@ function LuckyGrabbag.Quickbuy:ApplySetting()
     elseif quickbuyButton then
         quickbuyButton:Hide()
     end
+    LuckyGrabbag.TestflightBuy:ApplySetting()
 end
 
 function LuckyGrabbag.Quickbuy:Init(database)
@@ -55,6 +56,15 @@ function LuckyGrabbag.Quickbuy:Init(database)
         elseif event == "AUCTION_HOUSE_CLOSED" then
             auctionHouseOpen = false
             if quickbuyButton then quickbuyButton:Hide() end
+            LuckyGrabbag.TestflightBuy:ApplySetting()
         end
     end)
+end
+
+function LuckyGrabbag.Quickbuy:IsAuctionHouseOpen()
+    return auctionHouseOpen
+end
+
+function LuckyGrabbag.Quickbuy:GetButton()
+    return quickbuyButton
 end
