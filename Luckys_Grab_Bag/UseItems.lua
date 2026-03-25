@@ -65,8 +65,10 @@ local function ScanBags()
                     DevLog("  Bag " .. bag .. " slot " .. slot .. ": itemID=" .. info.itemID .. " itemName was nil, C_Item fallback=" .. tostring(itemName))
                 end
                 if itemName and IsMatchingItem(itemName) then
-                    -- Skip treatises already used this week (only check items matching the treatise name pattern)
-                    if string.find(itemName, "Thalassian Treatise on", 1, true) and LuckyGrabbag.Treatise:IsUsedThisWeek(info.itemID) then
+                    -- Skip treatises the character can't use (wrong profession) or already used this week
+                    if string.find(itemName, "Thalassian Treatise on", 1, true) and not LuckyGrabbag.Treatise:CanCharacterUse(info.itemID) then
+                        DevLog("  SKIP (no matching profession): " .. itemName .. " (itemID=" .. info.itemID .. ")")
+                    elseif string.find(itemName, "Thalassian Treatise on", 1, true) and LuckyGrabbag.Treatise:IsUsedThisWeek(info.itemID) then
                         DevLog("  SKIP (used this week): " .. itemName .. " (itemID=" .. info.itemID .. ")")
                     elseif not found[info.itemID] then
                         found[info.itemID] = {
@@ -187,6 +189,11 @@ local function UpdateButtons()
         if containerFrame then containerFrame:Hide() end
         return
     end
+    if db.useItemsCityOnly and not IsResting() then
+        DevLog("City-only mode active and not in a rest area, hiding")
+        if containerFrame then containerFrame:Hide() end
+        return
+    end
 
     local items = ScanBags()
     DevLog("Found " .. #items .. " matching item type(s)")
@@ -236,6 +243,7 @@ function LuckyGrabbag.UseItems:Init(database)
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    eventFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
     eventFrame:SetScript("OnEvent", function(_, event)
         DevLog("Event fired: " .. event)
         if event == "PLAYER_REGEN_DISABLED" then

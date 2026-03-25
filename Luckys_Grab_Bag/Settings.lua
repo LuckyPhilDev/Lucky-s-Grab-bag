@@ -50,8 +50,9 @@ end
 -- Returns the checkbox (use as anchor for the next item).
 local function AddFeatureToggle(content, prevAnchor, opts)
     local anchor = prevAnchor.desc or prevAnchor
+    local leftInset = 16 + (opts.indent or 0)
     local check = CreateFrame("CheckButton", nil, content, "UICheckButtonTemplate")
-    check:SetPoint("LEFT", content, "LEFT", 16, 0)
+    check:SetPoint("LEFT", content, "LEFT", leftInset, 0)
     check:SetPoint("TOP", anchor, "BOTTOM", 0, -(opts.gap or 8))
     check:SetChecked(opts.checked)
     check.text:SetText(opts.label)
@@ -78,6 +79,46 @@ local function AddFeatureToggle(content, prevAnchor, opts)
 
     check.desc = desc
     return check
+end
+
+-- Adds a labeled slider with a value readout.
+-- Returns the slider frame (use .desc for anchoring the next item).
+local function AddSlider(content, prevAnchor, opts)
+    local anchor = prevAnchor.desc or prevAnchor
+    local leftInset = 16 + (opts.indent or 0)
+
+    local label = content:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    label:SetPoint("LEFT", content, "LEFT", leftInset, 0)
+    label:SetPoint("TOP", anchor, "BOTTOM", 0, -(opts.gap or 12))
+    label:SetText(opts.label)
+
+    local slider = CreateFrame("Slider", "LGB_Slider_" .. opts.key, content, "OptionsSliderTemplate")
+    slider:SetPoint("TOPLEFT", label, "BOTTOMLEFT", 0, -14)
+    slider:SetWidth(opts.width or 160)
+    slider:SetMinMaxValues(opts.min, opts.max)
+    slider:SetValueStep(opts.step or 1)
+    slider:SetObeyStepOnDrag(true)
+    slider:SetValue(opts.value)
+    slider.Low:SetText(opts.min)
+    slider.High:SetText(opts.max)
+
+    local valueText = content:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+    valueText:SetPoint("LEFT", slider, "RIGHT", 8, 0)
+    valueText:SetText(opts.value .. (opts.suffix or ""))
+
+    slider:SetScript("OnValueChanged", function(_, val)
+        val = math.floor(val + 0.5)
+        valueText:SetText(val .. (opts.suffix or ""))
+        opts.onChanged(val)
+    end)
+
+    -- Invisible anchor region below the slider for consistent spacing
+    local spacer = content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+    spacer:SetPoint("TOPLEFT", slider, "BOTTOMLEFT", 0, -4)
+    spacer:SetText("")
+    slider.desc = spacer
+
+    return slider
 end
 
 local function CreateScrollFrame(panel)
@@ -205,13 +246,70 @@ function LuckyGrabbag.Settings:Init(db)
         end,
     })
 
-    local cookingCheck = AddFeatureToggle(content, useItemsCheck, {
+    local cityOnlyCheck = AddFeatureToggle(content, useItemsCheck, {
+        label    = "Only in Cities",
+        desc     = "Buttons only appear while in a city or inn.",
+        tooltip  = "When enabled, the Use Items popup is hidden outside of rest areas (cities and inns).",
+        checked  = db.useItemsCityOnly,
+        indent   = 20,
+
+        onToggle = function(checked)
+            db.useItemsCityOnly = checked
+            LuckyGrabbag.UseItems:ApplySetting()
+        end,
+    })
+
+    local cookingCheck = AddFeatureToggle(content, cityOnlyCheck, {
         label    = "Cooking Utility Buttons",
         desc     = "Campfire and Chef's Hat buttons on the Cooking window.",
         tooltip  = "Adds a Campfire button (casts Basic Campfire) and a Chef's Hat toggle (glows when active, click again to cancel) alongside the Cooking profession window.",
         checked  = db.showCookingButtons,
 
         onToggle = function(checked) db.showCookingButtons = checked end,
+    })
+
+    ---------------------------------------------------------------------------
+    -- Combat Prep
+    ---------------------------------------------------------------------------
+    local combatPrepHeading = AddGroupHeading(content, cookingCheck, "Combat Prep")
+
+    local combatPrepCheck = AddFeatureToggle(content, combatPrepHeading, {
+        label    = "Combat Prep Window",
+        desc     = "Shows a floating window with pull timer and ready check buttons.",
+        tooltip  = "Displays a small window when you're out of combat in a raid or Mythic+ dungeon. Right-click and drag to reposition.",
+        checked  = db.showCombatPrep,
+
+        onToggle = function(checked)
+            db.showCombatPrep = checked
+            LuckyGrabbag.CombatPrep:ApplySetting()
+        end,
+    })
+
+    local readyCheckToggle = AddFeatureToggle(content, combatPrepCheck, {
+        label    = "Ready Check Button",
+        desc     = "Show the ready check button on the combat prep window.",
+        checked  = db.combatPrepReadyCheck,
+        indent   = 20,
+
+        onToggle = function(checked)
+            db.combatPrepReadyCheck = checked
+            LuckyGrabbag.CombatPrep:ApplySetting()
+        end,
+    })
+
+    local timerSlider = AddSlider(content, readyCheckToggle, {
+        label    = "Pull Timer Duration",
+        key      = "CombatPrepTimer",
+        min      = 3,
+        max      = 30,
+        value    = db.combatPrepTimer,
+        suffix   = "s",
+        indent   = 20,
+
+        onChanged = function(val)
+            db.combatPrepTimer = val
+            LuckyGrabbag.CombatPrep:ApplySetting()
+        end,
     })
 
     panel:HookScript("OnShow", function()
