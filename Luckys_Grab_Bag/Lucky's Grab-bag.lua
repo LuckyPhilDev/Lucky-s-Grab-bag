@@ -12,6 +12,7 @@ local DB_DEFAULTS = {
     showCombatPrep     = true,
     combatPrepTimer    = 10,
     combatPrepReadyCheck = true,
+    combatPrepBreakTimer = 5,
 }
 
 local eventFrame = CreateFrame("Frame")

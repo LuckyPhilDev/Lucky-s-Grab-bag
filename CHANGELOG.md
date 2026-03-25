@@ -1,11 +1,7 @@
-## [0.0.9] - 2026-03-25
+## [0.0.10] - 2026-03-25
 
 ### Added
-- Combat Prep window with pull timer and ready check buttons, shown automatically in raids and Mythic+ when out of combat.
-- Pull timer duration is adjustable from 3 to 30 seconds in settings.
-- Ready check button can be toggled on or off independently.
-- Use `/combatprep` to test the window outside of group content.
-- Use Items popup can now be restricted to cities and inns only.
+- Break timer button on the Combat Prep window — starts a long countdown for bio breaks, adjustable from 1 to 15 minutes in settings.
 
-### Improved
-- Treatise buttons now only appear for professions your character has actually learned for the current expansion.
+### Fixed
+- Combat Prep window now appears as soon as you enter a dungeon, instead of only after the Mythic+ key was started.

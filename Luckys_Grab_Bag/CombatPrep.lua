@@ -56,9 +56,14 @@ local function UpdateVisibility()
     end
 end
 
-local function UpdatePullButtonText()
-    if prepFrame and prepFrame.pullTimerBtn then
+local function UpdateButtonTexts()
+    if not prepFrame then return end
+    if prepFrame.pullTimerBtn then
         prepFrame.pullTimerBtn:SetText("Pull " .. (db.combatPrepTimer or 10) .. "s")
+    end
+    if prepFrame.breakBtn then
+        local mins = db.combatPrepBreakTimer or 5
+        prepFrame.breakBtn:SetText("Break " .. mins .. "m")
     end
 end
 
@@ -66,14 +71,20 @@ local function UpdateLayout()
     if not prepFrame then return end
     local showRC = db.combatPrepReadyCheck
     prepFrame.readyCheckBtn:SetShown(showRC)
-    UpdatePullButtonText()
+    UpdateButtonTexts()
+
+    -- Anchor chain: ready check (optional) → pull timer → break
     if showRC then
         prepFrame.pullTimerBtn:SetPoint("TOP", prepFrame.readyCheckBtn, "BOTTOM", 0, -4)
-        prepFrame:SetSize(120, 76)
     else
         prepFrame.pullTimerBtn:SetPoint("TOP", prepFrame, "TOP", 0, -10)
-        prepFrame:SetSize(120, 46)
     end
+    prepFrame.breakBtn:SetPoint("TOP", prepFrame.pullTimerBtn, "BOTTOM", 0, -4)
+
+    -- Resize frame to fit visible buttons
+    local btnCount = showRC and 3 or 2
+    local height = 10 + (btnCount * 28) + ((btnCount - 1) * 4) + 10
+    prepFrame:SetSize(120, height)
 end
 
 -- Style guide colors
@@ -209,6 +220,19 @@ local function CreatePrepFrame()
         DevLog("Started pull timer for " .. seconds .. "s")
     end)
     f.pullTimerBtn = ptBtn
+
+    -- Long Break button (secondary style)
+    local breakMins = db.combatPrepBreakTimer or 5
+    local brBtn = CreateStyledButton(f, { width = 100, height = 28, variant = "secondary" })
+    brBtn:SetPoint("TOP", ptBtn, "BOTTOM", 0, -4)
+    brBtn:SetText("Break " .. breakMins .. "m")
+    brBtn:SetScript("OnClick", function()
+        local mins = db.combatPrepBreakTimer or 5
+        local seconds = mins * 60
+        C_PartyInfo.DoCountdown(seconds)
+        DevLog("Started break timer for " .. mins .. "m (" .. seconds .. "s)")
+    end)
+    f.breakBtn = brBtn
 
     prepFrame = f
     DevLog("Frame created")

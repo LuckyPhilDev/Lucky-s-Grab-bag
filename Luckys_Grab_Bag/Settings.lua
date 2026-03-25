@@ -312,6 +312,21 @@ function LuckyGrabbag.Settings:Init(db)
         end,
     })
 
+    local breakSlider = AddSlider(content, timerSlider, {
+        label    = "Break Timer Duration",
+        key      = "CombatPrepBreakTimer",
+        min      = 1,
+        max      = 15,
+        value    = db.combatPrepBreakTimer,
+        suffix   = "m",
+        indent   = 20,
+
+        onChanged = function(val)
+            db.combatPrepBreakTimer = val
+            LuckyGrabbag.CombatPrep:ApplySetting()
+        end,
+    })
+
     panel:HookScript("OnShow", function()
         UpdateContentHeight(content)
     end)
