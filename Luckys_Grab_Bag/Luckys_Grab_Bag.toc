@@ -8,15 +8,13 @@
 
 Luckys_Utils\embeds.xml
 
-Dependencies.lua
-Utils.lua
+UIHelpers.lua
 Settings.lua
-Quickbuy.lua
-TestflightBuy.lua
-Treatise.lua
-Cooking.lua
-UseItems.lua
-CombatPrep.lua
+features/AuctionHouse.lua
+features/Treatise.lua
+features/Cooking.lua
+features/UseItems.lua
+features/CombatPrep.lua
 Lucky's Grab-bag.lua
 
 ## X-Curse-Project-ID: 1474964
