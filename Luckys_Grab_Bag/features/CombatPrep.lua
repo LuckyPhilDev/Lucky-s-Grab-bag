@@ -87,14 +87,7 @@ local function UpdateLayout()
     prepFrame:SetSize(120, height)
 end
 
--- Style guide colors
-local COLORS = {
-    bgDark       = { 0.10, 0.07, 0.04 },  -- #1a1209
-    goldPrimary  = { 1.00, 0.82, 0.00 },  -- #ffd100
-    goldAccent   = { 0.79, 0.66, 0.30 },  -- #c9a84c
-    goldMuted    = { 0.55, 0.45, 0.25 },  -- #8b7340
-    textLight    = { 0.91, 0.86, 0.78 },  -- #e8dcc8
-}
+local C = LuckyUI.C  -- shared style guide colors
 
 -- Creates a styled button matching the style guide.
 -- variant: "primary" (gold gradient) or "secondary" (dark input).
@@ -113,8 +106,8 @@ local function CreateStyledButton(parent, opts)
     -- Normal state colors
     local function SetNormalColors()
         if isPrimary then
-            btn:SetBackdropColor(COLORS.goldAccent[1], COLORS.goldAccent[2], COLORS.goldAccent[3], 1)
-            btn:SetBackdropBorderColor(COLORS.goldPrimary[1], COLORS.goldPrimary[2], COLORS.goldPrimary[3], 1)
+            btn:SetBackdropColor(C.goldAccent[1], C.goldAccent[2], C.goldAccent[3], 1)
+            btn:SetBackdropBorderColor(C.goldPrimary[1], C.goldPrimary[2], C.goldPrimary[3], 1)
         else
             btn:SetBackdropColor(0.05, 0.04, 0.02, 1)  -- bg-input
             btn:SetBackdropBorderColor(0.23, 0.18, 0.10, 1)  -- #3a2e1a
@@ -128,9 +121,9 @@ local function CreateStyledButton(parent, opts)
     label:SetFont("Fonts\\FRIZQT__.TTF", 12, "")
     label:SetPoint("CENTER", 0, 0)
     if isPrimary then
-        label:SetTextColor(COLORS.bgDark[1], COLORS.bgDark[2], COLORS.bgDark[3])
+        label:SetTextColor(C.bgDark[1], C.bgDark[2], C.bgDark[3])
     else
-        label:SetTextColor(COLORS.textLight[1], COLORS.textLight[2], COLORS.textLight[3])
+        label:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
     end
     btn.label = label
 
@@ -138,14 +131,14 @@ local function CreateStyledButton(parent, opts)
     btn:SetScript("OnEnter", function()
         if isPrimary then
             btn:SetBackdropColor(
-                math.min(COLORS.goldAccent[1] + 0.1, 1),
-                math.min(COLORS.goldAccent[2] + 0.1, 1),
-                math.min(COLORS.goldAccent[3] + 0.1, 1),
+                math.min(C.goldAccent[1] + 0.1, 1),
+                math.min(C.goldAccent[2] + 0.1, 1),
+                math.min(C.goldAccent[3] + 0.1, 1),
                 1
             )
         else
             btn:SetBackdropColor(0.10, 0.08, 0.05, 1)
-            btn:SetBackdropBorderColor(COLORS.goldMuted[1], COLORS.goldMuted[2], COLORS.goldMuted[3], 1)
+            btn:SetBackdropBorderColor(C.goldMuted[1], C.goldMuted[2], C.goldMuted[3], 1)
         end
     end)
     btn:SetScript("OnLeave", function()
@@ -155,7 +148,7 @@ local function CreateStyledButton(parent, opts)
     -- Press feedback
     btn:SetScript("OnMouseDown", function()
         if isPrimary then
-            btn:SetBackdropColor(COLORS.goldMuted[1], COLORS.goldMuted[2], COLORS.goldMuted[3], 1)
+            btn:SetBackdropColor(C.goldMuted[1], C.goldMuted[2], C.goldMuted[3], 1)
         else
             btn:SetBackdropColor(0.03, 0.02, 0.01, 1)
         end
@@ -186,8 +179,8 @@ local function CreatePrepFrame()
         edgeSize = 1,
         insets   = { left = 1, right = 1, top = 1, bottom = 1 },
     })
-    f:SetBackdropColor(COLORS.bgDark[1], COLORS.bgDark[2], COLORS.bgDark[3], 0.92)
-    f:SetBackdropBorderColor(COLORS.goldAccent[1], COLORS.goldAccent[2], COLORS.goldAccent[3], 1)
+    f:SetBackdropColor(C.bgDark[1], C.bgDark[2], C.bgDark[3], 0.92)
+    f:SetBackdropBorderColor(C.goldAccent[1], C.goldAccent[2], C.goldAccent[3], 1)
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("RightButton")
