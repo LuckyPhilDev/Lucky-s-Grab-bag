@@ -185,10 +185,23 @@ function LuckyGrabbag.Settings:Init(db)
         onToggle = function(checked) db.devMode = checked end,
     })
 
+    local minimapState = db.minimap or {}
+    local minimapCheck = AddFeatureToggle(content, devCheck, {
+        label    = "Minimap Button",
+        desc     = "Show the Lucky's Grab-bag button on the minimap.",
+        tooltip  = "Toggle the minimap button. Shift-drag to reposition it.",
+        checked  = not minimapState.hide,
+        onToggle = function(checked)
+            if LuckyGrabbag.minimapButton then
+                LuckyGrabbag.minimapButton:SetShown_Persisted(checked)
+            end
+        end,
+    })
+
     ---------------------------------------------------------------------------
     -- Auctionator Enhancements
     ---------------------------------------------------------------------------
-    local ahHeading = AddGroupHeading(content, devCheck, "Auctionator Enhancements")
+    local ahHeading = AddGroupHeading(content, minimapCheck, "Auctionator Enhancements")
 
     local quickbuyCheck = AddFeatureToggle(content, ahHeading, {
         label    = "CraftSim Quickbuy",
