@@ -13,4 +13,8 @@ LuckyGrabbag.UseItemsData = {
     -- Weekly profession quest rewards use "Thalassian <profession> <suffix>" naming.
     -- We match the prefix + suffix separately to avoid hardcoding each profession name.
     thalassianSuffixes = { "Folio", "Notebook", "Journal" },
+
+    -- The shared prefix for all treatise items. Used both for pattern matching and for
+    -- treatise-specific filtering logic (profession eligibility, weekly quest status).
+    treatisePattern = "Thalassian Treatise on",
 }

@@ -2,8 +2,9 @@
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.UseItems = {}
 
-local ITEM_NAME_PATTERNS = LuckyGrabbag.UseItemsData.itemNamePatterns    -- defined in UseItemsData.lua
+local ITEM_NAME_PATTERNS  = LuckyGrabbag.UseItemsData.itemNamePatterns   -- defined in UseItemsData.lua
 local THALASSIAN_SUFFIXES = LuckyGrabbag.UseItemsData.thalassianSuffixes  -- defined in UseItemsData.lua
+local TREATISE_PATTERN    = LuckyGrabbag.UseItemsData.treatisePattern     -- defined in UseItemsData.lua
 
 local BUTTON_SIZE = 42
 local BUTTON_SPACING = 4
@@ -57,9 +58,9 @@ local function ScanBags()
                 end
                 if itemName and IsMatchingItem(itemName) then
                     -- Skip treatises the character can't use (wrong profession) or already used this week
-                    if string.find(itemName, "Thalassian Treatise on", 1, true) and not LuckyGrabbag.Treatise:CanCharacterUse(info.itemID) then
+                    if string.find(itemName, TREATISE_PATTERN, 1, true) and not LuckyGrabbag.Treatise:CanCharacterUse(info.itemID) then
                         DevLog("  SKIP (no matching profession): " .. itemName .. " (itemID=" .. info.itemID .. ")")
-                    elseif string.find(itemName, "Thalassian Treatise on", 1, true) and LuckyGrabbag.Treatise:IsUsedThisWeek(info.itemID) then
+                    elseif string.find(itemName, TREATISE_PATTERN, 1, true) and LuckyGrabbag.Treatise:IsUsedThisWeek(info.itemID) then
                         DevLog("  SKIP (used this week): " .. itemName .. " (itemID=" .. info.itemID .. ")")
                     elseif not found[info.itemID] then
                         found[info.itemID] = {
