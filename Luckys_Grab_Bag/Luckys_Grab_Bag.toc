@@ -13,6 +13,7 @@ Settings.lua
 features/AuctionHouse.lua
 features/TreatiseData.lua
 features/Treatise.lua
+features/CookingData.lua
 features/Cooking.lua
 features/UseItemsData.lua
 features/UseItems.lua

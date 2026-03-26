@@ -2,10 +2,10 @@
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.Cooking = {}
 
-local COOKING_SKILL_LINE_ID = 185
-local CHEFS_HAT_ITEM_ID     = 134020
-local CHEFS_HAT_SPELL_ID    = 67556
-local CAMPFIRE_SPELL_ID     = 818
+local COOKING_SKILL_LINE_ID = LuckyGrabbag.CookingData.cookingSkillLineID  -- defined in CookingData.lua
+local CHEFS_HAT_ITEM_ID     = LuckyGrabbag.CookingData.chefsHatItemID
+local CHEFS_HAT_SPELL_ID    = LuckyGrabbag.CookingData.chefsHatSpellID
+local CAMPFIRE_SPELL_ID     = LuckyGrabbag.CookingData.campfireSpellID
 
 local db
 local parentFrame
