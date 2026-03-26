@@ -1,11 +1,10 @@
--- Lucky's Grab-bag: Shared utilities
+-- Lucky's Grab-bag: Shared utilities and UI helpers
 LuckyGrabbag = LuckyGrabbag or {}
 
 LuckyGrabbag.PREFIX = "|cff00cc00Lucky:|r"
-local PREFIX = LuckyGrabbag.PREFIX
 
 --- Dev logging via LuckyLog. Reads db.devMode from the shared namespace.
-local _devLog = LuckyLog:New(PREFIX, function()
+local _devLog = LuckyLog:New(LuckyGrabbag.PREFIX, function()
     local db = LuckyGrabbag.db
     return db and db.devMode
 end)
