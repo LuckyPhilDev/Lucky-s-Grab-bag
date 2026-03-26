@@ -2,17 +2,8 @@
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.UseItems = {}
 
--- Any bag item whose name contains one of these fragments gets a "use" button.
-local ITEM_NAME_PATTERNS = {
-    "Artisan's Consortium Payout",
-    "Glimmer of Midnight",
-    "Flicker of Midnight",
-    "Thalassian Treatise on",
-}
-
--- Weekly profession quest rewards use "Thalassian <profession> <suffix>" naming.
--- We match the prefix + suffix separately to avoid hardcoding each profession name.
-local THALASSIAN_SUFFIXES = { "Folio", "Notebook", "Journal" }
+local ITEM_NAME_PATTERNS = LuckyGrabbag.UseItemsData.itemNamePatterns    -- defined in UseItemsData.lua
+local THALASSIAN_SUFFIXES = LuckyGrabbag.UseItemsData.thalassianSuffixes  -- defined in UseItemsData.lua
 
 local BUTTON_SIZE = 42
 local BUTTON_SPACING = 4

@@ -11,8 +11,10 @@ Luckys_Utils\embeds.xml
 UIHelpers.lua
 Settings.lua
 features/AuctionHouse.lua
+features/TreatiseData.lua
 features/Treatise.lua
 features/Cooking.lua
+features/UseItemsData.lua
 features/UseItems.lua
 features/CombatPrep.lua
 Lucky's Grab-bag.lua
