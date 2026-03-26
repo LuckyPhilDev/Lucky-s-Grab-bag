@@ -11,7 +11,7 @@ local function AddDependencyWarning(content, check, requires)
     warning:Hide()
 
     content:GetParent():GetParent():HookScript("OnShow", function()
-        local ok, msg = LuckyGrabbag.Dependencies.Check(requires.addon, requires.minVersion)
+        local ok, msg = LuckyDeps:Check(requires.addon, requires.minVersion)
         warning:SetShown(not ok)
         if not ok then
             warning:SetText(msg)

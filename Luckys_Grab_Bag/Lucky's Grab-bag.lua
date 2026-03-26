@@ -30,12 +30,12 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
 
         -- Re-evaluate showQuickbuy automatically until the user explicitly changes it.
         if db.showQuickbuyAutoDefault ~= false then
-            db.showQuickbuy = LuckyGrabbag.Dependencies.IsEnabled(LuckyGrabbag.Quickbuy.requires.addon)
+            db.showQuickbuy = LuckyDeps:IsEnabled(LuckyGrabbag.Quickbuy.requires.addon)
         end
 
         -- Re-evaluate showTestflightBuy automatically until the user explicitly changes it.
         if db.showTestflightBuyAutoDefault ~= false then
-            db.showTestflightBuy = LuckyGrabbag.Dependencies.IsEnabled(LuckyGrabbag.TestflightBuy.requires.addon)
+            db.showTestflightBuy = LuckyDeps:IsEnabled(LuckyGrabbag.TestflightBuy.requires.addon)
         end
 
         LuckyGrabbag.db = db
