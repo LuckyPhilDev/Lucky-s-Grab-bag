@@ -282,9 +282,40 @@ function LuckyGrabbag.Settings:Init(db)
     })
 
     ---------------------------------------------------------------------------
+    -- Delves
+    ---------------------------------------------------------------------------
+    local delveHeading = AddGroupHeading(content, cookingCheck, "Delves")
+
+    local delveMapCheck = AddFeatureToggle(content, delveHeading, {
+        label    = "Trovehunter's Bounty Map",
+        desc     = "Shows a clickable button for your Bounty Map when in a qualifying delve.",
+        tooltip  = "Displays a floating button to use your Trovehunter's Bounty Map when you're inside a delve that meets the minimum level. Right-click and drag to reposition.",
+        checked  = db.showDelveMap,
+
+        onToggle = function(checked)
+            db.showDelveMap = checked
+            LuckyGrabbag.DelveMap:ApplySetting()
+        end,
+    })
+
+    local delveMinSlider = AddSlider(content, delveMapCheck, {
+        label    = "Minimum Delve Level",
+        key      = "DelveMapMinLevel",
+        min      = 1,
+        max      = 11,
+        value    = db.delveMapMinLevel,
+        indent   = 20,
+
+        onChanged = function(val)
+            db.delveMapMinLevel = val
+            LuckyGrabbag.DelveMap:ApplySetting()
+        end,
+    })
+
+    ---------------------------------------------------------------------------
     -- Combat Prep
     ---------------------------------------------------------------------------
-    local combatPrepHeading = AddGroupHeading(content, cookingCheck, "Combat Prep")
+    local combatPrepHeading = AddGroupHeading(content, delveMinSlider, "Combat Prep")
 
     local combatPrepCheck = AddFeatureToggle(content, combatPrepHeading, {
         label    = "Combat Prep Window",

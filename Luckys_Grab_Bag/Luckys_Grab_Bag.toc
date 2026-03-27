@@ -17,6 +17,7 @@ features/CookingData.lua
 features/Cooking.lua
 features/UseItemsData.lua
 features/UseItems.lua
+features/DelveMap.lua
 features/CombatPrep.lua
 Lucky's Grab-bag.lua
 

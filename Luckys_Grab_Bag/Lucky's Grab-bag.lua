@@ -9,10 +9,8 @@ local DB_DEFAULTS = {
     showCookingButtons = true,
     showUseItems       = true,
     useItemsCityOnly   = false,
-    showCombatPrep     = true,
-    combatPrepTimer    = 10,
-    combatPrepReadyCheck = true,
-    combatPrepBreakTimer = 5,
+    showDelveMap       = true,
+    delveMapMinLevel   = 8,
 }
 
 local eventFrame = CreateFrame("Frame")
@@ -46,7 +44,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.Treatise:Init(db)
         LuckyGrabbag.Cooking:Init(db)
         LuckyGrabbag.UseItems:Init(db)
-        LuckyGrabbag.CombatPrep:Init(db)
+        LuckyGrabbag.DelveMap:Init(db)
 
         -- Minimap button
         LuckyGrabbag.minimapButton = LuckyMinimap:Create({
