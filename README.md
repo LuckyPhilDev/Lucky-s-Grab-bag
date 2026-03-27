@@ -37,6 +37,15 @@ A small floating window that appears automatically in raids and dungeons when yo
 - Use `/combatprep` to test the window outside of group content.
 - Can be toggled in the addon settings.
 
+### Trovehunter's Bounty Map
+Shows a clickable button when you're inside a delve that meets the configured minimum level and you have a Trovehunter's Bounty Map in your bags.
+
+- Appears automatically on entering a qualifying delve; hides when you leave or use the map.
+- **Minimum delve level** is configurable in settings (default: level 8).
+- Right-click drag to reposition; position is saved across reloads.
+- Respects combat lockdown — the button won't change mid-combat.
+- Can be toggled in the addon settings.
+
 ### Cooking Utility Buttons
 Adds two buttons alongside the Cooking profession window for quick access to common cooking prep.
 
@@ -109,6 +118,10 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Show use-item buttons* — Displays a floating row of buttons when consumable profession items are in your bags (Artisan's Consortium Payouts, Glimmers/Flickers of Midnight Knowledge, Thalassian Treatises). The bar is draggable and hides automatically when empty.
   - *Only in Cities* — Restricts the Use Items popup to cities and inns.
 - *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.
+
+**Delves**
+- *Trovehunter's Bounty Map* — Shows a clickable button for your Bounty Map when in a qualifying delve.
+  - *Minimum Delve Level* — The minimum delve level required for the button to appear (1–11).
 
 **Combat Prep**
 - *Combat Prep Window* — Shows a floating window with pull timer, ready check, and break timer buttons in raids and dungeons.

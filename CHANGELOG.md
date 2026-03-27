@@ -1,7 +1,7 @@
-## [0.0.10] - 2026-03-25
+## [1.0.0] - 2026-03-27
 
 ### Added
-- Break timer button on the Combat Prep window — starts a long countdown for bio breaks, adjustable from 1 to 15 minutes in settings.
+- **Trovehunter's Bounty Map button** — a clickable button appears automatically when you enter a delve with a Bounty Map in your bags. Configure the minimum delve level in settings (default: level 8).
 
-### Fixed
-- Combat Prep window now appears as soon as you enter a dungeon, instead of only after the Mythic+ key was started.
+### Improved
+- Cleaner internal organisation for features, settings, and game data — no visible changes but sets the foundation for future features.
