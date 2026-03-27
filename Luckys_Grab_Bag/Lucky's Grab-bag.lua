@@ -4,13 +4,17 @@ LuckyGrabbag = LuckyGrabbag or {}
 local ADDON_NAME = "Luckys_Grab_Bag"
 
 local DB_DEFAULTS = {
-    devMode            = false,
-    showTreatise       = true,
-    showCookingButtons = true,
-    showUseItems       = true,
-    useItemsCityOnly   = false,
-    showDelveMap       = true,
-    delveMapMinLevel   = 8,
+    devMode              = false,
+    showTreatise         = false,
+    showCookingButtons   = true,
+    showUseItems         = true,
+    useItemsCityOnly     = false,
+    showDelveMap         = true,
+    delveMapMinLevel     = 8,
+    showCombatPrep       = false,
+    combatPrepReadyCheck = false,
+    combatPrepTimer      = 10,
+    combatPrepBreakTimer = 5,
 }
 
 local eventFrame = CreateFrame("Frame")
