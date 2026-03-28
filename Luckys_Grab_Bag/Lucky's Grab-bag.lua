@@ -49,6 +49,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.Cooking:Init(db)
         LuckyGrabbag.UseItems:Init(db)
         LuckyGrabbag.DelveMap:Init(db)
+        LuckyGrabbag.CombatPrep:Init(db)
 
         -- Minimap button
         LuckyGrabbag.minimapButton = LuckyMinimap:Create({
