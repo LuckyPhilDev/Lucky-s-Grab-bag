@@ -10,8 +10,6 @@ local function DevLog(msg)
     LuckyGrabbag.DevLog("Treatise", msg)
 end
 
-local MIN_SKILL_FOR_TREATISE = 25
-
 -- Returns a map of skillLineID -> profession name for the current character's professions.
 -- GetProfessionInfo returns: name, texture, rank, maxRank, numSpells, spellOffset, skillLine, ...
 local function GetCharacterSkillLines()
@@ -32,15 +30,23 @@ local function GetCharacterSkillLines()
     return skillLines
 end
 
--- Returns the character's Midnight skill level for a profession using its expansion-specific
--- skillLineVariantID. This queries the expansion variant directly rather than relying on the
--- overall rank from GetProfessionInfo, which may not reflect the Midnight-specific level.
-local function GetMidnightSkillLevel(skillLineVariantID)
-    local profInfo = C_TradeSkillUI.GetProfessionInfoBySkillLineID(skillLineVariantID)
-    if profInfo and profInfo.skillLevel then
-        return profInfo.skillLevel + (profInfo.skillModifier or 0)
+-- Checks whether the character meets all item requirements (e.g. profession skill level) by
+-- inspecting the item tooltip. WoW renders unmet requirements as red text (RED_FONT_COLOR).
+-- This works regardless of which profession window is open and correctly reads expansion-specific
+-- skill thresholds.
+local function MeetsItemRequirements(itemID)
+    local tooltipData = C_TooltipInfo.GetItemByID(itemID)
+    if not tooltipData or not tooltipData.lines then
+        DevLog("  MeetsItemRequirements: no tooltip data for itemID=" .. itemID .. " — assuming usable")
+        return true
     end
-    return 0
+    for _, line in ipairs(tooltipData.lines) do
+        if line.leftColor and line.leftColor.r > 0.9 and line.leftColor.g < 0.3 and line.leftColor.b < 0.3 then
+            DevLog("  MeetsItemRequirements: itemID=" .. itemID .. " has unmet requirement: " .. tostring(line.leftText))
+            return false
+        end
+    end
+    return true
 end
 
 -- Checks whether the character is eligible to use this treatise this week.
@@ -131,10 +137,9 @@ local function WithdrawEligibleTreatises()
     local queue = {}
     for _, treatise in ipairs(TREATISES) do
         if skillLines[treatise.skillLineID] and IsPlayerSpell(treatise.midnightSpellID) then
-            local midnightSkill = GetMidnightSkillLevel(treatise.skillLineVariantID)
-            DevLog("Checking " .. treatise.name .. " (itemID=" .. treatise.itemID .. " questID=" .. treatise.questID .. " midnightSkill=" .. midnightSkill .. ")")
-            if midnightSkill < MIN_SKILL_FOR_TREATISE then
-                DevLog("  Skipping " .. treatise.name .. " — midnight skill " .. midnightSkill .. " < " .. MIN_SKILL_FOR_TREATISE)
+            DevLog("Checking " .. treatise.name .. " (itemID=" .. treatise.itemID .. " questID=" .. treatise.questID .. ")")
+            if not MeetsItemRequirements(treatise.itemID) then
+                DevLog("  Skipping " .. treatise.name .. " — unmet item requirements (skill too low)")
             elseif not IsEligibleThisWeek(treatise.questID, treatise.name) then
                 DevLog("  Skipping " .. treatise.name .. " — already used this week")
             else
@@ -167,10 +172,9 @@ function LuckyGrabbag.Treatise:CanCharacterUse(itemID)
                 DevLog("CanCharacterUse: " .. treatise.name .. " itemID=" .. itemID .. " known=false")
                 return false
             end
-            local midnightSkill = GetMidnightSkillLevel(treatise.skillLineVariantID)
-            local meetsSkill = midnightSkill >= MIN_SKILL_FOR_TREATISE
-            DevLog("CanCharacterUse: " .. treatise.name .. " itemID=" .. itemID .. " midnightSkill=" .. midnightSkill .. " meetsSkill=" .. tostring(meetsSkill))
-            return meetsSkill
+            local meetsReqs = MeetsItemRequirements(itemID)
+            DevLog("CanCharacterUse: " .. treatise.name .. " itemID=" .. itemID .. " meetsReqs=" .. tostring(meetsReqs))
+            return meetsReqs
         end
     end
     -- Not a treatise item — assume usable (shouldn't be called for non-treatises)

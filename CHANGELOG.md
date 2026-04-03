@@ -1,4 +1,4 @@
-## [1.0.2] - 2026-04-03
+## [1.0.3] - 2026-04-03
 
 ### Fixed
-- Treatises are no longer withdrawn or shown as buttons if your Midnight skill in that profession is below 25.
+- Treatises are no longer withdrawn or shown as buttons if your profession skill is too low to use them.
