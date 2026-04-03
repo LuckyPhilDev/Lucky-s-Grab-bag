@@ -7,7 +7,7 @@
 ### Use Items Popup
 Displays a floating bar of buttons when you have consumable profession items in your bags — click each one to use it.
 
-- Detects **Artisan's Consortium Payouts**, **Glimmers of Midnight Knowledge**, **Flickers of Midnight Knowledge**, and **Thalassian Treatises** (all professions).
+- Detects **Artisan's Consortium Payouts**, **Glimmers of Midnight Knowledge**, **Flickers of Midnight Knowledge**, **Thalassian Treatises** (all professions), **Brimming Mana Shards**, and **Swirling Arcane Essences**.
 - Thalassian Treatises are automatically hidden if already used this week, if your character hasn't learned that profession for the current expansion, or if your Midnight skill is below 25.
 - One button per item type; shows stack count when you have multiples.
 - Optionally restrict to cities and inns only via the "Only in Cities" setting.

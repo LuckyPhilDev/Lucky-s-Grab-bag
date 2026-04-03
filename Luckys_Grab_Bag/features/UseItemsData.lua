@@ -8,6 +8,8 @@ LuckyGrabbag.UseItemsData = {
         "Glimmer of Midnight",
         "Flicker of Midnight",
         "Thalassian Treatise on",
+        "Brimming Mana Shard",
+        "Swirling Arcane Essence",
     },
 
     -- Weekly profession quest rewards use "Thalassian <profession> <suffix>" naming.

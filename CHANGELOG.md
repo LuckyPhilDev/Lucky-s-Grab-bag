@@ -1,4 +1,4 @@
-## [1.0.3] - 2026-04-03
+## [1.0.4] - 2026-04-04
 
-### Fixed
-- Treatises are no longer withdrawn or shown as buttons if your profession skill is too low to use them.
+### Added
+- Use Items buttons now appear for Brimming Mana Shard and Swirling Arcane Essence (Enchanting consumables).
