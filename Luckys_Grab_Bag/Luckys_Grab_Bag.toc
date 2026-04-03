@@ -1,7 +1,7 @@
 ## Interface: 120000
 ## Title: Lucky's Grab-bag
 ## Notes: A collection of small quality-of-life features.
-## Version: 1.0.1
+## Version: 1.0.2
 ## Author: Lucky Phil
 ## SavedVariables: LuckyGrabbagDB
 ## OptionalDeps: Luckys_Utils

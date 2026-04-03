@@ -10,6 +10,8 @@ local function DevLog(msg)
     LuckyGrabbag.DevLog("Treatise", msg)
 end
 
+local MIN_SKILL_FOR_TREATISE = 25
+
 -- Returns a map of skillLineID -> profession name for the current character's professions.
 -- GetProfessionInfo returns: name, texture, rank, maxRank, numSpells, spellOffset, skillLine, ...
 local function GetCharacterSkillLines()
@@ -28,6 +30,17 @@ local function GetCharacterSkillLines()
         end
     end
     return skillLines
+end
+
+-- Returns the character's Midnight skill level for a profession using its expansion-specific
+-- skillLineVariantID. This queries the expansion variant directly rather than relying on the
+-- overall rank from GetProfessionInfo, which may not reflect the Midnight-specific level.
+local function GetMidnightSkillLevel(skillLineVariantID)
+    local profInfo = C_TradeSkillUI.GetProfessionInfoBySkillLineID(skillLineVariantID)
+    if profInfo and profInfo.skillLevel then
+        return profInfo.skillLevel + (profInfo.skillModifier or 0)
+    end
+    return 0
 end
 
 -- Checks whether the character is eligible to use this treatise this week.
@@ -118,11 +131,14 @@ local function WithdrawEligibleTreatises()
     local queue = {}
     for _, treatise in ipairs(TREATISES) do
         if skillLines[treatise.skillLineID] and IsPlayerSpell(treatise.midnightSpellID) then
-            DevLog("Checking " .. treatise.name .. " (itemID=" .. treatise.itemID .. " questID=" .. treatise.questID .. ")")
-            if IsEligibleThisWeek(treatise.questID, treatise.name) then
-                table.insert(queue, treatise)
-            else
+            local midnightSkill = GetMidnightSkillLevel(treatise.skillLineVariantID)
+            DevLog("Checking " .. treatise.name .. " (itemID=" .. treatise.itemID .. " questID=" .. treatise.questID .. " midnightSkill=" .. midnightSkill .. ")")
+            if midnightSkill < MIN_SKILL_FOR_TREATISE then
+                DevLog("  Skipping " .. treatise.name .. " — midnight skill " .. midnightSkill .. " < " .. MIN_SKILL_FOR_TREATISE)
+            elseif not IsEligibleThisWeek(treatise.questID, treatise.name) then
                 DevLog("  Skipping " .. treatise.name .. " — already used this week")
+            else
+                table.insert(queue, treatise)
             end
         end
     end
@@ -147,8 +163,14 @@ function LuckyGrabbag.Treatise:CanCharacterUse(itemID)
     for _, treatise in ipairs(TREATISES) do
         if treatise.itemID == itemID then
             local known = IsPlayerSpell(treatise.midnightSpellID)
-            DevLog("CanCharacterUse: " .. treatise.name .. " itemID=" .. itemID .. " midnightSpellID=" .. treatise.midnightSpellID .. " known=" .. tostring(known))
-            return known
+            if not known then
+                DevLog("CanCharacterUse: " .. treatise.name .. " itemID=" .. itemID .. " known=false")
+                return false
+            end
+            local midnightSkill = GetMidnightSkillLevel(treatise.skillLineVariantID)
+            local meetsSkill = midnightSkill >= MIN_SKILL_FOR_TREATISE
+            DevLog("CanCharacterUse: " .. treatise.name .. " itemID=" .. itemID .. " midnightSkill=" .. midnightSkill .. " meetsSkill=" .. tostring(meetsSkill))
+            return meetsSkill
         end
     end
     -- Not a treatise item — assume usable (shouldn't be called for non-treatises)

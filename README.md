@@ -8,7 +8,7 @@
 Displays a floating bar of buttons when you have consumable profession items in your bags — click each one to use it.
 
 - Detects **Artisan's Consortium Payouts**, **Glimmers of Midnight Knowledge**, **Flickers of Midnight Knowledge**, and **Thalassian Treatises** (all professions).
-- Thalassian Treatises are automatically hidden if already used this week, or if your character hasn't learned that profession for the current expansion.
+- Thalassian Treatises are automatically hidden if already used this week, if your character hasn't learned that profession for the current expansion, or if your Midnight skill is below 25.
 - One button per item type; shows stack count when you have multiples.
 - Optionally restrict to cities and inns only via the "Only in Cities" setting.
 - Draggable via right-click drag; position is saved account-wide and persists across reloads.
@@ -21,6 +21,7 @@ Automatically withdraws Thalassian Treatises for your current professions from t
 
 - Checks your character's active professions and only withdraws the relevant treatises.
 - Only withdraws treatises for professions your character has learned for the current expansion.
+- Requires at least 25 Midnight skill in the profession before withdrawing.
 - Skips any treatise whose weekly cooldown has already been used.
 - Skips withdrawal if the treatise is already in your bags (prevents duplicates).
 - Prints a confirmation message for each treatise withdrawn.
