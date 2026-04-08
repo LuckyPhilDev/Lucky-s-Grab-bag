@@ -1,7 +1,7 @@
 ## Interface: 120000
 ## Title: Lucky's Grab-bag
 ## Notes: A collection of small quality-of-life features.
-## Version: 1.0.4
+## Version: 1.1.0
 ## Author: Lucky Phil
 ## SavedVariables: LuckyGrabbagDB
 ## OptionalDeps: Luckys_Utils
@@ -19,6 +19,7 @@ features/UseItemsData.lua
 features/UseItems.lua
 features/DelveMap.lua
 features/CombatPrep.lua
+features/RotationGlow.lua
 Lucky's Grab-bag.lua
 
 ## X-Curse-Project-ID: 1474964

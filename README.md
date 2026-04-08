@@ -27,6 +27,14 @@ Automatically withdraws Thalassian Treatises for your current professions from t
 - Prints a confirmation message for each treatise withdrawn.
 - Enabled by default; can be toggled in the addon settings.
 
+### Rotation Glow
+Animates the suggested next-cast spell on Blizzard's Cooldown Manager, using the game's built-in assisted combat data.
+
+- Pulses an animated overlay on the cooldown icon matching the current rotation suggestion.
+- Works automatically for every spec — no per-class setup.
+- Requires the **Essential Cooldown Viewer** to be enabled in Edit Mode.
+- Off by default; enable it in the addon settings.
+
 ### Combat Prep Window
 A small floating window that appears automatically in raids and dungeons when you're out of combat, giving quick access to pull timers, ready checks, and break countdowns.
 
@@ -123,6 +131,9 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 **Delves**
 - *Trovehunter's Bounty Map* — Shows a clickable button for your Bounty Map when in a qualifying delve.
   - *Minimum Delve Level* — The minimum delve level required for the button to appear (1–11).
+
+**Rotation Glow**
+- *Rotation Glow* — Animates the suggested next-cast spell on the Essential Cooldown Viewer, using Blizzard's assisted combat data.
 
 **Combat Prep**
 - *Combat Prep Window* — Shows a floating window with pull timer, ready check, and break timer buttons in raids and dungeons.

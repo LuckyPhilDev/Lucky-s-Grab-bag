@@ -15,6 +15,7 @@ local DB_DEFAULTS = {
     combatPrepReadyCheck = false,
     combatPrepTimer      = 10,
     combatPrepBreakTimer = 5,
+    showRotationGlow     = false,
 }
 
 local eventFrame = CreateFrame("Frame")
@@ -50,6 +51,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.UseItems:Init(db)
         LuckyGrabbag.DelveMap:Init(db)
         LuckyGrabbag.CombatPrep:Init(db)
+        LuckyGrabbag.RotationGlow:Init(db)
 
         -- Minimap button
         LuckyGrabbag.minimapButton = LuckyMinimap:Create({

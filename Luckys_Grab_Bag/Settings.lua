@@ -154,7 +154,7 @@ local function UpdateContentHeight(content)
             if childBottom > bottom then bottom = childBottom end
         end
     end
-    content:SetHeight(bottom + 24)
+    content:SetHeight(bottom + 60)
 end
 
 function LuckyGrabbag.Settings:Init(db)
@@ -368,6 +368,23 @@ function LuckyGrabbag.Settings:Init(db)
         onChanged = function(val)
             db.combatPrepBreakTimer = val
             LuckyGrabbag.CombatPrep:ApplySetting()
+        end,
+    })
+
+    ---------------------------------------------------------------------------
+    -- Rotation Glow
+    ---------------------------------------------------------------------------
+    local rotationGlowHeading = AddGroupHeading(content, breakSlider, "Rotation Glow")
+
+    AddFeatureToggle(content, rotationGlowHeading, {
+        label    = "Rotation Glow",
+        desc     = "Animates the suggested next-cast spell on the Essential Cooldown Viewer.",
+        tooltip  = "Uses Blizzard's assisted combat data to highlight the icon matching the suggested next cast. Requires the Essential Cooldown Viewer to be enabled in Edit Mode.",
+        checked  = db.showRotationGlow,
+
+        onToggle = function(checked)
+            db.showRotationGlow = checked
+            LuckyGrabbag.RotationGlow:ApplySetting()
         end,
     })
 
