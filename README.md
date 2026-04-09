@@ -38,7 +38,7 @@ Animates the suggested next-cast spell on Blizzard's Cooldown Manager, using the
 ### Combat Prep Window
 A small floating window that appears automatically in raids and dungeons when you're out of combat, giving quick access to pull timers, ready checks, and break countdowns.
 
-- **Pull Timer** — starts a countdown for the configured duration (3–30 seconds, default 10s).
+- **Pull Timer** — starts a countdown for the configured duration (3–30 seconds, default 10s). A cancel button beside it lets you stop the countdown early.
 - **Ready Check** — initiates a ready check for the group. Can be hidden in settings.
 - **Break Timer** — starts a long countdown for bio breaks (1–15 minutes, default 5m).
 - Appears automatically when you enter a raid or dungeon instance and hides during combat.

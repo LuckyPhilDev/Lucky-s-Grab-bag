@@ -73,13 +73,17 @@ local function UpdateLayout()
     prepFrame.readyCheckBtn:SetShown(showRC)
     UpdateButtonTexts()
 
-    -- Anchor chain: ready check (optional) → pull timer → break
+    -- Anchor chain: ready check (optional) → pull timer + cancel → break
+    prepFrame.pullTimerBtn:ClearAllPoints()
+    prepFrame.cancelPullBtn:ClearAllPoints()
     if showRC then
-        prepFrame.pullTimerBtn:SetPoint("TOP", prepFrame.readyCheckBtn, "BOTTOM", 0, -4)
+        prepFrame.pullTimerBtn:SetPoint("TOPLEFT", prepFrame.readyCheckBtn, "BOTTOMLEFT", 0, -4)
     else
-        prepFrame.pullTimerBtn:SetPoint("TOP", prepFrame, "TOP", 0, -10)
+        prepFrame.pullTimerBtn:SetPoint("TOPLEFT", prepFrame, "TOPLEFT", 10, -10)
     end
-    prepFrame.breakBtn:SetPoint("TOP", prepFrame.pullTimerBtn, "BOTTOM", 0, -4)
+    prepFrame.cancelPullBtn:SetPoint("LEFT", prepFrame.pullTimerBtn, "RIGHT", 4, 0)
+    prepFrame.breakBtn:ClearAllPoints()
+    prepFrame.breakBtn:SetPoint("TOPLEFT", prepFrame.pullTimerBtn, "BOTTOMLEFT", 0, -4)
 
     -- Resize frame to fit visible buttons
     local btnCount = showRC and 3 or 2
@@ -195,7 +199,7 @@ local function CreatePrepFrame()
 
     -- Ready Check button (secondary style)
     local rcBtn = CreateStyledButton(f, { width = 100, height = 28, variant = "secondary" })
-    rcBtn:SetPoint("TOP", f, "TOP", 0, -10)
+    rcBtn:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -10)
     rcBtn:SetText("Ready Check")
     rcBtn:SetScript("OnClick", function()
         DoReadyCheck()
@@ -204,8 +208,7 @@ local function CreatePrepFrame()
     f.readyCheckBtn = rcBtn
 
     -- Pull Timer button (primary gold style)
-    local ptBtn = CreateStyledButton(f, { width = 100, height = 28, variant = "primary" })
-    ptBtn:SetPoint("TOP", rcBtn, "BOTTOM", 0, -4)
+    local ptBtn = CreateStyledButton(f, { width = 73, height = 28, variant = "primary" })
     ptBtn:SetText("Pull " .. (db.combatPrepTimer or 10) .. "s")
     ptBtn:SetScript("OnClick", function()
         local seconds = db.combatPrepTimer or 10
@@ -213,6 +216,43 @@ local function CreatePrepFrame()
         DevLog("Started pull timer for " .. seconds .. "s")
     end)
     f.pullTimerBtn = ptBtn
+
+    -- Cancel Pull button (danger style)
+    local cancelBtn = CreateFrame("Button", nil, f, "BackdropTemplate")
+    cancelBtn:SetSize(23, 28)
+    cancelBtn:SetBackdrop({
+        bgFile   = "Interface\\Buttons\\WHITE8X8",
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        edgeSize = 1,
+    })
+    cancelBtn:SetBackdropColor(0.3, 0.1, 0.1, 1)
+    cancelBtn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 0.6)
+    local cancelLabel = cancelBtn:CreateFontString(nil, "OVERLAY")
+    cancelLabel:SetFont("Fonts\\FRIZQT__.TTF", 12, "")
+    cancelLabel:SetPoint("CENTER", 0, 0)
+    cancelLabel:SetText("X")
+    cancelLabel:SetTextColor(C.danger[1], C.danger[2], C.danger[3])
+    cancelBtn:SetScript("OnEnter", function()
+        cancelBtn:SetBackdropColor(C.danger[1], C.danger[2], C.danger[3], 0.4)
+        cancelBtn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 1)
+    end)
+    cancelBtn:SetScript("OnLeave", function()
+        cancelBtn:SetBackdropColor(0.3, 0.1, 0.1, 1)
+        cancelBtn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 0.6)
+    end)
+    cancelBtn:SetScript("OnMouseDown", function()
+        cancelBtn:SetBackdropColor(0.2, 0.05, 0.05, 1)
+        cancelLabel:SetPoint("CENTER", 0, -1)
+    end)
+    cancelBtn:SetScript("OnMouseUp", function()
+        cancelBtn:SetBackdropColor(0.3, 0.1, 0.1, 1)
+        cancelLabel:SetPoint("CENTER", 0, 0)
+    end)
+    cancelBtn:SetScript("OnClick", function()
+        C_PartyInfo.DoCountdown(0)
+        DevLog("Cancelled pull timer")
+    end)
+    f.cancelPullBtn = cancelBtn
 
     -- Long Break button (secondary style)
     local breakMins = db.combatPrepBreakTimer or 5

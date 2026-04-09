@@ -1,4 +1,4 @@
-## [1.1.0] - 2026-04-08
+## [1.1.1] - 2026-04-09
 
 ### Added
-- New **Rotation Glow** feature animates the suggested next-cast spell on Blizzard's Cooldown Manager. Off by default — enable it in settings.
+- **Cancel pull timer** button next to the pull timer in the Combat Prep window.
