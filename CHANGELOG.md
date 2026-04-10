@@ -1,4 +1,4 @@
-## [1.1.1] - 2026-04-09
+## [1.1.2] - 2026-04-10
 
-### Added
-- **Cancel pull timer** button next to the pull timer in the Combat Prep window.
+### Fixed
+- Thalassian Engineer's Notepad now appears in the Use Items popup.
