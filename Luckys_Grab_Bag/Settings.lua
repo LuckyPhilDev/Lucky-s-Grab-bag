@@ -199,9 +199,31 @@ function LuckyGrabbag.Settings:Init(db)
     })
 
     ---------------------------------------------------------------------------
+    -- Auto Repair
+    ---------------------------------------------------------------------------
+    local autoRepairHeading = AddGroupHeading(content, minimapCheck, "Auto Repair")
+
+    local autoRepairCheck = AddFeatureToggle(content, autoRepairHeading, {
+        label    = "Auto Repair",
+        desc     = "Automatically repair your gear when visiting a repair vendor.",
+        tooltip  = "When you open a vendor that can repair, all damaged gear is repaired automatically.",
+        checked  = db.autoRepair,
+        onToggle = function(checked) db.autoRepair = checked end,
+    })
+
+    local guildFundsCheck = AddFeatureToggle(content, autoRepairCheck, {
+        label    = "Use Guild Funds",
+        desc     = "Prefer guild bank funds when repairing, if available.",
+        tooltip  = "Repair costs are paid from the guild bank if your guild allows it. Falls back to your own gold if guild repair isn't available.",
+        checked  = db.autoRepairUseGuildFunds,
+        indent   = 20,
+        onToggle = function(checked) db.autoRepairUseGuildFunds = checked end,
+    })
+
+    ---------------------------------------------------------------------------
     -- Auctionator Enhancements
     ---------------------------------------------------------------------------
-    local ahHeading = AddGroupHeading(content, minimapCheck, "Auctionator Enhancements")
+    local ahHeading = AddGroupHeading(content, guildFundsCheck, "Auctionator Enhancements")
 
     local quickbuyCheck = AddFeatureToggle(content, ahHeading, {
         label    = "CraftSim Quickbuy",

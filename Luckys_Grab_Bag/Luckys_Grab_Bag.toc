@@ -10,6 +10,7 @@ Luckys_Utils\embeds.xml
 
 UIHelpers.lua
 Settings.lua
+features/AutoRepair.lua
 features/AuctionHouse.lua
 features/TreatiseData.lua
 features/Treatise.lua

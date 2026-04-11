@@ -4,8 +4,10 @@ LuckyGrabbag = LuckyGrabbag or {}
 local ADDON_NAME = "Luckys_Grab_Bag"
 
 local DB_DEFAULTS = {
-    devMode              = false,
-    showTreatise         = false,
+    devMode                  = false,
+    autoRepair               = true,
+    autoRepairUseGuildFunds  = true,
+    showTreatise             = false,
     showCookingButtons   = true,
     showUseItems         = true,
     useItemsCityOnly     = false,
@@ -44,6 +46,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.db = db
 
         LuckyGrabbag.Settings:Init(db)
+        LuckyGrabbag.AutoRepair:Init(db)
         LuckyGrabbag.Quickbuy:Init(db)
         LuckyGrabbag.TestflightBuy:Init(db)
         LuckyGrabbag.Treatise:Init(db)
