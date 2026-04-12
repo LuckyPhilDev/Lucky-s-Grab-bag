@@ -4,9 +4,9 @@
 ## Version: 1.2.0
 ## Author: Lucky Phil
 ## SavedVariables: LuckyGrabbagDB
-## OptionalDeps: Luckys_Utils
+## Dependencies: Luckys_Utils
+## X-Curse-Project-ID: 1474964
 
-Luckys_Utils\embeds.xml
 
 UIHelpers.lua
 Settings.lua
@@ -22,5 +22,3 @@ features/DelveMap.lua
 features/CombatPrep.lua
 features/RotationGlow.lua
 Lucky's Grab-bag.lua
-
-## X-Curse-Project-ID: 1474964
