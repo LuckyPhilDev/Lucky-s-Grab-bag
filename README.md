@@ -4,6 +4,14 @@
 
 ## Features
 
+### Auto Repair
+Automatically repairs all damaged gear whenever you open a vendor that offers repairs — no button clicks required.
+
+- Uses guild bank funds by default if your guild allows it; falls back to your own gold if not.
+- The "Use Guild Funds" preference is independently toggleable in settings.
+- Prints a message confirming what was repaired and the cost, so you always know what was spent and from where.
+- Can be toggled in the addon settings.
+
 ### Use Items Popup
 Displays a floating bar of buttons when you have consumable profession items in your bags — click each one to use it.
 
@@ -117,6 +125,10 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 
 **Developer Tools**
 - *Enable Dev Mode* — Enables development-only logging and diagnostics. Has no visible effect for regular users.
+
+**Auto Repair**
+- *Auto Repair* — Automatically repairs all gear when you open a repair vendor.
+  - *Use Guild Funds* — Pays repair costs from the guild bank if your guild allows it, falling back to your own gold if not.
 
 **Auctionator Enhancements**
 - *Show Quickbuy button* — Places a shortcut button next to the Auction House window. Each click purchases one row of items from your CraftSim crafting queue's shopping list.
