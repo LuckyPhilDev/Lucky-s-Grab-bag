@@ -80,7 +80,48 @@ local function IsItemInBags(itemID)
     return false
 end
 
+-- Polls until condition() is true or timeout elapses. Calls onReady(true) on success,
+-- onReady(false) on timeout. interval and timeout are in seconds.
+local function WaitFor(condition, onReady, interval, timeout)
+    interval = interval or 0.05
+    timeout = timeout or 1.0
+    local elapsed = 0
+    local function tick()
+        if condition() then
+            onReady(true)
+            return
+        end
+        elapsed = elapsed + interval
+        if elapsed >= timeout then
+            onReady(false)
+            return
+        end
+        C_Timer.After(interval, tick)
+    end
+    C_Timer.After(interval, tick)
+end
+
+-- Waits for a single BAG_UPDATE_DELAYED event, then calls onReady. Falls back to onReady
+-- after a max wait in case no event fires (nothing moved).
+local function WaitForBagUpdate(onReady, maxWait)
+    maxWait = maxWait or 1.0
+    local frame = CreateFrame("Frame")
+    local done = false
+    local function finish()
+        if done then return end
+        done = true
+        frame:UnregisterAllEvents()
+        frame:SetScript("OnEvent", nil)
+        onReady()
+    end
+    frame:RegisterEvent("BAG_UPDATE_DELAYED")
+    frame:SetScript("OnEvent", finish)
+    C_Timer.After(maxWait, finish)
+end
+
 local function FindAndWithdrawTreatise(itemID, profName, onDone)
+    local function done() if onDone then onDone() end end
+
     if IsItemInBags(itemID) then
         DevLog("  " .. profName .. " treatise already in bags — skipping")
         return false
@@ -107,18 +148,31 @@ local function FindAndWithdrawTreatise(itemID, profName, onDone)
                     else
                         C_Container.PickupContainerItem(bagIndex, slot)
                     end
-                    C_Timer.After(0.1, function()
+
+                    -- Wait for cursor to actually hold the item before placing. SplitContainerItem
+                    -- is async; placing too early strands the item in the warband tab with its slot
+                    -- locked, which then blocks the next withdrawal until the bank is reopened.
+                    WaitFor(CursorHasItem, function(ok)
+                        if not ok then
+                            DevLog("    Cursor never picked up item — aborting this withdrawal")
+                            ClearCursor()
+                            done()
+                            return
+                        end
                         local destBag, destSlot = FindEmptyBagSlot()
-                        if destBag then
-                            DevLog("    Placing into bag=" .. destBag .. " slot=" .. destSlot)
-                            C_Container.PickupContainerItem(destBag, destSlot)
-                            print(LuckyGrabbag.PREFIX .. " Withdrawn " .. profName .. " treatise.")
-                        else
+                        if not destBag then
                             DevLog("    No empty bag slot — clearing cursor")
                             ClearCursor()
+                            done()
+                            return
                         end
-                        if onDone then onDone() end
-                    end)
+                        DevLog("    Placing into bag=" .. destBag .. " slot=" .. destSlot)
+                        C_Container.PickupContainerItem(destBag, destSlot)
+                        print(LuckyGrabbag.PREFIX .. " Withdrawn " .. profName .. " treatise.")
+                        -- Wait for bag state to settle before allowing the next withdrawal to
+                        -- scan the warband tab, otherwise the tab data can be stale.
+                        WaitForBagUpdate(done)
+                    end, 0.05, 1.0)
                     return true
                 end
             end
@@ -152,9 +206,7 @@ local function WithdrawEligibleTreatises()
     local function processNext()
         if #queue == 0 then return end
         local treatise = table.remove(queue, 1)
-        local withdrawn = FindAndWithdrawTreatise(treatise.itemID, treatise.name, function()
-            C_Timer.After(0.3, processNext)  -- brief pause to let inventory settle before next withdrawal
-        end)
+        local withdrawn = FindAndWithdrawTreatise(treatise.itemID, treatise.name, processNext)
         if not withdrawn then
             processNext()  -- nothing to wait for, move on immediately
         end
