@@ -140,6 +140,12 @@ local function GetOrCreateButton(index)
     icon:SetTexCoord(0.07, 0.93, 0.07, 0.93)
     btn.icon = icon
 
+    local cooldown = CreateFrame("Cooldown", nil, btn, "CooldownFrameTemplate")
+    cooldown:SetAllPoints()
+    cooldown:SetDrawEdge(false)
+    cooldown:SetHideCountdownNumbers(false)
+    btn.cooldown = cooldown
+
     local highlight = btn:CreateTexture(nil, "HIGHLIGHT")
     highlight:SetAllPoints()
     highlight:SetTexture("Interface\\Buttons\\ButtonHilight-Square")
@@ -147,6 +153,7 @@ local function GetOrCreateButton(index)
 
     local countText = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalOutline")
     countText:SetPoint("BOTTOMRIGHT", -2, 2)
+    countText:SetDrawLayer("OVERLAY", 7)
     btn.count = countText
 
     btn:RegisterForDrag("RightButton")
@@ -168,6 +175,19 @@ local function GetOrCreateButton(index)
     btn:Hide()
     buttons[index] = btn
     return btn
+end
+
+local function UpdateCooldowns()
+    for _, btn in ipairs(buttons) do
+        if btn:IsShown() and btn.itemID then
+            local start, duration, enable = C_Container.GetItemCooldown(btn.itemID)
+            if start and duration and enable == 1 then
+                btn.cooldown:SetCooldown(start, duration)
+            else
+                btn.cooldown:Clear()
+            end
+        end
+    end
 end
 
 local function UpdateButtons()
@@ -221,6 +241,8 @@ local function UpdateButtons()
     local totalWidth = 8 + shown * BUTTON_SIZE + (shown - 1) * BUTTON_SPACING + 8
     containerFrame:SetSize(totalWidth, BUTTON_SIZE + 16)
     containerFrame:Show()
+
+    UpdateCooldowns()
 end
 
 function LuckyGrabbag.UseItems:ApplySetting()
@@ -232,6 +254,7 @@ function LuckyGrabbag.UseItems:Init(database)
 
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("BAG_UPDATE_DELAYED")
+    eventFrame:RegisterEvent("BAG_UPDATE_COOLDOWN")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -243,6 +266,8 @@ function LuckyGrabbag.UseItems:Init(database)
         elseif event == "PLAYER_REGEN_ENABLED" then
             inCombat = false
             UpdateButtons()
+        elseif event == "BAG_UPDATE_COOLDOWN" then
+            UpdateCooldowns()
         else
             UpdateButtons()
         end
