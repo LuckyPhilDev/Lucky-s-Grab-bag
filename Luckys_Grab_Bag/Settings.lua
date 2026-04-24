@@ -154,6 +154,34 @@ function LuckyGrabbag.Settings:Init(db)
     })
 
     ---------------------------------------------------------------------------
+    -- Vendors
+    ---------------------------------------------------------------------------
+    panel:Section("Vendors")
+
+    panel:Toggle({
+        label    = "Confirm Purchase Button",
+        desc     = "Large button for confirming currency purchases at vendors.",
+        tooltip  = "When a purchase confirmation popup appears at a vendor, shows a large tick button that clicks the confirm option. Right-click and drag to reposition (when not in overlay mode).",
+        checked  = db.showConfirmPurchase,
+        onToggle = function(checked)
+            db.showConfirmPurchase = checked
+            LuckyGrabbag.ConfirmPurchase:ApplySetting()
+        end,
+    })
+
+    panel:Toggle({
+        label    = "Overlay on Clicked Item",
+        desc     = "Place the button directly on top of the vendor item you clicked.",
+        tooltip  = "When enabled, the confirm button appears centered over the item you clicked to trigger the popup. When disabled, it anchors next to the vendor window and can be dragged.",
+        checked  = db.confirmPurchaseOverlay,
+        indent   = 20,
+        onToggle = function(checked)
+            db.confirmPurchaseOverlay = checked
+            LuckyGrabbag.ConfirmPurchase:ApplySetting()
+        end,
+    })
+
+    ---------------------------------------------------------------------------
     -- Delves
     ---------------------------------------------------------------------------
     panel:Section("Delves")

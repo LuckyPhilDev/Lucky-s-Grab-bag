@@ -6,6 +6,11 @@ local ITEM_NAME_PATTERNS  = LuckyGrabbag.UseItemsData.itemNamePatterns   -- defi
 local THALASSIAN_SUFFIXES = LuckyGrabbag.UseItemsData.thalassianSuffixes  -- defined in UseItemsData.lua
 local TREATISE_PATTERN    = LuckyGrabbag.UseItemsData.treatisePattern     -- defined in UseItemsData.lua
 
+local ITEM_ID_SET = {}
+for _, id in ipairs(LuckyGrabbag.UseItemsData.itemIDs or {}) do
+    ITEM_ID_SET[id] = true
+end
+
 local BUTTON_SIZE = 42
 local BUTTON_SPACING = 4
 local MAX_BUTTONS = 12
@@ -19,7 +24,8 @@ local function DevLog(msg)
     LuckyGrabbag.DevLog("UseItems", msg)
 end
 
-local function IsMatchingItem(itemName)
+local function IsMatchingItem(itemName, itemID)
+    if itemID and ITEM_ID_SET[itemID] then return true end
     if not itemName then return false end
     for _, pattern in ipairs(ITEM_NAME_PATTERNS) do
         if string.find(itemName, pattern, 1, true) then
@@ -56,7 +62,7 @@ local function ScanBags()
                     itemName = C_Item.GetItemNameByID(info.itemID)
                     DevLog("  Bag " .. bag .. " slot " .. slot .. ": itemID=" .. info.itemID .. " itemName was nil, C_Item fallback=" .. tostring(itemName))
                 end
-                if itemName and IsMatchingItem(itemName) then
+                if itemName and IsMatchingItem(itemName, info.itemID) then
                     -- Skip treatises the character can't use (wrong profession) or already used this week
                     if string.find(itemName, TREATISE_PATTERN, 1, true) and not LuckyGrabbag.Treatise:CanCharacterUse(info.itemID) then
                         DevLog("  SKIP (no matching profession): " .. itemName .. " (itemID=" .. info.itemID .. ")")

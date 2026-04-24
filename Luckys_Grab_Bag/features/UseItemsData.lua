@@ -19,4 +19,10 @@ LuckyGrabbag.UseItemsData = {
     -- The shared prefix for all treatise items. Used both for pattern matching and for
     -- treatise-specific filtering logic (profession eligibility, weekly quest status).
     treatisePattern = "Thalassian Treatise on",
+
+    -- Explicit item IDs that should always get a "use" button, regardless of name.
+    itemIDs = {
+        264314, 264315, 264316, 264317, 264318,
+        264319, 264320, 264321, 264322, 264323,
+    },
 }

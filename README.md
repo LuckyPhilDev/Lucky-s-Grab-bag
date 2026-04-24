@@ -4,6 +4,15 @@
 
 ## Features
 
+### Confirm Purchase Button
+When a vendor shows a currency purchase confirmation popup, a large tick button appears so you can quickly confirm the buy.
+
+- Overlays directly on the item you clicked, so a double-click (click item → click tick) completes the purchase.
+- Works with both left and right mouse buttons — right-click the item, right-click the tick, and the item is yours.
+- Optionally anchor next to the vendor window instead of overlaying, with right-click drag to reposition.
+- Appears only while the popup is visible; hides automatically when the popup closes.
+- Can be toggled in the addon settings.
+
 ### Auto Repair
 Automatically repairs all damaged gear whenever you open a vendor that offers repairs — no button clicks required.
 
@@ -15,7 +24,7 @@ Automatically repairs all damaged gear whenever you open a vendor that offers re
 ### Use Items Popup
 Displays a floating bar of buttons when you have consumable profession items in your bags — click each one to use it.
 
-- Detects **Artisan's Consortium Payouts**, **Glimmers of Midnight Knowledge**, **Flickers of Midnight Knowledge**, **Thalassian Treatises** (all professions), **Brimming Mana Shards**, and **Swirling Arcane Essences**.
+- Detects **Artisan's Consortium Payouts**, **Glimmers of Midnight Knowledge**, **Flickers of Midnight Knowledge**, **Thalassian Treatises** (all professions), **Brimming Mana Shards**, **Swirling Arcane Essences**, and **Caches of Void-Touched Armor**.
 - Thalassian Treatises are automatically hidden if already used this week, if your character hasn't learned that profession for the current expansion, or if your Midnight skill is below 25.
 - One button per item type; shows stack count when you have multiples.
 - Optionally restrict to cities and inns only via the "Only in Cities" setting.
@@ -139,6 +148,10 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Show use-item buttons* — Displays a floating row of buttons when consumable profession items are in your bags (Artisan's Consortium Payouts, Glimmers/Flickers of Midnight Knowledge, Thalassian Treatises). The bar is draggable and hides automatically when empty.
   - *Only in Cities* — Restricts the Use Items popup to cities and inns.
 - *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.
+
+**Vendors**
+- *Confirm Purchase Button* — Shows a large tick button when a vendor currency purchase popup appears; clicking it confirms the buy.
+  - *Overlay on Clicked Item* — Places the button directly over the vendor item you clicked instead of next to the window.
 
 **Delves**
 - *Trovehunter's Bounty Map* — Shows a clickable button for your Bounty Map when in a qualifying delve.
