@@ -19,6 +19,16 @@ local function IsInQualifyingContent()
     return false
 end
 
+-- Picks the appropriate pull timer for current content. Raids use the raid
+-- slider; dungeons (M+) use the mythic slider. Falls back to mythic when the
+-- frame is forced visible outside qualifying content.
+local function GetActivePullTimer()
+    if IsInRaid() then
+        return db.combatPrepTimerRaid or 12
+    end
+    return db.combatPrepTimerMythic or 10
+end
+
 local function SavePosition()
     if not prepFrame then return end
     local point, _, relPoint, x, y = prepFrame:GetPoint()
@@ -35,8 +45,20 @@ local function RestorePosition(f)
     end
 end
 
+local function UpdateButtonTexts()
+    if not prepFrame then return end
+    if prepFrame.pullTimerBtn then
+        prepFrame.pullTimerBtn:SetText("Pull " .. GetActivePullTimer() .. "s")
+    end
+    if prepFrame.breakBtn then
+        local mins = db.combatPrepBreakTimer or 5
+        prepFrame.breakBtn:SetText("Break " .. mins .. "m")
+    end
+end
+
 local function UpdateVisibility()
     if not prepFrame then return end
+    UpdateButtonTexts()
     if not db.showCombatPrep then
         prepFrame:Hide()
         DevLog("Hidden (feature disabled)")
@@ -53,17 +75,6 @@ local function UpdateVisibility()
     else
         prepFrame:Hide()
         DevLog("Hidden (not in raid or M+)")
-    end
-end
-
-local function UpdateButtonTexts()
-    if not prepFrame then return end
-    if prepFrame.pullTimerBtn then
-        prepFrame.pullTimerBtn:SetText("Pull " .. (db.combatPrepTimer or 10) .. "s")
-    end
-    if prepFrame.breakBtn then
-        local mins = db.combatPrepBreakTimer or 5
-        prepFrame.breakBtn:SetText("Break " .. mins .. "m")
     end
 end
 
@@ -209,9 +220,9 @@ local function CreatePrepFrame()
 
     -- Pull Timer button (primary gold style)
     local ptBtn = CreateStyledButton(f, { width = 73, height = 28, variant = "primary" })
-    ptBtn:SetText("Pull " .. (db.combatPrepTimer or 10) .. "s")
+    ptBtn:SetText("Pull " .. GetActivePullTimer() .. "s")
     ptBtn:SetScript("OnClick", function()
-        local seconds = db.combatPrepTimer or 10
+        local seconds = GetActivePullTimer()
         C_PartyInfo.DoCountdown(seconds)
         DevLog("Started pull timer for " .. seconds .. "s")
     end)

@@ -15,7 +15,8 @@ local DB_DEFAULTS = {
     delveMapMinLevel     = 8,
     showCombatPrep       = false,
     combatPrepReadyCheck = false,
-    combatPrepTimer      = 10,
+    combatPrepTimerMythic = 10,
+    combatPrepTimerRaid   = 12,
     combatPrepBreakTimer = 5,
     showRotationGlow     = false,
     showConfirmPurchase  = true,
@@ -28,6 +29,13 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
     if event == "ADDON_LOADED" and addonLoaded == ADDON_NAME then
         LuckyGrabbagDB = LuckyGrabbagDB or {} ---@diagnostic disable-line: lowercase-global
         local db = LuckyGrabbagDB
+
+        -- Migrate legacy single combat prep pull timer into mythic/raid split.
+        if db.combatPrepTimer ~= nil then
+            if db.combatPrepTimerMythic == nil then db.combatPrepTimerMythic = db.combatPrepTimer end
+            if db.combatPrepTimerRaid == nil then db.combatPrepTimerRaid = db.combatPrepTimer end
+            db.combatPrepTimer = nil
+        end
 
         for key, default in pairs(DB_DEFAULTS) do
             if db[key] == nil then

@@ -238,15 +238,29 @@ function LuckyGrabbag.Settings:Init(db)
     })
 
     panel:Slider({
-        label    = "Pull Timer Duration",
-        key      = "CombatPrepTimer",
+        label    = "Pull Timer (Mythic+)",
+        key      = "CombatPrepTimerMythic",
         min      = 3,
         max      = 30,
-        value    = db.combatPrepTimer,
+        value    = db.combatPrepTimerMythic,
         suffix   = "s",
         indent   = 20,
         onChanged = function(val)
-            db.combatPrepTimer = val
+            db.combatPrepTimerMythic = val
+            LuckyGrabbag.CombatPrep:ApplySetting()
+        end,
+    })
+
+    panel:Slider({
+        label    = "Pull Timer (Raid)",
+        key      = "CombatPrepTimerRaid",
+        min      = 3,
+        max      = 30,
+        value    = db.combatPrepTimerRaid,
+        suffix   = "s",
+        indent   = 20,
+        onChanged = function(val)
+            db.combatPrepTimerRaid = val
             LuckyGrabbag.CombatPrep:ApplySetting()
         end,
     })
