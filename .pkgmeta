@@ -1,8 +1,5 @@
 package-as: Luckys_Grab_Bag
 
-externals:
-  Luckys_Grab_Bag/Luckys_Utils: https://github.com/LuckyPhilDev/LuckyUtils
-
 move-folders:
   Luckys_Grab_Bag/Luckys_Grab_Bag: Luckys_Grab_Bag
 
