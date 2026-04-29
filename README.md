@@ -24,7 +24,7 @@ Automatically repairs all damaged gear whenever you open a vendor that offers re
 ### Use Items Popup
 Displays a floating bar of buttons when you have consumable profession items in your bags — click each one to use it.
 
-- Detects **Artisan's Consortium Payouts**, **Glimmers of Midnight Knowledge**, **Flickers of Midnight Knowledge**, **Thalassian Treatises** (all professions), **Brimming Mana Shards**, **Swirling Arcane Essences**, and **Caches of Void-Touched Armor**.
+- Detects a wide range of profession knowledge consumables — **Artisan's Consortium Payouts**, **Glimmers** and **Flickers of Midnight Knowledge**, **Thalassian Treatises** (all professions), **Brimming Mana Shards**, **Swirling Arcane Essences**, **Caches of Void-Touched Armor**, plus the unique books, treasure pickups, gathering drops, weekly quest rewards, catch-up items, and treasure-hunt rewards from The War Within and Midnight.
 - Thalassian Treatises are automatically hidden if already used this week, if your character hasn't learned that profession for the current expansion, or if your Midnight skill is below 25.
 - One button per item type; shows stack count when you have multiples.
 - Optionally restrict to cities and inns only via the "Only in Cities" setting.

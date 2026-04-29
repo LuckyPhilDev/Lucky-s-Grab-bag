@@ -1,4 +1,4 @@
-## [1.3.3] - 2026-04-29
+## [1.4.0] - 2026-04-29
 
-### Fixed
-- More reliable Treatise withdrawals for characters with multiple or partially-learned professions. Thanks to @avilene for the fix.
+### Added
+- Use Items popup now recognises a much wider range of profession knowledge items — books, treasure pickups, gathering finds, weekly quest rewards, catch-up items, and treasure-hunt rewards across The War Within and Midnight.
