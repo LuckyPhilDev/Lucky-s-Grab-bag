@@ -10,23 +10,46 @@ local function DevLog(msg)
     LuckyGrabbag.DevLog("Treatise", msg)
 end
 
+-- GetProfessions() can contain nils; ipairs stops at the first nil, so iterate the five slots with pairs.
+local function ForEachProfessionIndex(callback)
+    local p1, p2, arch, fish, cook = GetProfessions()
+    for _, idx in pairs({ p1, p2, arch, fish, cook }) do
+        if idx then
+            callback(idx)
+        end
+    end
+end
+
+local function ActiveVariantLineLookup()
+    local t = {}
+    if C_TradeSkillUI and C_TradeSkillUI.GetAllProfessionTradeSkillLines then
+        for _, id in pairs(C_TradeSkillUI.GetAllProfessionTradeSkillLines() or {}) do
+            t[id] = true
+        end
+    end
+    return t
+end
+
+local function HasTreatiseProfession(treatise, variantLines)
+    return variantLines[treatise.skillLineVariantID] or IsPlayerSpell(treatise.midnightSpellID)
+end
+
 -- Returns a map of skillLineID -> profession name for the current character's professions.
 -- GetProfessionInfo returns: name, texture, rank, maxRank, numSpells, spellOffset, skillLine, ...
 local function GetCharacterSkillLines()
     local skillLines = {}
-    local indices = { GetProfessions() }
-    DevLog("GetProfessions() returned " .. #indices .. " indices")
-    for _, idx in ipairs(indices) do
-        if idx then
-            local name, _, _, _, _, _, skillLine = GetProfessionInfo(idx)
-            if skillLine then
-                skillLines[skillLine] = name
-                DevLog("  Profession: " .. tostring(name) .. " (skillLineID=" .. tostring(skillLine) .. ")")
-            else
-                DevLog("  GetProfessionInfo(" .. tostring(idx) .. ") returned nil skillLine")
-            end
+    local count = 0
+    ForEachProfessionIndex(function(idx)
+        count = count + 1
+        local name, _, _, _, _, _, skillLine = GetProfessionInfo(idx)
+        if skillLine then
+            skillLines[skillLine] = name
+            DevLog("  Profession: " .. tostring(name) .. " (skillLineID=" .. tostring(skillLine) .. ")")
+        else
+            DevLog("  GetProfessionInfo(" .. tostring(idx) .. ") returned nil skillLine")
         end
-    end
+    end)
+    DevLog("GetProfessions() returned " .. count .. " non-nil profession indices")
     return skillLines
 end
 
@@ -184,13 +207,12 @@ end
 
 local function WithdrawEligibleTreatises()
     DevLog("Scanning for eligible treatises")
-    local skillLines = GetCharacterSkillLines()
+    local variantLines = ActiveVariantLineLookup()
+    GetCharacterSkillLines()
 
-    -- Build a queue of eligible treatises to avoid cursor race conditions
-    -- when multiple treatises need withdrawing.
     local queue = {}
     for _, treatise in ipairs(TREATISES) do
-        if skillLines[treatise.skillLineID] and IsPlayerSpell(treatise.midnightSpellID) then
+        if HasTreatiseProfession(treatise, variantLines) then
             DevLog("Checking " .. treatise.name .. " (itemID=" .. treatise.itemID .. " questID=" .. treatise.questID .. ")")
             if not MeetsItemRequirements(treatise.itemID) then
                 DevLog("  Skipping " .. treatise.name .. " — unmet item requirements (skill too low)")
@@ -219,9 +241,9 @@ end
 function LuckyGrabbag.Treatise:CanCharacterUse(itemID)
     for _, treatise in ipairs(TREATISES) do
         if treatise.itemID == itemID then
-            local known = IsPlayerSpell(treatise.midnightSpellID)
+            local known = HasTreatiseProfession(treatise, ActiveVariantLineLookup())
             if not known then
-                DevLog("CanCharacterUse: " .. treatise.name .. " itemID=" .. itemID .. " known=false")
+                DevLog("CanCharacterUse: " .. treatise.name .. " itemID=" .. itemID .. " midnight tier not active")
                 return false
             end
             local meetsReqs = MeetsItemRequirements(itemID)
