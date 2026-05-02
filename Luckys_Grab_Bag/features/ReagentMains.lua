@@ -233,34 +233,89 @@ local function FormatCharShort(charKey)
     return label
 end
 
+local Rich = LuckySettings.Rich
+local R = Rich.Theme
+local R_FONT = Rich.Font
+
 local function BuildPopup()
     if popup then return popup end
 
-    local f = LuckyUI.CreatePanel("LuckyGrabbagReagentMainsPopup", UIParent, 520, 460)
+    local f = CreateFrame("Frame", "LuckyGrabbagReagentMainsPopup", UIParent)
+    f:SetSize(540, 480)
     f:SetFrameStrata("DIALOG")
-    LuckyUI.CreateHeader(f, "Reagent Mains")
+    f:SetClampedToScreen(true)
+    f:EnableMouse(true)
     f:Hide()
+    Rich.FillBg(f, R.bg)
+    -- Escape closes
+    table.insert(UISpecialFrames, "LuckyGrabbagReagentMainsPopup")
 
-    LuckyUI.EnableDrag(f, {
-        db      = db,
-        key     = "reagentMainsPopupPos",
-        default = { "CENTER", "CENTER", 0, 0 },
-    })
+    -- Title bar (drag handle)
+    local titleBar = CreateFrame("Frame", nil, f)
+    titleBar:SetHeight(40)
+    titleBar:SetPoint("TOPLEFT")
+    titleBar:SetPoint("TOPRIGHT")
+    Rich.FillBg(titleBar, R.bg2)
+    Rich.EdgeRule(titleBar, "BOTTOM", R.border)
+    titleBar:EnableMouse(true)
+    titleBar:RegisterForDrag("LeftButton")
+    titleBar:SetScript("OnDragStart", function() f:StartMoving() end)
+    titleBar:SetScript("OnDragStop", function()
+        f:StopMovingOrSizing()
+        local point, _, relPoint, x, y = f:GetPoint()
+        db.reagentMainsPopupPos = { point = point, relPoint = relPoint, x = x, y = y }
+    end)
+    f:SetMovable(true)
+    f:SetClampedToScreen(true)
+
+    local titleL = titleBar:CreateFontString(nil, "OVERLAY")
+    titleL:SetFont(R_FONT, 16, "")
+    titleL:SetPoint("LEFT", 14, 0)
+    titleL:SetText("Reagent Mains")
+    titleL:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
+
+    local titleR = titleBar:CreateFontString(nil, "OVERLAY")
+    titleR:SetFont(R_FONT, 11, "")
+    titleR:SetPoint("RIGHT", -40, 0)
+    titleR:SetText("GRAB-BAG")
+    titleR:SetTextColor(R.textFaint[1], R.textFaint[2], R.textFaint[3])
+
+    -- Close button
+    local close = CreateFrame("Button", nil, titleBar, "UIPanelCloseButton")
+    close:SetPoint("RIGHT", -4, 0)
+    close:SetScript("OnClick", function() f:Hide() end)
+
+    -- Restore saved position
+    local saved = db.reagentMainsPopupPos
+    f:ClearAllPoints()
+    if saved and saved.point then
+        f:SetPoint(saved.point, UIParent, saved.relPoint or saved.point, saved.x or 0, saved.y or 0)
+    else
+        f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    end
+
+    -- Content body inset
+    local body = CreateFrame("Frame", nil, f)
+    body:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 0, 0)
+    body:SetPoint("BOTTOMRIGHT", 0, 0)
 
     -- Description
-    local desc = f:CreateFontString(nil, "OVERLAY")
-    desc:SetFont(LuckyUI.BODY_FONT, 11)
-    desc:SetTextColor(LuckyUI.C.textMuted[1], LuckyUI.C.textMuted[2], LuckyUI.C.textMuted[3])
-    desc:SetPoint("TOPLEFT", 12, -42)
-    desc:SetPoint("TOPRIGHT", -12, -42)
+    local desc = body:CreateFontString(nil, "OVERLAY")
+    desc:SetFont(R_FONT, 12, "")
+    desc:SetTextColor(R.text[1], R.text[2], R.text[3])
+    desc:SetSpacing(3)
+    desc:SetPoint("TOPLEFT", 14, -14)
+    desc:SetPoint("TOPRIGHT", -14, -14)
     desc:SetJustifyH("LEFT")
     desc:SetText("Choose which character keeps each reagent category. When the warband bank is opened, this character deposits reagents that belong to someone else.")
     desc:SetWordWrap(true)
-    desc:SetHeight(32)
+    desc:SetHeight(34)
 
     -- Detect button
-    local detectBtn = LuckyUI.CreateButton(f, "Detect Professions", 150, 22, "secondary")
-    detectBtn:SetPoint("TOPLEFT", 12, -84)
+    local detectBtn = CreateFrame("Button", nil, body, "UIPanelButtonTemplate")
+    detectBtn:SetSize(150, 22)
+    detectBtn:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", 0, -10)
+    detectBtn:SetText("Detect Professions")
     detectBtn:SetScript("OnClick", function()
         LuckyRoster:Refresh()
         Feature:RefreshPopup()
@@ -272,29 +327,28 @@ local function BuildPopup()
     end)
     detectBtn:SetScript("OnLeave", GameTooltip_Hide)
 
-    -- Header row
-    local headerRow = CreateFrame("Frame", nil, f)
-    headerRow:SetPoint("TOPLEFT", 12, -114)
-    headerRow:SetPoint("TOPRIGHT", -12, -114)
-    headerRow:SetHeight(20)
-    local hbg = headerRow:CreateTexture(nil, "BACKGROUND")
-    hbg:SetAllPoints()
-    hbg:SetColorTexture(LuckyUI.C.bgInput[1], LuckyUI.C.bgInput[2], LuckyUI.C.bgInput[3], 0.6)
+    -- Column header
+    local headerRow = CreateFrame("Frame", nil, body)
+    headerRow:SetHeight(22)
+    headerRow:SetPoint("TOPLEFT", detectBtn, "BOTTOMLEFT", 0, -14)
+    headerRow:SetPoint("RIGHT", -14, 0)
+    Rich.FillBg(headerRow, R.bg3)
+    Rich.EdgeRule(headerRow, "BOTTOM", R.border)
 
     local function makeHeaderText(parent, text, x)
         local t = parent:CreateFontString(nil, "OVERLAY")
-        t:SetFont(LuckyUI.BODY_FONT, 11)
-        t:SetTextColor(LuckyUI.C.goldAccent[1], LuckyUI.C.goldAccent[2], LuckyUI.C.goldAccent[3])
+        t:SetFont(R_FONT, 10, "")
+        t:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
         t:SetPoint("LEFT", parent, "LEFT", x, 0)
-        t:SetText(text)
+        t:SetText(string.upper(text))
         return t
     end
-    makeHeaderText(headerRow, "CATEGORY",   8)
-    makeHeaderText(headerRow, "MAIN",       130)
-    makeHeaderText(headerRow, "PROFESSIONS", 290)
+    makeHeaderText(headerRow, "Category",    10)
+    makeHeaderText(headerRow, "Main",        140)
+    makeHeaderText(headerRow, "Professions", 310)
 
-    -- Scroll area for rows
-    local scroll = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+    -- Scroll area
+    local scroll = CreateFrame("ScrollFrame", nil, body, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", headerRow, "BOTTOMLEFT", 0, -2)
     scroll:SetPoint("BOTTOMRIGHT", -32, 12)
 
@@ -317,27 +371,27 @@ local function BuildRow(parent, catKey, catDef, yOffset, alt)
     if alt then
         local bg = row:CreateTexture(nil, "BACKGROUND")
         bg:SetAllPoints()
-        bg:SetColorTexture(1, 1, 1, 0.03)
+        bg:SetColorTexture(R.bg2[1], R.bg2[2], R.bg2[3], 0.5)
     end
 
     local catLabel = row:CreateFontString(nil, "OVERLAY")
-    catLabel:SetFont(LuckyUI.BODY_FONT, 12)
-    catLabel:SetTextColor(LuckyUI.C.textLight[1], LuckyUI.C.textLight[2], LuckyUI.C.textLight[3])
-    catLabel:SetPoint("LEFT", row, "LEFT", 8, 0)
-    catLabel:SetWidth(110)
+    catLabel:SetFont(R_FONT, 12, "")
+    catLabel:SetTextColor(R.text[1], R.text[2], R.text[3])
+    catLabel:SetPoint("LEFT", row, "LEFT", 10, 0)
+    catLabel:SetWidth(120)
     catLabel:SetJustifyH("LEFT")
     catLabel:SetText(catDef.name)
 
     local hintText = row:CreateFontString(nil, "OVERLAY")
-    hintText:SetFont(LuckyUI.BODY_FONT, 11)
-    hintText:SetTextColor(LuckyUI.C.textMuted[1], LuckyUI.C.textMuted[2], LuckyUI.C.textMuted[3])
-    hintText:SetPoint("LEFT", row, "LEFT", 290, 0)
-    hintText:SetWidth(180)
+    hintText:SetFont(R_FONT, 11, "")
+    hintText:SetTextColor(R.textDim[1], R.textDim[2], R.textDim[3])
+    hintText:SetPoint("LEFT", row, "LEFT", 310, 0)
+    hintText:SetWidth(160)
     hintText:SetJustifyH("LEFT")
 
     local dd = CreateFrame("Frame", nil, row, "UIDropDownMenuTemplate")
-    UIDropDownMenu_SetWidth(dd, 140)
-    dd:SetPoint("LEFT", row, "LEFT", 110, 0)
+    UIDropDownMenu_SetWidth(dd, 150)
+    dd:SetPoint("LEFT", row, "LEFT", 120, 0)
     row.dropdown = dd
     row.hint     = hintText
     row.catKey   = catKey
