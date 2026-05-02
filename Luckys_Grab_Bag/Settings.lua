@@ -4,8 +4,9 @@ LuckyGrabbag.Settings = {}
 
 function LuckyGrabbag.Settings:Init(db)
     local panel = LuckySettings:NewRichPanel("Lucky's Grab-bag", {
-        addonFolder = "Luckys_Grab_Bag",
-        imagesRoot  = "images",
+        addonFolder    = "Luckys_Grab_Bag",
+        imagesRoot     = "images",
+        recentVersions = { "1.5.0", "1.4.0" },
     })
     self.category = panel.category
 
@@ -46,6 +47,8 @@ function LuckyGrabbag.Settings:Init(db)
     do
         local g = panel:Group("Vendors")
 
+        g:Section("Automation")
+
         g:Toggle({
             label    = "Auto Repair",
             desc     = "Automatically repair all damaged gear when you open a vendor that can repair.",
@@ -61,6 +64,8 @@ function LuckyGrabbag.Settings:Init(db)
             parent   = "Auto Repair",
             onToggle = function(checked) db.autoRepairUseGuildFunds = checked end,
         })
+
+        g:Section("Purchasing")
 
         g:Toggle({
             label    = "Confirm Purchase",
@@ -146,6 +151,7 @@ function LuckyGrabbag.Settings:Init(db)
             desc     = "When you open the warband bank on a non-main character, reagents in categories assigned to other mains are deposited automatically.",
             checked  = db.reagentMainsEnabled,
             image    = "crafting/reagent-mains",
+            since    = "1.5.0",
             onToggle = function(checked) db.reagentMainsEnabled = checked end,
         })
 
@@ -305,4 +311,6 @@ function LuckyGrabbag.Settings:Init(db)
             end,
         })
     end
+
+    panel:Finalize()
 end
