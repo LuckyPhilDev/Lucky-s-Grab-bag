@@ -9,13 +9,12 @@ One folder per setting group, mirroring the section names in `Settings.lua`:
 ```
 images/
 ├── general/
-├── auto-repair/
-├── auctionator/
-├── professions/
 ├── vendors/
-├── delves/
-├── combat-prep/
-└── rotation-glow/
+├── auction-house/
+├── crafting/
+├── inventory/
+├── combat/
+└── delves/
 ```
 
 ## File naming
@@ -26,8 +25,8 @@ Examples:
 
 | Setting | Path |
 |---|---|
-| Use Items Popup | `images/professions/use-items-popup.tga` |
-| Reagent Mains | `images/professions/reagent-mains.tga` |
+| Use Items Popup | `images/inventory/use-items-popup.tga` |
+| Reagent Mains | `images/crafting/reagent-mains.tga` |
 | Trovehunter's Bounty Map | `images/delves/trovehunters-bounty-map.tga` |
 | Confirm Purchase Button | `images/vendors/confirm-purchase.tga` |
 
@@ -37,7 +36,7 @@ Examples:
 - Format: **TGA, 32-bit uncompressed**, or BLP. *(WoW does not load PNG at runtime.)*
 - Width/height: **power of two** (256, 512, 1024). Crop the actual screenshot inside a power-of-two canvas.
 - Recommended canvas: **256×256** (displayed scaled to ~190px in the About panel).
-- Filename in Lua: `Interface\\AddOns\\Luckys_Grab_Bag\\images\\professions\\use-items-popup`
+- Filename in Lua: `Interface\\AddOns\\Luckys_Grab_Bag\\images\\inventory\\use-items-popup`
   (no extension — WoW's texture loader resolves `.tga`/`.blp` automatically).
 
 **Design source (optional, kept alongside):**
@@ -61,7 +60,7 @@ Examples:
 
 | Group | Setting | File | Status |
 |---|---|---|---|
-| Professions | Use Items Popup | `professions/use-items-popup.tga` | _pending_ |
-| Professions | Only in Cities | `professions/use-items-popup.tga` (shared) | _pending_ |
+| Inventory | Use Items Popup | `inventory/use-items-popup.tga` | _done_ |
+| Inventory | Only in Cities | `inventory/use-items-popup.tga` (shared) | _done_ |
 
 Add rows here as screenshots are captured.
