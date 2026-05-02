@@ -1,7 +1,7 @@
 ## Interface: 120001
 ## Title: Lucky's Grab-bag
 ## Notes: A collection of small quality-of-life features.
-## Version: 1.4.0
+## Version: 1.5.0
 ## Author: Lucky Phil
 ## SavedVariables: LuckyGrabbagDB
 ## Dependencies: Luckys_Utils
@@ -16,6 +16,8 @@ features/TreatiseData.lua
 features/Treatise.lua
 features/CookingData.lua
 features/Cooking.lua
+features/ReagentMainsData.lua
+features/ReagentMains.lua
 features/UseItemsData.lua
 features/UseItems.lua
 features/DelveMap.lua

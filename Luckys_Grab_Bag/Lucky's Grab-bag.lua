@@ -8,6 +8,9 @@ local DB_DEFAULTS = {
     autoRepair               = true,
     autoRepairUseGuildFunds  = true,
     showTreatise             = false,
+    reagentMainsEnabled  = false,
+    reagentMains         = {},
+    reagentMainsImported = false,
     showCookingButtons   = true,
     showUseItems         = true,
     useItemsCityOnly     = false,
@@ -60,6 +63,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.Quickbuy:Init(db)
         LuckyGrabbag.TestflightBuy:Init(db)
         LuckyGrabbag.Treatise:Init(db)
+        LuckyGrabbag.ReagentMains:Init(db)
         LuckyGrabbag.Cooking:Init(db)
         LuckyGrabbag.UseItems:Init(db)
         LuckyGrabbag.DelveMap:Init(db)

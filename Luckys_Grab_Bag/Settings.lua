@@ -146,6 +146,21 @@ function LuckyGrabbag.Settings:Init(db)
     })
 
     panel:Toggle({
+        label    = "Reagent Mains",
+        desc     = "Auto-deposit reagents that belong to other characters when the warband bank opens.",
+        tooltip  = "Assign each reagent category (Herbs, Cloth, Gems, etc.) to a designated main. When you open the warband bank on a different character, reagents in those categories are deposited automatically.",
+        checked  = db.reagentMainsEnabled,
+        onToggle = function(checked) db.reagentMainsEnabled = checked end,
+    })
+
+    panel:Button({
+        label   = "Configure mains…",
+        tooltip = "Open the reagent mains assignment window.",
+        indent  = 20,
+        onClick = function() LuckyGrabbag.ReagentMains:OpenPopup() end,
+    })
+
+    panel:Toggle({
         label    = "Cooking Utility Buttons",
         desc     = "Campfire and Chef's Hat buttons on the Cooking window.",
         tooltip  = "Adds a Campfire button (casts Basic Campfire) and a Chef's Hat toggle (glows when active, click again to cancel) alongside the Cooking profession window.",
