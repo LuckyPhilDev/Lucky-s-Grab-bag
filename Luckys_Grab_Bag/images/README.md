@@ -1,0 +1,67 @@
+# Grab-bag Settings — Feature Images
+
+Screenshots used by the **About** panel of the settings UI (and as documentation references in the project README).
+
+## Folder layout
+
+One folder per setting group, mirroring the section names in `Settings.lua`:
+
+```
+images/
+├── general/
+├── auto-repair/
+├── auctionator/
+├── professions/
+├── vendors/
+├── delves/
+├── combat-prep/
+└── rotation-glow/
+```
+
+## File naming
+
+`<setting-key>.<ext>` — kebab-case, derived from the setting's stable identifier (the same key used in the saved-variables DB or the Settings.lua label, lowercased and dashed).
+
+Examples:
+
+| Setting | Path |
+|---|---|
+| Use Items Popup | `images/professions/use-items-popup.tga` |
+| Reagent Mains | `images/professions/reagent-mains.tga` |
+| Trovehunter's Bounty Map | `images/delves/trovehunters-bounty-map.tga` |
+| Confirm Purchase Button | `images/vendors/confirm-purchase.tga` |
+
+## Format & dimensions
+
+**Runtime (in-game About panel):**
+- Format: **TGA, 32-bit uncompressed**, or BLP. *(WoW does not load PNG at runtime.)*
+- Width/height: **power of two** (256, 512, 1024). Crop the actual screenshot inside a power-of-two canvas.
+- Recommended canvas: **256×256** (displayed scaled to ~190px in the About panel).
+- Filename in Lua: `Interface\\AddOns\\Luckys_Grab_Bag\\images\\professions\\use-items-popup`
+  (no extension — WoW's texture loader resolves `.tga`/`.blp` automatically).
+
+**Design source (optional, kept alongside):**
+- PNG of the raw screenshot, same basename. Used for the project README and for re-exporting the TGA later if the UI changes.
+- Not loaded at runtime — purely for the repo.
+
+## Capture conventions
+
+- Capture at the standard WoW UI scale (no zoom).
+- Keep only the feature itself; trim chrome and unrelated UI.
+- Use a dark, neutral backdrop where possible (the About panel background is `#0b0a07`, so the TGA blends in).
+- Subjects should sit roughly centred within the canvas.
+
+## Adding a new image
+
+1. Drop the PNG source in the matching folder.
+2. Export a TGA (32-bit) of the same image, padded into the nearest power-of-two square.
+3. Reference it from the setting's About-panel metadata.
+
+## Index
+
+| Group | Setting | File | Status |
+|---|---|---|---|
+| Professions | Use Items Popup | `professions/use-items-popup.tga` | _pending_ |
+| Professions | Only in Cities | `professions/use-items-popup.tga` (shared) | _pending_ |
+
+Add rows here as screenshots are captured.

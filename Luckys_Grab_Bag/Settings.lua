@@ -2,28 +2,11 @@
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.Settings = {}
 
-local function AddDependencyWarning(panel, requires)
-    local anchor = panel.lastAnchor.desc or panel.lastAnchor
-    local warning = panel.content:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-    warning:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -2)
-    warning:SetWidth(400)
-    warning:SetJustifyH("LEFT")
-    warning:SetTextColor(1, 0.3, 0.3)
-    warning:Hide()
-
-    panel.panel:HookScript("OnShow", function()
-        local ok, msg = LuckyDeps:Check(requires.addon, requires.minVersion)
-        warning:SetShown(not ok)
-        if not ok then
-            warning:SetText(msg)
-        end
-    end)
-
-    panel.lastAnchor = warning
-end
-
 function LuckyGrabbag.Settings:Init(db)
-    local panel = LuckySettings:NewPanel("Lucky's Grab-bag")
+    local panel = LuckySettings:NewRichPanel("Lucky's Grab-bag", {
+        addonFolder = "Luckys_Grab_Bag",
+        imagesRoot  = "images",
+    })
     self.category = panel.category
 
     SLASH_LUCKYGB1 = "/grabbag"
@@ -32,281 +15,301 @@ function LuckyGrabbag.Settings:Init(db)
     ---------------------------------------------------------------------------
     -- General
     ---------------------------------------------------------------------------
-    panel:Toggle({
-        label    = "Dev Mode",
-        desc     = "Development logging and diagnostics.",
-        tooltip  = "Enables verbose debug output via LuckyLog. Has no visible effect for regular users.",
-        checked  = db.devMode,
-        gap      = 16,
-        onToggle = function(checked) db.devMode = checked end,
-    })
+    do
+        local g = panel:Group("General")
 
-    local minimapState = db.minimap or {}
-    panel:Toggle({
-        label    = "Minimap Button",
-        desc     = "Show the Lucky's Grab-bag button on the minimap.",
-        tooltip  = "Toggle the minimap button. Shift-drag to reposition it.",
-        checked  = not minimapState.hide,
-        onToggle = function(checked)
-            if LuckyGrabbag.minimapButton then
-                LuckyGrabbag.minimapButton:SetShown_Persisted(checked)
-            end
-        end,
-    })
+        g:Toggle({
+            label    = "Dev Mode",
+            desc     = "Development logging and diagnostics. Has no visible effect for regular users.",
+            checked  = db.devMode,
+            image    = "general/dev-mode",
+            onToggle = function(checked) db.devMode = checked end,
+        })
+
+        local minimapState = db.minimap or {}
+        g:Toggle({
+            label    = "Minimap Button",
+            desc     = "Show the Lucky's Grab-bag button on the minimap. Shift-drag to reposition it.",
+            checked  = not minimapState.hide,
+            image    = "general/minimap-button",
+            onToggle = function(checked)
+                if LuckyGrabbag.minimapButton then
+                    LuckyGrabbag.minimapButton:SetShown_Persisted(checked)
+                end
+            end,
+        })
+    end
 
     ---------------------------------------------------------------------------
     -- Auto Repair
     ---------------------------------------------------------------------------
-    panel:Section("Auto Repair")
+    do
+        local g = panel:Group("Auto Repair")
 
-    panel:Toggle({
-        label    = "Auto Repair",
-        desc     = "Automatically repair your gear when visiting a repair vendor.",
-        tooltip  = "When you open a vendor that can repair, all damaged gear is repaired automatically.",
-        checked  = db.autoRepair,
-        onToggle = function(checked) db.autoRepair = checked end,
-    })
+        g:Toggle({
+            label    = "Auto Repair",
+            desc     = "Automatically repair all damaged gear when you open a vendor that can repair.",
+            checked  = db.autoRepair,
+            image    = "auto-repair/auto-repair",
+            onToggle = function(checked) db.autoRepair = checked end,
+        })
 
-    panel:Toggle({
-        label    = "Use Guild Funds",
-        desc     = "Prefer guild bank funds when repairing, if available.",
-        tooltip  = "Repair costs are paid from the guild bank if your guild allows it. Falls back to your own gold if guild repair isn't available.",
-        checked  = db.autoRepairUseGuildFunds,
-        indent   = 20,
-        onToggle = function(checked) db.autoRepairUseGuildFunds = checked end,
-    })
+        g:Toggle({
+            label    = "Use Guild Funds",
+            desc     = "Pay repair costs from the guild bank if your guild allows it. Falls back to your own gold otherwise.",
+            checked  = db.autoRepairUseGuildFunds,
+            parent   = "Auto Repair",
+            onToggle = function(checked) db.autoRepairUseGuildFunds = checked end,
+        })
+    end
 
     ---------------------------------------------------------------------------
     -- Auctionator Enhancements
     ---------------------------------------------------------------------------
-    panel:Section("Auctionator Enhancements")
+    do
+        local g = panel:Group("Auctionator")
 
-    panel:Toggle({
-        label    = "CraftSim Quickbuy",
-        desc     = "One-click purchasing from your CraftSim shopping list.",
-        tooltip  = "Adds a button next to the Auction House window. Each click purchases one row of items from your CraftSim crafting queue's shopping list.",
-        checked  = db.showQuickbuy,
-        onToggle = function(checked)
-            db.showQuickbuy = checked
-            db.showQuickbuyAutoDefault = false
-            LuckyGrabbag.Quickbuy:ApplySetting()
-        end,
-    })
+        g:Toggle({
+            label    = "CraftSim Quickbuy",
+            desc     = "Adds a button next to the Auction House. Each click purchases one row of items from your CraftSim crafting queue's shopping list.",
+            checked  = db.showQuickbuy,
+            image    = "auctionator/craftsim-quickbuy",
+            requires = LuckyGrabbag.Quickbuy and LuckyGrabbag.Quickbuy.requires,
+            onToggle = function(checked)
+                db.showQuickbuy = checked
+                db.showQuickbuyAutoDefault = false
+                LuckyGrabbag.Quickbuy:ApplySetting()
+            end,
+        })
 
-    AddDependencyWarning(panel, LuckyGrabbag.Quickbuy.requires)
-
-    panel:Toggle({
-        label    = "TestFlight Buy Next",
-        desc     = "Step through Auctionator purchases one click at a time.",
-        tooltip  = "Adds a button next to the Auction House window. Each click advances through Auctionator's purchase workflow — selecting the next item, buying it, and confirming — to quickly buy all items on a shopping list.",
-        checked  = db.showTestflightBuy,
-        onToggle = function(checked)
-            db.showTestflightBuy = checked
-            db.showTestflightBuyAutoDefault = false
-            LuckyGrabbag.TestflightBuy:ApplySetting()
-        end,
-    })
-
-    AddDependencyWarning(panel, LuckyGrabbag.TestflightBuy.requires)
+        g:Toggle({
+            label    = "TestFlight Buy Next",
+            desc     = "Adds a button next to the Auction House that steps through Auctionator's purchase workflow — selecting, buying, and confirming each item in turn.",
+            checked  = db.showTestflightBuy,
+            image    = "auctionator/testflight-buy",
+            requires = LuckyGrabbag.TestflightBuy and LuckyGrabbag.TestflightBuy.requires,
+            onToggle = function(checked)
+                db.showTestflightBuy = checked
+                db.showTestflightBuyAutoDefault = false
+                LuckyGrabbag.TestflightBuy:ApplySetting()
+            end,
+        })
+    end
 
     ---------------------------------------------------------------------------
     -- Professions
     ---------------------------------------------------------------------------
-    panel:Section("Professions")
+    do
+        local g = panel:Group("Professions")
 
-    panel:Toggle({
-        label    = "Thalassian Treatise Auto-Withdrawal",
-        desc     = "Withdraws unread treatises from Warband Bank when opened.",
-        tooltip  = "When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.",
-        checked  = db.showTreatise,
-        onToggle = function(checked) db.showTreatise = checked end,
-    })
+        g:Toggle({
+            label    = "Thalassian Treatise",
+            desc     = "When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.",
+            checked  = db.showTreatise,
+            image    = "professions/treatise",
+            onToggle = function(checked) db.showTreatise = checked end,
+        })
 
-    panel:Toggle({
-        label    = "Use Items Popup",
-        desc     = "Floating buttons for consumable profession items in your bags.",
-        tooltip  = "Shows buttons for Artisan's Consortium Payouts, Glimmers/Flickers of Midnight Knowledge, and Thalassian Treatises. Draggable, auto-hides when empty, respects combat lockdown.",
-        checked  = db.showUseItems,
-        onToggle = function(checked)
-            db.showUseItems = checked
-            LuckyGrabbag.UseItems:ApplySetting()
-        end,
-    })
+        g:Toggle({
+            label     = "Use Items Popup",
+            desc      = "Floating buttons for Artisan's Consortium Payouts, Glimmers/Flickers of Midnight Knowledge, and Thalassian Treatises in your bags. Draggable, auto-hides when empty.",
+            checked   = db.showUseItems,
+            image     = "professions/use-items-popup",
+            imageSize = { 400, 119 },
+            onToggle  = function(checked)
+                db.showUseItems = checked
+                LuckyGrabbag.UseItems:ApplySetting()
+            end,
+        })
 
-    panel:Toggle({
-        label    = "Only in Cities",
-        desc     = "Buttons only appear while in a city or inn.",
-        tooltip  = "When enabled, the Use Items popup is hidden outside of rest areas (cities and inns).",
-        checked  = db.useItemsCityOnly,
-        indent   = 20,
-        onToggle = function(checked)
-            db.useItemsCityOnly = checked
-            LuckyGrabbag.UseItems:ApplySetting()
-        end,
-    })
+        g:Toggle({
+            label     = "Only in Cities",
+            desc      = "Hide the Use Items popup when you're outside of rest areas (cities and inns).",
+            checked   = db.useItemsCityOnly,
+            parent    = "Use Items Popup",
+            image     = "professions/use-items-popup",
+            imageSize = { 400, 119 },
+            onToggle  = function(checked)
+                db.useItemsCityOnly = checked
+                LuckyGrabbag.UseItems:ApplySetting()
+            end,
+        })
 
-    panel:Toggle({
-        label    = "Reagent Mains",
-        desc     = "Auto-deposit reagents that belong to other characters when the warband bank opens.",
-        tooltip  = "Assign each reagent category (Herbs, Cloth, Gems, etc.) to a designated main. When you open the warband bank on a different character, reagents in those categories are deposited automatically.",
-        checked  = db.reagentMainsEnabled,
-        onToggle = function(checked) db.reagentMainsEnabled = checked end,
-    })
+        g:Toggle({
+            label    = "Reagent Mains",
+            desc     = "When you open the warband bank on a non-main character, reagents in categories assigned to other mains are deposited automatically.",
+            checked  = db.reagentMainsEnabled,
+            image    = "professions/reagent-mains",
+            onToggle = function(checked) db.reagentMainsEnabled = checked end,
+        })
 
-    panel:Button({
-        label   = "Configure mains…",
-        tooltip = "Open the reagent mains assignment window.",
-        indent  = 20,
-        onClick = function() LuckyGrabbag.ReagentMains:OpenPopup() end,
-    })
+        g:Button({
+            label    = "Configure mains…",
+            desc     = "Open the reagent mains assignment window to choose which character handles each reagent category.",
+            parent   = "Reagent Mains",
+            onClick  = function() LuckyGrabbag.ReagentMains:OpenPopup() end,
+        })
 
-    panel:Toggle({
-        label    = "Cooking Utility Buttons",
-        desc     = "Campfire and Chef's Hat buttons on the Cooking window.",
-        tooltip  = "Adds a Campfire button (casts Basic Campfire) and a Chef's Hat toggle (glows when active, click again to cancel) alongside the Cooking profession window.",
-        checked  = db.showCookingButtons,
-        onToggle = function(checked) db.showCookingButtons = checked end,
-    })
+        g:Toggle({
+            label    = "Cooking Utility Buttons",
+            desc     = "Adds a Campfire button (casts Basic Campfire) and a Chef's Hat toggle alongside the Cooking profession window.",
+            checked  = db.showCookingButtons,
+            image    = "professions/cooking-buttons",
+            onToggle = function(checked) db.showCookingButtons = checked end,
+        })
+    end
 
     ---------------------------------------------------------------------------
     -- Vendors
     ---------------------------------------------------------------------------
-    panel:Section("Vendors")
+    do
+        local g = panel:Group("Vendors")
 
-    panel:Toggle({
-        label    = "Confirm Purchase Button",
-        desc     = "Large button for confirming currency purchases at vendors.",
-        tooltip  = "When a purchase confirmation popup appears at a vendor, shows a large tick button that clicks the confirm option. Right-click and drag to reposition (when not in overlay mode).",
-        checked  = db.showConfirmPurchase,
-        onToggle = function(checked)
-            db.showConfirmPurchase = checked
-            LuckyGrabbag.ConfirmPurchase:ApplySetting()
-        end,
-    })
+        g:Toggle({
+            label    = "Confirm Purchase",
+            desc     = "When a currency confirmation popup appears at a vendor, shows a large tick button that clicks the confirm option. Right-click and drag to reposition.",
+            checked  = db.showConfirmPurchase,
+            image    = "vendors/confirm-purchase",
+            onToggle = function(checked)
+                db.showConfirmPurchase = checked
+                LuckyGrabbag.ConfirmPurchase:ApplySetting()
+            end,
+        })
 
-    panel:Toggle({
-        label    = "Overlay on Clicked Item",
-        desc     = "Place the button directly on top of the vendor item you clicked.",
-        tooltip  = "When enabled, the confirm button appears centered over the item you clicked to trigger the popup. When disabled, it anchors next to the vendor window and can be dragged.",
-        checked  = db.confirmPurchaseOverlay,
-        indent   = 20,
-        onToggle = function(checked)
-            db.confirmPurchaseOverlay = checked
-            LuckyGrabbag.ConfirmPurchase:ApplySetting()
-        end,
-    })
+        g:Toggle({
+            label    = "Overlay on Clicked Item",
+            desc     = "Place the confirm button directly on top of the vendor item you clicked. When disabled, the button anchors next to the vendor window and can be dragged.",
+            checked  = db.confirmPurchaseOverlay,
+            parent   = "Confirm Purchase",
+            image    = "vendors/confirm-purchase-overlay",
+            onToggle = function(checked)
+                db.confirmPurchaseOverlay = checked
+                LuckyGrabbag.ConfirmPurchase:ApplySetting()
+            end,
+        })
+    end
 
     ---------------------------------------------------------------------------
     -- Delves
     ---------------------------------------------------------------------------
-    panel:Section("Delves")
+    do
+        local g = panel:Group("Delves")
 
-    panel:Toggle({
-        label    = "Trovehunter's Bounty Map",
-        desc     = "Shows a clickable button for your Bounty Map when in a qualifying delve.",
-        tooltip  = "Displays a floating button to use your Trovehunter's Bounty Map when you're inside a delve that meets the minimum level. Right-click and drag to reposition.",
-        checked  = db.showDelveMap,
-        onToggle = function(checked)
-            db.showDelveMap = checked
-            LuckyGrabbag.DelveMap:ApplySetting()
-        end,
-    })
+        g:Toggle({
+            label    = "Trovehunter's Bounty Map",
+            desc     = "Floating button to use your Trovehunter's Bounty Map when you're inside a delve that meets the minimum level. Right-click and drag to reposition.",
+            checked  = db.showDelveMap,
+            image    = "delves/trovehunters-bounty-map",
+            onToggle = function(checked)
+                db.showDelveMap = checked
+                LuckyGrabbag.DelveMap:ApplySetting()
+            end,
+        })
 
-    panel:Slider({
-        label    = "Minimum Delve Level",
-        key      = "DelveMapMinLevel",
-        min      = 1,
-        max      = 11,
-        value    = db.delveMapMinLevel,
-        indent   = 20,
-        onChanged = function(val)
-            db.delveMapMinLevel = val
-            LuckyGrabbag.DelveMap:ApplySetting()
-        end,
-    })
+        g:Slider({
+            label    = "Minimum Delve Level",
+            key      = "DelveMapMinLevel",
+            desc     = "Only show the Bounty Map button in delves at or above this tier.",
+            min      = 1,
+            max      = 11,
+            value    = db.delveMapMinLevel,
+            parent   = "Trovehunter's Bounty Map",
+            onChanged = function(val)
+                db.delveMapMinLevel = val
+                LuckyGrabbag.DelveMap:ApplySetting()
+            end,
+        })
+    end
 
     ---------------------------------------------------------------------------
     -- Combat Prep
     ---------------------------------------------------------------------------
-    panel:Section("Combat Prep")
+    do
+        local g = panel:Group("Combat Prep")
 
-    panel:Toggle({
-        label    = "Combat Prep Window",
-        desc     = "Shows a floating window with pull timer and ready check buttons.",
-        tooltip  = "Displays a small window when you're out of combat in a raid or Mythic+ dungeon. Right-click and drag to reposition.",
-        checked  = db.showCombatPrep,
-        onToggle = function(checked)
-            db.showCombatPrep = checked
-            LuckyGrabbag.CombatPrep:ApplySetting()
-        end,
-    })
+        g:Toggle({
+            label    = "Combat Prep Window",
+            desc     = "Floating window with pull timer and ready check buttons, shown when you're out of combat in a raid or Mythic+ dungeon. Right-click and drag to reposition.",
+            checked  = db.showCombatPrep,
+            image    = "combat-prep/combat-prep-window",
+            onToggle = function(checked)
+                db.showCombatPrep = checked
+                LuckyGrabbag.CombatPrep:ApplySetting()
+            end,
+        })
 
-    panel:Toggle({
-        label    = "Ready Check Button",
-        desc     = "Show the ready check button on the combat prep window.",
-        checked  = db.combatPrepReadyCheck,
-        indent   = 20,
-        onToggle = function(checked)
-            db.combatPrepReadyCheck = checked
-            LuckyGrabbag.CombatPrep:ApplySetting()
-        end,
-    })
+        g:Toggle({
+            label    = "Ready Check Button",
+            desc     = "Show the ready check button on the combat prep window.",
+            checked  = db.combatPrepReadyCheck,
+            parent   = "Combat Prep Window",
+            onToggle = function(checked)
+                db.combatPrepReadyCheck = checked
+                LuckyGrabbag.CombatPrep:ApplySetting()
+            end,
+        })
 
-    panel:Slider({
-        label    = "Pull Timer (Mythic+)",
-        key      = "CombatPrepTimerMythic",
-        min      = 3,
-        max      = 30,
-        value    = db.combatPrepTimerMythic,
-        suffix   = "s",
-        indent   = 20,
-        onChanged = function(val)
-            db.combatPrepTimerMythic = val
-            LuckyGrabbag.CombatPrep:ApplySetting()
-        end,
-    })
+        g:Slider({
+            label    = "Pull Timer (Mythic+)",
+            key      = "CombatPrepTimerMythic",
+            desc     = "Countdown duration for the pull timer button when you're in a Mythic+ dungeon.",
+            min      = 3,
+            max      = 30,
+            value    = db.combatPrepTimerMythic,
+            suffix   = "s",
+            parent   = "Combat Prep Window",
+            onChanged = function(val)
+                db.combatPrepTimerMythic = val
+                LuckyGrabbag.CombatPrep:ApplySetting()
+            end,
+        })
 
-    panel:Slider({
-        label    = "Pull Timer (Raid)",
-        key      = "CombatPrepTimerRaid",
-        min      = 3,
-        max      = 30,
-        value    = db.combatPrepTimerRaid,
-        suffix   = "s",
-        indent   = 20,
-        onChanged = function(val)
-            db.combatPrepTimerRaid = val
-            LuckyGrabbag.CombatPrep:ApplySetting()
-        end,
-    })
+        g:Slider({
+            label    = "Pull Timer (Raid)",
+            key      = "CombatPrepTimerRaid",
+            desc     = "Countdown duration for the pull timer button when you're in a raid.",
+            min      = 3,
+            max      = 30,
+            value    = db.combatPrepTimerRaid,
+            suffix   = "s",
+            parent   = "Combat Prep Window",
+            onChanged = function(val)
+                db.combatPrepTimerRaid = val
+                LuckyGrabbag.CombatPrep:ApplySetting()
+            end,
+        })
 
-    panel:Slider({
-        label    = "Break Timer Duration",
-        key      = "CombatPrepBreakTimer",
-        min      = 1,
-        max      = 15,
-        value    = db.combatPrepBreakTimer,
-        suffix   = "m",
-        indent   = 20,
-        onChanged = function(val)
-            db.combatPrepBreakTimer = val
-            LuckyGrabbag.CombatPrep:ApplySetting()
-        end,
-    })
+        g:Slider({
+            label    = "Break Timer Duration",
+            key      = "CombatPrepBreakTimer",
+            desc     = "Default duration for the break timer button on the combat prep window.",
+            min      = 1,
+            max      = 15,
+            value    = db.combatPrepBreakTimer,
+            suffix   = "m",
+            parent   = "Combat Prep Window",
+            onChanged = function(val)
+                db.combatPrepBreakTimer = val
+                LuckyGrabbag.CombatPrep:ApplySetting()
+            end,
+        })
+    end
 
     ---------------------------------------------------------------------------
     -- Rotation Glow
     ---------------------------------------------------------------------------
-    panel:Section("Rotation Glow")
+    do
+        local g = panel:Group("Rotation Glow")
 
-    panel:Toggle({
-        label    = "Rotation Glow",
-        desc     = "Animates the suggested next-cast spell on the Essential Cooldown Viewer.",
-        tooltip  = "Uses Blizzard's assisted combat data to highlight the icon matching the suggested next cast. Requires the Essential Cooldown Viewer to be enabled in Edit Mode.",
-        checked  = db.showRotationGlow,
-        onToggle = function(checked)
-            db.showRotationGlow = checked
-            LuckyGrabbag.RotationGlow:ApplySetting()
-        end,
-    })
+        g:Toggle({
+            label    = "Rotation Glow",
+            desc     = "Animates the suggested next-cast spell on the Essential Cooldown Viewer. Requires the Essential Cooldown Viewer to be enabled in Edit Mode.",
+            checked  = db.showRotationGlow,
+            image    = "rotation-glow/rotation-glow",
+            onToggle = function(checked)
+                db.showRotationGlow = checked
+                LuckyGrabbag.RotationGlow:ApplySetting()
+            end,
+        })
+    end
 end
