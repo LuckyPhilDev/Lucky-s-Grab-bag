@@ -171,6 +171,12 @@ local function ProcessQueue(queue, index)
     end)
 end
 
+local function CharKeeps(set, charKey)
+    if type(set) ~= "table" then return false end
+    if set[Data.ALL_SENTINEL] then return true end
+    return set[charKey] == true
+end
+
 local function DepositUnmatchedReagents()
     if not db.reagentMainsEnabled then return end
 
@@ -182,11 +188,8 @@ local function DepositUnmatchedReagents()
     for itemID, count in pairs(inventory) do
         local cat = Data:Classify(itemID)
         if cat then
-            local mainChar = mains[cat]
-            local allKeep  = (mainChar == Data.ALL_SENTINEL)
-            if not allKeep and (mainChar == nil or mainChar ~= charKey) then
-                DevLog(("Queueing %d of item %d (cat=%s, main=%s)"):format(
-                    count, itemID, cat, tostring(mainChar)))
+            if not CharKeeps(mains[cat], charKey) then
+                DevLog(("Queueing %d of item %d (cat=%s)"):format(count, itemID, cat))
                 table.insert(queue, { itemID = itemID, amount = count })
             end
         end
@@ -209,8 +212,8 @@ local function ImportFromStockist()
     if type(WarbandStockistDB.reagentMains) == "table" then
         db.reagentMains = db.reagentMains or {}
         for cat, val in pairs(WarbandStockistDB.reagentMains) do
-            if db.reagentMains[cat] == nil then
-                db.reagentMains[cat] = val
+            if db.reagentMains[cat] == nil and type(val) == "string" then
+                db.reagentMains[cat] = { [val] = true }
             end
         end
     end
@@ -307,7 +310,7 @@ local function BuildPopup()
     desc:SetPoint("TOPLEFT", 14, -14)
     desc:SetPoint("TOPRIGHT", -14, -14)
     desc:SetJustifyH("LEFT")
-    desc:SetText("Choose which character keeps each reagent category. When the warband bank is opened, this character deposits reagents that belong to someone else.")
+    desc:SetText("Pick which characters keep each category. Anyone not listed deposits those reagents on opening the warband bank.")
     desc:SetWordWrap(true)
     desc:SetHeight(34)
 
@@ -399,10 +402,34 @@ local function BuildRow(parent, catKey, catDef, yOffset, alt)
     return row
 end
 
-local function DropdownDisplay(val)
-    if val == nil then return "None" end
-    if val == Data.ALL_SENTINEL then return "All" end
-    return LuckyRoster:FormatName(val) or val
+local function ShortName(charKey)
+    return charKey:match("^(.-)%-") or charKey
+end
+
+local function DropdownDisplay(set)
+    if type(set) ~= "table" then return "None" end
+    if set[Data.ALL_SENTINEL] then return "All" end
+    local names = {}
+    for ck in pairs(set) do table.insert(names, ShortName(ck)) end
+    if #names == 0 then return "None" end
+    table.sort(names)
+    if #names > 3 then
+        return ("%d characters"):format(#names)
+    end
+    return table.concat(names, ", ")
+end
+
+local function GetOrCreateSet(catKey)
+    db.reagentMains[catKey] = db.reagentMains[catKey] or {}
+    if type(db.reagentMains[catKey]) ~= "table" then
+        db.reagentMains[catKey] = {}
+    end
+    return db.reagentMains[catKey]
+end
+
+local function SetEmpty(set)
+    if type(set) ~= "table" then return true end
+    return next(set) == nil
 end
 
 local function RefreshRow(row, suggestions)
@@ -411,30 +438,42 @@ local function RefreshRow(row, suggestions)
     local current = mains[catKey]
 
     UIDropDownMenu_Initialize(row.dropdown, function(_, level)
+        local set      = type(current) == "table" and current or nil
+        local hasAll   = set and set[Data.ALL_SENTINEL] or false
+        local isEmpty  = SetEmpty(set)
+
         local none = UIDropDownMenu_CreateInfo()
-        none.text    = "None"
-        none.checked = (current == nil)
-        none.func    = function()
+        none.text                  = "None"
+        none.checked               = isEmpty
+        none.keepShownOnClick      = false
+        none.notCheckable          = false
+        none.func                  = function()
             db.reagentMains[catKey] = nil
             Feature:RefreshPopup()
         end
         UIDropDownMenu_AddButton(none, level)
 
         local all = UIDropDownMenu_CreateInfo()
-        all.text    = "All (everyone keeps)"
-        all.checked = (current == Data.ALL_SENTINEL)
-        all.func    = function()
-            db.reagentMains[catKey] = Data.ALL_SENTINEL
+        all.text                   = "All (everyone keeps)"
+        all.checked                = hasAll
+        all.keepShownOnClick       = false
+        all.func                   = function()
+            db.reagentMains[catKey] = { [Data.ALL_SENTINEL] = true }
             Feature:RefreshPopup()
         end
         UIDropDownMenu_AddButton(all, level)
 
         for _, ck in ipairs(LuckyRoster:GetKeys()) do
             local info = UIDropDownMenu_CreateInfo()
-            info.text    = LuckyRoster:FormatName(ck)
-            info.checked = (current == ck)
-            info.func    = function()
-                db.reagentMains[catKey] = ck
+            info.text             = LuckyRoster:FormatName(ck)
+            info.checked          = set and set[ck] == true or false
+            info.keepShownOnClick = true
+            info.isNotRadio       = true
+            info.func             = function(_, _, _, checked)
+                local s = GetOrCreateSet(catKey)
+                s[Data.ALL_SENTINEL] = nil  -- selecting individuals clears "All"
+                s[ck] = checked or nil
+                if SetEmpty(s) then db.reagentMains[catKey] = nil end
                 Feature:RefreshPopup()
             end
             UIDropDownMenu_AddButton(info, level)
@@ -500,6 +539,13 @@ end
 function Feature:Init(database)
     db = database
     db.reagentMains = db.reagentMains or {}
+
+    -- Migrate legacy single-value entries → multi-select set table.
+    for cat, val in pairs(db.reagentMains) do
+        if type(val) == "string" then
+            db.reagentMains[cat] = { [val] = true }
+        end
+    end
 
     ImportFromStockist()
 
