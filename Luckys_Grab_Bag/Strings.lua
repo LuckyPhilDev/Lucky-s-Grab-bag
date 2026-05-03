@@ -90,8 +90,15 @@ LuckyGrabbag.Strings = {
             delves       = "Delves",
         },
         sections = {
-            automation = "Automation",
-            purchasing = "Purchasing",
+            automation  = "Automation",
+            purchasing  = "Purchasing",
+            versionInfo = "Version Info",
+        },
+        grabbagVersion = {
+            label = "Grab-bag",
+        },
+        luckyUtilsVersion = {
+            label = "Lucky's Utils",
         },
         devMode = {
             label = "Dev Mode",
