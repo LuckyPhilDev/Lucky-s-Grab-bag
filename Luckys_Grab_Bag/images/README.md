@@ -60,7 +60,13 @@ Examples:
 
 | Group | Setting | File | Status |
 |---|---|---|---|
+| Vendors | Confirm Purchase | `vendors/confirm-purchase.tga` | _done_ |
+| Vendors | Confirm Purchase Overlay | `vendors/confirm-purchase-overlay.tga` | _done_ |
+| Auction House | CraftSim Quickbuy | `auction-house/craftsim-quickbuy.tga` | _done_ |
+| Crafting | Cooking Buttons | `crafting/cooking-buttons.tga` | _done_ |
 | Inventory | Use Items Popup | `inventory/use-items-popup.tga` | _done_ |
 | Inventory | Only in Cities | `inventory/use-items-popup.tga` (shared) | _done_ |
+| Combat | Combat Prep Window | `combat/combat-prep-window.tga` | _done_ |
+| Combat | Rotation Glow | `combat/rotation-glow.tga` | _done_ |
 
 Add rows here as screenshots are captured.

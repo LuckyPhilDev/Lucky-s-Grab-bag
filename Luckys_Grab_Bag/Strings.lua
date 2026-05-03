@@ -110,7 +110,7 @@ LuckyGrabbag.Strings = {
             desc  = "Pays from the guild bank when allowed, otherwise your own gold.",
         },
         confirmPurchase = {
-            label = "Confirm Purchase",
+            label = "Easy Confirm Purchase",
             desc  = "Shows a large tick button on top of the item you clicked when a vendor currency-confirmation popup appears.",
         },
         confirmPurchaseOnSide = {
