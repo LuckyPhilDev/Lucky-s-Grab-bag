@@ -43,12 +43,11 @@ function LuckyGrabbag.Settings:Init(db)
             end,
         })
 
-        g:Section(SS.sections.versionInfo)
-
         local gbVersion    = C_AddOns.GetAddOnMetadata("Luckys_Grab_Bag", "Version") or "?"
         local utilsVersion = C_AddOns.GetAddOnMetadata("Luckys_Utils",    "Version") or "?"
-        g:Label({ label = SS.grabbagVersion.label,    value = "v" .. gbVersion })
-        g:Label({ label = SS.luckyUtilsVersion.label, value = "v" .. utilsVersion })
+        g:BottomSection(SS.sections.versionInfo)
+        g:BottomLabel({ label = SS.grabbagVersion.label,    value = "v" .. gbVersion })
+        g:BottomLabel({ label = SS.luckyUtilsVersion.label, value = "v" .. utilsVersion })
     end
 
     ---------------------------------------------------------------------------
