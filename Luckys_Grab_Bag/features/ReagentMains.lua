@@ -274,13 +274,13 @@ local function BuildPopup()
     local titleL = titleBar:CreateFontString(nil, "OVERLAY")
     titleL:SetFont(R_FONT, 16, "")
     titleL:SetPoint("LEFT", 14, 0)
-    titleL:SetText("Reagent Mains")
+    titleL:SetText(LuckyGrabbag.Strings.reagentMains.title)
     titleL:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
 
     local titleR = titleBar:CreateFontString(nil, "OVERLAY")
     titleR:SetFont(R_FONT, 11, "")
     titleR:SetPoint("RIGHT", -40, 0)
-    titleR:SetText("GRAB-BAG")
+    titleR:SetText(LuckyGrabbag.Strings.reagentMains.subtitle)
     titleR:SetTextColor(R.textFaint[1], R.textFaint[2], R.textFaint[3])
 
     -- Close button
@@ -310,7 +310,7 @@ local function BuildPopup()
     desc:SetPoint("TOPLEFT", 14, -14)
     desc:SetPoint("TOPRIGHT", -14, -14)
     desc:SetJustifyH("LEFT")
-    desc:SetText("Pick which characters keep each category. Anyone not listed deposits those reagents on opening the warband bank.")
+    desc:SetText(LuckyGrabbag.Strings.reagentMains.description)
     desc:SetWordWrap(true)
     desc:SetHeight(34)
 
@@ -318,14 +318,14 @@ local function BuildPopup()
     local detectBtn = CreateFrame("Button", nil, body, "UIPanelButtonTemplate")
     detectBtn:SetSize(150, 22)
     detectBtn:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", 0, -10)
-    detectBtn:SetText("Detect Professions")
+    detectBtn:SetText(LuckyGrabbag.Strings.reagentMains.detectButton)
     detectBtn:SetScript("OnClick", function()
         LuckyRoster:Refresh()
         Feature:RefreshPopup()
     end)
     detectBtn:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:SetText("Re-scan the current character's professions and refresh hints.", 1, 1, 1)
+        GameTooltip:SetText(LuckyGrabbag.Strings.reagentMains.detectTooltip, 1, 1, 1)
         GameTooltip:Show()
     end)
     detectBtn:SetScript("OnLeave", GameTooltip_Hide)
@@ -346,9 +346,10 @@ local function BuildPopup()
         t:SetText(string.upper(text))
         return t
     end
-    makeHeaderText(headerRow, "Category",    10)
-    makeHeaderText(headerRow, "Main",        140)
-    makeHeaderText(headerRow, "Professions", 310)
+    local SR = LuckyGrabbag.Strings.reagentMains
+    makeHeaderText(headerRow, SR.headerCategory,    10)
+    makeHeaderText(headerRow, SR.headerMain,        140)
+    makeHeaderText(headerRow, SR.headerProfessions, 310)
 
     -- Scroll area
     local scroll = CreateFrame("ScrollFrame", nil, body, "UIPanelScrollFrameTemplate")
@@ -383,7 +384,7 @@ local function BuildRow(parent, catKey, catDef, yOffset, alt)
     catLabel:SetPoint("LEFT", row, "LEFT", 10, 0)
     catLabel:SetWidth(120)
     catLabel:SetJustifyH("LEFT")
-    catLabel:SetText(catDef.name)
+    catLabel:SetText(LuckyGrabbag.Strings.reagentCategories[catKey] or catKey)
 
     local hintText = row:CreateFontString(nil, "OVERLAY")
     hintText:SetFont(R_FONT, 11, "")
@@ -407,14 +408,15 @@ local function ShortName(charKey)
 end
 
 local function DropdownDisplay(set)
-    if type(set) ~= "table" then return "None" end
-    if set[Data.ALL_SENTINEL] then return "All" end
+    local SR = LuckyGrabbag.Strings.reagentMains
+    if type(set) ~= "table" then return SR.ddNone end
+    if set[Data.ALL_SENTINEL] then return SR.ddAllShort end
     local names = {}
     for ck in pairs(set) do table.insert(names, ShortName(ck)) end
-    if #names == 0 then return "None" end
+    if #names == 0 then return SR.ddNone end
     table.sort(names)
     if #names > 3 then
-        return ("%d characters"):format(#names)
+        return string.format(SR.ddMultiCharsFmt, #names)
     end
     return table.concat(names, ", ")
 end
@@ -442,8 +444,9 @@ local function RefreshRow(row, suggestions)
         local hasAll   = set and set[Data.ALL_SENTINEL] or false
         local isEmpty  = SetEmpty(set)
 
+        local SR = LuckyGrabbag.Strings.reagentMains
         local none = UIDropDownMenu_CreateInfo()
-        none.text                  = "None"
+        none.text                  = SR.ddNone
         none.checked               = isEmpty
         none.keepShownOnClick      = false
         none.notCheckable          = false
@@ -454,7 +457,7 @@ local function RefreshRow(row, suggestions)
         UIDropDownMenu_AddButton(none, level)
 
         local all = UIDropDownMenu_CreateInfo()
-        all.text                   = "All (everyone keeps)"
+        all.text                   = SR.ddAllOption
         all.checked                = hasAll
         all.keepShownOnClick       = false
         all.func                   = function()
