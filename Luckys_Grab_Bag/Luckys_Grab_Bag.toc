@@ -8,6 +8,8 @@
 ## X-Curse-Project-ID: 1474964
 
 
+Strings.lua
+Defaults.lua
 UIHelpers.lua
 Settings.lua
 features/AutoRepair.lua
