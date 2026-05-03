@@ -1,3 +1,5 @@
+[Join the Discord](https://discord.gg/87HRHcAYP)
+
 **Lucky's Grab-bag** is a growing collection of small quality-of-life features for World of Warcraft — each one independent, toggleable, and out of the way until you need it.
 
 ---
