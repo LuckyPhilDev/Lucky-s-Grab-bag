@@ -1,7 +1,7 @@
 -- Lucky's Grab-bag: Shared utilities and UI helpers
 LuckyGrabbag = LuckyGrabbag or {}
 
-LuckyGrabbag.PREFIX = "|cff00cc00Lucky:|r"
+LuckyGrabbag.PREFIX = LuckyGrabbag.Strings.addon.prefix
 
 --- Dev logging via LuckyLog. Reads db.devMode from the shared namespace.
 local _devLog = LuckyLog:New(LuckyGrabbag.PREFIX, function()

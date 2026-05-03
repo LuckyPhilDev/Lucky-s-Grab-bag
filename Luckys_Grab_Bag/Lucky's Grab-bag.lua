@@ -65,19 +65,21 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
             onClick = function(_, mouseBtn)
                 if mouseBtn == "MiddleButton" then
                     db.devMode = not db.devMode
-                    local state = db.devMode and "ON" or "OFF"
-                    print(LuckyGrabbag.PREFIX .. " Dev mode " .. state)
+                    local S = LuckyGrabbag.Strings
+                    local state = db.devMode and S.minimap.devModeOn or S.minimap.devModeOff
+                    print(LuckyGrabbag.PREFIX .. " " .. S.minimap.devModePrefix .. state)
                 else
                     LuckySettings:Open(LuckyGrabbag.Settings.category)
                 end
             end,
             tooltip = function(tt)
-                tt:AddLine(LuckyUI.WC.goldPrimary .. "Lucky's Grab-bag" .. LuckyUI.WC.reset)
+                local S = LuckyGrabbag.Strings
+                tt:AddLine(LuckyUI.WC.goldPrimary .. S.minimap.tooltipTitle .. LuckyUI.WC.reset)
                 tt:AddLine(" ")
-                tt:AddLine("Left-click: Open settings", 0.91, 0.86, 0.78)
-                tt:AddLine("Right-click: Open settings", 0.91, 0.86, 0.78)
-                tt:AddLine("Middle-click: Toggle dev mode", 0.91, 0.86, 0.78)
-                tt:AddLine("Shift+drag: Move button", 0.54, 0.49, 0.42)
+                tt:AddLine(S.minimap.leftClick, 0.91, 0.86, 0.78)
+                tt:AddLine(S.minimap.rightClick, 0.91, 0.86, 0.78)
+                tt:AddLine(S.minimap.middleClick, 0.91, 0.86, 0.78)
+                tt:AddLine(S.minimap.shiftDrag, 0.54, 0.49, 0.42)
             end,
         })
 
