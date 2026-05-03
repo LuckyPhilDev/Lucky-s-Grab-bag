@@ -134,6 +134,7 @@ A minimap button for quick access to the addon.
 | Command | Action |
 |---|---|
 | `/grabbag` | Open the addon settings panel |
+| `/grabbag-reagent <itemID>` | Diagnose why a reagent is or isn't being auto-deposited |
 | `/combatprep` | Force-show the Combat Prep window (for testing outside group content) |
 
 ---

@@ -1,3 +1,8 @@
+## [1.5.1] - 2026-05-03
+
+### Fixed
+- Reagent Mains now recognizes the new finishing reagents introduced in The War Within (e.g. Apprentice's Scribbles), so they deposit correctly instead of being skipped.
+
 ## [1.5.0] - 2026-05-03
 
 ### Added

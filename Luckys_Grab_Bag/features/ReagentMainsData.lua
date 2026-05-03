@@ -21,7 +21,7 @@ Data.Categories = {
     cooking    = { subclassIDs = { 8 } },
     elemental  = { subclassIDs = { 10 } },
     crafting   = { subclassIDs = { 13, 15 } }, -- materials + optional reagents
-    finishing  = { subclassIDs = { 16 } },
+    finishing  = { subclassIDs = { 16, 19 } }, -- legacy + TWW finishing reagents
     other      = { subclassIDs = { 11, 14 } }, -- misc + inscription
 }
 

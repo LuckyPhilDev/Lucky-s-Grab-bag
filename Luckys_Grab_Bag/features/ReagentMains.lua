@@ -551,6 +551,166 @@ end
 -- Init
 -- ---------------------------------------------------------------------------
 
+-- ---------------------------------------------------------------------------
+-- Diagnostic: /grabbag-reagent <itemID>
+-- ---------------------------------------------------------------------------
+
+local SUBCLASS_NAMES = {
+    [4]  = "Jewelcrafting",
+    [5]  = "Cloth",
+    [6]  = "Leather",
+    [7]  = "Metal & Stone",
+    [8]  = "Cooking",
+    [9]  = "Herb",
+    [10] = "Elemental",
+    [11] = "Other",
+    [12] = "Enchanting",
+    [13] = "Inscription",
+    [14] = "Optional Reagents",
+    [15] = "Finishing Reagents",
+    [16] = "Optional Reagents (new)",
+}
+
+local function CountInBags(itemID)
+    local total = 0
+    local locations = {}
+    for _, bag in ipairs(GetAllPlayerBagIDs()) do
+        local numSlots = C_Container.GetContainerNumSlots(bag) or 0
+        for slot = 1, numSlots do
+            local info = C_Container.GetContainerItemInfo(bag, slot)
+            if info and info.itemID == itemID then
+                total = total + (info.stackCount or 1)
+                table.insert(locations, { bag = bag, slot = slot, count = info.stackCount or 1 })
+            end
+        end
+    end
+    return total, locations
+end
+
+local function ColorYes(b) return b and "|cff40ff40yes|r" or "|cffff4040no|r" end
+
+local function Diagnose(itemIDStr)
+    local itemID = tonumber(itemIDStr)
+    if not itemID then
+        print(LuckyGrabbag.PREFIX .. " Usage: /grabbag-reagent <itemID>")
+        return
+    end
+
+    local prefix = LuckyGrabbag.PREFIX .. " |cffffd100Reagent diagnostic|r"
+    local name, link, _, _, _, itemType, itemSubType, _, _, _, _, classID, subclassID = GetItemInfo(itemID)
+
+    if classID == nil then
+        print(prefix .. ": item " .. itemID .. " not in client cache. Hover the item in your bags then re-run.")
+        return
+    end
+
+    print(prefix .. " for " .. (link or name or ("item:" .. itemID)))
+    print(("  Type: %s / %s  (classID=%s, subclassID=%s%s)"):format(
+        tostring(itemType), tostring(itemSubType), tostring(classID), tostring(subclassID),
+        SUBCLASS_NAMES[subclassID] and (" → " .. SUBCLASS_NAMES[subclassID]) or ""
+    ))
+
+    if classID ~= 7 then
+        print("  |cffff4040Not a Tradegoods item|r (classID 7 required). Will be ignored by reagent deposit.")
+        return
+    end
+
+    -- Classify (bypass cache so result is fresh)
+    local matchedCat
+    for cat, def in pairs(Data.Categories) do
+        for _, sc in ipairs(def.subclassIDs) do
+            if sc == subclassID then matchedCat = cat; break end
+        end
+        if matchedCat then break end
+    end
+
+    if not matchedCat then
+        print(("  |cffff4040No category maps to subclass %s.|r Add %s to ReagentMainsData.Categories to track it."):format(
+            tostring(subclassID), tostring(subclassID)
+        ))
+        return
+    end
+    print(("  Category: |cffffd100%s|r"):format(matchedCat))
+
+    -- Char keeps?
+    local charKey = LuckyRoster and LuckyRoster:GetKey() or "?"
+    local set = (db.reagentMains or {})[matchedCat]
+    local kept = CharKeeps(set, charKey)
+    local setDesc
+    if type(set) ~= "table" then
+        setDesc = "(no main set — every char keeps these)"
+    elseif set[Data.ALL_SENTINEL] then
+        setDesc = "ALL chars"
+    else
+        local keys = {}
+        for ck in pairs(set) do table.insert(keys, ck) end
+        setDesc = #keys > 0 and table.concat(keys, ", ") or "(empty set)"
+    end
+    print(("  Mains for %s: %s"):format(matchedCat, setDesc))
+    print(("  Current char (%s) keeps this category? %s"):format(charKey, ColorYes(kept)))
+    if type(set) ~= "table" then
+        print("  |cffff4040No main configured for this category|r → CharKeeps returns false → would never deposit. Set a main in the popup.")
+    end
+
+    -- Inventory
+    local total, locs = CountInBags(itemID)
+    print(("  In bags: %d (in %d stack%s)"):format(total, #locs, #locs == 1 and "" or "s"))
+    if total == 0 then
+        print("  |cffff4040Nothing to deposit.|r")
+    end
+
+    -- Bank-allowed check per stack
+    if #locs > 0 then
+        local allowedCount, blockedCount = 0, 0
+        for _, l in ipairs(locs) do
+            local loc = ItemLocation:CreateFromBagAndSlot(l.bag, l.slot)
+            local ok = C_Bank.IsItemAllowedInBankType(Enum.BankType.Account, loc)
+            if ok then allowedCount = allowedCount + 1 else blockedCount = blockedCount + 1 end
+        end
+        print(("  Warband-bank allowed: %d stack(s) yes, %d stack(s) no"):format(allowedCount, blockedCount))
+        if blockedCount > 0 then
+            print("  |cffff4040Some/all stacks are not allowed in the warband bank|r (e.g. soulbound). Those will be skipped.")
+        end
+    end
+
+    -- Bank state
+    local bankOpen = (BankFrame and BankFrame:IsShown()) or false
+    print(("  Warband bank open: %s"):format(ColorYes(bankOpen)))
+    if bankOpen then
+        local tabIDs = C_Bank.FetchPurchasedBankTabIDs(Enum.BankType.Account)
+        if type(tabIDs) ~= "table" or #tabIDs == 0 then
+            print("  |cffff4040No purchased warband bank tabs found.|r")
+        else
+            local stackBag, stackSlot = FindStackableBankSlot(itemID)
+            local emptyBag, emptySlot = FindEmptyBankSlot()
+            print(("  Stackable bank slot found: %s%s"):format(
+                ColorYes(stackBag ~= nil),
+                stackBag and (" (bag " .. stackBag .. ", slot " .. stackSlot .. ")") or ""
+            ))
+            print(("  Empty bank slot found: %s%s"):format(
+                ColorYes(emptyBag ~= nil),
+                emptyBag and (" (bag " .. emptyBag .. ", slot " .. emptySlot .. ")") or ""
+            ))
+            if not stackBag and not emptyBag then
+                print("  |cffff4040Bank is full and has no stackable slot for this item.|r")
+            end
+        end
+    else
+        print("  (Open the warband bank to test slot finding.)")
+    end
+
+    -- Feature toggle
+    print(("  Feature enabled (db.reagentMainsEnabled): %s"):format(ColorYes(db.reagentMainsEnabled and true or false)))
+
+    -- Final verdict
+    local wouldDeposit = (not kept) and total > 0 and (db.reagentMainsEnabled == true)
+    print(("  → Would auto-deposit on bank open? %s"):format(ColorYes(wouldDeposit)))
+end
+
+SLASH_LGBREAGENT1 = "/grabbag-reagent"
+SLASH_LGBREAGENT2 = "/gbreagent"
+SlashCmdList["LGBREAGENT"] = Diagnose
+
 function Feature:Init(database)
     db = database
     db.reagentMains = db.reagentMains or {}
