@@ -39,7 +39,7 @@ local function CreateButton()
         parent  = container,
         name    = "LGB_ConfirmPurchaseButton",
         texture = TICK_ICON,
-        tooltip = function() GameTooltip:SetText("Confirm Purchase") end,
+        tooltip = function() GameTooltip:SetText(LuckyGrabbag.Strings.confirmPurchase.tooltip) end,
     })
     button:SetFrameStrata("TOOLTIP")
     button:SetPushedTexture(TICK_ICON)
@@ -66,7 +66,7 @@ end
 
 local function AnchorButton()
     button:ClearAllPoints()
-    if db.confirmPurchaseOverlay and lastClickedMerchantButton and lastClickedMerchantButton:IsVisible() then
+    if not db.confirmPurchaseOnSide and lastClickedMerchantButton and lastClickedMerchantButton:IsVisible() then
         button:SetPoint("CENTER", lastClickedMerchantButton, "CENTER", 0, 0)
         DevLog("Overlay anchor on " .. lastClickedMerchantButton:GetName())
     else

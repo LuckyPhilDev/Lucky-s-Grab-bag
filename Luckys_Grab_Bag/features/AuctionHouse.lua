@@ -33,7 +33,8 @@ local function OnQuickbuyClick()
     if handler then
         handler("Quickbuy")
     else
-        print("|cffff0000Lucky's Grab-bag:|r CraftSim is not loaded.")
+        local S = LuckyGrabbag.Strings
+        print(S.addon.errorPrefix .. " " .. S.auctionHouse.craftsimNotLoaded)
     end
 end
 
@@ -44,7 +45,7 @@ local function CreateQuickbuyButton()
     quickbuyButton = LuckyGrabbag.CreateIconButton({
         parent  = ahContainer,
         texture = "Interface\\Icons\\INV_Misc_Coin_01",
-        tooltip = function() GameTooltip:SetText("CraftSim Quickbuy") end,
+        tooltip = function() GameTooltip:SetText(LuckyGrabbag.Strings.auctionHouse.quickbuyTooltip) end,
     })
     quickbuyButton:SetPoint("TOPLEFT", ahContainer, "TOPLEFT", 0, 0)
     quickbuyButton:SetPushedTexture("Interface\\Icons\\INV_Misc_Coin_01")
@@ -60,7 +61,8 @@ local function OnTestflightClick()
     if TestFlight and TestFlight.GUI and TestFlight.GUI.Auctionator then ---@diagnostic disable-line: undefined-global
         TestFlight.GUI.Auctionator:BuyButtonOnClick() ---@diagnostic disable-line: undefined-global
     else
-        print("|cffff0000Lucky's Grab-bag:|r TestFlight is not loaded.")
+        local S = LuckyGrabbag.Strings
+        print(S.addon.errorPrefix .. " " .. S.auctionHouse.testflightNotLoaded)
     end
 end
 
@@ -71,7 +73,7 @@ local function CreateTestflightButton()
     testflightButton = LuckyGrabbag.CreateIconButton({
         parent  = ahContainer,
         texture = "Interface\\Icons\\INV_Misc_Coin_18",
-        tooltip = function() GameTooltip:SetText("TestFlight Buy Next") end,
+        tooltip = function() GameTooltip:SetText(LuckyGrabbag.Strings.auctionHouse.testflightTooltip) end,
     })
     testflightButton:SetPushedTexture("Interface\\Icons\\INV_Misc_Coin_18")
     testflightButton:GetPushedTexture():SetVertexColor(0.8, 0.8, 0.8, 1)

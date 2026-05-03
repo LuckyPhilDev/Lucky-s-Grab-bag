@@ -47,12 +47,13 @@ end
 
 local function UpdateButtonTexts()
     if not prepFrame then return end
+    local S = LuckyGrabbag.Strings.combatPrep
     if prepFrame.pullTimerBtn then
-        prepFrame.pullTimerBtn:SetText("Pull " .. GetActivePullTimer() .. "s")
+        prepFrame.pullTimerBtn:SetText(string.format(S.pullTimerFmt, GetActivePullTimer()))
     end
     if prepFrame.breakBtn then
         local mins = db.combatPrepBreakTimer or 5
-        prepFrame.breakBtn:SetText("Break " .. mins .. "m")
+        prepFrame.breakBtn:SetText(string.format(S.breakTimerFmt, mins))
     end
 end
 
@@ -211,7 +212,7 @@ local function CreatePrepFrame()
     -- Ready Check button (secondary style)
     local rcBtn = CreateStyledButton(f, { width = 100, height = 28, variant = "secondary" })
     rcBtn:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -10)
-    rcBtn:SetText("Ready Check")
+    rcBtn:SetText(LuckyGrabbag.Strings.combatPrep.readyCheck)
     rcBtn:SetScript("OnClick", function()
         DoReadyCheck()
         DevLog("Ready check initiated")
@@ -220,7 +221,7 @@ local function CreatePrepFrame()
 
     -- Pull Timer button (primary gold style)
     local ptBtn = CreateStyledButton(f, { width = 73, height = 28, variant = "primary" })
-    ptBtn:SetText("Pull " .. GetActivePullTimer() .. "s")
+    ptBtn:SetText(string.format(LuckyGrabbag.Strings.combatPrep.pullTimerFmt, GetActivePullTimer()))
     ptBtn:SetScript("OnClick", function()
         local seconds = GetActivePullTimer()
         C_PartyInfo.DoCountdown(seconds)
@@ -241,7 +242,7 @@ local function CreatePrepFrame()
     local cancelLabel = cancelBtn:CreateFontString(nil, "OVERLAY")
     cancelLabel:SetFont("Fonts\\FRIZQT__.TTF", 12, "")
     cancelLabel:SetPoint("CENTER", 0, 0)
-    cancelLabel:SetText("X")
+    cancelLabel:SetText(LuckyGrabbag.Strings.combatPrep.cancelLabel)
     cancelLabel:SetTextColor(C.danger[1], C.danger[2], C.danger[3])
     cancelBtn:SetScript("OnEnter", function()
         cancelBtn:SetBackdropColor(C.danger[1], C.danger[2], C.danger[3], 0.4)
@@ -269,7 +270,7 @@ local function CreatePrepFrame()
     local breakMins = db.combatPrepBreakTimer or 5
     local brBtn = CreateStyledButton(f, { width = 100, height = 28, variant = "secondary" })
     brBtn:SetPoint("TOP", ptBtn, "BOTTOM", 0, -4)
-    brBtn:SetText("Break " .. breakMins .. "m")
+    brBtn:SetText(string.format(LuckyGrabbag.Strings.combatPrep.breakTimerFmt, breakMins))
     brBtn:SetScript("OnClick", function()
         local mins = db.combatPrepBreakTimer or 5
         local seconds = mins * 60

@@ -191,7 +191,7 @@ local function FindAndWithdrawTreatise(itemID, profName, onDone)
                         end
                         DevLog("    Placing into bag=" .. destBag .. " slot=" .. destSlot)
                         C_Container.PickupContainerItem(destBag, destSlot)
-                        print(LuckyGrabbag.PREFIX .. " Withdrawn " .. profName .. " treatise.")
+                        print(LuckyGrabbag.PREFIX .. " " .. string.format(LuckyGrabbag.Strings.treatise.withdrawn, profName))
                         -- Wait for bag state to settle before allowing the next withdrawal to
                         -- scan the warband tab, otherwise the tab data can be stale.
                         WaitForBagUpdate(done)

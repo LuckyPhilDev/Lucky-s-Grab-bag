@@ -33,8 +33,9 @@ local function TryRepair()
     local useGuild = db.autoRepairUseGuildFunds and CanGuildBankRepair()
     RepairAllItems(useGuild)
 
-    local source = useGuild and "guild funds" or "personal funds"
-    print(LuckyGrabbag.PREFIX .. " Repaired all items (" .. FormatCost(cost) .. " from " .. source .. ")")
+    local S = LuckyGrabbag.Strings.autoRepair
+    local source = useGuild and S.guildFunds or S.personalFunds
+    print(LuckyGrabbag.PREFIX .. " " .. string.format(S.repaired, FormatCost(cost), source))
     DevLog("Repaired for " .. FormatCost(cost) .. " from " .. source)
 end
 
