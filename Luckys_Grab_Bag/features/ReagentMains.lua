@@ -407,17 +407,29 @@ local function ShortName(charKey)
     return charKey:match("^(.-)%-") or charKey
 end
 
+local function ColoredShortName(charKey)
+    local short = ShortName(charKey)
+    local class = LuckyRoster:GetClass(charKey)
+    if class and RAID_CLASS_COLORS and RAID_CLASS_COLORS[class] then
+        local c = RAID_CLASS_COLORS[class]
+        return ("|cff%02x%02x%02x%s|r"):format(c.r * 255, c.g * 255, c.b * 255, short)
+    end
+    return short
+end
+
 local function DropdownDisplay(set)
     local SR = LuckyGrabbag.Strings.reagentMains
     if type(set) ~= "table" then return SR.ddNone end
     if set[Data.ALL_SENTINEL] then return SR.ddAllShort end
-    local names = {}
-    for ck in pairs(set) do table.insert(names, ShortName(ck)) end
-    if #names == 0 then return SR.ddNone end
-    table.sort(names)
-    if #names > 3 then
-        return string.format(SR.ddMultiCharsFmt, #names)
+    local keys = {}
+    for ck in pairs(set) do table.insert(keys, ck) end
+    if #keys == 0 then return SR.ddNone end
+    table.sort(keys)
+    if #keys > 3 then
+        return string.format(SR.ddMultiCharsFmt, #keys)
     end
+    local names = {}
+    for _, ck in ipairs(keys) do table.insert(names, ColoredShortName(ck)) end
     return table.concat(names, ", ")
 end
 
