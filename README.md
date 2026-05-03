@@ -34,11 +34,11 @@ Displays a floating bar of buttons when you have consumable profession items in 
 - Can be toggled in the addon settings.
 
 ### Reagent Mains
-Assigns each reagent category to a designated character. When you open the warband bank on a different character, reagents in those categories are deposited automatically — useful for keeping all your Herbs on the herbalist, all your Cloth on the tailor, and so on.
+Assigns each reagent category to one or more designated characters. When you open the warband bank on a character not in the list, reagents in those categories are deposited automatically — useful for keeping all your Herbs on the herbalist, all your Cloth on the tailor, and so on.
 
 - Covers every tradegoods category — Herbs, Cloth, Gems, Leather, Metal & Stone, Cooking, Enchanting, Inscription, and more.
-- Each category can be set to a specific main, **All** (everyone keeps these), or **None** (nobody auto-deposits).
-- Suggests a likely main per category based on each character's professions.
+- Pick any combination of characters per category, or set **All** (everyone keeps these) or **None** (nobody auto-deposits).
+- Suggests likely mains per category based on each character's professions.
 - Opens via a **Configure mains…** button next to the toggle in settings.
 - Existing assignments from Warband Stockist are imported automatically the first time you log in.
 - Off by default; can be toggled in the addon settings.
@@ -159,7 +159,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
   - *Only in Cities* — Restricts the Use Items popup to cities and inns.
 - *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.
 - *Reagent Mains* — When the warband bank opens, deposits reagents whose category is assigned to a different character.
-  - *Configure mains…* — Opens the assignment window where each reagent category can be linked to a specific character, "All" (everyone keeps), or "None".
+  - *Configure mains…* — Opens the assignment window where each reagent category can be linked to one or more characters, "All" (everyone keeps), or "None".
 
 **Vendors**
 - *Confirm Purchase Button* — Shows a large tick button when a vendor currency purchase popup appears; clicking it confirms the buy.
