@@ -3,29 +3,6 @@ LuckyGrabbag = LuckyGrabbag or {}
 
 local ADDON_NAME = "Luckys_Grab_Bag"
 
-local DB_DEFAULTS = {
-    devMode                  = false,
-    autoRepair               = true,
-    autoRepairUseGuildFunds  = true,
-    showTreatise             = false,
-    reagentMainsEnabled  = false,
-    reagentMains         = {},
-    reagentMainsImported = false,
-    showCookingButtons   = true,
-    showUseItems         = true,
-    useItemsCityOnly     = false,
-    showDelveMap         = true,
-    delveMapMinLevel     = 8,
-    showCombatPrep       = false,
-    combatPrepReadyCheck = false,
-    combatPrepTimerMythic = 10,
-    combatPrepTimerRaid   = 12,
-    combatPrepBreakTimer = 5,
-    showRotationGlow     = false,
-    showConfirmPurchase  = true,
-    confirmPurchaseOverlay = true,
-}
-
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
@@ -40,7 +17,15 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
             db.combatPrepTimer = nil
         end
 
-        for key, default in pairs(DB_DEFAULTS) do
+        -- Migrate confirmPurchaseOverlay (overlay-on-item) → confirmPurchaseOnSide (inverted).
+        if db.confirmPurchaseOverlay ~= nil then
+            if db.confirmPurchaseOnSide == nil then
+                db.confirmPurchaseOnSide = not db.confirmPurchaseOverlay
+            end
+            db.confirmPurchaseOverlay = nil
+        end
+
+        for key, default in pairs(LuckyGrabbag.DB_DEFAULTS) do
             if db[key] == nil then
                 db[key] = default
             end
