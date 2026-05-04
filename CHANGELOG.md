@@ -1,3 +1,12 @@
+## [1.5.2] - 2026-05-04
+
+### Added
+- **Kick Macro Generator** — A new setting button that automatically generates a class-appropriate interrupt macro. The macro interrupts your focus target if you have one, or the nearest enemy if you don't.
+- **Reagent Mains** — Added an "Only current expansion" option so you can choose to keep older expansion materials in your bags when auto-depositing.
+
+### Changed
+- Renamed the "Thalassian Treatise" setting and feature to "Withdraw Treatise from Warbank".
+
 ## [1.5.1] - 2026-05-03
 
 ### Fixed
