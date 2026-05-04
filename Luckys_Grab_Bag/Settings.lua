@@ -167,6 +167,14 @@ function LuckyGrabbag.Settings:Init(db)
             onToggle = function(checked) db.reagentMainsEnabled = checked end,
         })
 
+        g:Toggle({
+            label    = SS.reagentMainsCurrentExpOnly.label,
+            desc     = SS.reagentMainsCurrentExpOnly.desc,
+            checked  = db.reagentMainsCurrentExpOnly,
+            parent   = SS.reagentMains.label,
+            onToggle = function(checked) db.reagentMainsCurrentExpOnly = checked end,
+        })
+
         g:Button({
             label    = SS.configureMains.label,
             desc     = SS.configureMains.desc,

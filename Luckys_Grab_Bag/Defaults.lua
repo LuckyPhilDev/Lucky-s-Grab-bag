@@ -8,6 +8,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     autoRepairUseGuildFunds  = true,
     showTreatise             = false,
     reagentMainsEnabled      = false,
+    reagentMainsCurrentExpOnly = false,
     reagentMains             = {},
     reagentMainsImported     = false,
     showCookingButtons       = true,

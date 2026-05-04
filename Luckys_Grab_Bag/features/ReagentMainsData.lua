@@ -55,6 +55,9 @@ Data.ALL_SENTINEL = "__all__"
 
 -- Cache to avoid repeated GetItemInfo calls for the same item.
 local _classifyCache = {}
+local _expansionCache = {}
+
+local _currentExpID = GetExpansionLevel and GetExpansionLevel() or nil
 
 --- Returns the category key (e.g. "herb") for the given item ID, false if the item
 --- is not a tracked reagent category, or nil if item data is not yet in client cache.
@@ -84,6 +87,21 @@ end
 
 function Data:ClearCache()
     wipe(_classifyCache)
+    wipe(_expansionCache)
+end
+
+--- Returns true if the item is from the current expansion, false if not, nil if not in cache.
+--- Returns true when expansion cannot be determined (conservative: don't filter).
+function Data:IsCurrentExpansion(itemID)
+    if not _currentExpID then return true end
+    if _expansionCache[itemID] ~= nil then return _expansionCache[itemID] end
+
+    local expID = select(15, GetItemInfo(itemID))
+    if expID == nil then return nil end  -- not in cache; caller must skip
+
+    local result = (expID == _currentExpID)
+    _expansionCache[itemID] = result
+    return result
 end
 
 --- For each category, returns a single suggested character key when exactly one

@@ -188,7 +188,12 @@ local function DepositUnmatchedReagents()
     for itemID, count in pairs(inventory) do
         local cat = Data:Classify(itemID)
         if cat then
-            if not CharKeeps(mains[cat], charKey) then
+            local expOk = true
+            if db.reagentMainsCurrentExpOnly then
+                local isCurrent = Data:IsCurrentExpansion(itemID)
+                expOk = (isCurrent ~= false)  -- nil (unknown) passes through
+            end
+            if expOk and not CharKeeps(mains[cat], charKey) then
                 DevLog(("Queueing %d of item %d (cat=%s)"):format(count, itemID, cat))
                 table.insert(queue, { itemID = itemID, amount = count })
             end
@@ -605,9 +610,15 @@ local function Diagnose(itemIDStr)
     end
 
     print(prefix .. " for " .. (link or name or ("item:" .. itemID)))
+    local expID = select(15, GetItemInfo(itemID))
     print(("  Type: %s / %s  (classID=%s, subclassID=%s%s)"):format(
         tostring(itemType), tostring(itemSubType), tostring(classID), tostring(subclassID),
         SUBCLASS_NAMES[subclassID] and (" → " .. SUBCLASS_NAMES[subclassID]) or ""
+    ))
+    print(("  Expansion ID: %s  (current: %s)  Current-exp filter: %s"):format(
+        tostring(expID),
+        tostring(GetExpansionLevel and GetExpansionLevel() or "?"),
+        db.reagentMainsCurrentExpOnly and ColorYes(expID == (GetExpansionLevel and GetExpansionLevel())) or "off"
     ))
 
     if classID ~= 7 then
@@ -703,7 +714,9 @@ local function Diagnose(itemIDStr)
     print(("  Feature enabled (db.reagentMainsEnabled): %s"):format(ColorYes(db.reagentMainsEnabled and true or false)))
 
     -- Final verdict
-    local wouldDeposit = (not kept) and total > 0 and (db.reagentMainsEnabled == true)
+    local expFilter = db.reagentMainsCurrentExpOnly
+        and (expID ~= (GetExpansionLevel and GetExpansionLevel())) or false
+    local wouldDeposit = (not kept) and total > 0 and (db.reagentMainsEnabled == true) and not expFilter
     print(("  → Would auto-deposit on bank open? %s"):format(ColorYes(wouldDeposit)))
 end
 

@@ -144,6 +144,10 @@ LuckyGrabbag.Strings = {
             label = "Reagent Mains",
             desc  = "Deposits reagents into the warband bank that belong to a different character.",
         },
+        reagentMainsCurrentExpOnly = {
+            label = "Only current expansion",
+            desc  = "Only deposit reagents from the current expansion. Older expansion materials stay in your bags.",
+        },
         configureMains = {
             label = "Configure mains…",
             desc  = "Assign reagent categories to characters.",
