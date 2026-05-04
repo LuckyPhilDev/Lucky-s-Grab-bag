@@ -49,6 +49,13 @@ LuckyGrabbag.Strings = {
         cancelLabel  = "X",
     },
 
+    kickMacro = {
+        created      = "Created 'Kick' macro using %s.",
+        alreadyExists = "A macro named 'Kick' already exists.",
+        slotsFull    = "Your character macro slots are full.",
+        noInterrupt  = "No interrupt available for your current spec.",
+    },
+
     reagentMains = {
         title             = "Reagent Mains",
         subtitle          = "GRAB-BAG",
@@ -182,6 +189,10 @@ LuckyGrabbag.Strings = {
             label  = "Break Timer Duration",
             desc   = "Default break length.",
             suffix = "m",
+        },
+        kickMacro = {
+            label = "Create Kick Macro",
+            desc  = "Creates a 'Kick' macro using your class interrupt.\n\nIf you have a focus set, it interrupts that target — letting you kick a caster without switching away from your main target.\n\nWith no focus, it grabs the nearest enemy, kicks them, then clears focus so the next press does the same.",
         },
         rotationGlow = {
             label = "Rotation Glow",

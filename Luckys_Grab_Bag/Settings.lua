@@ -300,6 +300,12 @@ function LuckyGrabbag.Settings:Init(db)
                 LuckyGrabbag.RotationGlow:ApplySetting()
             end,
         })
+
+        g:Button({
+            label   = SS.kickMacro.label,
+            desc    = SS.kickMacro.desc,
+            onClick = function() LuckyGrabbag.KickMacro:Create() end,
+        })
     end
 
     ---------------------------------------------------------------------------
