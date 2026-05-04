@@ -55,7 +55,6 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.CombatPrep:Init(db)
         LuckyGrabbag.RotationGlow:Init(db)
         LuckyGrabbag.ConfirmPurchase:Init(db)
-        LuckyGrabbag.SwapBars:Init()
 
         -- Minimap button
         LuckyGrabbag.minimapButton = LuckyMinimap:Create({
