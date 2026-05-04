@@ -23,7 +23,9 @@ features/ReagentMains.lua
 features/UseItemsData.lua
 features/UseItems.lua
 features/DelveMap.lua
+features/KickMacro.lua
 features/CombatPrep.lua
 features/RotationGlow.lua
 features/ConfirmPurchase.lua
+features/SwapBars.lua
 Lucky's Grab-bag.lua
