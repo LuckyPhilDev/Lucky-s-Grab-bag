@@ -45,7 +45,7 @@ Assigns each reagent category to one or more designated characters. When you ope
 - Existing assignments from Warband Stockist are imported automatically the first time you log in.
 - Off by default; can be toggled in the addon settings.
 
-### Thalassian Treatise Auto-Withdrawal
+### Withdraw Treatise from Warbank
 Automatically withdraws Thalassian Treatises for your current professions from the Warband Bank whenever you open it — but only if you haven't already used them this week.
 
 - Checks your character's active professions and only withdraws the relevant treatises.
@@ -157,7 +157,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Show Buy Next button* — Places a shortcut button next to the Auction House window. Each click advances through Auctionator's purchase workflow to quickly buy all items on a shopping list.
 
 **Professions**
-- *Auto-withdraw treatises from Warband Bank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
+- *Withdraw Treatise from Warbank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
 - *Show use-item buttons* — Displays a floating row of buttons when consumable profession items are in your bags (Artisan's Consortium Payouts, Glimmers/Flickers of Midnight Knowledge, Thalassian Treatises). The bar is draggable and hides automatically when empty.
   - *Only in Cities* — Restricts the Use Items popup to cities and inns.
 - *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.

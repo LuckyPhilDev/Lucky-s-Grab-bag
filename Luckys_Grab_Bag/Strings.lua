@@ -60,6 +60,8 @@ LuckyGrabbag.Strings = {
         title             = "Reagent Mains",
         subtitle          = "GRAB-BAG",
         description       = "Pick which characters keep each category. Anyone not listed deposits those reagents on opening the warband bank.",
+        excludedLabel     = "Excluded characters",
+        excludedTooltip   = "These characters are never asked to deposit anything, regardless of category assignments. Useful for bank alts.",
         detectButton      = "Detect Professions",
         detectTooltip     = "Re-scan the current character's professions and refresh hints.",
         headerCategory    = "Category",
@@ -140,7 +142,7 @@ LuckyGrabbag.Strings = {
             desc  = "Adds a button next to the Auction House that steps through Auctionator's purchase workflow — selecting, buying, and confirming each item in turn.",
         },
         treatise = {
-            label = "Thalassian Treatise",
+            label = "Withdraw Treatise from Warbank",
             desc  = "Withdraws unused Thalassian Treatises for your professions when you open the warband bank.",
         },
         cookingButtons = {

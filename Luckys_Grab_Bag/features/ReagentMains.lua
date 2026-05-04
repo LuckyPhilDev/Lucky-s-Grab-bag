@@ -181,6 +181,10 @@ local function DepositUnmatchedReagents()
     if not db.reagentMainsEnabled then return end
 
     local charKey = LuckyRoster:GetKey()
+    if (db.reagentExcludedAlts or {})[charKey] then
+        DevLog("Character is excluded from reagent deposit")
+        return
+    end
     local mains   = db.reagentMains or {}
     local inventory = ScanInventory()
 
@@ -335,10 +339,35 @@ local function BuildPopup()
     end)
     detectBtn:SetScript("OnLeave", GameTooltip_Hide)
 
+    local SR = LuckyGrabbag.Strings.reagentMains
+
+    -- Excluded characters row
+    local excludedRow = CreateFrame("Frame", nil, body)
+    excludedRow:SetHeight(28)
+    excludedRow:SetPoint("TOPLEFT", detectBtn, "BOTTOMLEFT", 0, -8)
+    excludedRow:SetPoint("RIGHT", -14, 0)
+
+    local excludedLbl = excludedRow:CreateFontString(nil, "OVERLAY")
+    excludedLbl:SetFont(R_FONT, 12, "")
+    excludedLbl:SetTextColor(R.text[1], R.text[2], R.text[3])
+    excludedLbl:SetPoint("LEFT", 10, 0)
+    excludedLbl:SetText(SR.excludedLabel)
+
+    local excludedDd = CreateFrame("Frame", nil, excludedRow, "UIDropDownMenuTemplate")
+    UIDropDownMenu_SetWidth(excludedDd, 180)
+    excludedDd:SetPoint("LEFT", excludedRow, "LEFT", 130, 0)
+    excludedDd:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(SR.excludedTooltip, 1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    excludedDd:SetScript("OnLeave", GameTooltip_Hide)
+    f.excludedDd = excludedDd
+
     -- Column header
     local headerRow = CreateFrame("Frame", nil, body)
     headerRow:SetHeight(22)
-    headerRow:SetPoint("TOPLEFT", detectBtn, "BOTTOMLEFT", 0, -14)
+    headerRow:SetPoint("TOPLEFT", excludedRow, "BOTTOMLEFT", 0, -10)
     headerRow:SetPoint("RIGHT", -14, 0)
     Rich.FillBg(headerRow, R.bg3)
     Rich.EdgeRule(headerRow, "BOTTOM", R.border)
@@ -351,7 +380,6 @@ local function BuildPopup()
         t:SetText(string.upper(text))
         return t
     end
-    local SR = LuckyGrabbag.Strings.reagentMains
     makeHeaderText(headerRow, SR.headerCategory,    10)
     makeHeaderText(headerRow, SR.headerMain,        140)
     makeHeaderText(headerRow, SR.headerProfessions, 310)
@@ -544,6 +572,38 @@ function Feature:RefreshPopup()
     for j = i + 1, #existing do existing[j]:Hide() end
 
     popup.rowParent:SetHeight(-y + 8)
+
+    -- Refresh excluded characters dropdown
+    db.reagentExcludedAlts = db.reagentExcludedAlts or {}
+    local excluded = db.reagentExcludedAlts
+    UIDropDownMenu_Initialize(popup.excludedDd, function(_, level)
+        for _, ck in ipairs(LuckyRoster:GetKeys()) do
+            local info = UIDropDownMenu_CreateInfo()
+            info.text             = LuckyRoster:FormatName(ck)
+            info.checked          = excluded[ck] == true
+            info.keepShownOnClick = true
+            info.isNotRadio       = true
+            info.func             = function(_, _, _, checked)
+                db.reagentExcludedAlts = db.reagentExcludedAlts or {}
+                db.reagentExcludedAlts[ck] = checked or nil
+                Feature:RefreshPopup()
+            end
+            UIDropDownMenu_AddButton(info, level)
+        end
+    end)
+    local excludedKeys = {}
+    for ck in pairs(excluded) do table.insert(excludedKeys, ck) end
+    local SR = LuckyGrabbag.Strings.reagentMains
+    if #excludedKeys == 0 then
+        UIDropDownMenu_SetText(popup.excludedDd, SR.ddNone)
+    elseif #excludedKeys > 2 then
+        UIDropDownMenu_SetText(popup.excludedDd, string.format(SR.ddMultiCharsFmt, #excludedKeys))
+    else
+        table.sort(excludedKeys)
+        local names = {}
+        for _, ck in ipairs(excludedKeys) do table.insert(names, ColoredShortName(ck)) end
+        UIDropDownMenu_SetText(popup.excludedDd, table.concat(names, ", "))
+    end
 end
 
 function Feature:OpenPopup()
@@ -712,11 +772,13 @@ local function Diagnose(itemIDStr)
 
     -- Feature toggle
     print(("  Feature enabled (db.reagentMainsEnabled): %s"):format(ColorYes(db.reagentMainsEnabled and true or false)))
+    local isExcluded = (db.reagentExcludedAlts or {})[charKey] == true
+    print(("  Character excluded from all deposits: %s"):format(ColorYes(not isExcluded)))
 
     -- Final verdict
     local expFilter = db.reagentMainsCurrentExpOnly
         and (expID ~= (GetExpansionLevel and GetExpansionLevel())) or false
-    local wouldDeposit = (not kept) and total > 0 and (db.reagentMainsEnabled == true) and not expFilter
+    local wouldDeposit = (not kept) and total > 0 and (db.reagentMainsEnabled == true) and not expFilter and not isExcluded
     print(("  → Would auto-deposit on bank open? %s"):format(ColorYes(wouldDeposit)))
 end
 

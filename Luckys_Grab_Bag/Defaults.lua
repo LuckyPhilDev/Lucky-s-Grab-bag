@@ -9,6 +9,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     showTreatise             = false,
     reagentMainsEnabled      = false,
     reagentMainsCurrentExpOnly = false,
+    reagentExcludedAlts      = {},
     reagentMains             = {},
     reagentMainsImported     = false,
     showCookingButtons       = true,
