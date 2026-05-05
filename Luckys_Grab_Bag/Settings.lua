@@ -213,6 +213,16 @@ function LuckyGrabbag.Settings:Init(db)
                 LuckyGrabbag.UseItems:ApplySetting()
             end,
         })
+
+        g:Section(SS.sections.wardrobe)
+
+        g:Toggle({
+            label    = SS.transmog.label,
+            desc     = SS.transmog.desc,
+            checked  = db.keepTransmogTab,
+            since    = "1.6.0",
+            onToggle = function(checked) db.keepTransmogTab = checked end,
+        })
     end
 
     ---------------------------------------------------------------------------
@@ -337,21 +347,6 @@ function LuckyGrabbag.Settings:Init(db)
                 db.delveMapMinLevel = val
                 LuckyGrabbag.DelveMap:ApplySetting()
             end,
-        })
-    end
-
-    ---------------------------------------------------------------------------
-    -- Wardrobe
-    ---------------------------------------------------------------------------
-    do
-        local g = panel:Group(SS.groups.wardrobe)
-
-        g:Toggle({
-            label    = SS.transmog.label,
-            desc     = SS.transmog.desc,
-            checked  = db.keepTransmogTab,
-            since    = "1.6.0",
-            onToggle = function(checked) db.keepTransmogTab = checked end,
         })
     end
 

@@ -94,14 +94,14 @@ LuckyGrabbag.Strings = {
             vendors      = "Vendors",
             auctionHouse = "Auction House",
             crafting     = "Crafting",
-            inventory    = "Inventory",
+            inventory    = "Items & Appearance",
             combat       = "Combat",
             delves       = "Delves",
-            wardrobe     = "Wardrobe",
         },
         sections = {
             automation  = "Automation",
             purchasing  = "Purchasing",
+            wardrobe    = "Wardrobe",
             versionInfo = "Version Info",
         },
         grabbagVersion = {

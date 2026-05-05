@@ -25,5 +25,5 @@ LuckyGrabbag.DB_DEFAULTS = {
     showRotationGlow         = false,
     showConfirmPurchase      = true,
     confirmPurchaseOnSide    = false,
-    keepTransmogTab          = true,
+    keepTransmogTab          = false,
 }
