@@ -9,7 +9,7 @@ function LuckyGrabbag.Settings:Init(db)
     local panel = LuckySettings:NewRichPanel(S.addon.title, {
         addonFolder    = "Luckys_Grab_Bag",
         imagesRoot     = "images",
-        recentVersions = { "1.5.0", "1.4.0" },
+        recentVersions = { "1.6.0", "1.5.0" },
     })
     self.category = panel.category
 
@@ -337,6 +337,21 @@ function LuckyGrabbag.Settings:Init(db)
                 db.delveMapMinLevel = val
                 LuckyGrabbag.DelveMap:ApplySetting()
             end,
+        })
+    end
+
+    ---------------------------------------------------------------------------
+    -- Wardrobe
+    ---------------------------------------------------------------------------
+    do
+        local g = panel:Group(SS.groups.wardrobe)
+
+        g:Toggle({
+            label    = SS.transmog.label,
+            desc     = SS.transmog.desc,
+            checked  = db.keepTransmogTab,
+            since    = "1.6.0",
+            onToggle = function(checked) db.keepTransmogTab = checked end,
         })
     end
 

@@ -27,4 +27,5 @@ features/KickMacro.lua
 features/CombatPrep.lua
 features/RotationGlow.lua
 features/ConfirmPurchase.lua
+features/Transmog.lua
 Lucky's Grab-bag.lua

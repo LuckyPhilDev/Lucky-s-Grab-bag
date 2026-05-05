@@ -97,6 +97,7 @@ LuckyGrabbag.Strings = {
             inventory    = "Inventory",
             combat       = "Combat",
             delves       = "Delves",
+            wardrobe     = "Wardrobe",
         },
         sections = {
             automation  = "Automation",
@@ -207,6 +208,10 @@ LuckyGrabbag.Strings = {
         delveMapMinLevel = {
             label = "Minimum Delve Level",
             desc  = "Only show the Bounty Map button in delves at or above this tier.",
+        },
+        transmog = {
+            label = "Stay on Active Tab",
+            desc  = "Keeps whichever tab you're on when switching slots at the transmog NPC, instead of jumping back to Items.",
         },
     },
 }
