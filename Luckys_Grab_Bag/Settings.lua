@@ -314,6 +314,7 @@ function LuckyGrabbag.Settings:Init(db)
         g:Button({
             label   = SS.kickMacro.label,
             desc    = SS.kickMacro.desc,
+            since   = "1.5.0",
             onClick = function() LuckyGrabbag.KickMacro:Create() end,
         })
     end
