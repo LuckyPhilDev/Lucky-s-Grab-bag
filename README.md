@@ -56,6 +56,12 @@ Automatically withdraws Thalassian Treatises for your current professions from t
 - Prints a confirmation message for each treatise withdrawn.
 - Enabled by default; can be toggled in the addon settings.
 
+### Stay on Active Tab
+Keeps your active tab in the transmog panel when switching outfit slots, instead of jumping back to Items each time.
+
+- Works for any tab: Items, Sets, Custom Sets, and Situations.
+- Off by default; enable it in settings under Items & Appearance.
+
 ### Rotation Glow
 Animates the suggested next-cast spell on Blizzard's Cooldown Manager, using the game's built-in assisted combat data.
 
@@ -114,6 +120,14 @@ Adds a button next to the Auction House window that steps through Auctionator's 
 - Enabled by default if TestFlight is installed; disabled by default if it isn't.
 - Can be toggled on or off in the addon settings.
 
+### Kick Macro Generator
+Creates a class-appropriate interrupt macro in one of your character macro slots.
+
+- Interrupts your focus target if you have one set, letting you kick a caster without switching away from your main target.
+- With no focus, grabs the nearest enemy, kicks them, and clears focus so the next press does the same.
+- Handles specs with different interrupts (e.g. Survival Hunter uses Muzzle, others use Counter Shot).
+- Triggered via the **Create Kick Macro** button in settings under Combat.
+
 ### Minimap Button
 A minimap button for quick access to the addon.
 
@@ -156,10 +170,8 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Show Quickbuy button* — Places a shortcut button next to the Auction House window. Each click purchases one row of items from your CraftSim crafting queue's shopping list.
 - *Show Buy Next button* — Places a shortcut button next to the Auction House window. Each click advances through Auctionator's purchase workflow to quickly buy all items on a shopping list.
 
-**Professions**
+**Crafting**
 - *Withdraw Treatise from Warbank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
-- *Show use-item buttons* — Displays a floating row of buttons when consumable profession items are in your bags (Artisan's Consortium Payouts, Glimmers/Flickers of Midnight Knowledge, Thalassian Treatises). The bar is draggable and hides automatically when empty.
-  - *Only in Cities* — Restricts the Use Items popup to cities and inns.
 - *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.
 - *Reagent Mains* — When the warband bank opens, deposits reagents whose category is assigned to a different character.
   - *Configure mains…* — Opens the assignment window where each reagent category can be linked to one or more characters, "All" (everyone keeps), or "None".
@@ -172,6 +184,11 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Trovehunter's Bounty Map* — Shows a clickable button for your Bounty Map when in a qualifying delve.
   - *Minimum Delve Level* — The minimum delve level required for the button to appear (1–11).
 
+**Items & Appearance**
+- *Use Items Popup* — Displays a floating bar of buttons for consumable profession items in your bags.
+  - *Only while rested* — Restricts the popup to cities and inns.
+- *Stay on Active Tab* — Keeps your active transmog tab when switching outfit slots.
+
 **Rotation Glow**
 - *Rotation Glow* — Animates the suggested next-cast spell on the Essential Cooldown Viewer, using Blizzard's assisted combat data.
 
@@ -181,6 +198,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
   - *Pull Timer (Mythic+)* — How long the pull countdown lasts in dungeons (3–30 seconds).
   - *Pull Timer (Raid)* — How long the pull countdown lasts in raids (3–30 seconds).
   - *Break Timer Duration* — How long the break countdown lasts (1–15 minutes).
+- *Create Kick Macro* — Generates a class-appropriate interrupt macro in a character macro slot.
 
 Settings are saved per account.
 
