@@ -2,8 +2,8 @@
 -- Works with stock Blizzard and BetterWardrobeAndTransmog.
 -- Both call WardrobeCollection:UpdateSlot on slot click, which resets
 -- to the Items tab via SetToItemsTab(). We poll TabHeaders.selectedTabID
--- between frames to remember the user's last non-Items tab, then restore
--- it after TransmogFrame:SelectSlot runs.
+-- between frames to remember the user's last tab, then restore it
+-- after TransmogFrame:SelectSlot runs.
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.Transmog = {}
 
@@ -29,19 +29,19 @@ local function InstallHooks()
 
     local th = wc.TabHeaders
 
-    -- Poll between frames so we always have the most recent non-Items
-    -- tab before any in-frame reset clobbers it.
+    -- Poll between frames so we always have the most recent tab
+    -- before any in-frame reset clobbers it.
     watcher = CreateFrame("Frame")
     watcher:SetScript("OnUpdate", function()
         local id = th.selectedTabID
-        if id and id ~= wc.itemsTabID then
+        if id then
             userTab = id
         end
     end)
 
     hooksecurefunc(TransmogFrame, "SelectSlot", function()
         if not db or not db.keepTransmogTab then return end
-        if not userTab or userTab == wc.itemsTabID then return end
+        if not userTab then return end
         if th.selectedTabID == userTab then return end
         DevLog("Restoring tab to " .. tostring(userTab))
         wc:SetTab(userTab)
