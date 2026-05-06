@@ -1,92 +1,67 @@
 -- Lucky's Grab-bag: Transmog NPC — keep active tab on slot change
+-- Works with stock Blizzard and BetterWardrobeAndTransmog.
+-- Both call WardrobeCollection:UpdateSlot on slot click, which resets
+-- to the Items tab via SetToItemsTab(). We poll TabHeaders.selectedTabID
+-- between frames to remember the user's last non-Items tab, then restore
+-- it after TransmogFrame:SelectSlot runs.
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.Transmog = {}
 
 local db
+local hooked  = false
+local userTab = nil
+local watcher = nil
 
-local FRAME_CANDIDATES = {
-    "TransmogFrame",        -- confirmed Midnight name
-    "WardrobeFrame",
-    "TransmogrifyFrame",
-    "WardrobeCollectionFrame",
-}
-
-local transmogFrameName = nil
-local currentTab        = nil
-local tabsHooked        = false
-local selectSlotHooked  = false
-
-local function FindTransmogFrame()
-    if transmogFrameName then
-        local f = _G[transmogFrameName]
-        if f and f:IsShown() then return f end
-    end
-    for _, name in ipairs(FRAME_CANDIDATES) do
-        local f = _G[name]
-        if f and f.IsShown and f:IsShown() then
-            transmogFrameName = name
-            return f
-        end
-    end
-    return nil
+local function DevLog(msg)
+    LuckyGrabbag.DevLog("Transmog", msg)
 end
 
-local function FindTabByText(frame, targetText, depth)
-    depth = depth or 0
-    if depth > 2 or not frame then return nil end
-    for _, child in ipairs({ frame:GetChildren() }) do
-        if child.GetText and child:GetText() == targetText then
-            return child
-        end
-        local found = FindTabByText(child, targetText, depth + 1)
-        if found then return found end
-    end
-    return nil
+local function GetWardrobeCollection()
+    return TransmogFrame and TransmogFrame.WardrobeCollection
 end
 
-local function SwitchToTab(tabName)
-    local frame = FindTransmogFrame()
-    if not frame then return end
-    local tab = FindTabByText(frame, tabName)
-    if tab then tab:Click() end
-end
+local function InstallHooks()
+    if hooked then return end
+    local wc = GetWardrobeCollection()
+    if not wc or not wc.TabHeaders or not wc.itemsTabID then return end
+    if not TransmogFrame or type(TransmogFrame.SelectSlot) ~= "function" then return end
+    if type(wc.SetTab) ~= "function" then return end
 
-local function TrackTabChanges(frame)
-    if tabsHooked then return end
-    local tabNames = { "Items", "Sets", "Custom Sets", "Situations" }
-    for _, name in ipairs(tabNames) do
-        local btn = FindTabByText(frame, name)
-        if btn then
-            local captured = name
-            btn:HookScript("OnClick", function()
-                currentTab = captured
-            end)
-        end
-    end
-    tabsHooked = true
-end
+    local th = wc.TabHeaders
 
-local function HookSelectSlot()
-    if selectSlotHooked or not TransmogFrame then return end
-    if type(TransmogFrame.SelectSlot) ~= "function" then return end
-    hooksecurefunc(TransmogFrame, "SelectSlot", function()
-        if db.keepTransmogTab and currentTab and currentTab ~= "Items" then
-            C_Timer.After(0, function() SwitchToTab(currentTab) end)
+    -- Poll between frames so we always have the most recent non-Items
+    -- tab before any in-frame reset clobbers it.
+    watcher = CreateFrame("Frame")
+    watcher:SetScript("OnUpdate", function()
+        local id = th.selectedTabID
+        if id and id ~= wc.itemsTabID then
+            userTab = id
         end
     end)
-    selectSlotHooked = true
+
+    hooksecurefunc(TransmogFrame, "SelectSlot", function()
+        if not db or not db.keepTransmogTab then return end
+        if not userTab or userTab == wc.itemsTabID then return end
+        if th.selectedTabID == userTab then return end
+        DevLog("Restoring tab to " .. tostring(userTab))
+        wc:SetTab(userTab)
+    end)
+
+    hooked = true
 end
 
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("TRANSMOGRIFY_OPEN")
+eventFrame:RegisterEvent("TRANSMOGRIFY_CLOSE")
 eventFrame:SetScript("OnEvent", function(_, event)
-    if event ~= "TRANSMOGRIFY_OPEN" then return end
-    if not db or not db.keepTransmogTab then return end
-    C_Timer.After(0.1, function()
-        local frame = FindTransmogFrame()
-        if frame then TrackTabChanges(frame) end
-        HookSelectSlot()
-    end)
+    if event == "TRANSMOGRIFY_OPEN" then
+        userTab = nil
+        if watcher then watcher:Show() end
+        C_Timer.After(0.1, InstallHooks)
+    elseif event == "TRANSMOGRIFY_CLOSE" then
+        userTab = nil
+        if watcher then watcher:Hide() end
+    end
 end)
 
 function LuckyGrabbag.Transmog:Init(database)

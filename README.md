@@ -56,7 +56,7 @@ Automatically withdraws Thalassian Treatises for your current professions from t
 - Prints a confirmation message for each treatise withdrawn.
 - Enabled by default; can be toggled in the addon settings.
 
-### Stay on Active Tab
+### Keep Active Transmog Tab
 Keeps your active tab in the transmog panel when switching outfit slots, instead of jumping back to Items each time.
 
 - Works for any tab: Items, Sets, Custom Sets, and Situations.
@@ -187,7 +187,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 **Items & Appearance**
 - *Use Items Popup* — Displays a floating bar of buttons for consumable profession items in your bags.
   - *Only while rested* — Restricts the popup to cities and inns.
-- *Stay on Active Tab* — Keeps your active transmog tab when switching outfit slots.
+- *Keep Active Transmog Tab* — Keeps your active transmog tab when switching outfit slots.
 
 **Rotation Glow**
 - *Rotation Glow* — Animates the suggested next-cast spell on the Essential Cooldown Viewer, using Blizzard's assisted combat data.
