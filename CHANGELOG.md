@@ -1,3 +1,8 @@
+## [1.6.1] - 2026-05-06
+
+### Fixed
+- **Keep Active Transmog Tab**: Now works alongside BetterWardrobe and Transmog, and stays on Items when that's the tab you've chosen.
+
 ## [1.6.0] - 2026-05-05
 
 ### Added
