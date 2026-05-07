@@ -97,6 +97,7 @@ LuckyGrabbag.Strings = {
             inventory    = "Items & Appearance",
             combat       = "Combat",
             delves       = "Delves",
+            interface    = "Interface",
         },
         sections = {
             automation  = "Automation",
@@ -212,6 +213,39 @@ LuckyGrabbag.Strings = {
         transmog = {
             label = "Keep Active Transmog Tab",
             desc  = "Keeps whichever tab you're on when switching slots at the transmog NPC, instead of jumping back to Items.",
+        },
+        bonusRoll = {
+            label = "Auto-dismiss Bonus Roll",
+            desc  = "Automatically passes on the Bonus Roll popup that appears at the end of content, except in the situations selected below.",
+            note  = "This is a per-character setting.",
+        },
+        bonusRollKeepInMythicPlus = {
+            label = "Keep in Mythic+",
+            desc  = "Show the Bonus Roll popup after Mythic+ runs.",
+        },
+        bonusRollKeepInRaids = {
+            label = "Keep in Raids",
+            desc  = "Show the Bonus Roll popup after raid bosses.",
+        },
+        bonusRollRaidDifficulties = {
+            label     = "Difficulties",
+            desc      = "Limit which raid difficulties keep the popup.",
+            optLFR    = "Raid Finder",
+            optNormal = "Normal",
+            optHeroic = "Heroic",
+            optMythic = "Mythic",
+        },
+        bonusRollKeepInDelve = {
+            label = "Keep in Delves",
+            desc  = "Show the Bonus Roll popup after delve completions.",
+        },
+        bonusRollKeepInDungeon = {
+            label = "Keep in Dungeons",
+            desc  = "Show the Bonus Roll popup after Normal, Heroic, and Mythic-0 dungeon runs.",
+        },
+        bonusRollKeepInHunts = {
+            label = "Keep in Hunts",
+            desc  = "Show the Bonus Roll popup after completing hunts.",
         },
     },
 }

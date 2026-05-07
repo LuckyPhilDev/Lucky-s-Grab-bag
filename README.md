@@ -81,6 +81,14 @@ A small floating window that appears automatically in raids and dungeons when yo
 - Use `/combatprep` to test the window outside of group content.
 - Can be toggled in the addon settings.
 
+### Auto-dismiss Bonus Roll
+Automatically passes on Blizzard's Bonus Roll popup that appears at the end of instanced content, with per-character control over which content types are kept.
+
+- Per-content toggles for **Mythic+**, **Raids**, **Delves**, **Dungeons**, and **Hunts** in the open world.
+- Raid difficulties are individually selectable (Raid Finder, Normal, Heroic, Mythic).
+- Settings are saved per character, so each alt can have its own preferences.
+- Off by default; enable it in settings under Interface.
+
 ### Trovehunter's Bounty Map
 Shows a clickable button when you're inside a delve that meets the configured minimum level and you have a Trovehunter's Bounty Map in your bags.
 
@@ -200,7 +208,10 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
   - *Break Timer Duration* — How long the break countdown lasts (1–15 minutes).
 - *Create Kick Macro* — Generates a class-appropriate interrupt macro in a character macro slot.
 
-Settings are saved per account.
+**Interface**
+- *Auto-dismiss Bonus Roll* — Automatically passes on the Bonus Roll popup at the end of instanced content. Per-character toggles for Mythic+, Raids (with individual difficulty selection), Delves, Dungeons, and Hunts.
+
+Settings are saved per account, except for Bonus Roll preferences which are saved per character.
 
 ---
 

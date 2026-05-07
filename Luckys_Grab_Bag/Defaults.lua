@@ -27,3 +27,16 @@ LuckyGrabbag.DB_DEFAULTS = {
     confirmPurchaseOnSide    = false,
     keepTransmogTab          = false,
 }
+
+LuckyGrabbag.CHAR_DB_DEFAULTS = {
+    bonusRollAutoDismiss      = false,
+    bonusRollKeepInMythicPlus = true,
+    bonusRollKeepInRaids      = true,
+    bonusRollKeepInLFR        = true,
+    bonusRollKeepInNormalRaid = true,
+    bonusRollKeepInHeroicRaid = true,
+    bonusRollKeepInMythicRaid = true,
+    bonusRollKeepInDelve      = false,
+    bonusRollKeepInDungeon    = false,
+    bonusRollKeepInHunts      = false,
+}

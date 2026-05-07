@@ -2,14 +2,14 @@
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.Settings = {}
 
-function LuckyGrabbag.Settings:Init(db)
+function LuckyGrabbag.Settings:Init(db, charDB)
     local S = LuckyGrabbag.Strings
     local SS = S.settings
 
     local panel = LuckySettings:NewRichPanel(S.addon.title, {
         addonFolder    = "Luckys_Grab_Bag",
         imagesRoot     = "images",
-        recentVersions = { "1.6.0", "1.5.0" },
+        recentVersions = { "1.7.0", "1.6.0", "1.5.0" },
     })
     self.category = panel.category
 
@@ -348,6 +348,82 @@ function LuckyGrabbag.Settings:Init(db)
                 db.delveMapMinLevel = val
                 LuckyGrabbag.DelveMap:ApplySetting()
             end,
+        })
+    end
+
+    ---------------------------------------------------------------------------
+    -- Interface
+    ---------------------------------------------------------------------------
+    do
+        local g = panel:Group(SS.groups.interface)
+
+        g:Toggle({
+            label    = SS.bonusRoll.label,
+            desc     = SS.bonusRoll.desc,
+            note     = SS.bonusRoll.note,
+            checked  = charDB.bonusRollAutoDismiss,
+            since    = "1.7.0",
+            onToggle = function(checked) charDB.bonusRollAutoDismiss = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.bonusRollKeepInMythicPlus.label,
+            desc     = SS.bonusRollKeepInMythicPlus.desc,
+            checked  = charDB.bonusRollKeepInMythicPlus,
+            parent   = SS.bonusRoll.label,
+            onToggle = function(checked) charDB.bonusRollKeepInMythicPlus = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.bonusRollKeepInRaids.label,
+            desc     = SS.bonusRollKeepInRaids.desc,
+            checked  = charDB.bonusRollKeepInRaids,
+            parent   = SS.bonusRoll.label,
+            onToggle = function(checked) charDB.bonusRollKeepInRaids = checked end,
+        })
+
+        local raidKeyToField = {
+            lfr    = "bonusRollKeepInLFR",
+            normal = "bonusRollKeepInNormalRaid",
+            heroic = "bonusRollKeepInHeroicRaid",
+            mythic = "bonusRollKeepInMythicRaid",
+        }
+        g:MultiSelect({
+            label     = SS.bonusRollRaidDifficulties.label,
+            desc      = SS.bonusRollRaidDifficulties.desc,
+            parent    = SS.bonusRollKeepInRaids.label,
+            options   = {
+                { key = "lfr",    label = SS.bonusRollRaidDifficulties.optLFR },
+                { key = "normal", label = SS.bonusRollRaidDifficulties.optNormal },
+                { key = "heroic", label = SS.bonusRollRaidDifficulties.optHeroic },
+                { key = "mythic", label = SS.bonusRollRaidDifficulties.optMythic },
+            },
+            isChecked = function(key) return charDB[raidKeyToField[key]] end,
+            onToggle  = function(key, checked) charDB[raidKeyToField[key]] = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.bonusRollKeepInDelve.label,
+            desc     = SS.bonusRollKeepInDelve.desc,
+            checked  = charDB.bonusRollKeepInDelve,
+            parent   = SS.bonusRoll.label,
+            onToggle = function(checked) charDB.bonusRollKeepInDelve = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.bonusRollKeepInDungeon.label,
+            desc     = SS.bonusRollKeepInDungeon.desc,
+            checked  = charDB.bonusRollKeepInDungeon,
+            parent   = SS.bonusRoll.label,
+            onToggle = function(checked) charDB.bonusRollKeepInDungeon = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.bonusRollKeepInHunts.label,
+            desc     = SS.bonusRollKeepInHunts.desc,
+            checked  = charDB.bonusRollKeepInHunts,
+            parent   = SS.bonusRoll.label,
+            onToggle = function(checked) charDB.bonusRollKeepInHunts = checked end,
         })
     end
 

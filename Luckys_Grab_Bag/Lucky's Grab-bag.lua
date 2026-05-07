@@ -8,7 +8,9 @@ eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
     if event == "ADDON_LOADED" and addonLoaded == ADDON_NAME then
         LuckyGrabbagDB = LuckyGrabbagDB or {} ---@diagnostic disable-line: lowercase-global
+        LuckyGrabbagCharDB = LuckyGrabbagCharDB or {} ---@diagnostic disable-line: lowercase-global
         local db = LuckyGrabbagDB
+        local charDB = LuckyGrabbagCharDB
 
         -- Migrate legacy single combat prep pull timer into mythic/raid split.
         if db.combatPrepTimer ~= nil then
@@ -31,6 +33,12 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
             end
         end
 
+        for key, default in pairs(LuckyGrabbag.CHAR_DB_DEFAULTS or {}) do
+            if charDB[key] == nil then
+                charDB[key] = default
+            end
+        end
+
         -- Re-evaluate showQuickbuy automatically until the user explicitly changes it.
         if db.showQuickbuyAutoDefault ~= false then
             db.showQuickbuy = LuckyDeps:IsEnabled(LuckyGrabbag.Quickbuy.requires.addon)
@@ -42,8 +50,9 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         end
 
         LuckyGrabbag.db = db
+        LuckyGrabbag.charDB = charDB
 
-        LuckyGrabbag.Settings:Init(db)
+        LuckyGrabbag.Settings:Init(db, charDB)
         LuckyGrabbag.AutoRepair:Init(db)
         LuckyGrabbag.Quickbuy:Init(db)
         LuckyGrabbag.TestflightBuy:Init(db)
@@ -56,6 +65,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.RotationGlow:Init(db)
         LuckyGrabbag.ConfirmPurchase:Init(db)
         LuckyGrabbag.Transmog:Init(db)
+        LuckyGrabbag.BonusRoll:Init(charDB)
 
         -- Minimap button
         LuckyGrabbag.minimapButton = LuckyMinimap:Create({

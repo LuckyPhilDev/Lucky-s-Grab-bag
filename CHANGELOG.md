@@ -1,9 +1,4 @@
-## [1.6.1] - 2026-05-06
-
-### Fixed
-- **Keep Active Transmog Tab**: Now works alongside BetterWardrobe and Transmog, and stays on Items when that's the tab you've chosen.
-
-## [1.6.0] - 2026-05-05
+## [1.7.0] - 2026-05-07
 
 ### Added
-- **Keep Active Transmog Tab**: Keeps whichever tab you're on when switching slots at the transmog NPC, instead of jumping back to Items. Off by default; enable it under Items & Appearance in settings.
+- **Auto-dismiss Bonus Roll**: Automatically passes on the end-of-content Bonus Roll popup, with per-character toggles for which content types should keep showing it. Mythic+ and Raids are kept by default; Delves, Dungeons, and Hunts are dismissed. Raid difficulties are individually selectable.
