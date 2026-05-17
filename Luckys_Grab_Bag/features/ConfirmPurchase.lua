@@ -11,6 +11,10 @@ local container
 local merchantOpen = false
 local popupShown = false
 local lastClickedMerchantButton
+local lastClickedBag, lastClickedSlot
+local lastClickedBagButton
+local lastClickSource -- "merchant" or "bag"
+local useContainerItemHooked = false
 
 local function DevLog(msg)
     LuckyGrabbag.DevLog("ConfirmPurchase", msg)
@@ -57,6 +61,7 @@ local function HookMerchantButtons()
         if merchantBtn and not merchantBtn._lgbConfirmHooked then
             merchantBtn:HookScript("OnMouseDown", function(self)
                 lastClickedMerchantButton = self
+                lastClickSource = "merchant"
                 DevLog("Tracked click on " .. self:GetName())
             end)
             merchantBtn._lgbConfirmHooked = true
@@ -64,11 +69,133 @@ local function HookMerchantButtons()
     end
 end
 
+local function HookUseContainerItem()
+    if useContainerItemHooked or not C_Container or not C_Container.UseContainerItem then ---@diagnostic disable-line: undefined-global
+        DevLog("HookUseContainerItem skipped (hooked=" .. tostring(useContainerItemHooked) .. " api=" .. tostring(C_Container and C_Container.UseContainerItem) .. ")") ---@diagnostic disable-line: undefined-global
+        return
+    end
+    hooksecurefunc(C_Container, "UseContainerItem", function(bag, slot) ---@diagnostic disable-line: undefined-global
+        if not merchantOpen then return end
+        lastClickedBag, lastClickedSlot = bag, slot
+        lastClickSource = "bag"
+        DevLog("UseContainerItem hook fired bag=" .. tostring(bag) .. " slot=" .. tostring(slot))
+    end)
+    useContainerItemHooked = true
+    DevLog("UseContainerItem hook installed")
+end
+
+local function HookBagButtons()
+    local hookedCount = 0
+    local function hookFrame(frame, label)
+        if not frame or not frame.Items then return end
+        for _, btn in ipairs(frame.Items) do
+            if not btn._lgbConfirmHooked then
+                btn:HookScript("OnMouseDown", function(self)
+                    if not merchantOpen then return end
+                    lastClickedBagButton = self
+                    if self.GetBagID then
+                        lastClickedBag, lastClickedSlot = self:GetBagID(), self:GetID()
+                    end
+                    lastClickSource = "bag"
+                    DevLog("Bag button mousedown " .. tostring(self:GetName()) ..
+                        " bag=" .. tostring(self.GetBagID and self:GetBagID()) ..
+                        " slot=" .. tostring(self:GetID()))
+                end)
+                btn._lgbConfirmHooked = true
+                hookedCount = hookedCount + 1
+            end
+        end
+    end
+    hookFrame(ContainerFrameCombinedBags, "CombinedBags") ---@diagnostic disable-line: undefined-global
+    for i = 1, 13 do
+        hookFrame(_G["ContainerFrame" .. i], "ContainerFrame" .. i)
+    end
+    if hookedCount > 0 then DevLog("Hooked " .. hookedCount .. " new bag buttons") end
+end
+
+local function FindBagSlotByLink(link)
+    if not link or not C_Container or not C_Container.GetContainerNumSlots then return end ---@diagnostic disable-line: undefined-global
+    for bag = 0, 5 do
+        local numSlots = C_Container.GetContainerNumSlots(bag) or 0 ---@diagnostic disable-line: undefined-global
+        for slot = 1, numSlots do
+            if C_Container.GetContainerItemLink(bag, slot) == link then ---@diagnostic disable-line: undefined-global
+                DevLog("Matched link in bag " .. bag .. " slot " .. slot)
+                return bag, slot
+            end
+        end
+    end
+    DevLog("No bag slot matched link " .. tostring(link))
+end
+
+local function FindBagButton(bag, slot)
+    local function check(frame, label)
+        if not frame or not frame:IsVisible() or not frame.Items then return end
+        for _, btn in ipairs(frame.Items) do
+            if btn.GetBagID and btn:IsVisible() then
+                if btn:GetBagID() == bag and btn:GetID() == slot then
+                    DevLog("FindBagButton match in " .. label .. " name=" .. tostring(btn:GetName()))
+                    return btn
+                end
+            end
+        end
+    end
+    local btn = check(ContainerFrameCombinedBags, "CombinedBags") ---@diagnostic disable-line: undefined-global
+    if btn then return btn end
+    for i = 1, 13 do
+        btn = check(_G["ContainerFrame" .. i], "ContainerFrame" .. i)
+        if btn then return btn end
+    end
+
+    -- Fallback: walk all frames (handles third-party bag addons like Bagnon, ElvUI, etc.)
+    local frame = EnumerateFrames() ---@diagnostic disable-line: undefined-global
+    local scanned, candidates = 0, 0
+    while frame do
+        scanned = scanned + 1
+        if frame.GetBagID and frame:IsVisible() then
+            local ok, b = pcall(frame.GetBagID, frame)
+            if ok and b == bag and frame:GetID() == slot then
+                candidates = candidates + 1
+                local w, h = frame:GetSize()
+                if w and w > 10 and h and h > 10 then
+                    DevLog("FindBagButton enum match name=" .. tostring(frame:GetName()) ..
+                        " size=" .. math.floor(w) .. "x" .. math.floor(h) ..
+                        " (scanned " .. scanned .. ", " .. candidates .. " candidates)")
+                    return frame
+                end
+            end
+        end
+        frame = EnumerateFrames(frame) ---@diagnostic disable-line: undefined-global
+    end
+    DevLog("FindBagButton: no visible match for bag=" .. tostring(bag) .. " slot=" .. tostring(slot) ..
+        " (scanned " .. scanned .. " frames, " .. candidates .. " candidates)")
+end
+
+local function GetOverlayTarget()
+    DevLog("GetOverlayTarget source=" .. tostring(lastClickSource) ..
+        " bag=" .. tostring(lastClickedBag) ..
+        " slot=" .. tostring(lastClickedSlot) ..
+        " bagBtn=" .. tostring(lastClickedBagButton and lastClickedBagButton:GetName()))
+    if lastClickSource == "bag" then
+        if lastClickedBagButton and lastClickedBagButton:IsVisible() then
+            DevLog("Using cached bag button")
+            return lastClickedBagButton
+        end
+        if lastClickedBag then
+            local b = FindBagButton(lastClickedBag, lastClickedSlot)
+            if b and b:IsVisible() then return b end
+            DevLog("bag target unavailable (b=" .. tostring(b) .. ")")
+        end
+    elseif lastClickSource == "merchant" and lastClickedMerchantButton and lastClickedMerchantButton:IsVisible() then
+        return lastClickedMerchantButton
+    end
+end
+
 local function AnchorButton()
     button:ClearAllPoints()
-    if not db.confirmPurchaseOnSide and lastClickedMerchantButton and lastClickedMerchantButton:IsVisible() then
-        button:SetPoint("CENTER", lastClickedMerchantButton, "CENTER", 0, 0)
-        DevLog("Overlay anchor on " .. lastClickedMerchantButton:GetName())
+    local target = (not db.confirmPurchaseOnSide) and GetOverlayTarget() or nil
+    if target then
+        button:SetPoint("CENTER", target, "CENTER", 0, 0)
+        DevLog("Overlay anchor on " .. (target:GetName() or "bag item"))
     else
         container:RestorePosition()
         button:SetPoint("TOPLEFT", container, "TOPLEFT", 0, 0)
@@ -105,15 +232,57 @@ function LuckyGrabbag.ConfirmPurchase:Init(database)
         if event == "MERCHANT_SHOW" then
             merchantOpen = true
             HookMerchantButtons()
+            HookUseContainerItem()
+            HookBagButtons()
         elseif event == "MERCHANT_CLOSED" then
             merchantOpen = false
             lastClickedMerchantButton = nil
+            lastClickedBag, lastClickedSlot = nil, nil
+            lastClickedBagButton = nil
+            lastClickSource = nil
         end
         Refresh()
     end)
 
-    StaticPopup1:HookScript("OnShow", function() ---@diagnostic disable-line: undefined-global
+    StaticPopup1:HookScript("OnShow", function(self) ---@diagnostic disable-line: undefined-global
         popupShown = true
+        local which = self.which or "?"
+        local data = self.data
+        local dataDesc = "nil"
+        if type(data) == "table" then
+            local parts = {}
+            for k, v in pairs(data) do
+                table.insert(parts, tostring(k) .. "=" .. tostring(v))
+            end
+            dataDesc = "{" .. table.concat(parts, ", ") .. "}"
+        elseif data ~= nil then
+            dataDesc = tostring(data)
+        end
+        DevLog("StaticPopup1 shown which=" .. tostring(which) .. " data=" .. dataDesc)
+
+        if merchantOpen and type(data) == "table" then
+            local btn = data.button or data.itemButton
+            if btn and btn.GetBagID then
+                lastClickedBagButton = btn
+                lastClickedBag, lastClickedSlot = btn:GetBagID(), btn:GetID()
+                lastClickSource = "bag"
+                DevLog("Extracted button from popup data: " .. tostring(btn:GetName()))
+            else
+                local bag = data.bag or data.bagID or data.containerID
+                local slot = data.slot or data.slotIndex or data.containerSlot
+                if not (bag and slot) and data.link then
+                    bag, slot = FindBagSlotByLink(data.link)
+                end
+                if bag and slot then
+                    lastClickedBag, lastClickedSlot = bag, slot
+                    lastClickedBagButton = nil
+                    lastClickSource = "bag"
+                    DevLog("Resolved bag/slot " .. bag .. "/" .. slot)
+                end
+            end
+        end
+
+        if merchantOpen then HookBagButtons() end
         Refresh()
     end)
     StaticPopup1:HookScript("OnHide", function() ---@diagnostic disable-line: undefined-global
