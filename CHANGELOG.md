@@ -1,4 +1,5 @@
-## [1.7.0] - 2026-05-07
+## [1.8.0] - 2026-05-18
 
 ### Added
-- **Auto-dismiss Bonus Roll**: Automatically passes on the end-of-content Bonus Roll popup, with per-character toggles for which content types should keep showing it. Mythic+ and Raids are kept by default; Delves, Dungeons, and Hunts are dismissed. Raid difficulties are individually selectable.
+- **Confirm Purchase Button** now also overlays a tick on the bag item being sold at a vendor, so you can sell with a double-click. Works with third-party bag addons like Baganator, Bagnon, and ElvUI.
+- **Discord link** in the settings panel, with a one-click copy of the invite URL.

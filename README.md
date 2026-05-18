@@ -9,8 +9,9 @@
 ### Confirm Purchase Button
 When a vendor shows a currency purchase confirmation popup, a large tick button appears so you can quickly confirm the buy.
 
-- Overlays directly on the item you clicked, so a double-click (click item → click tick) completes the purchase.
-- Works with both left and right mouse buttons — right-click the item, right-click the tick, and the item is yours.
+- Overlays directly on the item you clicked, so a double-click (click item, click tick) completes the purchase.
+- Also overlays on the bag item when a sell confirmation popup appears, so selling is just as quick.
+- Works with both left and right mouse buttons. Right-click the item, right-click the tick, and the item is yours.
 - Optionally anchor next to the vendor window instead of overlaying, with right-click drag to reposition.
 - Appears only while the popup is visible; hides automatically when the popup closes.
 - Can be toggled in the addon settings.
