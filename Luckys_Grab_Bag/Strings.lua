@@ -111,6 +111,10 @@ LuckyGrabbag.Strings = {
         luckyUtilsVersion = {
             label = "Lucky's Utils",
         },
+        discord = {
+            label = "Discord",
+            url   = "discord.gg/87HRHcAYP",
+        },
         devMode = {
             label = "Dev Mode",
             desc  = "Development logging and diagnostics. Has no visible effect for regular users.",

@@ -2,9 +2,31 @@
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.Settings = {}
 
+StaticPopupDialogs["LUCKYGB_COPY_DISCORD"] = {
+    text      = "Copy the Discord link:",
+    button1   = CLOSE,
+    hasEditBox  = 1,
+    editBoxWidth = 220,
+    OnShow = function(self)
+        self.editBox:SetMaxLetters(0)
+        self.editBox:SetText("https://discord.gg/87HRHcAYP")
+        self.editBox:HighlightText()
+        self.editBox:SetFocus()
+    end,
+    OnHide = function(self)
+        self.editBox:SetText("")
+    end,
+    timeout       = 0,
+    whileDead     = true,
+    hideOnEscape  = true,
+}
+
 function LuckyGrabbag.Settings:Init(db, charDB)
     local S = LuckyGrabbag.Strings
     local SS = S.settings
+
+    local gbVersion    = C_AddOns.GetAddOnMetadata("Luckys_Grab_Bag", "Version") or "?"
+    local utilsVersion = C_AddOns.GetAddOnMetadata("Luckys_Utils",    "Version") or "?"
 
     local panel = LuckySettings:NewRichPanel(S.addon.title, {
         addonFolder    = "Luckys_Grab_Bag",
@@ -43,11 +65,6 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        local gbVersion    = C_AddOns.GetAddOnMetadata("Luckys_Grab_Bag", "Version") or "?"
-        local utilsVersion = C_AddOns.GetAddOnMetadata("Luckys_Utils",    "Version") or "?"
-        g:BottomSection(SS.sections.versionInfo)
-        g:BottomLabel({ label = SS.grabbagVersion.label,    value = "v" .. gbVersion })
-        g:BottomLabel({ label = SS.luckyUtilsVersion.label, value = "v" .. utilsVersion })
     end
 
     ---------------------------------------------------------------------------
@@ -428,4 +445,16 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     end
 
     panel:Finalize()
+
+    local target = panel.whatsNewGroup
+    if target then
+        target:BottomSection(SS.sections.versionInfo)
+        target:BottomLabel({ label = SS.grabbagVersion.label,    value = "v" .. gbVersion })
+        target:BottomLabel({ label = SS.luckyUtilsVersion.label, value = "v" .. utilsVersion })
+        target:BottomLink({
+            label   = SS.discord.label,
+            value   = "|A:chatframe-button-copy:11:11|a " .. SS.discord.url,
+            onClick = function() StaticPopup_Show("LUCKYGB_COPY_DISCORD") end,
+        })
+    end
 end

@@ -206,7 +206,7 @@ local function CreatePrepFrame()
         SavePosition()
     end)
     f:SetClampedToScreen(true)
-    f:SetFrameStrata("HIGH")
+    f:SetFrameStrata("LOW")
     f:Hide()
 
     -- Ready Check button (secondary style)

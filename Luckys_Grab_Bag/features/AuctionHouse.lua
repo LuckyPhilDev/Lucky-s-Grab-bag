@@ -20,9 +20,8 @@ local auctionHouseOpen = false
 local function CreateContainer()
     if ahContainer then return end
 
-    ahContainer = CreateFrame("Frame", "LGB_AHButtonsParent", UIParent) ---@diagnostic disable-line: undefined-global
+    ahContainer = CreateFrame("Frame", "LGB_AHButtonsParent", AuctionHouseFrame) ---@diagnostic disable-line: undefined-global
     ahContainer:SetSize(1, 1)
-    ahContainer:SetFrameStrata("MEDIUM")
     LuckyGrabbag.EnableGroupDrag(ahContainer, AuctionHouseFrame, "ahButtonPos", 5, 0) ---@diagnostic disable-line: undefined-global
 end
 
