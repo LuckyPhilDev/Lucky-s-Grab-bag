@@ -1,3 +1,8 @@
+## [1.8.2] - 2026-05-22
+
+### Improved
+- **Easy Confirm Purchase** button now also handles the "bind on equip" popup, so soulbound gear can be equipped with a single tick.
+
 ## [1.8.1] - 2026-05-22
 
 ### Improved
