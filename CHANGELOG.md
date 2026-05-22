@@ -1,3 +1,8 @@
+## [1.8.1] - 2026-05-22
+
+### Improved
+- **Easy Confirm Purchase** button now also handles the "this item will no longer be refundable" confirmation, so refundable gear can be equipped with a single click.
+
 ## [1.8.0] - 2026-05-18
 
 ### Added

@@ -10,6 +10,8 @@ local button
 local container
 local merchantOpen = false
 local popupShown = false
+local popupWhich
+local popupIsRefund = false
 local lastClickedMerchantButton
 local lastClickedBag, lastClickedSlot
 local lastClickedBagButton
@@ -18,6 +20,15 @@ local useContainerItemHooked = false
 
 local function DevLog(msg)
     LuckyGrabbag.DevLog("ConfirmPurchase", msg)
+end
+
+local REFUND_POPUP_NAMES = {
+    USE_NO_REFUND_CONFIRM = true,
+    END_REFUND = true,
+}
+
+local function IsRefundPopup(popup)
+    return popup and popup.which and REFUND_POPUP_NAMES[popup.which] == true
 end
 
 local function CreateContainer()
@@ -75,8 +86,8 @@ local function HookUseContainerItem()
         return
     end
     hooksecurefunc(C_Container, "UseContainerItem", function(bag, slot) ---@diagnostic disable-line: undefined-global
-        if not merchantOpen then return end
         lastClickedBag, lastClickedSlot = bag, slot
+        lastClickedBagButton = nil
         lastClickSource = "bag"
         DevLog("UseContainerItem hook fired bag=" .. tostring(bag) .. " slot=" .. tostring(slot))
     end)
@@ -91,7 +102,6 @@ local function HookBagButtons()
         for _, btn in ipairs(frame.Items) do
             if not btn._lgbConfirmHooked then
                 btn:HookScript("OnMouseDown", function(self)
-                    if not merchantOpen then return end
                     lastClickedBagButton = self
                     if self.GetBagID then
                         lastClickedBag, lastClickedSlot = self:GetBagID(), self:GetID()
@@ -125,6 +135,25 @@ local function FindBagSlotByLink(link)
         end
     end
     DevLog("No bag slot matched link " .. tostring(link))
+end
+
+local function FindMouseoverBagButton()
+    local frame = EnumerateFrames() ---@diagnostic disable-line: undefined-global
+    while frame do
+        if frame.GetBagID and frame:IsVisible() and frame:IsMouseOver() then
+            local ok, b = pcall(frame.GetBagID, frame)
+            if ok and b and frame.GetID then
+                local w, h = frame:GetSize()
+                if w and w > 10 and h and h > 10 then
+                    DevLog("FindMouseoverBagButton match name=" .. tostring(frame:GetName()) ..
+                        " bag=" .. tostring(b) .. " slot=" .. tostring(frame:GetID()))
+                    return frame, b, frame:GetID()
+                end
+            end
+        end
+        frame = EnumerateFrames(frame) ---@diagnostic disable-line: undefined-global
+    end
+    DevLog("FindMouseoverBagButton: no match")
 end
 
 local function FindBagButton(bag, slot)
@@ -196,10 +225,13 @@ local function AnchorButton()
     if target then
         button:SetPoint("CENTER", target, "CENTER", 0, 0)
         DevLog("Overlay anchor on " .. (target:GetName() or "bag item"))
-    else
+    elseif merchantOpen then
         container:RestorePosition()
         button:SetPoint("TOPLEFT", container, "TOPLEFT", 0, 0)
         DevLog("Anchored next to MerchantFrame")
+    else
+        button:SetPoint("LEFT", StaticPopup1, "RIGHT", 5, 0) ---@diagnostic disable-line: undefined-global
+        DevLog("Anchored next to StaticPopup1 (no merchant)")
     end
 end
 
@@ -209,7 +241,8 @@ local function Refresh()
         return
     end
 
-    if merchantOpen and popupShown then
+    local active = popupShown and (merchantOpen or popupIsRefund)
+    if active then
         CreateButton()
         AnchorButton()
         button:Show()
@@ -225,6 +258,8 @@ end
 function LuckyGrabbag.ConfirmPurchase:Init(database)
     db = database
 
+    HookUseContainerItem()
+
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("MERCHANT_SHOW")
     eventFrame:RegisterEvent("MERCHANT_CLOSED")
@@ -232,7 +267,6 @@ function LuckyGrabbag.ConfirmPurchase:Init(database)
         if event == "MERCHANT_SHOW" then
             merchantOpen = true
             HookMerchantButtons()
-            HookUseContainerItem()
             HookBagButtons()
         elseif event == "MERCHANT_CLOSED" then
             merchantOpen = false
@@ -246,6 +280,8 @@ function LuckyGrabbag.ConfirmPurchase:Init(database)
 
     StaticPopup1:HookScript("OnShow", function(self) ---@diagnostic disable-line: undefined-global
         popupShown = true
+        popupWhich = self.which
+        popupIsRefund = IsRefundPopup(self)
         local which = self.which or "?"
         local data = self.data
         local dataDesc = "nil"
@@ -258,9 +294,24 @@ function LuckyGrabbag.ConfirmPurchase:Init(database)
         elseif data ~= nil then
             dataDesc = tostring(data)
         end
-        DevLog("StaticPopup1 shown which=" .. tostring(which) .. " data=" .. dataDesc)
+        DevLog("StaticPopup1 shown which=" .. tostring(which) .. " isRefund=" .. tostring(popupIsRefund) .. " data=" .. dataDesc)
 
-        if merchantOpen and type(data) == "table" then
+        if popupIsRefund then
+            -- Stale lastClicked data (set by previous UseContainerItem) would mislead FindBagButton.
+            -- For refund popups, find the bag button currently under the cursor instead.
+            lastClickedBagButton = nil
+            lastClickedBag, lastClickedSlot = nil, nil
+            lastClickSource = nil
+            local btn, bag, slot = FindMouseoverBagButton()
+            if btn then
+                lastClickedBagButton = btn
+                lastClickedBag, lastClickedSlot = bag, slot
+                lastClickSource = "bag"
+            end
+        end
+
+        local active = merchantOpen or popupIsRefund
+        if active and type(data) == "table" then
             local btn = data.button or data.itemButton
             if btn and btn.GetBagID then
                 lastClickedBagButton = btn
@@ -282,11 +333,13 @@ function LuckyGrabbag.ConfirmPurchase:Init(database)
             end
         end
 
-        if merchantOpen then HookBagButtons() end
+        if active then HookBagButtons() end
         Refresh()
     end)
     StaticPopup1:HookScript("OnHide", function() ---@diagnostic disable-line: undefined-global
         popupShown = false
+        popupWhich = nil
+        popupIsRefund = false
         Refresh()
     end)
 

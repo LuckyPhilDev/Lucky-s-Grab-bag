@@ -11,6 +11,7 @@ When a vendor shows a currency purchase confirmation popup, a large tick button 
 
 - Overlays directly on the item you clicked, so a double-click (click item, click tick) completes the purchase.
 - Also overlays on the bag item when a sell confirmation popup appears, so selling is just as quick.
+- Handles the "this item will no longer be refundable" popup too, so refundable gear can be equipped with a single tick.
 - Works with both left and right mouse buttons. Right-click the item, right-click the tick, and the item is yours.
 - Optionally anchor next to the vendor window instead of overlaying, with right-click drag to reposition.
 - Appears only while the popup is visible; hides automatically when the popup closes.
@@ -186,7 +187,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
   - *Configure mains…* — Opens the assignment window where each reagent category can be linked to one or more characters, "All" (everyone keeps), or "None".
 
 **Vendors**
-- *Confirm Purchase Button* — Shows a large tick button when a vendor currency purchase popup appears; clicking it confirms the buy.
+- *Confirm Purchase Button* — Shows a large tick button on vendor currency, sell, and "no longer refundable" popups; clicking it confirms.
   - *Overlay on Clicked Item* — Places the button directly over the vendor item you clicked instead of next to the window.
 
 **Delves**
