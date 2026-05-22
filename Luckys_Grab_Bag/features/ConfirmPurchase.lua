@@ -11,7 +11,7 @@ local container
 local merchantOpen = false
 local popupShown = false
 local popupWhich
-local popupIsRefund = false
+local popupIsBagUse = false
 local lastClickedMerchantButton
 local lastClickedBag, lastClickedSlot
 local lastClickedBagButton
@@ -22,13 +22,16 @@ local function DevLog(msg)
     LuckyGrabbag.DevLog("ConfirmPurchase", msg)
 end
 
-local REFUND_POPUP_NAMES = {
+-- StaticPopup names that fire from clicking an item in the player's bags
+-- (vs the merchant frame). These need the same bag-overlay treatment.
+local BAG_USE_POPUP_NAMES = {
     USE_NO_REFUND_CONFIRM = true,
-    END_REFUND = true,
+    END_REFUND            = true,
+    EQUIP_BIND            = true,
 }
 
-local function IsRefundPopup(popup)
-    return popup and popup.which and REFUND_POPUP_NAMES[popup.which] == true
+local function IsBagUsePopup(popup)
+    return popup and popup.which and BAG_USE_POPUP_NAMES[popup.which] == true
 end
 
 local function CreateContainer()
@@ -241,7 +244,7 @@ local function Refresh()
         return
     end
 
-    local active = popupShown and (merchantOpen or popupIsRefund)
+    local active = popupShown and (merchantOpen or popupIsBagUse)
     if active then
         CreateButton()
         AnchorButton()
@@ -281,7 +284,7 @@ function LuckyGrabbag.ConfirmPurchase:Init(database)
     StaticPopup1:HookScript("OnShow", function(self) ---@diagnostic disable-line: undefined-global
         popupShown = true
         popupWhich = self.which
-        popupIsRefund = IsRefundPopup(self)
+        popupIsBagUse = IsBagUsePopup(self)
         local which = self.which or "?"
         local data = self.data
         local dataDesc = "nil"
@@ -294,11 +297,11 @@ function LuckyGrabbag.ConfirmPurchase:Init(database)
         elseif data ~= nil then
             dataDesc = tostring(data)
         end
-        DevLog("StaticPopup1 shown which=" .. tostring(which) .. " isRefund=" .. tostring(popupIsRefund) .. " data=" .. dataDesc)
+        DevLog("StaticPopup1 shown which=" .. tostring(which) .. " isBagUse=" .. tostring(popupIsBagUse) .. " data=" .. dataDesc)
 
-        if popupIsRefund then
+        if popupIsBagUse then
             -- Stale lastClicked data (set by previous UseContainerItem) would mislead FindBagButton.
-            -- For refund popups, find the bag button currently under the cursor instead.
+            -- For bag-use popups, find the bag button currently under the cursor instead.
             lastClickedBagButton = nil
             lastClickedBag, lastClickedSlot = nil, nil
             lastClickSource = nil
@@ -310,7 +313,7 @@ function LuckyGrabbag.ConfirmPurchase:Init(database)
             end
         end
 
-        local active = merchantOpen or popupIsRefund
+        local active = merchantOpen or popupIsBagUse
         if active and type(data) == "table" then
             local btn = data.button or data.itemButton
             if btn and btn.GetBagID then
@@ -339,7 +342,7 @@ function LuckyGrabbag.ConfirmPurchase:Init(database)
     StaticPopup1:HookScript("OnHide", function() ---@diagnostic disable-line: undefined-global
         popupShown = false
         popupWhich = nil
-        popupIsRefund = false
+        popupIsBagUse = false
         Refresh()
     end)
 

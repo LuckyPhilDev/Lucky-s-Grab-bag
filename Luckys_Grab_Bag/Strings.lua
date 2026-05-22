@@ -133,7 +133,7 @@ LuckyGrabbag.Strings = {
         },
         confirmPurchase = {
             label = "Easy Confirm Purchase",
-            desc  = "Shows a large tick button when a vendor currency-confirmation or 'no longer refundable' popup appears, anchored on the item where possible.",
+            desc  = "Shows a large tick button on vendor currency, sell, 'no longer refundable', and 'bind on equip' popups, anchored on the item where possible.",
         },
         confirmPurchaseOnSide = {
             label = "Button on Side",

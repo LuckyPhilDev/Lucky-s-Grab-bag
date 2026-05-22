@@ -10,7 +10,7 @@
 Whenever the game pops a confirmation at a vendor or when using a still-refundable item, a large tick button appears so you can confirm with a quick second click.
 
 - Overlays directly on the item you clicked, so a double-click (click item, click tick) completes the action.
-- Works for vendor currency purchases, vendor sells, and the "this item will no longer be refundable" popup that appears when you use or equip a refundable item.
+- Works for vendor currency purchases, vendor sells, the "no longer refundable" popup when you use or equip a refundable item, and the "bind on equip" popup for soulbound gear.
 - Works with both left and right mouse buttons. Right-click the item, right-click the tick, and the item is yours.
 - Optionally anchor next to the vendor window instead of overlaying, with right-click drag to reposition.
 - Appears only while the popup is visible; hides automatically when the popup closes.
@@ -186,7 +186,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
   - *Configure mains…* — Opens the assignment window where each reagent category can be linked to one or more characters, "All" (everyone keeps), or "None".
 
 **Vendors**
-- *Confirm Purchase Button* — Shows a large tick button on vendor currency, sell, and "no longer refundable" popups; clicking it confirms.
+- *Confirm Purchase Button* — Shows a large tick button on vendor currency, sell, "no longer refundable", and "bind on equip" popups; clicking it confirms.
   - *Overlay on Clicked Item* — Places the button directly over the vendor item you clicked instead of next to the window.
 
 **Delves**
