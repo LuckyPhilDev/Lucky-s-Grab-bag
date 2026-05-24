@@ -266,7 +266,6 @@ function LuckyGrabbag.UseItems:Init(database)
     eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     eventFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
     eventFrame:SetScript("OnEvent", function(_, event)
-        DevLog("Event fired: " .. event)
         if event == "PLAYER_REGEN_DISABLED" then
             inCombat = true
         elseif event == "PLAYER_REGEN_ENABLED" then
