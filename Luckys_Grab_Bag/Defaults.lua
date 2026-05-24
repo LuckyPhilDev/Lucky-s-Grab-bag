@@ -26,6 +26,8 @@ LuckyGrabbag.DB_DEFAULTS = {
     showConfirmPurchase      = true,
     confirmPurchaseOnSide    = false,
     keepTransmogTab          = false,
+    autoTipAlt               = true,
+    spendToNextPerk          = true,
 }
 
 LuckyGrabbag.CHAR_DB_DEFAULTS = {

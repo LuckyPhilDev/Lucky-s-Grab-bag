@@ -31,7 +31,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     local panel = LuckySettings:NewRichPanel(S.addon.title, {
         addonFolder    = "Luckys_Grab_Bag",
         imagesRoot     = "images",
-        recentVersions = { "1.7.0", "1.6.0", "1.5.0" },
+        minVersion     = "1.5.0",
     })
     self.category = panel.category
 
@@ -197,6 +197,22 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             desc     = SS.configureMains.desc,
             parent   = SS.reagentMains.label,
             onClick  = function() LuckyGrabbag.ReagentMains:OpenPopup() end,
+        })
+
+        g:Toggle({
+            label    = SS.autoTipAlt.label,
+            desc     = SS.autoTipAlt.desc,
+            checked  = db.autoTipAlt,
+            since    = "1.10.0",
+            onToggle = function(checked) db.autoTipAlt = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.spendToNextPerk.label,
+            desc     = SS.spendToNextPerk.desc,
+            checked  = db.spendToNextPerk,
+            since    = "1.10.0",
+            onToggle = function(checked) db.spendToNextPerk = checked end,
         })
     end
 

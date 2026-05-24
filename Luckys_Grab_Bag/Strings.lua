@@ -218,6 +218,14 @@ LuckyGrabbag.Strings = {
             label = "Keep Active Transmog Tab",
             desc  = "Keeps whichever tab you're on when switching slots at the transmog NPC, instead of jumping back to Items.",
         },
+        autoTipAlt = {
+            label = "1s Tip on Alt Work Orders",
+            desc  = "When sending a personal work order to one of your own characters, automatically sets the tip to 1 silver.",
+        },
+        spendToNextPerk = {
+            label = "Spend to Next Perk",
+            desc  = "Clicking a profession specialisation node automatically spends knowledge points up to the next perk threshold (every 5 ranks).",
+        },
         bonusRoll = {
             label = "Auto-dismiss Bonus Roll",
             desc  = "Automatically passes on the Bonus Roll popup that appears at the end of content, except in the situations selected below.",

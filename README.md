@@ -99,6 +99,22 @@ Shows a clickable button when you're inside a delve that meets the configured mi
 - Respects combat lockdown — the button won't change mid-combat.
 - Can be toggled in the addon settings.
 
+### 1s Tip on Alt Work Orders
+When you submit a personal crafting work order to one of your own characters, the tip is automatically set to 1 silver so you don't have to clear the field each time.
+
+- Detects alts via your account-wide character roster (same-realm name match).
+- Only fires on Personal orders, never on Public or Guild orders.
+- Always overwrites the tip when the recipient changes, even if you'd typed something larger.
+- Enabled by default; can be toggled in the addon settings under Crafting.
+
+### Spend to Next Perk
+Clicking a profession specialisation node automatically spends additional knowledge points until you reach the next perk, so you can unlock a perk in one click instead of five.
+
+- Hooks the standard spec node click; works exactly like clicking a node normally, just keeps going.
+- Stops at each 5-rank perk threshold so you can review before unlocking the next one.
+- Stops early if you run out of knowledge points or the path is locked.
+- Enabled by default; can be toggled in the addon settings under Crafting.
+
 ### Cooking Utility Buttons
 Adds two buttons alongside the Cooking profession window for quick access to common cooking prep.
 
@@ -182,6 +198,8 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 **Crafting**
 - *Withdraw Treatise from Warbank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
 - *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.
+- *Spend to Next Perk* — When clicking a profession specialisation node, spends knowledge points up to the next 5-rank perk threshold.
+- *1s Tip on Alt Work Orders* — Automatically sets the tip to 1 silver when sending a personal work order to one of your own characters.
 - *Reagent Mains* — When the warband bank opens, deposits reagents whose category is assigned to a different character.
   - *Configure mains…* — Opens the assignment window where each reagent category can be linked to one or more characters, "All" (everyone keeps), or "None".
 
