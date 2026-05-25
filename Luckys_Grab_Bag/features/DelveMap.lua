@@ -6,6 +6,10 @@ local BOUNTY_MAP_ITEM_ID = 252415
 local DELVE_DIFFICULTY_ID = 208
 local BUTTON_SIZE = 42
 
+-- Widget IDs used by the scenario header to display the current delve tier.
+-- C_GossipInfo.GetActiveDelveGossip and C_DelvesUI.GetCurrentDelveTier do not exist in 12.0.5+.
+local DELVE_WIDGET_IDS = { 6183, 6184, 6185 }
+
 local db
 local button
 local inCombat = false
@@ -15,42 +19,33 @@ local function DevLog(msg)
 end
 
 -- Returns true + tier number if the player is in a delve, false otherwise.
--- Tier detection tries multiple APIs; returns 0 if tier cannot be determined.
+-- Tier is read from the scenario header widget (the same source Blizzard uses on screen).
+-- Returns 0 if the widget data is not yet available.
 local function GetDelveInfo()
     local _, _, difficultyID = GetInstanceInfo()
     if difficultyID ~= DELVE_DIFFICULTY_ID then
         return false, 0
     end
 
-    -- Try C_DelvesUI API (TWW 11.x)
-    if C_DelvesUI and C_DelvesUI.GetCurrentDelveTier then
-        local ok, tier = pcall(C_DelvesUI.GetCurrentDelveTier)
-        if ok and tier then
-            DevLog("Tier from C_DelvesUI: " .. tier)
-            return true, tier
+    if C_UIWidgetManager and C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo then
+        for _, widgetID in ipairs(DELVE_WIDGET_IDS) do
+            local info = C_UIWidgetManager.GetScenarioHeaderDelvesWidgetVisualizationInfo(widgetID)
+            if info and info.shownState ~= 0 then
+                local t = info.tierText
+                if type(t) == "number" then t = tostring(t) end
+                if type(t) == "string" then
+                    t = t:gsub("^%s+", ""):gsub("%s+$", "")
+                    local tier = tonumber(t)
+                    if tier then
+                        DevLog("Tier from widget " .. widgetID .. ": " .. tier)
+                        return true, tier
+                    end
+                end
+            end
         end
     end
 
-    -- Try Challenge Mode (delves may expose tier as keystone level)
-    if C_ChallengeMode and C_ChallengeMode.GetActiveKeystoneInfo then
-        local ok, level = pcall(C_ChallengeMode.GetActiveKeystoneInfo)
-        if ok and level and level > 0 then
-            DevLog("Tier from ChallengeMode: " .. level)
-            return true, level
-        end
-    end
-
-    -- Fallback: parse tier from difficulty name (e.g. "Tier 8", "Level 8")
-    local _, _, _, difficultyName = GetInstanceInfo()
-    if difficultyName then
-        local tier = difficultyName:match("(%d+)")
-        if tier then
-            DevLog("Tier parsed from difficultyName '" .. difficultyName .. "': " .. tier)
-            return true, tonumber(tier)
-        end
-    end
-
-    DevLog("In delve but tier unknown (difficultyName='" .. tostring(difficultyName) .. "')")
+    DevLog("In delve but tier unknown (widget not ready)")
     return true, 0
 end
 
@@ -150,6 +145,7 @@ function LuckyGrabbag.DelveMap:Init(database)
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+    eventFrame:RegisterEvent("ACTIVE_DELVE_DATA_UPDATE")
     eventFrame:RegisterEvent("BAG_UPDATE")
     eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")

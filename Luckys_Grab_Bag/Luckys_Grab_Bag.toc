@@ -32,6 +32,7 @@ features/RotationGlow.lua
 features/ConfirmPurchase.lua
 features/Transmog.lua
 features/WorkOrderAltTip.lua
+features/InstanceDiag.lua
 features/BonusRoll.lua
 features/ProfessionSpendToPerk.lua
 Lucky's Grab-bag.lua

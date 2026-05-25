@@ -68,6 +68,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.Transmog:Init(db)
         LuckyGrabbag.WorkOrderAltTip:Init(db)
         LuckyGrabbag.BonusRoll:Init(charDB)
+        LuckyGrabbag.InstanceDiag:Init(db)
         LuckyGrabbag.ProfessionSpendToPerk:Init(db)
 
         -- Minimap button
@@ -79,6 +80,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
             onClick = function(_, mouseBtn)
                 if mouseBtn == "MiddleButton" then
                     db.devMode = not db.devMode
+                    LuckyGrabbag.InstanceDiag:Refresh()
                     local S = LuckyGrabbag.Strings
                     local state = db.devMode and S.minimap.devModeOn or S.minimap.devModeOff
                     print(LuckyGrabbag.PREFIX .. " " .. S.minimap.devModePrefix .. state)
