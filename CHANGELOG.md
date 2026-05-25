@@ -1,3 +1,9 @@
+## [1.11.0] - 2026-05-24
+
+### Added
+- **Auto-Deposit Warbound Items** — automatically deposit warbound armor, weapons, and tokens to the warband bank when you open it. Toggle each type independently.
+- **Custom Item Whitelist** — add specific items to always auto-deposit by pasting their links or IDs. Handy for items that don't fit the standard categories.
+
 ## [1.10.0] - 2026-05-24
 
 ### Added

@@ -93,8 +93,8 @@ LuckyGrabbag.Strings = {
             general      = "General",
             vendors      = "Vendors",
             auctionHouse = "Auction House",
-            crafting     = "Crafting",
-            inventory    = "Items & Appearance",
+            crafting     = "Professions",
+            inventory    = "Inventory",
             combat       = "Combat",
             delves       = "Delves",
             interface    = "Interface",
@@ -166,6 +166,30 @@ LuckyGrabbag.Strings = {
         configureMains = {
             label = "Configure mains…",
             desc  = "Assign reagent categories to characters.",
+        },
+        warboundAutoDeposit = {
+            label = "Auto-Deposit Warbound Items",
+            desc  = "Deposits warbound armor, weapons, and tokens into the warband bank when you open it.",
+        },
+        warboundDepositArmor = {
+            label = "Warbound Armor",
+            desc  = "Auto-deposit warbound armor.",
+        },
+        warboundDepositWeapons = {
+            label = "Warbound Weapons",
+            desc  = "Auto-deposit warbound weapons.",
+        },
+        warboundDepositTokens = {
+            label = "Warbound Tokens",
+            desc  = "Auto-deposit warbound tokens.",
+        },
+        warboundItemWhitelist = {
+            label = "Custom Item Whitelist",
+            desc  = "Add specific items to always auto-deposit. Use with the button below.",
+        },
+        configureWhitelist = {
+            label = "Configure whitelist…",
+            desc  = "Add or remove items from the auto-deposit whitelist.",
         },
         useItems = {
             label = "Use Items Popup",

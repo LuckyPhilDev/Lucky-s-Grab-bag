@@ -46,6 +46,17 @@ Assigns each reagent category to one or more designated characters. When you ope
 - Existing assignments from Warband Stockist are imported automatically the first time you log in.
 - Off by default; can be toggled in the addon settings.
 
+### Auto-Deposit Warbound Items
+Automatically sends warbound gear and tokens to the warband bank when you open it.
+
+- **Warbound Armor** — toggle to auto-deposit all warbound armor pieces.
+- **Warbound Weapons** — toggle to auto-deposit all warbound weapons.
+- **Warbound Tokens** — toggle to auto-deposit tier tokens and other raid rewards.
+- **Custom Whitelist** — add specific items by pasting their item links or IDs. Whitelisted items always deposit, regardless of type toggles.
+- Each category can be toggled independently.
+- Opens via a **Configure whitelist…** button in settings for managing custom items.
+- Off by default; can be toggled in the addon settings.
+
 ### Withdraw Treatise from Warbank
 Automatically withdraws Thalassian Treatises for your current professions from the Warband Bank whenever you open it — but only if you haven't already used them this week.
 
@@ -61,7 +72,7 @@ Automatically withdraws Thalassian Treatises for your current professions from t
 Keeps your active tab in the transmog panel when switching outfit slots, instead of jumping back to Items each time.
 
 - Works for any tab: Items, Sets, Custom Sets, and Situations.
-- Off by default; enable it in settings under Items & Appearance.
+- Off by default; enable it in settings under Interface.
 
 ### Rotation Glow
 Animates the suggested next-cast spell on Blizzard's Cooldown Manager, using the game's built-in assisted combat data.
@@ -105,7 +116,7 @@ When you submit a personal crafting work order to one of your own characters, th
 - Detects alts via your account-wide character roster (same-realm name match).
 - Only fires on Personal orders, never on Public or Guild orders.
 - Always overwrites the tip when the recipient changes, even if you'd typed something larger.
-- Enabled by default; can be toggled in the addon settings under Crafting.
+- Enabled by default; can be toggled in the addon settings under Professions.
 
 ### Spend to Next Perk
 Clicking a profession specialisation node automatically spends additional knowledge points until you reach the next perk, so you can unlock a perk in one click instead of five.
@@ -113,7 +124,7 @@ Clicking a profession specialisation node automatically spends additional knowle
 - Hooks the standard spec node click; works exactly like clicking a node normally, just keeps going.
 - Stops at each 5-rank perk threshold so you can review before unlocking the next one.
 - Stops early if you run out of knowledge points or the path is locked.
-- Enabled by default; can be toggled in the addon settings under Crafting.
+- Enabled by default; can be toggled in the addon settings under Professions.
 
 ### Cooking Utility Buttons
 Adds two buttons alongside the Cooking profession window for quick access to common cooking prep.
@@ -195,7 +206,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Show Quickbuy button* — Places a shortcut button next to the Auction House window. Each click purchases one row of items from your CraftSim crafting queue's shopping list.
 - *Show Buy Next button* — Places a shortcut button next to the Auction House window. Each click advances through Auctionator's purchase workflow to quickly buy all items on a shopping list.
 
-**Crafting**
+**Professions**
 - *Withdraw Treatise from Warbank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
 - *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.
 - *Spend to Next Perk* — When clicking a profession specialisation node, spends knowledge points up to the next 5-rank perk threshold.
@@ -211,10 +222,9 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Trovehunter's Bounty Map* — Shows a clickable button for your Bounty Map when in a qualifying delve.
   - *Minimum Delve Level* — The minimum delve level required for the button to appear (1–11).
 
-**Items & Appearance**
+**Inventory**
 - *Use Items Popup* — Displays a floating bar of buttons for consumable profession items in your bags.
   - *Only while rested* — Restricts the popup to cities and inns.
-- *Keep Active Transmog Tab* — Keeps your active transmog tab when switching outfit slots.
 
 **Rotation Glow**
 - *Rotation Glow* — Animates the suggested next-cast spell on the Essential Cooldown Viewer, using Blizzard's assisted combat data.
@@ -228,6 +238,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Create Kick Macro* — Generates a class-appropriate interrupt macro in a character macro slot.
 
 **Interface**
+- *Keep Active Transmog Tab* — Keeps your active transmog tab when switching outfit slots.
 - *Auto-dismiss Bonus Roll* — Automatically passes on the Bonus Roll popup at the end of instanced content. Per-character toggles for Mythic+, Raids (with individual difficulty selection), Delves, Dungeons, and Hunts.
 
 Settings are saved per account, except for Bonus Roll preferences which are saved per character.

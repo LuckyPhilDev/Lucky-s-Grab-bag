@@ -176,6 +176,31 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label    = SS.autoTipAlt.label,
+            desc     = SS.autoTipAlt.desc,
+            checked  = db.autoTipAlt,
+            since    = "1.10.0",
+            onToggle = function(checked) db.autoTipAlt = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.spendToNextPerk.label,
+            desc     = SS.spendToNextPerk.desc,
+            checked  = db.spendToNextPerk,
+            since    = "1.10.0",
+            onToggle = function(checked) db.spendToNextPerk = checked end,
+        })
+    end
+
+    ---------------------------------------------------------------------------
+    -- Auto-Deposit
+    ---------------------------------------------------------------------------
+    do
+        local g = panel:Group("Auto-Deposit")
+
+        g:Section("Reagents")
+
+        g:Toggle({
             label    = SS.reagentMains.label,
             desc     = SS.reagentMains.desc,
             checked  = db.reagentMainsEnabled,
@@ -199,20 +224,60 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onClick  = function() LuckyGrabbag.ReagentMains:OpenPopup() end,
         })
 
+        g:Section("Gear")
+
         g:Toggle({
-            label    = SS.autoTipAlt.label,
-            desc     = SS.autoTipAlt.desc,
-            checked  = db.autoTipAlt,
-            since    = "1.10.0",
-            onToggle = function(checked) db.autoTipAlt = checked end,
+            label    = SS.warboundAutoDeposit.label,
+            desc     = SS.warboundAutoDeposit.desc,
+            checked  = db.warboundAutoDepositEnabled,
+            image    = "crafting/reagent-mains",
+            since    = "1.11.0",
+            onToggle = function(checked) db.warboundAutoDepositEnabled = checked end,
         })
 
         g:Toggle({
-            label    = SS.spendToNextPerk.label,
-            desc     = SS.spendToNextPerk.desc,
-            checked  = db.spendToNextPerk,
-            since    = "1.10.0",
-            onToggle = function(checked) db.spendToNextPerk = checked end,
+            label    = SS.warboundDepositArmor.label,
+            desc     = SS.warboundDepositArmor.desc,
+            checked  = db.warboundDepositArmor,
+            parent   = SS.warboundAutoDeposit.label,
+            onToggle = function(checked) db.warboundDepositArmor = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.warboundDepositWeapons.label,
+            desc     = SS.warboundDepositWeapons.desc,
+            checked  = db.warboundDepositWeapons,
+            parent   = SS.warboundAutoDeposit.label,
+            onToggle = function(checked) db.warboundDepositWeapons = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.warboundDepositTokens.label,
+            desc     = SS.warboundDepositTokens.desc,
+            checked  = db.warboundDepositTokens,
+            parent   = SS.warboundAutoDeposit.label,
+            onToggle = function(checked) db.warboundDepositTokens = checked end,
+        })
+
+        g:Section("Whitelist")
+
+        g:Toggle({
+            label    = SS.warboundItemWhitelist.label,
+            desc     = SS.warboundItemWhitelist.desc,
+            checked  = db.warboundItemWhitelist and true or false,
+            parent   = SS.warboundAutoDeposit.label,
+            onToggle = function(checked)
+                if checked and not db.warboundItemWhitelist then
+                    db.warboundItemWhitelist = {}
+                end
+            end,
+        })
+
+        g:Button({
+            label    = SS.configureWhitelist.label,
+            desc     = SS.configureWhitelist.desc,
+            parent   = SS.warboundAutoDeposit.label,
+            onClick  = function() LuckyGrabbag.WarboundAutoDeposit:OpenPopup() end,
         })
     end
 
@@ -247,15 +312,6 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        g:Section(SS.sections.wardrobe)
-
-        g:Toggle({
-            label    = SS.transmog.label,
-            desc     = SS.transmog.desc,
-            checked  = db.keepTransmogTab,
-            since    = "1.6.0",
-            onToggle = function(checked) db.keepTransmogTab = checked end,
-        })
     end
 
     ---------------------------------------------------------------------------
@@ -389,6 +445,16 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     ---------------------------------------------------------------------------
     do
         local g = panel:Group(SS.groups.interface)
+
+        g:Section(SS.sections.wardrobe)
+
+        g:Toggle({
+            label    = SS.transmog.label,
+            desc     = SS.transmog.desc,
+            checked  = db.keepTransmogTab,
+            since    = "1.6.0",
+            onToggle = function(checked) db.keepTransmogTab = checked end,
+        })
 
         g:Toggle({
             label    = SS.bonusRoll.label,
