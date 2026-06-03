@@ -88,7 +88,7 @@ local function BuildCopyPopup()
     local e = CreateFrame("EditBox", nil, p, "InputBoxTemplate")
     e:SetSize(260, 18)
     e:SetPoint("CENTER")
-    e:SetAutoFocus(true)
+    e:SetAutoFocus(false)
     e:SetScript("OnEscapePressed",  function() p:Hide() end)
     e:SetScript("OnEditFocusLost",  function() p:Hide() end)
 
@@ -97,12 +97,15 @@ local function BuildCopyPopup()
 end
 
 local function ShowCopyPopup(text, anchor)
+    local captured = text or ""
     copyPopup:ClearAllPoints()
     copyPopup:SetPoint("TOP", anchor, "BOTTOM", 0, -4)
-    copyEdit:SetText(text or "")
     copyPopup:Show()
-    copyEdit:SetFocus()
-    copyEdit:HighlightText()
+    C_Timer.After(0, function()
+        copyEdit:SetText(captured)
+        copyEdit:SetFocus()
+        copyEdit:HighlightText()
+    end)
 end
 
 local function Refresh()

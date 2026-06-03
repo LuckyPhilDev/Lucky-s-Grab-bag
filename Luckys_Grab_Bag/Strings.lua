@@ -263,6 +263,10 @@ LuckyGrabbag.Strings = {
             label = "Keep in Mythic+",
             desc  = "Show the Bonus Roll popup after Mythic+ runs.",
         },
+        bonusRollMythicPlusMinLevel = {
+            label = "Minimum key level",
+            desc  = "Only keep the popup on keys at or above this level. Keys below this level are always dismissed.",
+        },
         bonusRollKeepInRaids = {
             label = "Keep in Raids",
             desc  = "Show the Bonus Roll popup after raid bosses.",

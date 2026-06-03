@@ -70,6 +70,14 @@ local RAID_CONTEXTS = {
     raidLFR = true, raidNormal = true, raidHeroic = true, raidMythic = true,
 }
 
+local function getMythicPlusLevel()
+    if C_ChallengeMode and C_ChallengeMode.GetActiveKeystoneInfo then
+        local level = C_ChallengeMode.GetActiveKeystoneInfo()
+        if type(level) == "number" and level > 0 then return level end
+    end
+    return 0
+end
+
 local function onBonusRollShow()
     if not charDB or not charDB.bonusRollAutoDismiss then return end
     local ctx = detectContext()
@@ -78,6 +86,11 @@ local function onBonusRollShow()
     -- Raid contexts: master raid toggle gates the per-difficulty keep flags.
     if RAID_CONTEXTS[ctx] then
         if charDB.bonusRollKeepInRaids and charDB[keepKey] then return end
+    elseif ctx == "mythicplus" then
+        if charDB.bonusRollKeepInMythicPlus then
+            local minLevel = charDB.bonusRollMythicPlusMinLevel or 1
+            if getMythicPlusLevel() >= minLevel then return end
+        end
     elseif keepKey and charDB[keepKey] then
         return
     end

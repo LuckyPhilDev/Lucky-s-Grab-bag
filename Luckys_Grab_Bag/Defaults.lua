@@ -39,6 +39,7 @@ LuckyGrabbag.DB_DEFAULTS = {
 LuckyGrabbag.CHAR_DB_DEFAULTS = {
     bonusRollAutoDismiss      = false,
     bonusRollKeepInMythicPlus = true,
+    bonusRollMythicPlusMinLevel = 10,
     bonusRollKeepInRaids      = true,
     bonusRollKeepInLFR        = true,
     bonusRollKeepInNormalRaid = true,

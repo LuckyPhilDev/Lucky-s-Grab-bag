@@ -480,6 +480,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked) charDB.bonusRollKeepInMythicPlus = checked end,
         })
 
+        g:Slider({
+            label     = SS.bonusRollMythicPlusMinLevel.label,
+            key       = "BonusRollMythicPlusMinLevel",
+            desc      = SS.bonusRollMythicPlusMinLevel.desc,
+            min       = 2,
+            max       = 10,
+            value     = charDB.bonusRollMythicPlusMinLevel,
+            parent    = SS.bonusRollKeepInMythicPlus.label,
+            onChanged = function(val) charDB.bonusRollMythicPlusMinLevel = val end,
+        })
+
         g:Toggle({
             label    = SS.bonusRollKeepInRaids.label,
             desc     = SS.bonusRollKeepInRaids.desc,
