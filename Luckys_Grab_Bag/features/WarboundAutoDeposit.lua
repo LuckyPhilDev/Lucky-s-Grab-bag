@@ -14,69 +14,76 @@ local function DevLog(msg)
     if LuckyGrabbag.DevLog then LuckyGrabbag.DevLog("WarboundAutoDeposit", msg) end
 end
 
--- ---------------------------------------------------------------------------
--- Item classification
--- ---------------------------------------------------------------------------
-
-local function IsWarboundArmor(itemID)
-    local classID, subclassID, bindType = select(12, GetItemInfo(itemID))
-    if classID ~= 4 then return false end  -- 4 = Armor
-    if bindType ~= 4 then return false end  -- 4 = Warbound
-    return true
-end
-
-local function IsWarboundWeapon(itemID)
-    local classID, subclassID, bindType = select(12, GetItemInfo(itemID))
-    if classID ~= 2 then return false end  -- 2 = Weapon
-    if bindType ~= 4 then return false end  -- 4 = Warbound
-    return true
-end
-
-local function IsWarboundToken(itemID)
-    local classID, subclassID = select(12, GetItemInfo(itemID))
-    if classID ~= 15 then return false end  -- 15 = Miscellaneous
-    if subclassID ~= 0 then return false end  -- subclass 0 = tokens
-    return true
-end
+-- Lumber sits in classID 7 (Tradeskill) under the catch-all "Other" subclass (11),
+-- which holds far more than lumber, so we also require the name to contain "Lumber".
+local LUMBER_CLASS_ID   = 7
+local LUMBER_NAME_MATCH = "lumber"
 
 -- ---------------------------------------------------------------------------
 -- Deposit logic
 -- ---------------------------------------------------------------------------
 
 local function DepositWarboundItems()
-    if not db.warboundAutoDepositEnabled then return end
+    -- Lumber is a standalone reagent toggle that runs independently of the
+    -- warbound gear/whitelist feature, so either can trigger this pass.
+    local warbound = db.warboundAutoDepositEnabled
+    if not warbound and not db.warboundDepositLumber then return end
 
+    local anyTypeEnabled = warbound and (db.warboundDepositArmor or db.warboundDepositWeapons
+        or db.warboundDepositTokens)
+    local toDeposit = {}  -- itemID → true, built via per-slot scan
+
+    -- One pass: find which itemIDs to deposit.
+    -- Use C_Bank.IsItemAllowedInBankType for accurate warbound detection (requires an
+    -- ItemLocation, so we must scan per-slot rather than using the aggregated inventory).
+    for _, bag in ipairs(Utils.GetAllPlayerBagIDs()) do
+        local numSlots = C_Container.GetContainerNumSlots(bag)
+        for slot = 1, numSlots do
+            local info = C_Container.GetContainerItemInfo(bag, slot)
+            if info and info.itemID and not toDeposit[info.itemID] then
+                local itemID = info.itemID
+
+                -- Whitelist always wins regardless of type toggles
+                if warbound and db.warboundItemWhitelist and db.warboundItemWhitelist[itemID] then
+                    toDeposit[itemID] = true
+                    DevLog(("Queueing whitelisted itemID %d"):format(itemID))
+                elseif anyTypeEnabled or db.warboundDepositLumber then
+                    local loc = ItemLocation:CreateFromBagAndSlot(bag, slot)
+                    if C_Bank.IsItemAllowedInBankType(Enum.BankType.Account, loc) then
+                        local name = GetItemInfo(itemID)
+                        local classID, subclassID = select(12, GetItemInfo(itemID))
+                        if anyTypeEnabled and db.warboundDepositArmor and classID == 4 then
+                            toDeposit[itemID] = true
+                            DevLog(("Queueing warbound armor itemID %d"):format(itemID))
+                        elseif anyTypeEnabled and db.warboundDepositWeapons and classID == 2 then
+                            toDeposit[itemID] = true
+                            DevLog(("Queueing warbound weapon itemID %d"):format(itemID))
+                        elseif anyTypeEnabled and db.warboundDepositTokens and classID == 15 and subclassID == 0 then
+                            toDeposit[itemID] = true
+                            DevLog(("Queueing warbound token itemID %d"):format(itemID))
+                        elseif db.warboundDepositLumber and classID == LUMBER_CLASS_ID
+                            and name and name:lower():find(LUMBER_NAME_MATCH, 1, true) then
+                            toDeposit[itemID] = true
+                            DevLog(("Queueing lumber itemID %d"):format(itemID))
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    -- Build queue with full stack counts from inventory
     local inventory = Utils.ScanInventory()
     local queue = {}
-
-    for itemID, count in pairs(inventory) do
-        local shouldDeposit = false
-
-        -- Check warbound category toggles
-        if db.warboundDepositArmor and IsWarboundArmor(itemID) then
-            shouldDeposit = true
-            DevLog(("Queueing %d of armor itemID %d"):format(count, itemID))
-        elseif db.warboundDepositWeapons and IsWarboundWeapon(itemID) then
-            shouldDeposit = true
-            DevLog(("Queueing %d of weapon itemID %d"):format(count, itemID))
-        elseif db.warboundDepositTokens and IsWarboundToken(itemID) then
-            shouldDeposit = true
-            DevLog(("Queueing %d of token itemID %d"):format(count, itemID))
-        end
-
-        -- Whitelist override: always deposit if in whitelist
-        if db.warboundItemWhitelist and db.warboundItemWhitelist[itemID] then
-            shouldDeposit = true
-            DevLog(("Queueing %d of whitelisted itemID %d"):format(count, itemID))
-        end
-
-        if shouldDeposit then
+    for itemID in pairs(toDeposit) do
+        local count = inventory[itemID] or 0
+        if count > 0 then
             table.insert(queue, { itemID = itemID, amount = count })
         end
     end
 
     if #queue > 0 then
-        DevLog(("Depositing %d warbound/whitelisted item stack(s)"):format(#queue))
+        DevLog(("Depositing %d warbound/whitelisted item type(s)"):format(#queue))
         Utils.ProcessQueue(queue, 1)
     end
 end
@@ -335,6 +342,53 @@ function Feature:OpenPopup()
     popup:Show()
     self:RefreshPopup()
 end
+
+-- ---------------------------------------------------------------------------
+-- Diagnostics: identify item classification (used to find new deposit types)
+-- ---------------------------------------------------------------------------
+
+-- Scans player bags and prints each item's name, itemID, and class/subclass
+-- (both the numeric IDs the deposit logic uses and their localized names).
+-- Pass a filter string to only show items whose name contains it, e.g.
+--   /grabbag-iteminfo lumber
+local function DiagnoseItems(filter)
+    filter = filter and filter:lower():gsub("^%s+", ""):gsub("%s+$", "")
+    if filter == "" then filter = nil end
+
+    local P = LuckyGrabbag.PREFIX
+    print(P .. " Item classification" .. (filter and (" matching '" .. filter .. "'") or " (all bag items)") .. ":")
+
+    local seen = {}
+    local shown = 0
+    for _, bag in ipairs(Utils.GetAllPlayerBagIDs()) do
+        local numSlots = C_Container.GetContainerNumSlots(bag)
+        for slot = 1, numSlots do
+            local info = C_Container.GetContainerItemInfo(bag, slot)
+            if info and info.itemID and not seen[info.itemID] then
+                local name, link, _, _, _, itemType, itemSubType, _, _, _, _, classID, subclassID = GetItemInfo(info.itemID)
+                if name and (not filter or name:lower():find(filter, 1, true)) then
+                    seen[info.itemID] = true
+                    shown = shown + 1
+                    print(("  %s |cffaaaaaaid=%d  classID=%s (%s)  subclassID=%s (%s)|r"):format(
+                        link or name,
+                        info.itemID,
+                        tostring(classID), tostring(itemType),
+                        tostring(subclassID), tostring(itemSubType)
+                    ))
+                end
+            end
+        end
+    end
+
+    if shown == 0 then
+        print("  |cffff4040No matching items found in your bags.|r"
+            .. (filter and " (Item info may not be cached yet; try again.)" or ""))
+    end
+end
+
+SLASH_LGBITEMINFO1 = "/grabbag-iteminfo"
+SLASH_LGBITEMINFO2 = "/gbiteminfo"
+SlashCmdList["LGBITEMINFO"] = DiagnoseItems
 
 -- ---------------------------------------------------------------------------
 -- Init

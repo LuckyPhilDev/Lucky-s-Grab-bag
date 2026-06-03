@@ -183,6 +183,10 @@ LuckyGrabbag.Strings = {
             label = "Warbound Tokens",
             desc  = "Auto-deposit warbound tokens.",
         },
+        warboundDepositLumber = {
+            label = "Lumber",
+            desc  = "Auto-deposit lumber.",
+        },
         warboundItemWhitelist = {
             label = "Custom Item Whitelist",
             desc  = "Add specific items to always auto-deposit. Use with the button below.",

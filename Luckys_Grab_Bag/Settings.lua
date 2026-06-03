@@ -224,6 +224,13 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onClick  = function() LuckyGrabbag.ReagentMains:OpenPopup() end,
         })
 
+        g:Toggle({
+            label    = SS.warboundDepositLumber.label,
+            desc     = SS.warboundDepositLumber.desc,
+            checked  = db.warboundDepositLumber,
+            onToggle = function(checked) db.warboundDepositLumber = checked end,
+        })
+
         g:Section("Gear")
 
         g:Toggle({

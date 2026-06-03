@@ -16,6 +16,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     warboundDepositArmor     = false,
     warboundDepositWeapons   = false,
     warboundDepositTokens    = false,
+    warboundDepositLumber    = false,
     warboundItemWhitelist    = {},
     showCookingButtons       = true,
     showUseItems             = true,
