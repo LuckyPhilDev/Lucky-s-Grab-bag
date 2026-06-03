@@ -101,6 +101,9 @@ local function CreateButtons()
     campfireButton:RegisterForClicks("LeftButtonDown", "LeftButtonUp")
     campfireButton:SetAttribute("type1", "spell")
     campfireButton:SetAttribute("spell", CAMPFIRE_SPELL_ID)
+    -- unit1="player" makes this ground-targeted spell auto-place at the player's
+    -- feet instead of dropping the placement cursor for a manual click.
+    campfireButton:SetAttribute("unit1", "player")
     parentFrame:RegisterDraggable(campfireButton)
 
     -- Campfire cooldown overlay
