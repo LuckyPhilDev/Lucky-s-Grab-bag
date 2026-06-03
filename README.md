@@ -52,6 +52,7 @@ Automatically sends warbound gear and tokens to the warband bank when you open i
 - **Warbound Armor** — toggle to auto-deposit all warbound armor pieces.
 - **Warbound Weapons** — toggle to auto-deposit all warbound weapons.
 - **Warbound Tokens** — toggle to auto-deposit tier tokens and other raid rewards.
+- **Lumber** — toggle to auto-deposit lumber alongside your other warbound items.
 - **Custom Whitelist** — add specific items by pasting their item links or IDs. Whitelisted items always deposit, regardless of type toggles.
 - Each category can be toggled independently.
 - Opens via a **Configure whitelist…** button in settings for managing custom items.
@@ -97,6 +98,7 @@ A small floating window that appears automatically in raids and dungeons when yo
 Automatically passes on Blizzard's Bonus Roll popup that appears at the end of instanced content, with per-character control over which content types are kept.
 
 - Per-content toggles for **Mythic+**, **Raids**, **Delves**, **Dungeons**, and **Hunts** in the open world.
+- For Mythic+, set a **minimum key level** to keep the roll for, so rolls from lower keys are dismissed automatically.
 - Raid difficulties are individually selectable (Raid Finder, Normal, Heroic, Mythic).
 - Settings are saved per character, so each alt can have its own preferences.
 - Off by default; enable it in settings under Interface.
@@ -129,7 +131,7 @@ Clicking a profession specialisation node automatically spends additional knowle
 ### Cooking Utility Buttons
 Adds two buttons alongside the Cooking profession window for quick access to common cooking prep.
 
-- **Campfire** — casts Basic Campfire so you can cook anywhere.
+- **Campfire** — casts Basic Campfire right at your feet so you can cook anywhere, no ground placement needed.
 - **Chef's Hat** — uses the Chef's Hat toy to put it on. If the buff is already active, clicking the button cancels it instead (the button glows while active).
 - Both buttons are hidden when the Cooking window is closed.
 - Right-click drag any button to reposition the group; position is saved relative to the Cooking window.
@@ -239,7 +241,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 
 **Interface**
 - *Keep Active Transmog Tab* — Keeps your active transmog tab when switching outfit slots.
-- *Auto-dismiss Bonus Roll* — Automatically passes on the Bonus Roll popup at the end of instanced content. Per-character toggles for Mythic+, Raids (with individual difficulty selection), Delves, Dungeons, and Hunts.
+- *Auto-dismiss Bonus Roll* — Automatically passes on the Bonus Roll popup at the end of instanced content. Per-character toggles for Mythic+ (with a minimum key level), Raids (with individual difficulty selection), Delves, Dungeons, and Hunts.
 
 Settings are saved per account, except for Bonus Roll preferences which are saved per character.
 

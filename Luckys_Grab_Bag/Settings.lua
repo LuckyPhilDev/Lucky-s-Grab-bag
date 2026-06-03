@@ -31,7 +31,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     local panel = LuckySettings:NewRichPanel(S.addon.title, {
         addonFolder    = "Luckys_Grab_Bag",
         imagesRoot     = "images",
-        minVersion     = "1.5.0",
+        minVersion     = LuckyGrabbag.WHATS_NEW_MIN_VERSION,
     })
     self.category = panel.category
 
@@ -228,6 +228,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.warboundDepositLumber.label,
             desc     = SS.warboundDepositLumber.desc,
             checked  = db.warboundDepositLumber,
+            since    = "1.11.0",
             onToggle = function(checked) db.warboundDepositLumber = checked end,
         })
 
@@ -273,6 +274,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             desc     = SS.warboundItemWhitelist.desc,
             checked  = db.warboundItemWhitelist and true or false,
             parent   = SS.warboundAutoDeposit.label,
+            since    = "1.11.0",
             onToggle = function(checked)
                 if checked and not db.warboundItemWhitelist then
                     db.warboundItemWhitelist = {}
@@ -488,6 +490,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             max       = 10,
             value     = charDB.bonusRollMythicPlusMinLevel,
             parent    = SS.bonusRollKeepInMythicPlus.label,
+            since     = "1.11.0",
             onChanged = function(val) charDB.bonusRollMythicPlusMinLevel = val end,
         })
 
