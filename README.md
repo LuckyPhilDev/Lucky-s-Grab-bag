@@ -128,6 +128,16 @@ Clicking a profession specialisation node automatically spends additional knowle
 - Stops early if you run out of knowledge points or the path is locked.
 - Enabled by default; can be toggled in the addon settings under Professions.
 
+### Concentration on Profession Book
+Adds a Concentration bar above each profession's skill bar in the Profession Book, so you can check your Concentration for both professions at a glance without opening either crafting window.
+
+![Concentration bars on the Profession Book](images/crafting/concentration-view.png)
+
+- Shows the current amount and maximum for each primary crafting profession.
+- Hover the bar to see how long until your Concentration is full again.
+- Updates as you spend and recharge, including passive recharge over time.
+- Enabled by default; can be toggled in the addon settings under Professions.
+
 ### Cooking Utility Buttons
 Adds two buttons alongside the Cooking profession window for quick access to common cooking prep.
 
@@ -212,6 +222,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Withdraw Treatise from Warbank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
 - *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.
 - *Spend to Next Perk* — When clicking a profession specialisation node, spends knowledge points up to the next 5-rank perk threshold.
+- *Concentration on Profession Book* — Shows a Concentration bar above each profession's skill bar in the Profession Book, with a hover tooltip for the refill time.
 - *1s Tip on Alt Work Orders* — Automatically sets the tip to 1 silver when sending a personal work order to one of your own characters.
 - *Reagent Mains* — When the warband bank opens, deposits reagents whose category is assigned to a different character.
   - *Configure mains…* — Opens the assignment window where each reagent category can be linked to one or more characters, "All" (everyone keeps), or "None".

@@ -39,6 +39,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     keepTransmogTab          = false,
     autoTipAlt               = true,
     spendToNextPerk          = true,
+    showConcentration        = true,
 }
 
 LuckyGrabbag.CHAR_DB_DEFAULTS = {

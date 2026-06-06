@@ -1,22 +1,11 @@
-## [1.11.1] - 2026-06-05
+## [1.12.0] - 2026-06-05
+
+### Added
+- **Concentration on Profession Book** — see your Concentration for both professions at a glance in the Profession Book, with a bar above each skill bar. No need to open each profession. Hover to see how long until it refills.
 
 ### Fixed
 - Minimap button now appears correctly on the minimap instead of sometimes hiding behind it.
 - Removed a black square that could appear when hovering the minimap button.
-
-## [1.11.0] - 2026-06-03
-
-### Added
-- **Auto-Deposit Warbound Items** — automatically deposit warbound armor, weapons, and tokens to the warband bank when you open it. Toggle each type independently.
-- **Custom Item Whitelist** — add specific items to always auto-deposit by pasting their links or IDs. Handy for items that don't fit the standard categories.
-- **Auto-Deposit Lumber** — automatically stash lumber in the warband bank alongside your other warbound items.
-
-### Improved
-- **Cooking Fire button** — now drops the campfire right at your feet instead of leaving you to place it on the ground.
-- **Bonus Roll** — set a minimum Mythic+ key level to keep the roll for, so rolls from lower keys are dismissed automatically.
-
-### Fixed
-- More reliable delve tier detection for the delve map reminder.
 
 ## [1.10.0] - 2026-05-24
 

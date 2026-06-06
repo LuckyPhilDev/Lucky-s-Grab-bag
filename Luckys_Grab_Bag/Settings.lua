@@ -190,6 +190,18 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             since    = "1.10.0",
             onToggle = function(checked) db.spendToNextPerk = checked end,
         })
+
+        g:Toggle({
+            label    = SS.concentrationView.label,
+            desc     = SS.concentrationView.desc,
+            checked  = db.showConcentration,
+            since    = "1.12.0",
+            image    = "crafting/concentration-view.png",
+            onToggle = function(checked)
+                db.showConcentration = checked
+                LuckyGrabbag.ConcentrationView:ApplySetting()
+            end,
+        })
     end
 
     ---------------------------------------------------------------------------

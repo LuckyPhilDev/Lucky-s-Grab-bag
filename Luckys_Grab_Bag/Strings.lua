@@ -31,6 +31,13 @@ LuckyGrabbag.Strings = {
         withdrawn = "Withdrawn %s treatise.",
     },
 
+    concentrationView = {
+        barLabel        = "Concentration",
+        tooltipCurrent  = "Concentration: %d / %d",
+        tooltipRecharge = "Full in %s",
+        tooltipFull     = "Full",
+    },
+
     auctionHouse = {
         quickbuyTooltip      = "CraftSim Quickbuy",
         testflightTooltip    = "TestFlight Buy Next",
@@ -253,6 +260,10 @@ LuckyGrabbag.Strings = {
         spendToNextPerk = {
             label = "Spend to Next Perk",
             desc  = "Clicking a profession specialisation node automatically spends knowledge points up to the next perk threshold (every 5 ranks).",
+        },
+        concentrationView = {
+            label = "Concentration on Profession Book",
+            desc  = "Adds a Concentration bar above each profession's skill bar in the Profession Book, so you can see your Concentration for both at a glance without opening each one.",
         },
         bonusRoll = {
             label = "Auto-dismiss Bonus Roll",

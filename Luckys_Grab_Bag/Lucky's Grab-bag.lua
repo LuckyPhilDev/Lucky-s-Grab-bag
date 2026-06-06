@@ -70,6 +70,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.BonusRoll:Init(charDB)
         LuckyGrabbag.InstanceDiag:Init(db)
         LuckyGrabbag.ProfessionSpendToPerk:Init(db)
+        LuckyGrabbag.ConcentrationView:Init(db)
 
         -- Minimap button
         LuckyGrabbag.minimapButton = LuckyMinimap:Create({
