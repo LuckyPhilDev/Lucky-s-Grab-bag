@@ -36,4 +36,4 @@ features/InstanceDiag.lua
 features/BonusRoll.lua
 features/ProfessionSpendToPerk.lua
 features/ConcentrationView.lua
-Lucky's Grab-bag.lua
+Core.lua
