@@ -1,3 +1,8 @@
+## [1.12.1] - 2026-06-07
+
+### Improved
+- Behind-the-scenes maintenance.
+
 ## [1.12.0] - 2026-06-05
 
 ### Added
