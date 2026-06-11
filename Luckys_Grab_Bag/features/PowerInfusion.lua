@@ -29,6 +29,7 @@ local pickerFrame
 local rowPool = {}
 local inCombat = false
 local mockCandidates  -- dev tool: fake roster from /pipicker mock
+local dismissed = false  -- X button; resets on new boss or new M+ key
 local Refresh
 
 local C = LuckyUI.C
@@ -404,6 +405,11 @@ local function UpdateVisibility()
         DevLog("Hidden (in combat)")
         return
     end
+    if dismissed then
+        pickerFrame:Hide()
+        DevLog("Hidden (dismissed)")
+        return
+    end
     if not mockCandidates and not IsInGroup() then
         pickerFrame:Hide()
         DevLog("Hidden (not in a group)")
@@ -453,6 +459,29 @@ local function CreatePicker()
     title:SetPoint("TOPLEFT", PAD, -PAD)
     title:SetTextColor(C.goldPrimary[1], C.goldPrimary[2], C.goldPrimary[3])
     title:SetText(S.title)
+
+    local closeBtn = CreateFrame("Button", nil, f)
+    closeBtn:SetSize(16, 16)
+    closeBtn:SetPoint("TOPRIGHT", -4, -4)
+    local closeBtnHl = closeBtn:CreateTexture(nil, "HIGHLIGHT")
+    closeBtnHl:SetAllPoints()
+    closeBtnHl:SetColorTexture(C.highlight[1], C.highlight[2], C.highlight[3], C.highlight[4])
+    local closeBtnText = closeBtn:CreateFontString(nil, "OVERLAY")
+    closeBtnText:SetFont(LuckyUI.BODY_FONT, 13, "")
+    closeBtnText:SetAllPoints()
+    closeBtnText:SetJustifyH("CENTER")
+    closeBtnText:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
+    closeBtnText:SetText("x")
+    closeBtn:SetScript("OnClick", function()
+        dismissed = true
+        pickerFrame:Hide()
+    end)
+    closeBtn:SetScript("OnEnter", function()
+        closeBtnText:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
+    end)
+    closeBtn:SetScript("OnLeave", function()
+        closeBtnText:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
+    end)
 
     local current = f:CreateFontString(nil, "OVERLAY")
     current:SetFont(LuckyUI.BODY_FONT, 11, "")
@@ -521,6 +550,8 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
     eventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     eventFrame:RegisterEvent("TRAIT_CONFIG_UPDATED")
     eventFrame:RegisterEvent("INSPECT_READY")
+    eventFrame:RegisterEvent("ENCOUNTER_START")
+    eventFrame:RegisterEvent("CHALLENGE_MODE_START")
     eventFrame:SetScript("OnEvent", function(_, event, arg1)
         if event == "INSPECT_READY" then
             HandleInspectReady(arg1)
@@ -530,6 +561,8 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
             inCombat = true
         elseif event == "PLAYER_REGEN_ENABLED" then
             inCombat = false
+        elseif event == "ENCOUNTER_START" or event == "CHALLENGE_MODE_START" then
+            dismissed = false
         elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
             -- Group members respeccing need a fresh inspect.
             if arg1 and arg1 ~= "player" and UnitExists(arg1) then
