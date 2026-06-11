@@ -552,7 +552,6 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
     eventFrame:RegisterEvent("TRAIT_CONFIG_UPDATED")
     eventFrame:RegisterEvent("INSPECT_READY")
     eventFrame:RegisterEvent("ENCOUNTER_START")
-    eventFrame:RegisterEvent("CHALLENGE_MODE_START")
     eventFrame:SetScript("OnEvent", function(_, event, arg1)
         if event == "INSPECT_READY" then
             HandleInspectReady(arg1)
@@ -562,8 +561,10 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
             inCombat = true
         elseif event == "PLAYER_REGEN_ENABLED" then
             inCombat = false
-        elseif event == "ENCOUNTER_START" or event == "CHALLENGE_MODE_START" then
+        elseif event == "ENCOUNTER_START" then
             dismissed = false
+        elseif event == "PLAYER_ENTERING_WORLD" then
+            if GetDifficultyID() == 8 then dismissed = false end
         elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
             -- Group members respeccing need a fresh inspect.
             if arg1 and arg1 ~= "player" and UnitExists(arg1) then
