@@ -6,6 +6,7 @@ local POWER_INFUSION_SPELL_ID = 10060
 local MACRO_NAME = "PI"
 local MACRO_ICON = "INV_Misc_QuestionMark"
 local CHECK_MARKUP = "|A:common-icon-checkmark:12:12|a"
+local STAR_MARKUP = "|A:auctionhouse-icon-favorite:12:12|a"
 
 local ROWS_PER_COLUMN = 10
 local ROW_WIDTH       = 140
@@ -31,6 +32,17 @@ local mockCandidates  -- dev tool: fake roster from /pipicker mock
 local Refresh
 
 local C = LuckyUI.C
+local PIData = LuckyGrabbag.PowerInfusionData
+
+-- Spec inspection: one pending request at a time, throttled, only while the
+-- picker is visible and out of combat. Results are cached by GUID.
+local specCache = {}      -- guid -> specID
+local inspectQueue = {}   -- guids awaiting inspection
+local inspectGuid         -- guid of our in-flight NotifyInspect, if any
+local inspectTimer        -- timeout timer for the in-flight request
+local lastInspect = 0
+local pumpScheduled = false
+local INSPECT_INTERVAL = 1.5
 
 local function DevLog(msg)
     LuckyGrabbag.DevLog("PowerInfusion", msg)
@@ -42,6 +54,8 @@ end
 
 local function SortCandidates(list)
     table.sort(list, function(a, b)
+        local ga, gb = a.rating or 0, b.rating or 0
+        if ga ~= gb then return ga > gb end
         local ra, rb = ROLE_ORDER[a.role] or 5, ROLE_ORDER[b.role] or 5
         if ra ~= rb then return ra < rb end
         return a.display < b.display
@@ -63,11 +77,16 @@ local function GetCandidates()
                 local name, realm = UnitFullName(unit)
                 if name then
                     local _, class = UnitClass(unit)
+                    local guid = UnitGUID(unit)
+                    local specID = guid and specCache[guid]
                     table.insert(list, {
                         display = name,
                         full    = (realm and realm ~= "") and (name .. "-" .. realm) or name,
                         class   = class,
                         role    = role,
+                        guid    = guid,
+                        specID  = specID,
+                        rating  = specID and PIData.RATING[specID] or 0,
                     })
                 end
             end
@@ -75,6 +94,86 @@ local function GetCandidates()
     end
     SortCandidates(list)
     return list
+end
+
+local function UnitForGuid(guid)
+    local isRaid = IsInRaid()
+    local count = isRaid and GetNumGroupMembers() or GetNumSubgroupMembers()
+    local prefix = isRaid and "raid" or "party"
+    for i = 1, count do
+        local unit = prefix .. i
+        if UnitGUID(unit) == guid then return unit end
+    end
+end
+
+-- Works through the inspect queue one request at a time. The server only
+-- honors one NotifyInspect at once, so each request waits for INSPECT_READY
+-- (or a 4s timeout) before the next is sent.
+local function PumpInspect()
+    pumpScheduled = false
+    if inspectGuid then return end
+    if inCombat then return end
+    if not pickerFrame or not pickerFrame:IsShown() then return end
+    local now = GetTime()
+    local wait = (lastInspect + INSPECT_INTERVAL) - now
+    if wait > 0 then
+        if not pumpScheduled then
+            pumpScheduled = true
+            C_Timer.After(wait, PumpInspect)
+        end
+        return
+    end
+    while #inspectQueue > 0 do
+        local guid = table.remove(inspectQueue, 1)
+        if not specCache[guid] then
+            local unit = UnitForGuid(guid)
+            if unit and CanInspect(unit) then
+                inspectGuid = guid
+                lastInspect = now
+                NotifyInspect(unit)
+                inspectTimer = C_Timer.NewTimer(4, function()
+                    inspectTimer = nil
+                    inspectGuid = nil
+                    PumpInspect()
+                end)
+                return
+            end
+        end
+    end
+end
+
+local function QueueInspects(list)
+    if mockCandidates or inCombat then return end
+    wipe(inspectQueue)
+    local needed = false
+    for _, c in ipairs(list) do
+        if c.guid and not specCache[c.guid] then
+            table.insert(inspectQueue, c.guid)
+            needed = true
+        end
+    end
+    if needed then PumpInspect() end
+end
+
+local function HandleInspectReady(guid)
+    if not guid then return end
+    local unit = UnitForGuid(guid)
+    if unit then
+        local specID = GetInspectSpecialization(unit)
+        if specID and specID > 0 then specCache[guid] = specID end
+    end
+    if guid == inspectGuid then
+        if inspectTimer then inspectTimer:Cancel(); inspectTimer = nil end
+        inspectGuid = nil
+        ClearInspectPlayer()
+        if pickerFrame and pickerFrame:IsShown() then
+            Refresh()
+            C_Timer.After(1, PumpInspect)
+        end
+    elseif unit and pickerFrame and pickerFrame:IsShown() then
+        -- Another addon's inspect; take the free data.
+        Refresh()
+    end
 end
 
 -- Dev tool: fake roster so the picker can be tested outside a group.
@@ -87,6 +186,13 @@ local MOCK_NAMES = {
     "Sparklefist", "Grimjaw", "Moonpetal", "Vexalia", "Thornbark",
     "Ashenvale", "Quickdraw", "Nightbloom", "Stormcaller", "Emberlyn",
     "Frostwhisper", "Ironbelly", "Suntouched", "Voidstep", "Brambleroot",
+}
+-- One spec per mock class, spread across the rating tiers so the star,
+-- tooltip, and sort order all get exercised.
+local MOCK_SPECS = {
+    MAGE = 63, HUNTER = 254, ROGUE = 261, WARLOCK = 265, DRUID = 102,
+    SHAMAN = 262, WARRIOR = 71, PALADIN = 70, DEATHKNIGHT = 251,
+    DEMONHUNTER = 1480, EVOKER = 1467, MONK = 269, PRIEST = 258,
 }
 
 local function BuildMockCandidates(count)
@@ -101,11 +207,15 @@ local function BuildMockCandidates(count)
         if i == 1 then role = "TANK"
         elseif i == 2 then role = "HEALER"
         elseif i == 3 then role = "NONE" end
+        local class = MOCK_CLASSES[((i - 1) % #MOCK_CLASSES) + 1]
+        local specID = MOCK_SPECS[class]
         table.insert(list, {
             display = name,
             full    = name,
-            class   = MOCK_CLASSES[((i - 1) % #MOCK_CLASSES) + 1],
+            class   = class,
             role    = role,
+            specID  = specID,
+            rating  = specID and PIData.RATING[specID] or 0,
         })
     end
     SortCandidates(list)
@@ -194,6 +304,24 @@ local function AcquireRow(i)
         if self.candidate then SetTarget(self.candidate) end
     end)
 
+    row:SetScript("OnEnter", function(self)
+        local c = self.candidate
+        if not c or not c.rating or c.rating == 0 then return end
+        local S = LuckyGrabbag.Strings.powerInfusion
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        local _, specName = GetSpecializationInfoByID(c.specID)
+        GameTooltip:SetText(specName or "", 1, 1, 1)
+        if c.rating == PIData.STRONG then
+            GameTooltip:AddLine(S.recStrong, 0.1, 1, 0.1)
+        else
+            GameTooltip:AddLine(S.recGood, 1, 0.82, 0)
+        end
+        GameTooltip:Show()
+    end)
+    row:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
+
     rowPool[i] = row
     return row
 end
@@ -203,6 +331,8 @@ function Refresh()
     local S = LuckyGrabbag.Strings.powerInfusion
     local list = GetCandidates()
     local target = charDB.piTarget
+
+    if not mockCandidates then QueueInspects(list) end
 
     -- Current-target line: class colored while they're in the group, muted otherwise.
     local targetText
@@ -243,7 +373,8 @@ function Refresh()
 
         local selected = (candidate.full == target)
         local icon = ROLE_ICON[candidate.role] or ""
-        row.text:SetText(icon .. candidate.display .. (selected and (" " .. CHECK_MARKUP) or ""))
+        local star = (candidate.rating == PIData.STRONG) and (" " .. STAR_MARKUP) or ""
+        row.text:SetText(icon .. candidate.display .. star .. (selected and (" " .. CHECK_MARKUP) or ""))
         local cc = RAID_CLASS_COLORS[candidate.class]
         if cc then
             row.text:SetTextColor(cc.r, cc.g, cc.b)
@@ -285,6 +416,7 @@ local function UpdateVisibility()
     end
     Refresh()
     pickerFrame:Show()
+    PumpInspect()  -- Refresh ran before Show, so its queueing was gated off
     DevLog("Shown")
 end
 
@@ -376,6 +508,7 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
         end
         Refresh()
         pickerFrame:Show()
+        PumpInspect()
         DevLog("Force-shown via slash command")
     end
 
@@ -387,11 +520,22 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     eventFrame:RegisterEvent("TRAIT_CONFIG_UPDATED")
-    eventFrame:SetScript("OnEvent", function(_, event)
+    eventFrame:RegisterEvent("INSPECT_READY")
+    eventFrame:SetScript("OnEvent", function(_, event, arg1)
+        if event == "INSPECT_READY" then
+            HandleInspectReady(arg1)
+            return
+        end
         if event == "PLAYER_REGEN_DISABLED" then
             inCombat = true
         elseif event == "PLAYER_REGEN_ENABLED" then
             inCombat = false
+        elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
+            -- Group members respeccing need a fresh inspect.
+            if arg1 and arg1 ~= "player" and UnitExists(arg1) then
+                local guid = UnitGUID(arg1)
+                if guid then specCache[guid] = nil end
+            end
         end
         UpdateVisibility()
     end)

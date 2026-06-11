@@ -29,6 +29,7 @@ features/DelveMap.lua
 features/KickMacro.lua
 features/CombatPrep.lua
 features/RotationGlow.lua
+features/PowerInfusionData.lua
 features/PowerInfusion.lua
 features/AutoCombatLog.lua
 features/ConfirmPurchase.lua

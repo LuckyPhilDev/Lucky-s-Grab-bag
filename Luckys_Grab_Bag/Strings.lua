@@ -72,6 +72,8 @@ LuckyGrabbag.Strings = {
         macroCreated = "Created the 'PI' macro and picked it up. Drop it onto your action bar.",
         slotsFull    = "Your macro slots are full. Free a slot and pick a target again.",
         inCombat     = "Cannot update macros during combat.",
+        recStrong    = "Strong Power Infusion target",
+        recGood      = "Good Power Infusion target",
     },
 
     autoCombatLog = {
@@ -259,7 +261,7 @@ LuckyGrabbag.Strings = {
         },
         piPicker = {
             label = "Power Infusion Picker",
-            desc  = "For priests: shows a window in parties and raids to pick who receives your Power Infusion. Clicking a name updates a 'PI' macro that casts Power Infusion on that player. Drag the macro to your action bar once, then pick new targets any time. Right-click drag to move the window.",
+            desc  = "For priests: shows a window in parties and raids to pick who receives your Power Infusion. Clicking a name updates a 'PI' macro that casts Power Infusion on that player. Drag the macro to your action bar once, then pick new targets any time. Right-click drag to move the window. Players who gain the most from it are starred.",
         },
         autoCombatLog = {
             label = "Auto Combat Logging",
