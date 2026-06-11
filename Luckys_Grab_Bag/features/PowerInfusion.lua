@@ -530,6 +530,7 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
             else
                 local count = math.min(math.max(tonumber(countArg) or 14, 1), 40)
                 mockCandidates = BuildMockCandidates(count)
+                dismissed = false
                 print(prefix .. " PI picker mock roster on (" .. count .. " players). '/pipicker mock' again turns it off.")
             end
             UpdateVisibility()
