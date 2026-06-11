@@ -30,6 +30,7 @@ features/KickMacro.lua
 features/CombatPrep.lua
 features/RotationGlow.lua
 features/PowerInfusion.lua
+features/AutoCombatLog.lua
 features/ConfirmPurchase.lua
 features/Transmog.lua
 features/WorkOrderAltTip.lua

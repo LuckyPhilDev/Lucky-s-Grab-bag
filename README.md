@@ -106,6 +106,16 @@ For priests: a small floating window in parties and raids that lets you choose w
 - Use `/pipicker` to test the window outside group content.
 - Enabled by default; only appears for priests who know Power Infusion.
 
+### Auto Combat Logging
+Starts combat logging when you enter the raid or Mythic+ content you choose, and stops it when you leave, so your Warcraft Logs uploads never miss a pull.
+
+- Separate toggles for Mythic+ and raids.
+- Pick which raid difficulties to log (Raid Finder, Normal, Heroic, Mythic).
+- Current season only by default: older raids never trigger logging.
+- Prints a chat message when logging starts or stops.
+- If you stop logging manually mid-run, it stays off until you leave.
+- Off by default; enable it in settings under Combat.
+
 ### Auto-dismiss Bonus Roll
 Automatically passes on Blizzard's Bonus Roll popup that appears at the end of instanced content, with per-character control over which content types are kept.
 
@@ -263,6 +273,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
   - *Pull Timer (Raid)* — How long the pull countdown lasts in raids (3–30 seconds).
   - *Break Timer Duration* — How long the break countdown lasts (1–15 minutes).
 - *Power Infusion Picker*: Shows a window in groups for priests to pick their Power Infusion target; clicking a name updates the 'PI' macro.
+- *Auto Combat Logging*: Starts combat logging in selected raid difficulties and Mythic+ keys, stops when you leave; current season only by default.
 - *Create Kick Macro* — Generates a class-appropriate interrupt macro in a character macro slot.
 
 **Interface**

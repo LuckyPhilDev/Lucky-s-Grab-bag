@@ -432,6 +432,73 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
+        g:Toggle({
+            label    = SS.autoCombatLog.label,
+            desc     = SS.autoCombatLog.desc,
+            checked  = db.autoCombatLog,
+            since    = "1.13.0",
+            onToggle = function(checked)
+                db.autoCombatLog = checked
+                LuckyGrabbag.AutoCombatLog:ApplySetting()
+            end,
+        })
+
+        g:Toggle({
+            label    = SS.autoCombatLogMythicPlus.label,
+            desc     = SS.autoCombatLogMythicPlus.desc,
+            checked  = db.autoCombatLogMythicPlus,
+            parent   = SS.autoCombatLog.label,
+            onToggle = function(checked)
+                db.autoCombatLogMythicPlus = checked
+                LuckyGrabbag.AutoCombatLog:ApplySetting()
+            end,
+        })
+
+        g:Toggle({
+            label    = SS.autoCombatLogRaids.label,
+            desc     = SS.autoCombatLogRaids.desc,
+            checked  = db.autoCombatLogRaids,
+            parent   = SS.autoCombatLog.label,
+            onToggle = function(checked)
+                db.autoCombatLogRaids = checked
+                LuckyGrabbag.AutoCombatLog:ApplySetting()
+            end,
+        })
+
+        local logRaidKeyToField = {
+            lfr    = "autoCombatLogLFR",
+            normal = "autoCombatLogNormalRaid",
+            heroic = "autoCombatLogHeroicRaid",
+            mythic = "autoCombatLogMythicRaid",
+        }
+        g:MultiSelect({
+            label     = SS.autoCombatLogRaidDifficulties.label,
+            desc      = SS.autoCombatLogRaidDifficulties.desc,
+            parent    = SS.autoCombatLogRaids.label,
+            options   = {
+                { key = "lfr",    label = SS.autoCombatLogRaidDifficulties.optLFR },
+                { key = "normal", label = SS.autoCombatLogRaidDifficulties.optNormal },
+                { key = "heroic", label = SS.autoCombatLogRaidDifficulties.optHeroic },
+                { key = "mythic", label = SS.autoCombatLogRaidDifficulties.optMythic },
+            },
+            isChecked = function(key) return db[logRaidKeyToField[key]] end,
+            onToggle  = function(key, checked)
+                db[logRaidKeyToField[key]] = checked
+                LuckyGrabbag.AutoCombatLog:ApplySetting()
+            end,
+        })
+
+        g:Toggle({
+            label    = SS.autoCombatLogCurrentSeason.label,
+            desc     = SS.autoCombatLogCurrentSeason.desc,
+            checked  = db.autoCombatLogCurrentSeasonOnly,
+            parent   = SS.autoCombatLog.label,
+            onToggle = function(checked)
+                db.autoCombatLogCurrentSeasonOnly = checked
+                LuckyGrabbag.AutoCombatLog:ApplySetting()
+            end,
+        })
+
         g:Button({
             label   = SS.kickMacro.label,
             desc    = SS.kickMacro.desc,

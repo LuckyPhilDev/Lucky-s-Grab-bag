@@ -74,6 +74,11 @@ LuckyGrabbag.Strings = {
         inCombat     = "Cannot update macros during combat.",
     },
 
+    autoCombatLog = {
+        started = "Combat logging on (%s).",
+        stopped = "Combat logging off.",
+    },
+
     reagentMains = {
         title             = "Reagent Mains",
         subtitle          = "GRAB-BAG",
@@ -255,6 +260,30 @@ LuckyGrabbag.Strings = {
         piPicker = {
             label = "Power Infusion Picker",
             desc  = "For priests: shows a window in parties and raids to pick who receives your Power Infusion. Clicking a name updates a 'PI' macro that casts Power Infusion on that player. Drag the macro to your action bar once, then pick new targets any time. Right-click drag to move the window.",
+        },
+        autoCombatLog = {
+            label = "Auto Combat Logging",
+            desc  = "Starts combat logging when you enter the raid or Mythic+ content selected below, and stops it when you leave. Your log file is ready for Warcraft Logs without ever typing /combatlog.",
+        },
+        autoCombatLogMythicPlus = {
+            label = "Log Mythic+",
+            desc  = "Start logging when a Mythic+ keystone run begins.",
+        },
+        autoCombatLogRaids = {
+            label = "Log Raids",
+            desc  = "Start logging when you enter a raid at one of the selected difficulties.",
+        },
+        autoCombatLogRaidDifficulties = {
+            label     = "Difficulties",
+            desc      = "Limit which raid difficulties start logging.",
+            optLFR    = "Raid Finder",
+            optNormal = "Normal",
+            optHeroic = "Heroic",
+            optMythic = "Mythic",
+        },
+        autoCombatLogCurrentSeason = {
+            label = "Current Season Only",
+            desc  = "Only log raids from the current raid tier. Older raids never start logging. Mythic+ keys are always current content.",
         },
         delveMap = {
             label = "Trovehunter's Bounty Map",
