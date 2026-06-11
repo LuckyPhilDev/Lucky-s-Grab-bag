@@ -1,7 +1,7 @@
 ## Interface: 120005
 ## Title: Lucky's Grab-bag
 ## Notes: A collection of small quality-of-life features.
-## Version: 1.12.1
+## Version: 1.13.0
 ## Author: Lucky Phil
 ## SavedVariables: LuckyGrabbagDB
 ## SavedVariablesPerCharacter: LuckyGrabbagCharDB
@@ -29,6 +29,7 @@ features/DelveMap.lua
 features/KickMacro.lua
 features/CombatPrep.lua
 features/RotationGlow.lua
+features/PowerInfusion.lua
 features/ConfirmPurchase.lua
 features/Transmog.lua
 features/WorkOrderAltTip.lua

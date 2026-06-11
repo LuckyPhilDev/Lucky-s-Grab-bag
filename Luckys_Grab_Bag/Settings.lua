@@ -421,6 +421,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
+        g:Toggle({
+            label    = SS.piPicker.label,
+            desc     = SS.piPicker.desc,
+            checked  = db.showPIPicker,
+            since    = "1.13.0",
+            onToggle = function(checked)
+                db.showPIPicker = checked
+                LuckyGrabbag.PowerInfusion:ApplySetting()
+            end,
+        })
+
         g:Button({
             label   = SS.kickMacro.label,
             desc    = SS.kickMacro.desc,

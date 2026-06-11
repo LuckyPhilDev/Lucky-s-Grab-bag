@@ -94,6 +94,18 @@ A small floating window that appears automatically in raids and dungeons when yo
 - Use `/combatprep` to test the window outside of group content.
 - Can be toggled in the addon settings.
 
+### Power Infusion Picker
+For priests: a small floating window in parties and raids that lets you choose who receives your Power Infusion, out of combat.
+
+- Click a name to update the 'PI' macro, which casts Power Infusion on that player.
+- The first click creates the macro and picks it up so you can drop it onto your action bar.
+- Parties list everyone with damage dealers first; raids list damage dealers only.
+- Appears automatically when grouped and out of combat; hides during combat.
+- Your chosen target is saved per character.
+- Right-click drag to reposition; position is saved across reloads.
+- Use `/pipicker` to test the window outside group content.
+- Enabled by default; only appears for priests who know Power Infusion.
+
 ### Auto-dismiss Bonus Roll
 Automatically passes on Blizzard's Bonus Roll popup that appears at the end of instanced content, with per-character control over which content types are kept.
 
@@ -200,6 +212,8 @@ A minimap button for quick access to the addon.
 | `/grabbag` | Open the addon settings panel |
 | `/grabbag-reagent <itemID>` | Diagnose why a reagent is or isn't being auto-deposited |
 | `/combatprep` | Force-show the Combat Prep window (for testing outside group content) |
+| `/pipicker` | Force-show the Power Infusion Picker window (also `/pitarget`) |
+| `/pipicker mock` | Fill the picker with a fake roster for testing outside a group; add a number for the roster size (e.g. `/pipicker mock 25`) |
 
 ---
 
@@ -248,6 +262,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
   - *Pull Timer (Mythic+)* — How long the pull countdown lasts in dungeons (3–30 seconds).
   - *Pull Timer (Raid)* — How long the pull countdown lasts in raids (3–30 seconds).
   - *Break Timer Duration* — How long the break countdown lasts (1–15 minutes).
+- *Power Infusion Picker*: Shows a window in groups for priests to pick their Power Infusion target; clicking a name updates the 'PI' macro.
 - *Create Kick Macro* — Generates a class-appropriate interrupt macro in a character macro slot.
 
 **Interface**

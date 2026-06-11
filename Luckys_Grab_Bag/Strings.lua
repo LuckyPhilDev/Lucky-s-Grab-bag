@@ -63,6 +63,17 @@ LuckyGrabbag.Strings = {
         noInterrupt  = "No interrupt available for your current spec.",
     },
 
+    powerInfusion = {
+        title        = "POWER INFUSION",
+        currentFmt   = "Casts on: %s",
+        noTarget     = "nobody yet",
+        notInGroup   = "Join a party or raid to pick a target.",
+        targetSet    = "Power Infusion macro now casts on %s.",
+        macroCreated = "Created the 'PI' macro and picked it up. Drop it onto your action bar.",
+        slotsFull    = "Your macro slots are full. Free a slot and pick a target again.",
+        inCombat     = "Cannot update macros during combat.",
+    },
+
     reagentMains = {
         title             = "Reagent Mains",
         subtitle          = "GRAB-BAG",
@@ -240,6 +251,10 @@ LuckyGrabbag.Strings = {
         rotationGlow = {
             label = "Rotation Glow",
             desc  = "Animates the next-cast spell on the Essential Cooldown Viewer. Enable the viewer in Edit Mode.",
+        },
+        piPicker = {
+            label = "Power Infusion Picker",
+            desc  = "For priests: shows a window in parties and raids to pick who receives your Power Infusion. Clicking a name updates a 'PI' macro that casts Power Infusion on that player. Drag the macro to your action bar once, then pick new targets any time. Right-click drag to move the window.",
         },
         delveMap = {
             label = "Trovehunter's Bounty Map",

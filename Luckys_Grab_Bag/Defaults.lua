@@ -34,6 +34,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     combatPrepTimerRaid      = 12,
     combatPrepBreakTimer     = 5,
     showRotationGlow         = false,
+    showPIPicker             = true,
     showConfirmPurchase      = true,
     confirmPurchaseOnSide    = false,
     keepTransmogTab          = false,
