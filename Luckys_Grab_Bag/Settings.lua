@@ -91,6 +91,14 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked) db.autoRepairUseGuildFunds = checked end,
         })
 
+        g:Toggle({
+            label    = SS.autoSellJunk.label,
+            desc     = SS.autoSellJunk.desc,
+            checked  = db.autoSellJunk,
+            since    = "1.14.0",
+            onToggle = function(checked) db.autoSellJunk = checked end,
+        })
+
         g:Section(SS.sections.purchasing)
 
         g:Toggle({

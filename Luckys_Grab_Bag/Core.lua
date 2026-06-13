@@ -54,6 +54,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
 
         LuckyGrabbag.Settings:Init(db, charDB)
         LuckyGrabbag.AutoRepair:Init(db)
+        LuckyGrabbag.AutoSellJunk:Init(db)
         LuckyGrabbag.Quickbuy:Init(db)
         LuckyGrabbag.TestflightBuy:Init(db)
         LuckyGrabbag.Treatise:Init(db)

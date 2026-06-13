@@ -11,6 +11,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     devMode                  = false,
     autoRepair               = true,
     autoRepairUseGuildFunds  = true,
+    autoSellJunk             = false,
     showTreatise             = false,
     reagentMainsEnabled      = false,
     reagentMainsCurrentExpOnly = false,

@@ -27,6 +27,11 @@ LuckyGrabbag.Strings = {
         personalFunds = "personal funds",
     },
 
+    autoSellJunk = {
+        soldOne  = "Sold 1 junk item for %s.",
+        soldMany = "Sold %d junk items for %s.",
+    },
+
     treatise = {
         withdrawn = "Withdrawn %s treatise.",
     },
@@ -160,6 +165,10 @@ LuckyGrabbag.Strings = {
         useGuildFunds = {
             label = "Use Guild Funds",
             desc  = "Pays from the guild bank when allowed, otherwise your own gold.",
+        },
+        autoSellJunk = {
+            label = "Auto Sell Junk",
+            desc  = "Automatically sells grey-quality junk items when you open a vendor, and reports the total earned in chat.",
         },
         confirmPurchase = {
             label = "Easy Confirm Purchase",

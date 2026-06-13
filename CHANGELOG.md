@@ -1,3 +1,8 @@
+## [1.14.0] - 2026-06-14
+
+### Added
+- **Auto Sell Junk**: optionally sells all grey-quality junk from your bags the moment you open a vendor, with a chat summary of how much you earned. Off by default; enable it under Vendors.
+
 ## [1.13.0] - 2026-06-13
 
 ### Added

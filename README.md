@@ -24,6 +24,14 @@ Automatically repairs all damaged gear whenever you open a vendor that offers re
 - Prints a message confirming what was repaired and the cost, so you always know what was spent and from where.
 - Can be toggled in the addon settings.
 
+### Auto Sell Junk
+Automatically sells all grey-quality junk items from your bags whenever you open a vendor, so you never have to clear them out by hand.
+
+- Sells only Poor (grey) quality items; everything else is left untouched.
+- Prints a chat summary of how many items sold and the total earned.
+- Skips items with no sell value and anything currently locked.
+- Off by default; enable it in settings under Vendors.
+
 ### Use Items Popup
 Displays a floating bar of buttons when you have consumable profession items in your bags — click each one to use it.
 
@@ -240,6 +248,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 **Auto Repair**
 - *Auto Repair* — Automatically repairs all gear when you open a repair vendor.
   - *Use Guild Funds* — Pays repair costs from the guild bank if your guild allows it, falling back to your own gold if not.
+- *Auto Sell Junk* — Automatically sells grey-quality junk items when you open a vendor, and reports the total earned in chat.
 
 **Auctionator Enhancements**
 - *Show Quickbuy button* — Places a shortcut button next to the Auction House window. Each click purchases one row of items from your CraftSim crafting queue's shopping list.
