@@ -13,7 +13,15 @@ local ROW_WIDTH       = 165
 local ROW_HEIGHT      = 20
 local COL_GAP         = 4
 local PAD             = 10
-local HEADER_HEIGHT   = 34  -- title + current-target line, below the top padding
+local HEADER_HEIGHT   = 54  -- title + current-target line + target-count tabs, below the top padding
+
+-- Target-count tabs. Each entry maps a tab to the index into a spec's
+-- PowerInfusionData.GAIN { single, 3-target, 5-target } table.
+local TARGET_TABS = {
+    { idx = 1, label = "1" },
+    { idx = 2, label = "3" },
+    { idx = 3, label = "5" },
+}
 
 -- Tank/healer picks are unusual, so mark them with a role icon; DPS rows stay clean.
 local ROLE_ICON = {
@@ -30,7 +38,10 @@ local rowPool = {}
 local inCombat = false
 local mockCandidates  -- dev tool: fake roster from /pipicker mock
 local dismissed = false  -- X button; resets on new boss or new M+ key
+local targetIdx = 1  -- selected target-count tab (index into GAIN); set in Init
+local tabButtons = {}  -- target-count tab buttons, in TARGET_TABS order
 local Refresh
+local StyleTabs
 
 local C = LuckyUI.C
 local PIData = LuckyGrabbag.PowerInfusionData
@@ -87,7 +98,7 @@ local function GetCandidates()
                         role    = role,
                         guid    = guid,
                         specID  = specID,
-                        rating  = specID and PIData.GAIN[specID] or 0,
+                        rating  = PIData.Gain(specID, targetIdx) or 0,
                     })
                 end
             end
@@ -216,7 +227,7 @@ local function BuildMockCandidates(count)
             class   = class,
             role    = role,
             specID  = specID,
-            rating  = specID and PIData.GAIN[specID] or 0,
+            rating  = PIData.Gain(specID, targetIdx) or 0,
         })
     end
     SortCandidates(list)
@@ -312,8 +323,18 @@ local function AcquireRow(i)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         local _, specName = GetSpecializationInfoByID(c.specID)
         GameTooltip:SetText(specName or "", 1, 1, 1)
-        GameTooltip:AddLine(string.format(S.gainFmt, c.rating), 1, 1, 1)
-        local tier = PIData.Tier(c.specID)
+        local gain = PIData.GAIN[c.specID]
+        if gain then
+            GameTooltip:AddLine(S.gainHeader, 0.7, 0.7, 0.7)
+            local labels = { S.target1, S.target3, S.target5 }
+            for i = 1, 3 do
+                -- Active target count in gold, the others muted.
+                local r, g, b = 0.6, 0.6, 0.6
+                if i == targetIdx then r, g, b = 1, 0.82, 0 end
+                GameTooltip:AddDoubleLine(labels[i], string.format("+%.1f%%", gain[i]), r, g, b, r, g, b)
+            end
+        end
+        local tier = PIData.Tier(c.specID, targetIdx)
         if tier == "STRONG" then
             GameTooltip:AddLine(S.recStrong, 0.1, 1, 0.1)
         elseif tier == "GOOD" then
@@ -376,7 +397,7 @@ function Refresh()
 
         local selected = (candidate.full == target)
         local icon = ROLE_ICON[candidate.role] or ""
-        local star = (PIData.Tier(candidate.specID) == "STRONG") and (" " .. STAR_MARKUP) or ""
+        local star = (PIData.Tier(candidate.specID, targetIdx) == "STRONG") and (" " .. STAR_MARKUP) or ""
         local gain = candidate.rating > 0
             and (" " .. LuckyUI.WC.textMuted .. string.format("%.1f%%", candidate.rating) .. LuckyUI.WC.reset)
             or ""
@@ -429,6 +450,19 @@ local function UpdateVisibility()
     pickerFrame:Show()
     PumpInspect()  -- Refresh ran before Show, so its queueing was gated off
     DevLog("Shown")
+end
+
+-- Selected tab gold and backed; the rest muted and flat.
+function StyleTabs()
+    for _, btn in ipairs(tabButtons) do
+        if btn.idx == targetIdx then
+            btn.selTex:Show()
+            btn.text:SetTextColor(C.goldPrimary[1], C.goldPrimary[2], C.goldPrimary[3])
+        else
+            btn.selTex:Hide()
+            btn.text:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
+        end
+    end
 end
 
 local function CreatePicker()
@@ -494,6 +528,55 @@ local function CreatePicker()
     current:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
     f.currentLine = current
 
+    -- Target-count switcher: "Targets" label followed by 1 / 3 / 5 tabs. The
+    -- selected tab drives both the sort order and the tooltip highlight.
+    local tabsLabel = f:CreateFontString(nil, "OVERLAY")
+    tabsLabel:SetFont(LuckyUI.BODY_FONT, 11, "")
+    tabsLabel:SetPoint("TOPLEFT", PAD, -(PAD + 34))
+    tabsLabel:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
+    tabsLabel:SetText(S.targetsLabel)
+
+    local TAB_W, TAB_H = 20, 16
+    local prev
+    for i, t in ipairs(TARGET_TABS) do
+        local btn = CreateFrame("Button", nil, f)
+        btn:SetSize(TAB_W, TAB_H)
+        if prev then
+            btn:SetPoint("LEFT", prev, "RIGHT", 2, 0)
+        else
+            btn:SetPoint("LEFT", tabsLabel, "RIGHT", 8, 0)
+        end
+
+        local sel = btn:CreateTexture(nil, "BACKGROUND")
+        sel:SetAllPoints()
+        sel:SetColorTexture(C.goldAccent[1], C.goldAccent[2], C.goldAccent[3], 0.25)
+        btn.selTex = sel
+
+        local hl = btn:CreateTexture(nil, "HIGHLIGHT")
+        hl:SetAllPoints()
+        hl:SetColorTexture(C.highlight[1], C.highlight[2], C.highlight[3], C.highlight[4])
+
+        local txt = btn:CreateFontString(nil, "OVERLAY")
+        txt:SetFont(LuckyUI.BODY_FONT, 11, "")
+        txt:SetAllPoints()
+        txt:SetJustifyH("CENTER")
+        txt:SetText(t.label)
+        btn.text = txt
+        btn.idx = t.idx
+
+        btn:SetScript("OnClick", function()
+            if targetIdx == t.idx then return end
+            targetIdx = t.idx
+            db.piTargetCount = t.idx
+            StyleTabs()
+            Refresh()
+        end)
+
+        tabButtons[i] = btn
+        prev = btn
+    end
+    StyleTabs()
+
     local empty = f:CreateFontString(nil, "OVERLAY")
     empty:SetFont(LuckyUI.BODY_FONT, 11, "")
     empty:SetPoint("TOPLEFT", PAD, -(PAD + HEADER_HEIGHT))
@@ -518,6 +601,8 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
 
     local _, class = UnitClass("player")
     if class ~= "PRIEST" then return end
+
+    targetIdx = db.piTargetCount or 1
 
     DevLog("Init called")
     CreatePicker()
