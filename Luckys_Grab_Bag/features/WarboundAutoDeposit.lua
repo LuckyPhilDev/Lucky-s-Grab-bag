@@ -260,7 +260,7 @@ local function BuildItemRow(parent, itemID, yOffset)
     row:SetSize(480, 26)
     row:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, yOffset)
 
-    local name, link, quality, _, _, _, _, _, _, icon = GetItemInfo(itemID)
+    local name, link, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
     local itemText = link or (name or ("Item " .. itemID))
 
     -- Icon

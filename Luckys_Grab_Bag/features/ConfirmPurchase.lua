@@ -10,7 +10,6 @@ local button
 local container
 local merchantOpen = false
 local popupShown = false
-local popupWhich
 local popupIsBagUse = false
 local lastClickedMerchantButton
 local lastClickedBag, lastClickedSlot
@@ -283,7 +282,6 @@ function LuckyGrabbag.ConfirmPurchase:Init(database)
 
     StaticPopup1:HookScript("OnShow", function(self) ---@diagnostic disable-line: undefined-global
         popupShown = true
-        popupWhich = self.which
         popupIsBagUse = IsBagUsePopup(self)
         local which = self.which or "?"
         local data = self.data
@@ -341,7 +339,6 @@ function LuckyGrabbag.ConfirmPurchase:Init(database)
     end)
     StaticPopup1:HookScript("OnHide", function() ---@diagnostic disable-line: undefined-global
         popupShown = false
-        popupWhich = nil
         popupIsBagUse = false
         Refresh()
     end)

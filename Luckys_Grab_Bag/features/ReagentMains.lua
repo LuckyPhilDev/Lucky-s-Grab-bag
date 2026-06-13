@@ -88,12 +88,6 @@ end
 -- Configure popup
 -- ---------------------------------------------------------------------------
 
-local function FormatCharShort(charKey)
-    if not charKey then return "" end
-    local label = LuckyRoster:FormatName(charKey) or charKey
-    return label
-end
-
 local Rich = LuckySettings.Rich
 local R = Rich.Theme
 local R_FONT = Rich.Font
