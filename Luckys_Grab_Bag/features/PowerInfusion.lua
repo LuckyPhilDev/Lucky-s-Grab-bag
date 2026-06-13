@@ -9,11 +9,13 @@ local CHECK_MARKUP = "|A:common-icon-checkmark:12:12|a"
 local STAR_MARKUP = "|A:auctionhouse-icon-favorite:12:12|a"
 
 local ROWS_PER_COLUMN = 10
-local ROW_WIDTH       = 165
+local ROW_WIDTH       = 215
 local ROW_HEIGHT      = 20
 local COL_GAP         = 4
 local PAD             = 10
 local HEADER_HEIGHT   = 54  -- title + current-target line + target-count tabs, below the top padding
+local CHEVRON_W       = 16  -- expand/collapse toggle for columns past the first
+local CHEVRON_GAP     = 2
 
 -- Target-count tabs. Each entry maps a tab to the index into a spec's
 -- PowerInfusionData.GAIN { single, 3-target, 5-target } table.
@@ -23,13 +25,16 @@ local TARGET_TABS = {
     { idx = 3, label = "5" },
 }
 
--- Tank/healer picks are unusual, so mark them with a role icon; DPS rows stay clean.
-local ROLE_ICON = {
-    TANK   = INLINE_TANK_ICON and (INLINE_TANK_ICON .. " ") or "",
-    HEALER = INLINE_HEALER_ICON and (INLINE_HEALER_ICON .. " ") or "",
-}
-
 local ROLE_ORDER = { DAMAGER = 1, NONE = 2, HEALER = 3, TANK = 4 }
+
+-- Spec icon markup for a row, cropped to drop the default texture border.
+-- Empty until the member has been inspected and we know their spec.
+local function SpecIcon(specID)
+    if not specID then return "" end
+    local _, _, _, icon = GetSpecializationInfoByID(specID)
+    if not icon then return "" end
+    return "|T" .. icon .. ":14:14:0:0:64:64:4:60:4:60|t "
+end
 
 local db
 local charDB
@@ -39,6 +44,7 @@ local inCombat = false
 local mockCandidates  -- dev tool: fake roster from /pipicker mock
 local dismissed = false  -- X button; resets on new boss or new M+ key
 local targetIdx = 1  -- selected target-count tab (index into GAIN); set in Init
+local expanded = false  -- show columns past the first (raids); set in Init
 local tabButtons = {}  -- target-count tab buttons, in TARGET_TABS order
 local Refresh
 local StyleTabs
@@ -202,25 +208,50 @@ local MOCK_NAMES = {
 -- One spec per mock class, spread across the rating tiers so the star,
 -- tooltip, and sort order all get exercised.
 local MOCK_SPECS = {
-    MAGE = 63, HUNTER = 254, ROGUE = 261, WARLOCK = 265, DRUID = 102,
+    MAGE = 64, HUNTER = 254, ROGUE = 261, WARLOCK = 265, DRUID = 102,
     SHAMAN = 262, WARRIOR = 71, PALADIN = 70, DEATHKNIGHT = 251,
     DEMONHUNTER = 1480, EVOKER = 1467, MONK = 269, PRIEST = 258,
+}
+-- Tank and healer { class, specID } pairs, used to fill a realistic roster
+-- composition in the mock. These have no PI rating, so they sort to the bottom.
+local MOCK_TANKS = {
+    { class = "WARRIOR", specID = 73 },      -- Protection Warrior
+    { class = "DEATHKNIGHT", specID = 250 }, -- Blood Death Knight
+}
+local MOCK_HEALERS = {
+    { class = "PRIEST", specID = 257 },  -- Holy Priest
+    { class = "PALADIN", specID = 65 },  -- Holy Paladin
+    { class = "DRUID", specID = 105 },   -- Restoration Druid
+    { class = "SHAMAN", specID = 264 },  -- Restoration Shaman
+    { class = "MONK", specID = 270 },    -- Mistweaver Monk
 }
 
 local function BuildMockCandidates(count)
     local list = {}
+    -- Realistic composition: 1 tank in a 5-man, 2 once it's 10+; 1 healer per 5.
+    local numTanks = count >= 10 and 2 or 1
+    local numHealers = math.max(1, math.floor(count / 5))
+    local dpsSeen = 0
     for i = 1, count do
         local name = MOCK_NAMES[((i - 1) % #MOCK_NAMES) + 1]
         if i > #MOCK_NAMES then
             name = name .. math.floor((i - 1) / #MOCK_NAMES + 1)
         end
-        -- First three get off-meta roles to exercise the icons and sort order.
-        local role = "DAMAGER"
-        if i == 1 then role = "TANK"
-        elseif i == 2 then role = "HEALER"
-        elseif i == 3 then role = "NONE" end
-        local class = MOCK_CLASSES[((i - 1) % #MOCK_CLASSES) + 1]
-        local specID = MOCK_SPECS[class]
+        local role, class, specID
+        if i <= numTanks then
+            role = "TANK"
+            local t = MOCK_TANKS[((i - 1) % #MOCK_TANKS) + 1]
+            class, specID = t.class, t.specID
+        elseif i <= numTanks + numHealers then
+            role = "HEALER"
+            local h = MOCK_HEALERS[((i - numTanks - 1) % #MOCK_HEALERS) + 1]
+            class, specID = h.class, h.specID
+        else
+            role = "DAMAGER"
+            class = MOCK_CLASSES[(dpsSeen % #MOCK_CLASSES) + 1]
+            specID = MOCK_SPECS[class]
+            dpsSeen = dpsSeen + 1
+        end
         table.insert(list, {
             display = name,
             full    = name,
@@ -356,6 +387,30 @@ function Refresh()
     local list = GetCandidates()
     local target = charDB.piTarget
 
+    -- Ratings and order follow the selected tab. GetCandidates rebuilds for
+    -- real groups, but the mock roster is cached, so recompute and re-sort
+    -- here to cover both paths.
+    for _, c in ipairs(list) do
+        c.rating = PIData.Gain(c.specID, targetIdx) or 0
+    end
+    SortCandidates(list)
+
+    -- Winner of each target count earns a numbered star (1 / 3 / 5), so the
+    -- cross-target standouts stay visible whatever tab is selected.
+    local topSpec = {}
+    local topGain = {}
+    for _, c in ipairs(list) do
+        if c.specID then
+            for idx = 1, 3 do
+                local g = PIData.Gain(c.specID, idx)
+                if g and (not topGain[idx] or g > topGain[idx]) then
+                    topGain[idx] = g
+                    topSpec[idx] = c.specID
+                end
+            end
+        end
+    end
+
     if not mockCandidates then QueueInspects(list) end
 
     -- Current-target line: class colored while they're in the group, muted otherwise.
@@ -386,7 +441,13 @@ function Refresh()
     end
     pickerFrame.emptyLabel:Hide()
 
-    for i, candidate in ipairs(list) do
+    -- Past the first column the list stops being useful (a full raid), so
+    -- everything beyond the first 10 stays hidden behind a chevron.
+    local hasOverflow = n > ROWS_PER_COLUMN
+    local visibleN = (hasOverflow and not expanded) and ROWS_PER_COLUMN or n
+
+    for i = 1, visibleN do
+        local candidate = list[i]
         local row = AcquireRow(i)
         local col = math.floor((i - 1) / ROWS_PER_COLUMN)
         local rowInCol = (i - 1) % ROWS_PER_COLUMN
@@ -396,12 +457,20 @@ function Refresh()
             -(PAD + HEADER_HEIGHT + rowInCol * ROW_HEIGHT))
 
         local selected = (candidate.full == target)
-        local icon = ROLE_ICON[candidate.role] or ""
-        local star = (PIData.Tier(candidate.specID, targetIdx) == "STRONG") and (" " .. STAR_MARKUP) or ""
+        local icon = SpecIcon(candidate.specID)
+        local stars = ""
+        if candidate.specID then
+            for idx = 1, 3 do
+                if topSpec[idx] == candidate.specID then
+                    stars = stars .. "  " .. STAR_MARKUP
+                        .. LuckyUI.WC.goldPrimary .. TARGET_TABS[idx].label .. LuckyUI.WC.reset
+                end
+            end
+        end
         local gain = candidate.rating > 0
             and (" " .. LuckyUI.WC.textMuted .. string.format("%.1f%%", candidate.rating) .. LuckyUI.WC.reset)
             or ""
-        row.text:SetText(icon .. candidate.display .. gain .. star .. (selected and (" " .. CHECK_MARKUP) or ""))
+        row.text:SetText(icon .. candidate.display .. gain .. stars .. (selected and (" " .. CHECK_MARKUP) or ""))
         local cc = RAID_CLASS_COLORS[candidate.class]
         if cc then
             row.text:SetTextColor(cc.r, cc.g, cc.b)
@@ -412,11 +481,24 @@ function Refresh()
         row:Show()
     end
 
-    local cols = math.ceil(n / ROWS_PER_COLUMN)
-    local rowsPerCol = math.min(n, ROWS_PER_COLUMN)
-    pickerFrame:SetSize(
-        PAD * 2 + cols * ROW_WIDTH + (cols - 1) * COL_GAP,
-        PAD + HEADER_HEIGHT + rowsPerCol * ROW_HEIGHT + PAD)
+    local cols = math.ceil(visibleN / ROWS_PER_COLUMN)
+    local rowsPerCol = math.min(visibleN, ROWS_PER_COLUMN)
+    local colsRight = PAD + cols * ROW_WIDTH + (cols - 1) * COL_GAP
+
+    local chevron = pickerFrame.chevron
+    if hasOverflow then
+        chevron:ClearAllPoints()
+        chevron:SetPoint("TOPLEFT", pickerFrame, "TOPLEFT",
+            colsRight + CHEVRON_GAP, -(PAD + HEADER_HEIGHT))
+        chevron:SetHeight(rowsPerCol * ROW_HEIGHT)
+        chevron.text:SetText(expanded and "<" or ">")
+        chevron:Show()
+    else
+        chevron:Hide()
+    end
+
+    local width = colsRight + (hasOverflow and (CHEVRON_GAP + CHEVRON_W) or 0) + PAD
+    pickerFrame:SetSize(width, PAD + HEADER_HEIGHT + rowsPerCol * ROW_HEIGHT + PAD)
 end
 
 local function UpdateVisibility()
@@ -522,6 +604,27 @@ local function CreatePicker()
         closeBtnText:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
     end)
 
+    -- Expand/collapse the columns past the first. Positioned and shown by
+    -- Refresh, which only reveals it when the roster overflows one column.
+    local chevron = CreateFrame("Button", nil, f)
+    chevron:SetWidth(CHEVRON_W)
+    local chevronHl = chevron:CreateTexture(nil, "HIGHLIGHT")
+    chevronHl:SetAllPoints()
+    chevronHl:SetColorTexture(C.highlight[1], C.highlight[2], C.highlight[3], C.highlight[4])
+    local chevronText = chevron:CreateFontString(nil, "OVERLAY")
+    chevronText:SetFont(LuckyUI.BODY_FONT, 16, "")
+    chevronText:SetAllPoints()
+    chevronText:SetJustifyH("CENTER")
+    chevronText:SetTextColor(C.goldPrimary[1], C.goldPrimary[2], C.goldPrimary[3])
+    chevron.text = chevronText
+    chevron:SetScript("OnClick", function()
+        expanded = not expanded
+        db.piExpanded = expanded
+        Refresh()
+    end)
+    chevron:Hide()
+    f.chevron = chevron
+
     local current = f:CreateFontString(nil, "OVERLAY")
     current:SetFont(LuckyUI.BODY_FONT, 11, "")
     current:SetPoint("TOPLEFT", PAD, -(PAD + 16))
@@ -603,6 +706,7 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
     if class ~= "PRIEST" then return end
 
     targetIdx = db.piTargetCount or 1
+    expanded = db.piExpanded or false
 
     DevLog("Init called")
     CreatePicker()

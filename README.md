@@ -100,7 +100,9 @@ For priests: a small floating window in parties and raids that lets you choose w
 - Click a name to update the 'PI' macro, which casts Power Infusion on that player.
 - The first click creates the macro and picks it up so you can drop it onto your action bar.
 - Parties list everyone with damage dealers first; raids list damage dealers only.
-- Specs that gain the most from Power Infusion are starred and sorted to the top, using current-season simulation data. Hover a name for details.
+- Each name shows its spec icon and the percentage damage gain Power Infusion gives that spec, using current-season simulation data. Hover a name for the full breakdown.
+- Switch between single-target, 3-target, and 5-target tabs to compare gains for different fights. The list reorders to match, and a numbered star marks the best target for each scenario.
+- In large raids only the top column is shown; a chevron expands the rest when you want them.
 - Appears automatically when grouped and out of combat; hides during combat.
 - Your chosen target is saved per character.
 - Right-click drag to reposition; position is saved across reloads.
