@@ -9,7 +9,7 @@ local CHECK_MARKUP = "|A:common-icon-checkmark:12:12|a"
 local STAR_MARKUP = "|A:auctionhouse-icon-favorite:12:12|a"
 
 local ROWS_PER_COLUMN = 10
-local ROW_WIDTH       = 140
+local ROW_WIDTH       = 165
 local ROW_HEIGHT      = 20
 local COL_GAP         = 4
 local PAD             = 10
@@ -87,7 +87,7 @@ local function GetCandidates()
                         role    = role,
                         guid    = guid,
                         specID  = specID,
-                        rating  = specID and PIData.RATING[specID] or 0,
+                        rating  = specID and PIData.GAIN[specID] or 0,
                     })
                 end
             end
@@ -216,7 +216,7 @@ local function BuildMockCandidates(count)
             class   = class,
             role    = role,
             specID  = specID,
-            rating  = specID and PIData.RATING[specID] or 0,
+            rating  = specID and PIData.GAIN[specID] or 0,
         })
     end
     SortCandidates(list)
@@ -312,9 +312,11 @@ local function AcquireRow(i)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         local _, specName = GetSpecializationInfoByID(c.specID)
         GameTooltip:SetText(specName or "", 1, 1, 1)
-        if c.rating == PIData.STRONG then
+        GameTooltip:AddLine(string.format(S.gainFmt, c.rating), 1, 1, 1)
+        local tier = PIData.Tier(c.specID)
+        if tier == "STRONG" then
             GameTooltip:AddLine(S.recStrong, 0.1, 1, 0.1)
-        else
+        elseif tier == "GOOD" then
             GameTooltip:AddLine(S.recGood, 1, 0.82, 0)
         end
         GameTooltip:Show()
@@ -374,8 +376,11 @@ function Refresh()
 
         local selected = (candidate.full == target)
         local icon = ROLE_ICON[candidate.role] or ""
-        local star = (candidate.rating == PIData.STRONG) and (" " .. STAR_MARKUP) or ""
-        row.text:SetText(icon .. candidate.display .. star .. (selected and (" " .. CHECK_MARKUP) or ""))
+        local star = (PIData.Tier(candidate.specID) == "STRONG") and (" " .. STAR_MARKUP) or ""
+        local gain = candidate.rating > 0
+            and (" " .. LuckyUI.WC.textMuted .. string.format("%.1f%%", candidate.rating) .. LuckyUI.WC.reset)
+            or ""
+        row.text:SetText(icon .. candidate.display .. gain .. star .. (selected and (" " .. CHECK_MARKUP) or ""))
         local cc = RAID_CLASS_COLORS[candidate.class]
         if cc then
             row.text:SetTextColor(cc.r, cc.g, cc.b)

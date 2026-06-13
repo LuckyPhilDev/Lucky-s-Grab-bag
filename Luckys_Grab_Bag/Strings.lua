@@ -72,6 +72,7 @@ LuckyGrabbag.Strings = {
         macroCreated = "Created the 'PI' macro and picked it up. Drop it onto your action bar.",
         slotsFull    = "Your macro slots are full. Free a slot and pick a target again.",
         inCombat     = "Cannot update macros during combat.",
+        gainFmt      = "+%.1f%% DPS from Power Infusion",
         recStrong    = "Strong Power Infusion target",
         recGood      = "Good Power Infusion target",
     },
