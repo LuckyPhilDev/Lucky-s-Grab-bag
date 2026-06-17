@@ -326,9 +326,10 @@ LuckyGrabbag.Strings = {
             desc  = "Adds a Concentration bar above each profession's skill bar in the Profession Book, so you can see your Concentration for both at a glance without opening each one.",
         },
         bonusRoll = {
-            label = "Auto-dismiss Bonus Roll",
-            desc  = "Automatically passes on the Bonus Roll popup that appears at the end of content, except in the situations selected below.",
-            note  = "This is a per-character setting.",
+            label   = "Auto-dismiss Bonus Roll",
+            desc    = "Automatically passes on the Bonus Roll popup that appears at the end of content, except in the situations selected below.",
+            note    = "This is a per-character setting.",
+            warning = "Temporarily disabled while we fix a bug. A fix is under construction.",
         },
         bonusRollKeepInMythicPlus = {
             label = "Keep in Mythic+",

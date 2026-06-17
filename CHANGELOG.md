@@ -1,3 +1,8 @@
+## [1.14.4] - 2026-06-17
+
+### Fixed
+- Temporarily disabled Auto-dismiss Bonus Roll while we fix a bug. The setting is greyed out with a note for now, and will return once the fix is ready.
+
 ## [1.14.3] - 2026-06-17
 
 ### Fixed

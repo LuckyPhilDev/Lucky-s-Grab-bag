@@ -9,6 +9,11 @@ local BR = LuckyGrabbag.BonusRoll
 
 local charDB
 
+-- Temporarily disabled: auto-dismiss has a bug under investigation. While this
+-- is true, Init never hooks BonusRollFrame, so the feature is fully inert
+-- regardless of saved settings. Flip back to false once the fix lands.
+local FEATURE_DISABLED = true
+
 -- Maps detected context → per-character "keep popup here" flag
 local KEEP_KEYS = {
     mythicplus = "bonusRollKeepInMythicPlus",
@@ -110,6 +115,7 @@ end
 
 function BR:Init(characterDB)
     charDB = characterDB
+    if FEATURE_DISABLED then return end
 
     -- BonusRollFrame lives in Blizzard_UIPanels_Game (typically loaded at login,
     -- but treat as on-demand to be safe).

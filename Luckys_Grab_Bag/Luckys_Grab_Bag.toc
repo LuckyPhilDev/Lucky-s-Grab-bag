@@ -1,7 +1,7 @@
 ## Interface: 120007
 ## Title: Lucky's Grab-bag
 ## Notes: A collection of small quality-of-life features.
-## Version: 1.14.3
+## Version: 1.14.4
 ## Author: Lucky Phil
 ## SavedVariables: LuckyGrabbagDB
 ## SavedVariablesPerCharacter: LuckyGrabbagCharDB
