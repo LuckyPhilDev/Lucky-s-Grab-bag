@@ -10,8 +10,7 @@
 --   e.g. .../power_infusion/castingpatchwerk/priest/shadow  (3 and 5 swap the suffix)
 -- Each spec's gain is (DPS with one PI on cooldown) over its no-PI baseline.
 --
--- Data as of 2026-06-10 (SimC build 1493847; the 5-target set was last
--- regenerated 2026-06-03). Refresh each balance patch or season by re-pulling
+-- Data as of 2026-06-17 (SimC build 9f3b11b). Refresh each balance patch or season by re-pulling
 -- the three raw-data URLs and recomputing: each spec has a with-PI value and a
 -- "{Spec}" baseline, so gain = (with - base) / base.
 --
@@ -38,32 +37,32 @@ local D = LuckyGrabbag.PowerInfusionData
 -- Infusion. DPS specs only; tanks and healers are intentionally absent so they
 -- stay unrated. Ordered by single-target gain for readability.
 D.GAIN = {
-    [63]   = { 5.93, 6.79, 7.03 }, -- Fire Mage
-    [102]  = { 5.23, 4.57, 4.22 }, -- Balance Druid
-    [263]  = { 4.97, 5.05, 4.98 }, -- Enhancement Shaman
-    [253]  = { 4.93, 2.83, 2.80 }, -- Beast Mastery Hunter
-    [266]  = { 4.89, 5.33, 6.10 }, -- Demonology Warlock
-    [269]  = { 4.89, 6.15, 6.51 }, -- Windwalker Monk
-    [255]  = { 4.83, 4.33, 3.96 }, -- Survival Hunter
-    [254]  = { 4.80, 4.96, 5.12 }, -- Marksmanship Hunter
-    [262]  = { 4.58, 4.34, 3.86 }, -- Elemental Shaman
-    [103]  = { 4.36, 4.34, 4.08 }, -- Feral Druid
-    [70]   = { 4.35, 4.13, 3.95 }, -- Retribution Paladin
-    [265]  = { 4.27, 3.84, 3.98 }, -- Affliction Warlock (fallback)
-    [62]   = { 4.00, 4.12, 4.31 }, -- Arcane Mage
-    [1480] = { 3.86, 3.71, 3.74 }, -- Devourer Demon Hunter
-    [259]  = { 3.79, 2.19, 1.72 }, -- Assassination Rogue (fallback)
-    [71]   = { 3.53, 3.00, 2.84 }, -- Arms Warrior
-    [252]  = { 3.16, 3.02, 3.03 }, -- Unholy Death Knight
-    [258]  = { 3.13, 3.76, 3.88 }, -- Shadow Priest
-    [1467] = { 2.90, 3.82, 4.01 }, -- Devastation Evoker
-    [64]   = { 2.72, 2.79, 2.87 }, -- Frost Mage
-    [577]  = { 2.70, 2.95, 3.59 }, -- Havoc Demon Hunter
-    [251]  = { 2.65, 2.54, 2.46 }, -- Frost Death Knight
-    [72]   = { 2.62, 2.76, 2.62 }, -- Fury Warrior
-    [267]  = { 2.24, 2.36, 2.16 }, -- Destruction Warlock
-    [260]  = { 1.95, 2.08, 1.80 }, -- Outlaw Rogue (fallback)
-    [261]  = { 1.27, 2.99, 2.23 }, -- Subtlety Rogue
+    [63]   = { 6.03, 6.68, 7.07 }, -- Fire Mage
+    [102]  = { 5.27, 4.38, 4.25 }, -- Balance Druid
+    [269]  = { 5.13, 6.10, 6.37 }, -- Windwalker Monk
+    [263]  = { 5.07, 4.85, 5.04 }, -- Enhancement Shaman
+    [253]  = { 4.98, 2.85, 2.72 }, -- Beast Mastery Hunter
+    [266]  = { 4.90, 5.33, 6.04 }, -- Demonology Warlock
+    [255]  = { 4.85, 4.31, 4.00 }, -- Survival Hunter
+    [254]  = { 4.81, 5.00, 4.98 }, -- Marksmanship Hunter
+    [262]  = { 4.59, 4.35, 4.05 }, -- Elemental Shaman
+    [70]   = { 4.47, 4.09, 4.01 }, -- Retribution Paladin
+    [103]  = { 4.42, 4.36, 4.18 }, -- Feral Druid
+    [265]  = { 4.21, 3.91, 4.00 }, -- Affliction Warlock (fallback)
+    [62]   = { 3.85, 4.11, 4.28 }, -- Arcane Mage
+    [259]  = { 3.75, 2.19, 1.81 }, -- Assassination Rogue (fallback)
+    [71]   = { 3.66, 2.96, 2.68 }, -- Arms Warrior
+    [1480] = { 3.60, 3.73, 3.99 }, -- Devourer Demon Hunter
+    [258]  = { 3.54, 3.75, 3.80 }, -- Shadow Priest
+    [252]  = { 2.99, 2.73, 2.70 }, -- Unholy Death Knight
+    [64]   = { 2.86, 2.88, 2.87 }, -- Frost Mage
+    [251]  = { 2.82, 2.88, 2.74 }, -- Frost Death Knight
+    [577]  = { 2.72, 3.00, 3.51 }, -- Havoc Demon Hunter
+    [1467] = { 2.66, 3.71, 4.23 }, -- Devastation Evoker
+    [72]   = { 2.56, 2.58, 2.62 }, -- Fury Warrior
+    [267]  = { 2.34, 2.42, 2.17 }, -- Destruction Warlock
+    [260]  = { 1.90, 2.04, 1.88 }, -- Outlaw Rogue (fallback)
+    [261]  = { 1.41, 3.02, 2.31 }, -- Subtlety Rogue
 }
 
 -- Gain for a spec at a target-count index (1 = single, 2 = 3-target,
