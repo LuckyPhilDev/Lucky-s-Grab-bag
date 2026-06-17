@@ -1,3 +1,8 @@
+## [1.14.3] - 2026-06-17
+
+### Fixed
+- The Power Infusion macro now keeps any extra lines you've added to it. Picking a new target only updates the Power Infusion cast, leaving the rest of your macro untouched.
+
 ## [1.14.2] - 2026-06-17
 
 ### Improved

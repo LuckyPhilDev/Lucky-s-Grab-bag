@@ -265,8 +265,37 @@ local function BuildMockCandidates(count)
     return list
 end
 
+-- Rewrites our targeted Power Infusion cast inside an existing macro body,
+-- leaving every other line the player added (extra casts, /use, etc.) intact.
+-- Our line is the first /cast that targets a unit ([@...]) and names the spell.
+-- If none is found, the new cast line is appended rather than clobbering the body.
+local function MergePIMacro(existing, castLine, spellName)
+    local lines = {}
+    local replaced = false
+    for line in (existing .. "\n"):gmatch("(.-)\n") do
+        if not replaced
+            and line:find("/cast", 1, true)
+            and line:find("@", 1, true)
+            and line:find(spellName, 1, true)
+        then
+            lines[#lines + 1] = castLine
+            replaced = true
+        else
+            lines[#lines + 1] = line
+        end
+    end
+    if not replaced then
+        lines[#lines + 1] = castLine
+    end
+    -- Drop the empty segment left by the trailing newline we appended above.
+    if lines[#lines] == "" then lines[#lines] = nil end
+    return table.concat(lines, "\n")
+end
+
 -- Writes the PI macro to cast on the given Name or Name-Realm. Creates the
 -- per-character macro on first use and puts it on the cursor for bar placement.
+-- On later updates only our cast line changes, so any lines the player added
+-- to the macro themselves are preserved.
 local function WriteMacro(targetFull)
     local S = LuckyGrabbag.Strings
     local prefix = S.addon.prefix
@@ -282,14 +311,16 @@ local function WriteMacro(targetFull)
         return false
     end
 
-    local body = "#showtooltip " .. spellName .. "\n/cast [@" .. targetFull .. "] " .. spellName
+    local castLine = "/cast [@" .. targetFull .. "] " .. spellName
 
     local idx = GetMacroIndexByName(MACRO_NAME)
     if idx and idx > 0 then
+        local body = MergePIMacro(GetMacroBody(idx) or "", castLine, spellName)
         EditMacro(idx, MACRO_NAME, MACRO_ICON, body)
         return true
     end
 
+    local body = "#showtooltip " .. spellName .. "\n" .. castLine
     idx = CreateMacro(MACRO_NAME, MACRO_ICON, body, true)
     if not idx or idx == 0 then
         print(prefix .. " " .. S.powerInfusion.slotsFull)
@@ -702,8 +733,11 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
     db = database
     charDB = characterDB
 
+    -- Priests only, except in dev mode where the feature loads on any class so
+    -- the picker can be exercised via "/pipicker mock". Requires devMode on at
+    -- load, since Init runs once; toggle it, then /reload on a non-priest.
     local _, class = UnitClass("player")
-    if class ~= "PRIEST" then return end
+    if class ~= "PRIEST" and not db.devMode then return end
 
     targetIdx = db.piTargetCount or 1
     expanded = db.piExpanded or false
