@@ -198,6 +198,34 @@ local function RefreshAH()
 end
 
 -- ---------------------------------------------------------------------------
+-- Auctionator (third-party Shopping tab)
+--
+-- Auctionator draws its own results list, so the Blizzard cell hook never fires
+-- there. Its name column is an item-key cell whose Populate sets the name text;
+-- hook it the same way to prefix the coloured stat code. Rows are recycled
+-- through Populate on scroll and refresh, so the tag stays in place.
+-- ---------------------------------------------------------------------------
+
+local auctionatorHooked = false
+
+local function HookAuctionator()
+    if auctionatorHooked then return end
+    if not (AuctionatorItemKeyCellTemplateMixin
+        and AuctionatorItemKeyCellTemplateMixin.Populate) then return end
+    auctionatorHooked = true
+    hooksecurefunc(AuctionatorItemKeyCellTemplateMixin, "Populate", function(cell, rowData)
+        if not (db.showEnchantBadges and db.enchantBadgesAH) then return end
+        local itemID = rowData.itemKey and rowData.itemKey.itemID
+        local name = rowData.itemName or (rowData.itemLink and rowData.itemLink:match("%[(.-)%]"))
+        MaybeLogUnmapped(itemID, name)
+        local _, long, color = Data:Resolve(itemID, name)
+        if not (long and cell.Text) then return end
+        cell.Text:SetText(StatMarkup(long, color) .. (cell.Text:GetText() or ""))
+    end)
+    DevLog("Auctionator cells hooked")
+end
+
+-- ---------------------------------------------------------------------------
 -- Baganator (third-party bags)
 --
 -- Baganator hides the default bags and draws its own, so the ContainerFrame
@@ -269,7 +297,11 @@ function EnchantStats:Init(database)
     RegisterBaganator() -- in case Baganator is already loaded
 
     -- The Auction House UI is load-on-demand, so hook it the first time it opens.
+    -- Auctionator is loaded by then too, so hook its Shopping tab here as well.
     local ahEvents = CreateFrame("Frame")
     ahEvents:RegisterEvent("AUCTION_HOUSE_SHOW")
-    ahEvents:SetScript("OnEvent", HookAHCells)
+    ahEvents:SetScript("OnEvent", function()
+        HookAHCells()
+        HookAuctionator()
+    end)
 end

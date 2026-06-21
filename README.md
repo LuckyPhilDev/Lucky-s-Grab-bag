@@ -50,7 +50,7 @@ Marks enchant items in your bags with a small stat code so you can tell them apa
 - Short codes for each stat: H haste, C crit, M mastery, V versatility, Sp speed, Le leech, Av avoidance, plus primary-stat and weapon-proc codes.
 - A '+' marks the pricier, higher-stat version of a stat.
 - Works on the default Blizzard bags and Baganator. Other bag addons may not show them.
-- Optionally tags enchant names in the Auction House browse list as well.
+- Optionally tags enchant names in the Auction House browse list and Auctionator's Shopping tab as well.
 - Can be toggled in the addon settings under Inventory.
 
 ### Reagent Mains
