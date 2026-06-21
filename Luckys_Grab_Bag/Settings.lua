@@ -588,14 +588,11 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked) db.keepTransmogTab = checked end,
         })
 
-        g:Notice({ text = SS.bonusRoll.warning })
-
         g:Toggle({
             label    = SS.bonusRoll.label,
             desc     = SS.bonusRoll.desc,
             note     = SS.bonusRoll.note,
             checked  = charDB.bonusRollAutoDismiss,
-            disabled = true,
             since    = "1.7.0",
             onToggle = function(checked) charDB.bonusRollAutoDismiss = checked end,
         })

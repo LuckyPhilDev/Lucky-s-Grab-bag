@@ -1,3 +1,8 @@
+## [1.15.1] - 2026-06-21
+
+### Fixed
+- **Auto-dismiss Bonus Roll is back**: the setting is no longer greyed out, and it now handles the newest raid difficulties correctly so it keeps your Bonus Roll where you asked instead of passing it.
+
 ## [1.15.0] - 2026-06-21
 
 ### Added

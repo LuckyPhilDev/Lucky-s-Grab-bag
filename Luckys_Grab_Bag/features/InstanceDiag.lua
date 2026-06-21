@@ -1,6 +1,6 @@
 -- Lucky's Grab-bag: Instance Diagnostic Overlay
--- Shows raw M+/Delve API data to verify tier and level detection.
--- Only visible when devMode is enabled.
+-- Shows raw M+/Delve/raid API data to verify tier, level, and difficulty
+-- detection. Only visible when devMode is enabled.
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.InstanceDiag = {}
 local ID = LuckyGrabbag.InstanceDiag
@@ -52,6 +52,14 @@ local function GatherInfo()
     -- C_GossipInfo.GetActiveDelveGossip was removed in patch 12.0.5.
     local delveWidgetTier = GetDelveWidgetTier()
 
+    -- Difficulty display flags, the same signals BonusRoll uses to classify a
+    -- raid difficulty that isn't in its explicit ID table.
+    local diffIsHeroic, diffDisplayHeroic, diffDisplayMythic
+    if difficultyID and difficultyID > 0 then
+        local _, _, isHeroic, _, displayHeroic, displayMythic = GetDifficultyInfo(difficultyID)
+        diffIsHeroic, diffDisplayHeroic, diffDisplayMythic = isHeroic, displayHeroic, displayMythic
+    end
+
     return {
         name           = name,
         instanceType   = instanceType,
@@ -61,10 +69,14 @@ local function GatherInfo()
         mpMapID        = mpMapID,
         delveTierCVar  = delveTierCVar,
         delveWidgetTier = delveWidgetTier,
+        diffIsHeroic      = diffIsHeroic,
+        diffDisplayHeroic = diffDisplayHeroic,
+        diffDisplayMythic = diffDisplayMythic,
     }
 end
 
 local function IsRelevantInstance(info)
+    if info.instanceType == "raid" then return true end
     if info.difficultyID == 8 then return true end
     if info.mpLevel and info.mpLevel > 0 then return true end
     if DELVE_DIFFICULTY_IDS[info.difficultyID] then return true end
@@ -145,6 +157,10 @@ local function Refresh()
 
     if info.mpLevel then addC(M, "M+ Level: ", info.mpLevel) end
     if info.mpMapID then addC(M, "M+ MapID: ", info.mpMapID) end
+    if info.instanceType == "raid" then
+        addC(M, "Mythic flag:  ", info.diffDisplayMythic and true or false)
+        addC(M, "Heroic flag:  ", (info.diffIsHeroic or info.diffDisplayHeroic) and true or false)
+    end
     addC(D, "Delve CVar:   ", info.delveTierCVar   ~= nil and info.delveTierCVar   or "n/a")
     addC(D, "Delve Widget: ", info.delveWidgetTier  ~= nil and info.delveWidgetTier or "n/a")
 
@@ -209,6 +225,7 @@ function ID:Init(database)
     events:RegisterEvent("CHALLENGE_MODE_START")
     events:RegisterEvent("CHALLENGE_MODE_COMPLETED")
     events:RegisterEvent("ACTIVE_DELVE_DATA_UPDATE")
+    events:RegisterEvent("PLAYER_DIFFICULTY_CHANGED")
     events:SetScript("OnEvent", function(_, event)
         Refresh()
         if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then

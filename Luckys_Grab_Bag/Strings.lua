@@ -334,10 +334,9 @@ LuckyGrabbag.Strings = {
             desc  = "Shows the same stat tag next to enchant names in the Auction House browse list.",
         },
         bonusRoll = {
-            label   = "Auto-dismiss Bonus Roll",
-            desc    = "Automatically passes on the Bonus Roll popup that appears at the end of content, except in the situations selected below.",
-            note    = "This is a per-character setting.",
-            warning = "Temporarily disabled while we fix a bug. A fix is under construction.",
+            label = "Auto-dismiss Bonus Roll",
+            desc  = "Automatically passes on the Bonus Roll popup that appears at the end of content, except in the situations selected below.",
+            note  = "This is a per-character setting.",
         },
         bonusRollKeepInMythicPlus = {
             label = "Keep in Mythic+",

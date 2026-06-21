@@ -9,11 +9,6 @@ local BR = LuckyGrabbag.BonusRoll
 
 local charDB
 
--- Temporarily disabled: auto-dismiss has a bug under investigation. While this
--- is true, Init never hooks BonusRollFrame, so the feature is fully inert
--- regardless of saved settings. Flip back to false once the fix lands.
-local FEATURE_DISABLED = true
-
 -- Maps detected context → per-character "keep popup here" flag
 local KEEP_KEYS = {
     mythicplus = "bonusRollKeepInMythicPlus",
@@ -26,14 +21,16 @@ local KEEP_KEYS = {
     hunts      = "bonusRollKeepInHunts",
 }
 
--- Raid difficulty IDs → context key. Anything raid-typed not listed here
--- (e.g. timewalking ID 33, legacy IDs) falls through to raidNormal.
+-- Fast-path raid difficulty IDs → context key. IDs not listed here are
+-- classified at runtime from the game's own difficulty flags (see
+-- classifyRaidContext), so a newly added difficulty still reads correctly.
 local RAID_DIFFICULTY_TO_CONTEXT = {
     [17] = "raidLFR",
     [7]  = "raidLFR",     -- legacy LFR
     [14] = "raidNormal",
     [15] = "raidHeroic",
     [16] = "raidMythic",
+    [233] = "raidMythic",  -- Mythic - Flexible Raiding (added 12.0.7)
 }
 
 -- Known delve difficulty IDs in The War Within. Wider range used as fallback.
@@ -41,6 +38,21 @@ local DELVE_DIFFICULTY_IDS = {
     [208] = true, [215] = true, [216] = true, [217] = true,
     [218] = true, [219] = true, [220] = true,
 }
+
+-- Resolve a raid difficulty to a context key. Tries the explicit table first,
+-- then the difficulty's own display flags so a difficulty ID we've never seen
+-- (e.g. the flexible Mythic added in 12.0.7) is still recognised as Mythic
+-- instead of being misread as Normal. Returns nil when it can't be classified;
+-- the caller treats an unidentified context as "don't auto-dismiss".
+local function classifyRaidContext(difficultyID)
+    local explicit = RAID_DIFFICULTY_TO_CONTEXT[difficultyID]
+    if explicit then return explicit end
+
+    local _, _, isHeroic, _, displayHeroic, displayMythic = GetDifficultyInfo(difficultyID)
+    if displayMythic then return "raidMythic" end
+    if isHeroic or displayHeroic then return "raidHeroic" end
+    return nil
+end
 
 local function detectContext()
     local _, instanceType, difficultyID = GetInstanceInfo()
@@ -52,7 +64,7 @@ local function detectContext()
     end
 
     if instanceType == "raid" then
-        return RAID_DIFFICULTY_TO_CONTEXT[difficultyID] or "raidNormal"
+        return classifyRaidContext(difficultyID)
     end
     if DELVE_DIFFICULTY_IDS[difficultyID] then return "delve" end
     if instanceType == "party" then return "dungeon" end
@@ -85,7 +97,13 @@ end
 
 local function onBonusRollShow()
     if not charDB or not charDB.bonusRollAutoDismiss then return end
+
     local ctx = detectContext()
+
+    -- Fail safe: if the context can't be identified, never auto-pass. Leaving an
+    -- extra popup is harmless; passing a roll the player wanted is not.
+    if not ctx then return end
+
     local keepKey = KEEP_KEYS[ctx]
 
     -- Raid contexts: master raid toggle gates the per-difficulty keep flags.
@@ -115,7 +133,6 @@ end
 
 function BR:Init(characterDB)
     charDB = characterDB
-    if FEATURE_DISABLED then return end
 
     -- BonusRollFrame lives in Blizzard_UIPanels_Game (typically loaded at login,
     -- but treat as on-demand to be safe).
