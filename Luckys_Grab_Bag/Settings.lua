@@ -341,6 +341,28 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
+        g:Toggle({
+            label    = SS.enchantBadges.label,
+            desc     = SS.enchantBadges.desc,
+            checked  = db.showEnchantBadges,
+            since    = "1.15.0",
+            onToggle = function(checked)
+                db.showEnchantBadges = checked
+                LuckyGrabbag.EnchantStats:ApplySetting()
+            end,
+        })
+
+        g:Toggle({
+            label    = SS.enchantBadgesAH.label,
+            desc     = SS.enchantBadgesAH.desc,
+            checked  = db.enchantBadgesAH,
+            parent   = SS.enchantBadges.label,
+            onToggle = function(checked)
+                db.enchantBadgesAH = checked
+                LuckyGrabbag.EnchantStats:ApplySetting()
+            end,
+        })
+
     end
 
     ---------------------------------------------------------------------------

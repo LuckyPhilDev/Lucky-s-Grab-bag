@@ -44,6 +44,15 @@ Displays a floating bar of buttons when you have consumable profession items in 
 - Respects combat lockdown — buttons won't change mid-combat.
 - Can be toggled in the addon settings.
 
+### Enchant Stat Badges
+Marks enchant items in your bags with a small stat code so you can tell them apart at a glance.
+
+- Short codes for each stat: H haste, C crit, M mastery, V versatility, Sp speed, Le leech, Av avoidance, plus primary-stat and weapon-proc codes.
+- A '+' marks the pricier, higher-stat version of a stat.
+- Works on the default Blizzard bags and Baganator. Other bag addons may not show them.
+- Optionally tags enchant names in the Auction House browse list as well.
+- Can be toggled in the addon settings under Inventory.
+
 ### Reagent Mains
 Assigns each reagent category to one or more designated characters. When you open the warband bank on a character not in the list, reagents in those categories are deposited automatically — useful for keeping all your Herbs on the herbalist, all your Cloth on the tailor, and so on.
 

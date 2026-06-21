@@ -325,6 +325,14 @@ LuckyGrabbag.Strings = {
             label = "Concentration on Profession Book",
             desc  = "Adds a Concentration bar above each profession's skill bar in the Profession Book, so you can see your Concentration for both at a glance without opening each one.",
         },
+        enchantBadges = {
+            label = "Enchant Stat Badges",
+            desc  = "Marks enchant items with their stat so you can tell them apart at a glance: H haste, C crit, M mastery, V versatility, Sp speed, Le leech, Av avoidance. A '+' means the pricier, higher-stat version of that stat. Bag badges work with the default Blizzard bags and Baganator. Other bag addons may not show them.",
+        },
+        enchantBadgesAH = {
+            label = "Also tag the Auction House",
+            desc  = "Shows the same stat tag next to enchant names in the Auction House browse list.",
+        },
         bonusRoll = {
             label   = "Auto-dismiss Bonus Roll",
             desc    = "Automatically passes on the Bonus Roll popup that appears at the end of content, except in the situations selected below.",
