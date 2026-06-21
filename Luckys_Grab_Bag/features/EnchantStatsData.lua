@@ -33,6 +33,7 @@ local PRIMARY = { 0.88, 0.86, 0.78 }
 D.codes = {
     H  = { short = "H",   long = "Haste",   color = { 0.40, 0.80, 0.45 } },
     C  = { short = "C",   long = "Crit",    color = { 0.95, 0.70, 0.20 } },
+    CEff = { short = "C", long = "Crit Effect", color = { 0.95, 0.70, 0.20 } }, -- crit effectiveness, not crit rating
     M  = { short = "M",   long = "Mastery", color = { 0.82, 0.45, 0.86 } },
     V  = { short = "V",   long = "Vers",    color = { 0.32, 0.70, 0.95 } },
     Sp = { short = "Sp",  long = "Speed",   color = { 0.45, 0.85, 0.85 } },
@@ -61,7 +62,7 @@ D.byName = {
     ["Zul'jin's Mastery"]      = { "M", premium = true },
     ["Nature's Wrath"]         = { "C" },
     ["Nature's Fury"]          = { "C", premium = true },
-    ["Eyes of the Eagle"]      = { "C" }, -- crit effectiveness, niche
+    ["Eyes of the Eagle"]      = { "CEff" }, -- crit effectiveness, niche
 
     -- Helm ─ tertiary, base vs "Empowered" (premium)
     ["Blessing of Speed"]           = { "Sp" },
