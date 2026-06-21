@@ -215,8 +215,17 @@ local auctionatorHooked = false
 
 local function HookAuctionator()
     if auctionatorHooked then return end
-    if not (AuctionatorItemKeyCellTemplateMixin
-        and AuctionatorItemKeyCellTemplateMixin.Populate) then return end
+    if not (C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded("Auctionator")) then
+        return  -- Auctionator not present; nothing to do
+    end
+    if not AuctionatorItemKeyCellTemplateMixin then
+        DevLog("Auctionator loaded but item-key mixin not defined yet")
+        return
+    end
+    if not AuctionatorItemKeyCellTemplateMixin.Populate then
+        DevLog("Auctionator item-key mixin has no Populate")
+        return
+    end
     auctionatorHooked = true
     hooksecurefunc(AuctionatorItemKeyCellTemplateMixin, "Populate", function(cell, rowData)
         if not (db.showEnchantBadges and db.enchantBadgesAH) then return end
@@ -304,7 +313,12 @@ function EnchantStats:Init(database)
     HookAuctionator()    -- in case Auctionator is already loaded
 
     -- The Auction House UI is load-on-demand, so hook it the first time it opens.
+    -- Retry the Auctionator hook here too: by the time the AH is open Auctionator
+    -- is fully loaded, covering any load-order case the ADDON_LOADED path missed.
     local ahEvents = CreateFrame("Frame")
     ahEvents:RegisterEvent("AUCTION_HOUSE_SHOW")
-    ahEvents:SetScript("OnEvent", HookAHCells)
+    ahEvents:SetScript("OnEvent", function()
+        HookAHCells()
+        HookAuctionator()
+    end)
 end
