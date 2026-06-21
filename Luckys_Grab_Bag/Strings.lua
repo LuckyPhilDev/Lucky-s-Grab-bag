@@ -331,7 +331,7 @@ LuckyGrabbag.Strings = {
         },
         enchantBadgesAH = {
             label = "Also tag the Auction House",
-            desc  = "Shows the same stat tag next to enchant names in the Auction House browse list and Auctionator's Shopping tab.",
+            desc  = "Shows the same stat tag next to enchant names in the Auction House browse list.",
         },
         bonusRoll = {
             label   = "Auto-dismiss Bonus Roll",
