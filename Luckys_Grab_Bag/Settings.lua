@@ -202,10 +202,11 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         g:Toggle({
             label    = SS.concentrationView.label,
             desc     = SS.concentrationView.desc,
-            checked  = db.showConcentration,
-            since    = "1.12.0",
-            image    = "crafting/concentration-view.png",
-            onToggle = function(checked)
+            checked   = db.showConcentration,
+            since     = "1.12.0",
+            image     = "crafting/concentration-view",
+            imageSize = { 213, 243 },
+            onToggle  = function(checked)
                 db.showConcentration = checked
                 LuckyGrabbag.ConcentrationView:ApplySetting()
             end,
