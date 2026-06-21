@@ -345,7 +345,9 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.enchantBadges.label,
             desc     = SS.enchantBadges.desc,
             checked  = db.showEnchantBadges,
-            since    = "1.15.0",
+            image     = "inventory/enchant-stat-badges",
+            imageSize = { 109, 81 },
+            since     = "1.15.0",
             onToggle = function(checked)
                 db.showEnchantBadges = checked
                 LuckyGrabbag.EnchantStats:ApplySetting()
