@@ -204,6 +204,11 @@ end
 -- there. Its name column is an item-key cell whose Populate sets the name text;
 -- hook it the same way to prefix the coloured stat code. Rows are recycled
 -- through Populate on scroll and refresh, so the tag stays in place.
+--
+-- The cells are built by a TableBuilder that copies the mixin's methods onto
+-- each cell instance when it creates it. A hook applied after those cells exist
+-- never reaches them, so hook the mixin at Auctionator's load, before the
+-- Auction House UI ever builds its table.
 -- ---------------------------------------------------------------------------
 
 local auctionatorHooked = false
@@ -289,19 +294,17 @@ function EnchantStats:Init(database)
     bagEvents:SetScript("OnEvent", function(_, event, name)
         if event == "ADDON_LOADED" then
             if name == "Baganator" then RegisterBaganator() end
+            if name == "Auctionator" then HookAuctionator() end
         else
             UpdateAllBags()
         end
     end)
 
-    RegisterBaganator() -- in case Baganator is already loaded
+    RegisterBaganator()  -- in case Baganator is already loaded
+    HookAuctionator()    -- in case Auctionator is already loaded
 
     -- The Auction House UI is load-on-demand, so hook it the first time it opens.
-    -- Auctionator is loaded by then too, so hook its Shopping tab here as well.
     local ahEvents = CreateFrame("Frame")
     ahEvents:RegisterEvent("AUCTION_HOUSE_SHOW")
-    ahEvents:SetScript("OnEvent", function()
-        HookAHCells()
-        HookAuctionator()
-    end)
+    ahEvents:SetScript("OnEvent", HookAHCells)
 end
