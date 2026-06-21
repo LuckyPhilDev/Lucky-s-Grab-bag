@@ -161,8 +161,13 @@ end
 local ahHooked = false
 
 -- The trailing "||" renders as a single literal "|" (WoW's escape for a pipe
--- character in FontString text), giving "Haste | Item Name".
+-- character in FontString text), giving "Haste | Item Name". Paired labels
+-- (missives, gems) arrive already coloured per-stat, so they only need the
+-- separator; single-stat labels are wrapped in their stat colour here.
 local function StatMarkup(label, color)
+    if label:find("|c", 1, true) then
+        return label .. " || "
+    end
     return ("|cff%02x%02x%02x%s|r || "):format(
         color[1] * 255, color[2] * 255, color[3] * 255, label)
 end
