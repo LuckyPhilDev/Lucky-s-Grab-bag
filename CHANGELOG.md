@@ -1,3 +1,8 @@
+## [1.16.1] - 2026-06-24
+
+### Improved
+- Refreshed Power Infusion damage rankings with the latest simulation data.
+
 ## [1.16.0] - 2026-06-21
 
 ### Added
