@@ -29,6 +29,25 @@ local function GetActivePullTimer()
     return db.combatPrepTimerMythic or 10
 end
 
+-- Routes the break timer through DBM or BigWigs when either is loaded so the
+-- whole group sees a proper break bar (the two boss mods broadcast breaks to
+-- each other). Falls back to the Blizzard countdown when neither is present.
+-- BigWigs owns the /break slash when both are loaded, so it takes priority.
+-- A value of 0 cancels an in-progress break: all three backends treat it as a
+-- cancel. Returns the backend used, for logging.
+local function RouteBreakTimer(minutes)
+    if BigWigsLoader and SlashCmdList["break"] then
+        SlashCmdList["break"](tostring(minutes))
+        return "BigWigs"
+    end
+    if DBM and DBM.CreateBreakTimer then
+        DBM:CreateBreakTimer(minutes)
+        return "DBM"
+    end
+    C_PartyInfo.DoCountdown(minutes * 60)
+    return "Blizzard"
+end
+
 local function SavePosition()
     if not prepFrame then return end
     local point, _, relPoint, x, y = prepFrame:GetPoint()
@@ -85,7 +104,7 @@ local function UpdateLayout()
     prepFrame.readyCheckBtn:SetShown(showRC)
     UpdateButtonTexts()
 
-    -- Anchor chain: ready check (optional) → pull timer + cancel → break
+    -- Anchor chain: ready check (optional) → pull timer + cancel → break + cancel
     prepFrame.pullTimerBtn:ClearAllPoints()
     prepFrame.cancelPullBtn:ClearAllPoints()
     if showRC then
@@ -96,6 +115,8 @@ local function UpdateLayout()
     prepFrame.cancelPullBtn:SetPoint("LEFT", prepFrame.pullTimerBtn, "RIGHT", 4, 0)
     prepFrame.breakBtn:ClearAllPoints()
     prepFrame.breakBtn:SetPoint("TOPLEFT", prepFrame.pullTimerBtn, "BOTTOMLEFT", 0, -4)
+    prepFrame.cancelBreakBtn:ClearAllPoints()
+    prepFrame.cancelBreakBtn:SetPoint("LEFT", prepFrame.breakBtn, "RIGHT", 4, 0)
 
     -- Resize frame to fit visible buttons
     local btnCount = showRC and 3 or 2
@@ -183,6 +204,44 @@ local function CreateStyledButton(parent, opts)
     return btn
 end
 
+-- Small danger-styled "X" button that sits beside a timer button to cancel it.
+local function CreateCancelButton(parent)
+    local btn = CreateFrame("Button", nil, parent, "BackdropTemplate")
+    btn:SetSize(23, 28)
+    btn:SetBackdrop({
+        bgFile   = "Interface\\Buttons\\WHITE8X8",
+        edgeFile = "Interface\\Buttons\\WHITE8X8",
+        edgeSize = 1,
+    })
+    btn:SetBackdropColor(0.3, 0.1, 0.1, 1)
+    btn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 0.6)
+
+    local label = btn:CreateFontString(nil, "OVERLAY")
+    label:SetFont("Fonts\\FRIZQT__.TTF", 12, "")
+    label:SetPoint("CENTER", 0, 0)
+    label:SetText(LuckyGrabbag.Strings.combatPrep.cancelLabel)
+    label:SetTextColor(C.danger[1], C.danger[2], C.danger[3])
+
+    btn:SetScript("OnEnter", function()
+        btn:SetBackdropColor(C.danger[1], C.danger[2], C.danger[3], 0.4)
+        btn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 1)
+    end)
+    btn:SetScript("OnLeave", function()
+        btn:SetBackdropColor(0.3, 0.1, 0.1, 1)
+        btn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 0.6)
+    end)
+    btn:SetScript("OnMouseDown", function()
+        btn:SetBackdropColor(0.2, 0.05, 0.05, 1)
+        label:SetPoint("CENTER", 0, -1)
+    end)
+    btn:SetScript("OnMouseUp", function()
+        btn:SetBackdropColor(0.3, 0.1, 0.1, 1)
+        label:SetPoint("CENTER", 0, 0)
+    end)
+
+    return btn
+end
+
 local function CreatePrepFrame()
     if prepFrame then return end
 
@@ -230,36 +289,7 @@ local function CreatePrepFrame()
     f.pullTimerBtn = ptBtn
 
     -- Cancel Pull button (danger style)
-    local cancelBtn = CreateFrame("Button", nil, f, "BackdropTemplate")
-    cancelBtn:SetSize(23, 28)
-    cancelBtn:SetBackdrop({
-        bgFile   = "Interface\\Buttons\\WHITE8X8",
-        edgeFile = "Interface\\Buttons\\WHITE8X8",
-        edgeSize = 1,
-    })
-    cancelBtn:SetBackdropColor(0.3, 0.1, 0.1, 1)
-    cancelBtn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 0.6)
-    local cancelLabel = cancelBtn:CreateFontString(nil, "OVERLAY")
-    cancelLabel:SetFont("Fonts\\FRIZQT__.TTF", 12, "")
-    cancelLabel:SetPoint("CENTER", 0, 0)
-    cancelLabel:SetText(LuckyGrabbag.Strings.combatPrep.cancelLabel)
-    cancelLabel:SetTextColor(C.danger[1], C.danger[2], C.danger[3])
-    cancelBtn:SetScript("OnEnter", function()
-        cancelBtn:SetBackdropColor(C.danger[1], C.danger[2], C.danger[3], 0.4)
-        cancelBtn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 1)
-    end)
-    cancelBtn:SetScript("OnLeave", function()
-        cancelBtn:SetBackdropColor(0.3, 0.1, 0.1, 1)
-        cancelBtn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 0.6)
-    end)
-    cancelBtn:SetScript("OnMouseDown", function()
-        cancelBtn:SetBackdropColor(0.2, 0.05, 0.05, 1)
-        cancelLabel:SetPoint("CENTER", 0, -1)
-    end)
-    cancelBtn:SetScript("OnMouseUp", function()
-        cancelBtn:SetBackdropColor(0.3, 0.1, 0.1, 1)
-        cancelLabel:SetPoint("CENTER", 0, 0)
-    end)
+    local cancelBtn = CreateCancelButton(f)
     cancelBtn:SetScript("OnClick", function()
         C_PartyInfo.DoCountdown(0)
         DevLog("Cancelled pull timer")
@@ -268,16 +298,22 @@ local function CreatePrepFrame()
 
     -- Long Break button (secondary style)
     local breakMins = db.combatPrepBreakTimer or 5
-    local brBtn = CreateStyledButton(f, { width = 100, height = 28, variant = "secondary" })
-    brBtn:SetPoint("TOP", ptBtn, "BOTTOM", 0, -4)
+    local brBtn = CreateStyledButton(f, { width = 73, height = 28, variant = "secondary" })
     brBtn:SetText(string.format(LuckyGrabbag.Strings.combatPrep.breakTimerFmt, breakMins))
     brBtn:SetScript("OnClick", function()
         local mins = db.combatPrepBreakTimer or 5
-        local seconds = mins * 60
-        C_PartyInfo.DoCountdown(seconds)
-        DevLog("Started break timer for " .. mins .. "m (" .. seconds .. "s)")
+        local source = RouteBreakTimer(mins)
+        DevLog("Started break timer for " .. mins .. "m via " .. source)
     end)
     f.breakBtn = brBtn
+
+    -- Cancel Break button (danger style)
+    local cancelBreakBtn = CreateCancelButton(f)
+    cancelBreakBtn:SetScript("OnClick", function()
+        local source = RouteBreakTimer(0)
+        DevLog("Cancelled break timer via " .. source)
+    end)
+    f.cancelBreakBtn = cancelBreakBtn
 
     prepFrame = f
     DevLog("Frame created")

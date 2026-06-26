@@ -262,7 +262,7 @@ LuckyGrabbag.Strings = {
         },
         breakTimer = {
             label  = "Break Timer Duration",
-            desc   = "Default break length.",
+            desc   = "Default break length. When DBM or BigWigs is installed, the break is sent through it so your whole group sees the timer. Otherwise a standard countdown is used.",
             suffix = "m",
         },
         kickMacro = {
