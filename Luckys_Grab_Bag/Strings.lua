@@ -311,7 +311,7 @@ LuckyGrabbag.Strings = {
         },
         transmog = {
             label = "Keep Active Transmog Tab",
-            desc  = "Keeps whichever tab you're on when switching slots at the transmog NPC, instead of jumping back to Items.",
+            desc  = "Keeps whichever tab you're on when switching outfits at the transmog NPC, instead of jumping back to Items. Clicking a slot still opens Items.",
         },
         autoTipAlt = {
             label = "1s Tip on Alt Work Orders",

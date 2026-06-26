@@ -1,9 +1,12 @@
--- Lucky's Grab-bag: Transmog NPC — keep active tab on slot change
+-- Lucky's Grab-bag: Transmog NPC — keep active tab on programmatic refreshes
+-- (outfit switch, model reload) while letting a manual slot click fall through
+-- to the Items tab as stock does.
 -- Works with stock Blizzard and BetterWardrobeAndTransmog.
--- Both call WardrobeCollection:UpdateSlot on slot click, which resets
--- to the Items tab via SetToItemsTab(). We poll TabHeaders.selectedTabID
--- between frames to remember the user's last tab, then restore it
--- after TransmogFrame:SelectSlot runs.
+-- Both call WardrobeCollection:UpdateSlot, which resets to the Items tab via
+-- SetToItemsTab(). SelectSlot's forceRefresh arg tells the two apart: a user
+-- slot click passes false, a refresh (RefreshSelectedSlot) passes true. We poll
+-- TabHeaders.selectedTabID between frames to remember the user's last tab, then
+-- restore it only on forceRefresh.
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.Transmog = {}
 
@@ -39,8 +42,9 @@ local function InstallHooks()
         end
     end)
 
-    hooksecurefunc(TransmogFrame, "SelectSlot", function()
+    hooksecurefunc(TransmogFrame, "SelectSlot", function(_, _, forceRefresh)
         if not db or not db.keepTransmogTab then return end
+        if not forceRefresh then return end
         if not userTab then return end
         if th.selectedTabID == userTab then return end
         DevLog("Restoring tab to " .. tostring(userTab))
