@@ -6,7 +6,7 @@ LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.Strings = {
     addon = {
         title       = "Lucky's Grab-bag",
-        prefix      = "|cff00cc00Lucky:|r",
+        prefix      = "|cff00cc00Lucky's Grab-bag:|r",
         errorPrefix = "|cffff0000Lucky's Grab-bag:|r",
     },
 
@@ -52,6 +52,15 @@ LuckyGrabbag.Strings = {
 
     confirmPurchase = {
         tooltip = "Confirm Purchase",
+    },
+
+    transmogSets = {
+        trackedOne     = "Now tracking %d appearance from %s.",
+        trackedMany    = "Now tracking %d appearances from %s.",
+        nothingToTrack = "Nothing new to track from %s.",
+        skippedSuffix  = "%d could not be tracked.",
+        trackedItem    = "Now tracking %s.",
+        itemAlready    = "%s is already collected or being tracked.",
     },
 
     combatPrep = {
@@ -312,6 +321,10 @@ LuckyGrabbag.Strings = {
         transmog = {
             label = "Keep Active Transmog Tab",
             desc  = "Keeps whichever tab you're on when switching outfits at the transmog NPC, instead of jumping back to Items. Clicking a slot still opens Items.",
+        },
+        trackTransmogSets = {
+            label = "Shift-Click Set Tracking",
+            desc  = "Shift-click a set on the Appearances Sets tab to track every appearance you are still missing from it, just like shift-clicking an item on the Items tab.",
         },
         autoTipAlt = {
             label = "1s Tip on Alt Work Orders",

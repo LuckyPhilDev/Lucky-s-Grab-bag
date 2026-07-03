@@ -93,6 +93,13 @@ Keeps your active tab in the transmog panel when switching outfit slots, instead
 - Works for any tab: Items, Sets, Custom Sets, and Situations.
 - Off by default; enable it in settings under Interface.
 
+### Shift-Click Set Tracking
+Shift-click a transmog set on the Appearances Sets tab to track every appearance you're still missing from it, just like shift-clicking an item on the Items tab.
+
+- Works from the collection list, the NPC set browser, and the individual pieces in the set details pane.
+- If a piece has more than one source and one can't be tracked, the others are tried automatically.
+- Enabled by default; can be toggled in the addon settings under Interface.
+
 ### Rotation Glow
 Animates the suggested next-cast spell on Blizzard's Cooldown Manager, using the game's built-in assisted combat data.
 
@@ -302,6 +309,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 
 **Interface**
 - *Keep Active Transmog Tab* — Keeps your active transmog tab when switching outfit slots.
+- *Shift-Click Set Tracking* — Shift-click a set on the Appearances Sets tab to track every appearance you're still missing from it.
 - *Auto-dismiss Bonus Roll* — Automatically passes on the Bonus Roll popup at the end of instanced content. Per-character toggles for Mythic+ (with a minimum key level), Raids (with individual difficulty selection), Delves, Dungeons, and Hunts.
 
 Settings are saved per account, except for Bonus Roll preferences which are saved per character.

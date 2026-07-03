@@ -589,6 +589,14 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label    = SS.trackTransmogSets.label,
+            desc     = SS.trackTransmogSets.desc,
+            checked  = db.trackTransmogSets,
+            since    = "1.17.0",
+            onToggle = function(checked) db.trackTransmogSets = checked end,
+        })
+
+        g:Toggle({
             label    = SS.bonusRoll.label,
             desc     = SS.bonusRoll.desc,
             note     = SS.bonusRoll.note,
