@@ -43,5 +43,4 @@ features/ProfessionSpendToPerk.lua
 features/ConcentrationView.lua
 features/EnchantStatsData.lua
 features/EnchantStats.lua
-features/HousingRotate.lua
 Core.lua
