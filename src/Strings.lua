@@ -70,6 +70,12 @@ LuckyGrabbag.Strings = {
         cancelLabel  = "X",
     },
 
+    housingRotate = {
+        degreeBtnFmt = "%+d°",
+        degreeFmt    = "%d°",
+        resetLabel   = "Reset",
+    },
+
     kickMacro = {
         created      = "Created 'Kick' macro using %s.",
         alreadyExists = "A macro named 'Kick' already exists.",
@@ -142,6 +148,7 @@ LuckyGrabbag.Strings = {
             combat       = "Combat",
             delves       = "Delves",
             interface    = "Interface",
+            housing      = "Housing",
         },
         sections = {
             automation  = "Automation",
@@ -317,6 +324,10 @@ LuckyGrabbag.Strings = {
         delveMapMinLevel = {
             label = "Minimum Delve Level",
             desc  = "Only show the Bounty Map button in delves at or above this tier.",
+        },
+        housingRotate = {
+            label = "Housing Rotate Buttons",
+            desc  = "Floating buttons for rotating the selected decor item by an exact number of degrees while in Expert Mode. Shows a running total since the last reset, handy for lining a rug up square with a wall. Right-click drag to move.",
         },
         transmog = {
             label = "Keep Active Transmog Tab",

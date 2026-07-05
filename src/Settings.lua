@@ -678,6 +678,24 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
     end
 
+    ---------------------------------------------------------------------------
+    -- Housing
+    ---------------------------------------------------------------------------
+    do
+        local g = panel:Group(SS.groups.housing)
+
+        g:Toggle({
+            label    = SS.housingRotate.label,
+            desc     = SS.housingRotate.desc,
+            checked  = db.showHousingRotate,
+            since    = "1.18.0",
+            onToggle = function(checked)
+                db.showHousingRotate = checked
+                LuckyGrabbag.HousingRotate:ApplySetting()
+            end,
+        })
+    end
+
     panel:Finalize()
 
     local target = panel.whatsNewGroup

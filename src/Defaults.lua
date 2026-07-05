@@ -53,6 +53,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     showConcentration        = true,
     showEnchantBadges        = true,
     enchantBadgesAH          = true,
+    showHousingRotate        = false,
 }
 
 LuckyGrabbag.CHAR_DB_DEFAULTS = {

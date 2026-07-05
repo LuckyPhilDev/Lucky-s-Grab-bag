@@ -1,7 +1,7 @@
 package-as: Luckys_Grab_Bag
 
 move-folders:
-  Luckys_Grab_Bag/Luckys_Grab_Bag: Luckys_Grab_Bag
+  Luckys_Grab_Bag/src: Luckys_Grab_Bag
 
 manual-changelog:
   filename: CHANGELOG.md
