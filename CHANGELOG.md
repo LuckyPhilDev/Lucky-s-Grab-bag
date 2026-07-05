@@ -1,3 +1,8 @@
+## [1.17.1] - 2026-07-05
+
+### Improved
+- Minor maintenance and packaging updates.
+
 ## [1.17.0] - 2026-07-03
 
 ### Added
