@@ -1,13 +1,5 @@
-## [1.17.1] - 2026-07-05
-
-### Improved
-- Minor maintenance and packaging updates.
-
-## [1.17.0] - 2026-07-03
+## [1.18.0] - 2026-07-06
 
 ### Added
-- **Shift-click a transmog set to track it**: on the Appearances Sets tab, shift-click a set (or an individual piece) to track every appearance you're still missing from it, just like shift-clicking an item on the Items tab. Works from the collection list, the NPC set browser, and the set details pane.
-
-### Improved
-- **Break timer syncs with DBM and BigWigs**: when either is installed, the break is sent through it so your whole group sees the same timer. A standard countdown is used when neither is present. You can also cancel a running break with the new cancel button.
-- **Set tracking checks every source of an appearance**: if one source of a missing look can't be tracked, the other ways to get it are tried before giving up.
+- **Crest bags in the Use Items popup**: crest upgrade and downgrade satchels now show up in the Use Items bar, so you can click to redeem them straight from your bags, handy for topping up Veteran crests for bonus rolls.
+- **More from Lucky Phil**: the settings panel now shows other Lucky Phil addons you don't have installed, each with a click-to-copy link. It disappears once you have them all.

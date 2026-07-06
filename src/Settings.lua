@@ -8,13 +8,15 @@ StaticPopupDialogs["LUCKYGB_COPY_DISCORD"] = {
     hasEditBox  = 1,
     editBoxWidth = 220,
     OnShow = function(self)
-        self.editBox:SetMaxLetters(0)
-        self.editBox:SetText("https://discord.gg/87HRHcAYP")
-        self.editBox:HighlightText()
-        self.editBox:SetFocus()
+        local editBox = self.editBox or _G[self:GetName() .. "EditBox"]
+        editBox:SetMaxLetters(0)
+        editBox:SetText("https://discord.gg/87HRHcAYP")
+        editBox:HighlightText()
+        editBox:SetFocus()
     end,
     OnHide = function(self)
-        self.editBox:SetText("")
+        local editBox = self.editBox or _G[self:GetName() .. "EditBox"]
+        editBox:SetText("")
     end,
     timeout       = 0,
     whileDead     = true,
@@ -690,5 +692,6 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             value   = "|A:chatframe-button-copy:11:11|a " .. SS.discord.url,
             onClick = function() StaticPopup_Show("LUCKYGB_COPY_DISCORD") end,
         })
+        LuckyPromo:AddToRichGroup(target, "Luckys_Grab_Bag")
     end
 end
