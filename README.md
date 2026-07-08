@@ -144,6 +144,14 @@ Starts combat logging when you enter the raid or Mythic+ content you choose, and
 - If you stop logging manually mid-run, it stays off until you leave.
 - Off by default; enable it in settings under Combat.
 
+### Per-Spec Omnium Folio Runes
+The Omnium Folio keeps the same runes when you change specialization. This feature remembers the rune choices you use in each spec and swaps them back automatically when you switch.
+
+- Restores your last-used runes for the spec you switch to, with a chat message listing what changed.
+- The first time you visit a spec, your current runes become that spec's starting point.
+- Rune memory is saved per character.
+- On by default; turn it off in settings under Combat.
+
 ### Auto-dismiss Bonus Roll
 > Temporarily disabled while we fix a bug. The setting is greyed out for now and will return once the fix is ready.
 
@@ -306,13 +314,14 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Power Infusion Picker*: Shows a window in groups for priests to pick their Power Infusion target; clicking a name updates the 'PI' macro.
 - *Auto Combat Logging*: Starts combat logging in selected raid difficulties and Mythic+ keys, stops when you leave; current season only by default.
 - *Create Kick Macro* — Generates a class-appropriate interrupt macro in a character macro slot.
+- *Per-Spec Omnium Folio Runes*: Remembers your Omnium Folio rune choices for each specialization and restores them when you switch specs.
 
 **Interface**
 - *Keep Active Transmog Tab* — Keeps your active transmog tab when switching outfit slots.
 - *Shift-Click Set Tracking* — Shift-click a set on the Appearances Sets tab to track every appearance you're still missing from it.
 - *Auto-dismiss Bonus Roll* — Automatically passes on the Bonus Roll popup at the end of instanced content. Per-character toggles for Mythic+ (with a minimum key level), Raids (with individual difficulty selection), Delves, Dungeons, and Hunts.
 
-Settings are saved per account, except for Bonus Roll preferences which are saved per character.
+Settings are saved per account, except for Bonus Roll preferences and Omnium Folio rune memory, which are saved per character.
 
 ---
 

@@ -100,6 +100,12 @@ LuckyGrabbag.Strings = {
         stopped = "Combat logging off.",
     },
 
+    omniumFolio = {
+        restored      = "Restored Omnium Folio runes for %s: %s",
+        restoreFailed = "Could not restore your Omnium Folio runes. Open the Omnium Folio and set them manually.",
+        unknownRune   = "Unknown rune",
+    },
+
     reagentMains = {
         title             = "Reagent Mains",
         subtitle          = "GRAB-BAG",
@@ -281,6 +287,10 @@ LuckyGrabbag.Strings = {
         rotationGlow = {
             label = "Rotation Glow",
             desc  = "Animates the next-cast spell on the Essential Cooldown Viewer. Enable the viewer in Edit Mode.",
+        },
+        omniumFolio = {
+            label = "Per-Spec Omnium Folio Runes",
+            desc  = "Remembers your Omnium Folio rune choices for each specialization and restores them when you switch specs. A chat message shows which runes were swapped back.",
         },
         piPicker = {
             label = "Power Infusion Picker",

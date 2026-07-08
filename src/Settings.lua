@@ -540,6 +540,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             since   = "1.5.0",
             onClick = function() LuckyGrabbag.KickMacro:Create() end,
         })
+
+        g:Toggle({
+            label    = SS.omniumFolio.label,
+            desc     = SS.omniumFolio.desc,
+            checked  = db.omniumFolioPerSpec,
+            since    = "1.19.0",
+            onToggle = function(checked)
+                db.omniumFolioPerSpec = checked
+                LuckyGrabbag.OmniumFolio:ApplySetting()
+            end,
+        })
     end
 
     ---------------------------------------------------------------------------
