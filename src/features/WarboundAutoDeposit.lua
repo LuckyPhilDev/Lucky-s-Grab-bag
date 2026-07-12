@@ -49,9 +49,13 @@ local function DepositWarboundItems()
                     DevLog(("Queueing whitelisted itemID %d"):format(itemID))
                 elseif anyTypeEnabled or db.warboundDepositLumber then
                     local loc = ItemLocation:CreateFromBagAndSlot(bag, slot)
-                    if C_Bank.IsItemAllowedInBankType(Enum.BankType.Account, loc) then
-                        local name = GetItemInfo(itemID)
-                        local classID, subclassID = select(12, GetItemInfo(itemID))
+                    -- IsItemAllowedInBankType only means "not soulbound", so grey vendor
+                    -- trash passes it. Poor-quality items share classID 15/0 with tier
+                    -- tokens, so the type rules must also exclude them; only the explicit
+                    -- whitelist above may auto-deposit junk.
+                    local name, _, quality, _, _, _, _, _, _, _, _, classID, subclassID = GetItemInfo(itemID)
+                    if quality and quality > Enum.ItemQuality.Poor
+                        and C_Bank.IsItemAllowedInBankType(Enum.BankType.Account, loc) then
                         if anyTypeEnabled and db.warboundDepositArmor and classID == 4 then
                             toDeposit[itemID] = true
                             DevLog(("Queueing warbound armor itemID %d"):format(itemID))

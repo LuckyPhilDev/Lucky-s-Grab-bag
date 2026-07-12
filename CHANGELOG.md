@@ -1,3 +1,8 @@
+## [1.19.1] - 2026-07-12
+
+### Fixed
+- Auto-deposit no longer sends grey (junk) items to the warband bank.
+
 ## [1.19.0] - 2026-07-08
 
 ### Added
