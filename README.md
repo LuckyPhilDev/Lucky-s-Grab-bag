@@ -153,8 +153,6 @@ The Omnium Folio keeps the same runes when you change specialization. This featu
 - On by default; turn it off in settings under Combat.
 
 ### Auto-dismiss Bonus Roll
-> Temporarily disabled while we fix a bug. The setting is greyed out for now and will return once the fix is ready.
-
 Automatically passes on Blizzard's Bonus Roll popup that appears at the end of instanced content, with per-character control over which content types are kept.
 
 - Per-content toggles for **Mythic+**, **Raids**, **Delves**, **Dungeons**, and **Hunts** in the open world.
