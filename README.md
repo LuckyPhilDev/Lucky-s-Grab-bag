@@ -326,3 +326,9 @@ Settings are saved per account, except for Bonus Roll preferences and Omnium Fol
 ## Notes
 
 - More features will be added over time — hence the name.
+
+---
+
+## A note on AI
+
+My addons are made by one person who plays the game and wants them to work properly. I use AI tools to move faster, mostly on code, bug hunting, and docs, but every change is reviewed and tested in game before release. If a feature feels off or something breaks, that's mine to fix, and the Discord is the fastest way to reach me.
