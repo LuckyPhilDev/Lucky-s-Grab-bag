@@ -107,7 +107,7 @@ A small floating window that appears automatically in raids and dungeons when yo
 - Can be toggled in the addon settings.
 
 ### Power Infusion Picker
-For priests: a small floating window in parties and raids that lets you choose who receives your Power Infusion, out of combat.
+For priests: a small floating window in dungeons, raids, and scenarios that lets you choose who receives your Power Infusion, out of combat.
 
 - Click a name to update the 'PI' macro, which casts Power Infusion on that player.
 - The first click creates the macro and picks it up so you can drop it onto your action bar.
@@ -115,7 +115,7 @@ For priests: a small floating window in parties and raids that lets you choose w
 - Each name shows its spec icon and the percentage damage gain Power Infusion gives that spec, using current-season simulation data. Hover a name for the full breakdown.
 - Switch between single-target, 3-target, and 5-target tabs to compare gains for different fights. The list reorders to match, and a numbered star marks the best target for each scenario.
 - In large raids only the top column is shown; a chevron expands the rest when you want them.
-- Appears automatically when grouped and out of combat; hides during combat.
+- Appears automatically when you are grouped inside a dungeon, raid, or scenario, including delves with other players, and out of combat; hides during combat.
 - Your chosen target is saved per character.
 - Right-click drag to reposition; position is saved across reloads.
 - Use `/pipicker` to test the window outside group content.
@@ -296,7 +296,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
   - *Pull Timer (Mythic+)* — How long the pull countdown lasts in dungeons (3–30 seconds).
   - *Pull Timer (Raid)* — How long the pull countdown lasts in raids (3–30 seconds).
   - *Break Timer Duration* — How long the break countdown lasts (1–15 minutes).
-- *Power Infusion Picker*: Shows a window in groups for priests to pick their Power Infusion target; clicking a name updates the 'PI' macro.
+- *Power Infusion Picker*: Shows a window in dungeons, raids, and scenarios for priests to pick their Power Infusion target; clicking a name updates the 'PI' macro.
 - *Auto Combat Logging*: Starts combat logging in selected raid difficulties and Mythic+ keys, stops when you leave; current season only by default.
 - *Create Kick Macro* — Generates a class-appropriate interrupt macro in a character macro slot.
 - *Per-Spec Omnium Folio Runes*: Remembers your Omnium Folio rune choices for each specialization and restores them when you switch specs.

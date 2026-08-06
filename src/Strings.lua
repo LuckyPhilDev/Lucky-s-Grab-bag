@@ -294,7 +294,7 @@ LuckyGrabbag.Strings = {
         },
         piPicker = {
             label = "Power Infusion Picker",
-            desc  = "For priests: shows a window in parties and raids to pick who receives your Power Infusion. Clicking a name updates a 'PI' macro that casts Power Infusion on that player. Drag the macro to your action bar once, then pick new targets any time. Right-click drag to move the window. Players who gain the most from it are starred.",
+            desc  = "For priests: shows a window in dungeons, raids, and grouped scenarios such as delves to pick who receives your Power Infusion. Clicking a name updates a 'PI' macro that casts Power Infusion on that player. Drag the macro to your action bar once, then pick new targets any time. Right-click drag to move the window. Players who gain the most from it are starred.",
         },
         autoCombatLog = {
             label = "Auto Combat Logging",

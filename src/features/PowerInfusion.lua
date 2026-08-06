@@ -70,6 +70,14 @@ local function KnowsPowerInfusion()
     return IsPlayerSpell(POWER_INFUSION_SPELL_ID)
 end
 
+-- Allowlist rather than a blocklist, so new game modes (housing duels,
+-- whatever ships next) stay out until they earn a place here. Scenarios cover
+-- delves, which are worth a target only when grouped; the caller checks that.
+local function InSupportedInstance()
+    local _, instanceType = GetInstanceInfo()
+    return instanceType == "party" or instanceType == "raid" or instanceType == "scenario"
+end
+
 local function SortCandidates(list)
     table.sort(list, function(a, b)
         local ga, gb = a.rating or 0, b.rating or 0
@@ -552,6 +560,11 @@ local function UpdateVisibility()
     if not mockCandidates and not IsInGroup() then
         pickerFrame:Hide()
         DevLog("Hidden (not in a group)")
+        return
+    end
+    if not mockCandidates and not InSupportedInstance() then
+        pickerFrame:Hide()
+        DevLog("Hidden (not in a dungeon, raid, or scenario)")
         return
     end
     if not mockCandidates and not KnowsPowerInfusion() then
