@@ -247,6 +247,7 @@ A minimap button for quick access to the addon.
 | `/combatprep` | Force-show the Combat Prep window (for testing outside group content) |
 | `/pipicker` | Force-show the Power Infusion Picker window (also `/pitarget`) |
 | `/pipicker mock` | Fill the picker with a fake roster for testing outside a group; add a number for the roster size (e.g. `/pipicker mock 25`) |
+| `/gbdiag` | Print where you are and why each floating window is or isn't showing, for bug reports; `/gbdiag recheck` re-runs the checks first |
 
 ---
 

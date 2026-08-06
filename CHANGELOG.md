@@ -1,3 +1,13 @@
+## [1.19.3] - 2026-08-06
+
+### Fixed
+- The Power Infusion picker and the Combat Prep window no longer turn up in Decor Duels. Both now appear only in dungeons, raids, and scenarios such as delves when you are grouped.
+- The pull timer now offers the raid duration everywhere inside a raid, including small groups.
+
+### Changed
+- Keep Active Transmog Tab and Shift-Click Set Tracking have retired. Both have moved to Lucky's Better Wardrobe, which handles them natively, and their settings here are switched off.
+- Updated the Discord invite link in the settings panel.
+
 ## [1.19.2] - 2026-07-16
 
 ### Improved
