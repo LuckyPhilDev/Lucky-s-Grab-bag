@@ -96,12 +96,12 @@ Animates the suggested next-cast spell on Blizzard's Cooldown Manager, using the
 - Off by default; enable it in the addon settings.
 
 ### Combat Prep Window
-A small floating window that appears automatically in raids and dungeons when you're out of combat, giving quick access to pull timers, ready checks, and break countdowns.
+A small floating window that appears automatically in dungeons, raids, and scenarios when you're out of combat, giving quick access to pull timers, ready checks, and break countdowns.
 
 - **Pull Timer** — starts a countdown for the configured duration. Separate durations for Mythic+ (default 10s) and raids (default 12s); the button shows whichever applies to the content you're in. A cancel button beside it lets you stop the countdown early.
 - **Ready Check** — initiates a ready check for the group. Can be hidden in settings.
 - **Break Timer** — starts a long countdown for bio breaks (1–15 minutes, default 5m).
-- Appears automatically when you enter a raid or dungeon instance and hides during combat.
+- Appears automatically when you enter a dungeon or raid, or a scenario such as a delve with other players, and hides during combat.
 - Right-click drag to reposition; position is saved across reloads.
 - Use `/combatprep` to test the window outside of group content.
 - Can be toggled in the addon settings.
@@ -291,7 +291,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Rotation Glow* — Animates the suggested next-cast spell on the Essential Cooldown Viewer, using Blizzard's assisted combat data.
 
 **Combat Prep**
-- *Combat Prep Window* — Shows a floating window with pull timer, ready check, and break timer buttons in raids and dungeons.
+- *Combat Prep Window* — Shows a floating window with pull timer, ready check, and break timer buttons in dungeons, raids, and scenarios.
   - *Ready Check Button* — Show or hide the ready check button.
   - *Pull Timer (Mythic+)* — How long the pull countdown lasts in dungeons (3–30 seconds).
   - *Pull Timer (Raid)* — How long the pull countdown lasts in raids (3–30 seconds).

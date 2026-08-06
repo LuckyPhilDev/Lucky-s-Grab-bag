@@ -10,20 +10,23 @@ local function DevLog(msg)
     LuckyGrabbag.DevLog("CombatPrep", msg)
 end
 
+-- Instance type rather than group type, so a raid group parked in the open
+-- world or a housing decor duel does not get the window. Dungeons are matched
+-- on "party" because IsChallengeModeActive() only turns true once the key
+-- starts, which would miss pre-key M+ and plain mythic.
 local function IsInQualifyingContent()
-    if IsInRaid() then return true end
-    -- IsChallengeModeActive() is only true after the key starts, so also
-    -- check if we're inside a dungeon instance (covers pre-key M+ and mythic).
     local _, instanceType = IsInInstance()
-    if instanceType == "party" then return true end
-    return false
+    if instanceType == "party" or instanceType == "raid" then return true end
+    -- Delves and other scenarios only count when there are people to pull with.
+    return instanceType == "scenario" and IsInGroup()
 end
 
 -- Picks the appropriate pull timer for current content. Raids use the raid
 -- slider; dungeons (M+) use the mythic slider. Falls back to mythic when the
 -- frame is forced visible outside qualifying content.
 local function GetActivePullTimer()
-    if IsInRaid() then
+    local _, instanceType = IsInInstance()
+    if instanceType == "raid" then
         return db.combatPrepTimerRaid or 12
     end
     return db.combatPrepTimerMythic or 10
@@ -94,7 +97,7 @@ local function UpdateVisibility()
         DevLog("Shown (in qualifying content)")
     else
         prepFrame:Hide()
-        DevLog("Hidden (not in raid or M+)")
+        DevLog("Hidden (not in a dungeon, raid, or grouped scenario)")
     end
 end
 
