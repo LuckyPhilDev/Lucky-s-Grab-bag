@@ -10,7 +10,7 @@ StaticPopupDialogs["LUCKYGB_COPY_DISCORD"] = {
     OnShow = function(self)
         local editBox = self.editBox or _G[self:GetName() .. "EditBox"]
         editBox:SetMaxLetters(0)
-        editBox:SetText("https://discord.gg/87HRHcAYP")
+        editBox:SetText("https://discord.gg/ptTtYyAjdZ")
         editBox:HighlightText()
         editBox:SetFocus()
     end,
@@ -596,17 +596,21 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         g:Toggle({
             label    = SS.transmog.label,
             desc     = SS.transmog.desc,
-            checked  = db.keepTransmogTab,
+            note     = SS.transmog.note,
+            checked  = false,
+            disabled = true,
             since    = "1.6.0",
-            onToggle = function(checked) db.keepTransmogTab = checked end,
+            onToggle = function() end,
         })
 
         g:Toggle({
             label    = SS.trackTransmogSets.label,
             desc     = SS.trackTransmogSets.desc,
-            checked  = db.trackTransmogSets,
+            note     = SS.trackTransmogSets.note,
+            checked  = false,
+            disabled = true,
             since    = "1.17.0",
-            onToggle = function(checked) db.trackTransmogSets = checked end,
+            onToggle = function() end,
         })
 
         g:Toggle({

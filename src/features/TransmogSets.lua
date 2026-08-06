@@ -7,8 +7,14 @@
 -- copy of it, the transmog NPC set tiles (TransmogSetModelMixin /
 -- BW_TransmogSetModelMixin), and the individual item models in the set
 -- details pane (WardrobeSetsDetailsItemMixin).
+--
+-- Retired: Better Wardrobe and Transmog now does this itself, so nothing below
+-- is installed. The hooks are kept intact in case that ever changes; flip the
+-- flag and re-enable the setting in Settings.lua to bring the feature back.
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.TransmogSets = {}
+
+local MOVED_TO_BETTER_WARDROBE = true
 
 local db
 
@@ -199,11 +205,12 @@ local function TryWrap()
     WrapMethod(BetterWardrobeSetsDetailsItemMixin, "OnMouseDown", "BetterWardrobeSetsDetailsItemMixin", HandleDetailsItem)
 end
 
-local eventFrame = CreateFrame("Frame")
-eventFrame:RegisterEvent("ADDON_LOADED")
-eventFrame:SetScript("OnEvent", TryWrap)
-
 function LuckyGrabbag.TransmogSets:Init(database)
+    if MOVED_TO_BETTER_WARDROBE then return end
     db = database
+
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("ADDON_LOADED")
+    eventFrame:SetScript("OnEvent", TryWrap)
     TryWrap()
 end

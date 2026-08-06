@@ -7,8 +7,14 @@
 -- slot click passes false, a refresh (RefreshSelectedSlot) passes true. We poll
 -- TabHeaders.selectedTabID between frames to remember the user's last tab, then
 -- restore it only on forceRefresh.
+--
+-- Retired: Better Wardrobe and Transmog now does this itself, so nothing below
+-- is installed. The hooks are kept intact in case that ever changes; flip the
+-- flag and re-enable the setting in Settings.lua to bring the feature back.
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.Transmog = {}
+
+local MOVED_TO_BETTER_WARDROBE = true
 
 local db
 local hooked  = false
@@ -54,20 +60,21 @@ local function InstallHooks()
     hooked = true
 end
 
-local eventFrame = CreateFrame("Frame")
-eventFrame:RegisterEvent("TRANSMOGRIFY_OPEN")
-eventFrame:RegisterEvent("TRANSMOGRIFY_CLOSE")
-eventFrame:SetScript("OnEvent", function(_, event)
-    if event == "TRANSMOGRIFY_OPEN" then
-        userTab = nil
-        if watcher then watcher:Show() end
-        C_Timer.After(0.1, InstallHooks)
-    elseif event == "TRANSMOGRIFY_CLOSE" then
-        userTab = nil
-        if watcher then watcher:Hide() end
-    end
-end)
-
 function LuckyGrabbag.Transmog:Init(database)
+    if MOVED_TO_BETTER_WARDROBE then return end
     db = database
+
+    local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("TRANSMOGRIFY_OPEN")
+    eventFrame:RegisterEvent("TRANSMOGRIFY_CLOSE")
+    eventFrame:SetScript("OnEvent", function(_, event)
+        if event == "TRANSMOGRIFY_OPEN" then
+            userTab = nil
+            if watcher then watcher:Show() end
+            C_Timer.After(0.1, InstallHooks)
+        elseif event == "TRANSMOGRIFY_CLOSE" then
+            userTab = nil
+            if watcher then watcher:Hide() end
+        end
+    end)
 end

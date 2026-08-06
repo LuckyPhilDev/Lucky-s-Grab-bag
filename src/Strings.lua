@@ -163,7 +163,7 @@ LuckyGrabbag.Strings = {
         },
         discord = {
             label = "Discord",
-            url   = "discord.gg/87HRHcAYP",
+            url   = "discord.gg/ptTtYyAjdZ",
         },
         devMode = {
             label = "Dev Mode",
@@ -331,10 +331,12 @@ LuckyGrabbag.Strings = {
         transmog = {
             label = "Keep Active Transmog Tab",
             desc  = "Keeps whichever tab you're on when switching outfits at the transmog NPC, instead of jumping back to Items. Clicking a slot still opens Items.",
+            note  = "This has moved to Lucky's Wardrobe, which now handles it natively. The setting here is turned off and no longer does anything.",
         },
         trackTransmogSets = {
             label = "Shift-Click Set Tracking",
             desc  = "Shift-click a set on the Appearances Sets tab to track every appearance you are still missing from it, just like shift-clicking an item on the Items tab.",
+            note  = "This has moved to Lucky's Wardrobe, which now handles it natively. The setting here is turned off and no longer does anything.",
         },
         autoTipAlt = {
             label = "1s Tip on Alt Work Orders",

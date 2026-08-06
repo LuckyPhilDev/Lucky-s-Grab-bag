@@ -46,8 +46,9 @@ LuckyGrabbag.DB_DEFAULTS = {
     autoCombatLogCurrentSeasonOnly = true,
     showConfirmPurchase      = true,
     confirmPurchaseOnSide    = false,
+    -- Retired, both moved to Better Wardrobe and Transmog.
     keepTransmogTab          = false,
-    trackTransmogSets        = true,
+    trackTransmogSets        = false,
     autoTipAlt               = true,
     spendToNextPerk          = true,
     showConcentration        = true,
