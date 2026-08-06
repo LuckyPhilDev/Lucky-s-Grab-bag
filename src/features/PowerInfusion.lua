@@ -742,6 +742,20 @@ function LuckyGrabbag.PowerInfusion:ApplySetting()
     UpdateVisibility()
 end
 
+-- Every gate UpdateVisibility applies, for /gbdiag.
+function LuckyGrabbag.PowerInfusion:GetDiagState()
+    return {
+        shown        = pickerFrame and pickerFrame:IsShown() or false,
+        enabled      = db and db.showPIPicker or false,
+        inCombat     = inCombat,
+        dismissed    = dismissed,
+        inGroup      = IsInGroup(),
+        okInstance   = InSupportedInstance(),
+        knowsSpell   = KnowsPowerInfusion(),
+        mockRoster   = mockCandidates ~= nil,
+    }
+end
+
 function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
     db = database
     charDB = characterDB

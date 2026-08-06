@@ -214,8 +214,68 @@ local function BuildFrame()
     return f
 end
 
+local DIAG_FEATURES = { "PowerInfusion", "CombatPrep" }
+
+local function StateLine(state)
+    local parts = {}
+    for key, value in pairs(state) do
+        parts[#parts + 1] = key .. "=" .. tostring(value)
+    end
+    table.sort(parts)
+    return table.concat(parts, " ")
+end
+
+-- Prints where you are and what each visibility gate makes of it. Run it in
+-- the content that is misbehaving, then again after "/gbdiag recheck", which
+-- re-runs the gates: if a window disappears only on the recheck, the feature
+-- is missing an event for that content rather than misreading it.
+local function PrintDiag(recheck)
+    local name, instanceType, difficultyID, difficultyName, maxPlayers,
+        _, _, instanceMapID, instanceGroupSize, lfgDungeonID = GetInstanceInfo()
+    local inInstance, inInstanceType = IsInInstance()
+
+    print(LuckyGrabbag.PREFIX .. " diag" .. (recheck and " (after recheck)" or ""))
+    print(("  instance: name=%s type=%s diffID=%s diffName=%s mapID=%s maxPlayers=%s groupSize=%s lfgID=%s")
+        :format(tostring(name), tostring(instanceType), tostring(difficultyID), tostring(difficultyName),
+            tostring(instanceMapID), tostring(maxPlayers), tostring(instanceGroupSize), tostring(lfgDungeonID)))
+    print(("  IsInInstance: %s / %s | zone=%s / %s | uiMapID=%s")
+        :format(tostring(inInstance), tostring(inInstanceType), tostring(GetRealZoneText()),
+            tostring(GetSubZoneText()), tostring(C_Map.GetBestMapForUnit("player"))))
+    print(("  group: inGroup=%s inRaid=%s party=%d raid=%d")
+        :format(tostring(IsInGroup()), tostring(IsInRaid()), GetNumSubgroupMembers(), GetNumGroupMembers()))
+
+    if C_ScenarioInfo and C_ScenarioInfo.GetScenarioInfo then
+        local scenario = C_ScenarioInfo.GetScenarioInfo()
+        if scenario then
+            print(("  scenario: name=%s id=%s type=%s")
+                :format(tostring(scenario.name), tostring(scenario.scenarioID), tostring(scenario.type)))
+        end
+    end
+
+    for _, feature in ipairs(DIAG_FEATURES) do
+        local module = LuckyGrabbag[feature]
+        if module and module.GetDiagState then
+            print("  " .. feature .. ": " .. StateLine(module:GetDiagState()))
+        end
+    end
+end
+
 function ID:Init(database)
     db = database
+
+    SLASH_LGBDIAG1 = "/gbdiag"
+    SlashCmdList["LGBDIAG"] = function(msg)
+        if (msg or ""):lower():match("recheck") then
+            for _, feature in ipairs(DIAG_FEATURES) do
+                local module = LuckyGrabbag[feature]
+                if module and module.ApplySetting then module:ApplySetting() end
+            end
+            PrintDiag(true)
+            return
+        end
+        PrintDiag(false)
+    end
+
     BuildCopyPopup()
     diagFrame = BuildFrame()
 

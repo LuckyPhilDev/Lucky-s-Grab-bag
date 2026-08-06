@@ -334,6 +334,16 @@ function LuckyGrabbag.CombatPrep:ApplySetting()
     UpdateVisibility()
 end
 
+-- Every gate UpdateVisibility applies, for /gbdiag.
+function LuckyGrabbag.CombatPrep:GetDiagState()
+    return {
+        shown      = prepFrame and prepFrame:IsShown() or false,
+        enabled    = db and db.showCombatPrep or false,
+        inCombat   = inCombat,
+        qualifying = IsInQualifyingContent(),
+    }
+end
+
 function LuckyGrabbag.CombatPrep:Init(database)
     db = database
     DevLog("Init called")
