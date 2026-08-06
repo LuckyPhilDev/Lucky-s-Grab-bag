@@ -15,6 +15,23 @@ function LuckyGrabbag.DevLog(tag, msg)
     _devLog("|cffaaaaaa[" .. tag .. "]|r " .. msg)
 end
 
+local GROUP_INSTANCE_TYPES = { party = true, raid = true, scenario = true }
+
+--- Instance type for windows that only make sense in group content, or nil
+--- when the player is somewhere else. An allowlist, so new game modes stay out
+--- until they are added deliberately.
+---
+--- GetInstanceInfo and IsInInstance can disagree, and hybrid content is where
+--- it bites: a housing Decor Duel reports "pvp" from the first and "scenario"
+--- from the second. Both have to agree before content counts.
+---@return string|nil
+function LuckyGrabbag.GroupInstanceType()
+    local _, infoType = GetInstanceInfo()
+    local _, inInstanceType = IsInInstance()
+    if infoType ~= inInstanceType then return nil end
+    return GROUP_INSTANCE_TYPES[infoType] and infoType or nil
+end
+
 --- Creates a standard icon button with highlight texture and optional tooltip.
 --- Button-specific attributes (SetAttribute, RegisterForClicks, etc.) are set by the caller after creation.
 ---@param opts table

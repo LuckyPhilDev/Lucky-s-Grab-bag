@@ -259,7 +259,7 @@ LuckyGrabbag.Strings = {
         },
         combatPrep = {
             label = "Combat Prep Window",
-            desc  = "Pull timer and ready check buttons in raids and Mythic+. Shows out of combat. Right-click drag to move.",
+            desc  = "Pull timer and ready check buttons in dungeons, raids, and grouped scenarios such as delves. Shows out of combat. Right-click drag to move.",
         },
         combatPrepReadyCheck = {
             label = "Ready Check Button",
