@@ -11,22 +11,21 @@ local function DevLog(msg)
 end
 
 -- Instance type rather than group type, so a raid group parked in the open
--- world or a housing decor duel does not get the window. Dungeons are matched
--- on "party" because IsChallengeModeActive() only turns true once the key
--- starts, which would miss pre-key M+ and plain mythic.
+-- world or a housing decor duel does not get the window. Dungeons come back as
+-- "party" because IsChallengeModeActive() only turns true once the key starts,
+-- which would miss pre-key M+ and plain mythic.
 local function IsInQualifyingContent()
-    local _, instanceType = IsInInstance()
-    if instanceType == "party" or instanceType == "raid" then return true end
+    local instanceType = LuckyGrabbag.GroupInstanceType()
+    if not instanceType then return false end
     -- Delves and other scenarios only count when there are people to pull with.
-    return instanceType == "scenario" and IsInGroup()
+    return instanceType ~= "scenario" or IsInGroup()
 end
 
 -- Picks the appropriate pull timer for current content. Raids use the raid
 -- slider; dungeons (M+) use the mythic slider. Falls back to mythic when the
 -- frame is forced visible outside qualifying content.
 local function GetActivePullTimer()
-    local _, instanceType = IsInInstance()
-    if instanceType == "raid" then
+    if LuckyGrabbag.GroupInstanceType() == "raid" then
         return db.combatPrepTimerRaid or 12
     end
     return db.combatPrepTimerMythic or 10

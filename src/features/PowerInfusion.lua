@@ -70,12 +70,10 @@ local function KnowsPowerInfusion()
     return IsPlayerSpell(POWER_INFUSION_SPELL_ID)
 end
 
--- Allowlist rather than a blocklist, so new game modes (housing duels,
--- whatever ships next) stay out until they earn a place here. Scenarios cover
--- delves, which are worth a target only when grouped; the caller checks that.
+-- Scenarios cover delves, which are worth a target only when grouped; the
+-- IsInGroup gate in UpdateVisibility handles that.
 local function InSupportedInstance()
-    local _, instanceType = GetInstanceInfo()
-    return instanceType == "party" or instanceType == "raid" or instanceType == "scenario"
+    return LuckyGrabbag.GroupInstanceType() ~= nil
 end
 
 local function SortCandidates(list)
