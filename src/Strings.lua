@@ -36,6 +36,10 @@ LuckyGrabbag.Strings = {
         withdrawn = "Withdrawn %s treatise.",
     },
 
+    recipeSearchFilter = {
+        allExpansions = "All Expansions",
+    },
+
     concentrationView = {
         barLabel        = "Concentration",
         tooltipCurrent  = "Concentration: %d / %d",
@@ -348,7 +352,7 @@ LuckyGrabbag.Strings = {
         },
         recipeSearchFilter = {
             label = "Search Selected Expansion Only",
-            desc  = "When searching recipes, only shows results from the expansion selected in the Filter dropdown. Blizzard normally shows matches from every expansion, with the current one buried partway down the list.",
+            desc  = "When searching recipes, only shows results from the expansion selected in the Filter dropdown. An All Expansions option at the top of that list searches everything at once, which is Blizzard's normal behaviour.",
         },
         concentrationView = {
             label = "Concentration on Profession Book",
