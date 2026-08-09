@@ -152,6 +152,7 @@ LuckyGrabbag.Strings = {
         sections = {
             automation  = "Automation",
             purchasing  = "Purchasing",
+            tooltips    = "Tooltips",
             wardrobe    = "Wardrobe",
             versionInfo = "Version Info",
         },
@@ -327,6 +328,10 @@ LuckyGrabbag.Strings = {
         delveMapMinLevel = {
             label = "Minimum Delve Level",
             desc  = "Only show the Bounty Map button in delves at or above this tier.",
+        },
+        alwaysCompareItems = {
+            label = "Always Compare Items",
+            desc  = "Shows the comparison tooltip beside gear you hover over. Turn it off to see comparisons only while holding Shift. This is a game setting, so it applies to every character and stays put if you disable the addon.",
         },
         transmog = {
             label = "Keep Active Transmog Tab",
