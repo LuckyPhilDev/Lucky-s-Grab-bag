@@ -346,6 +346,10 @@ LuckyGrabbag.Strings = {
             label = "Spend to Next Perk",
             desc  = "Clicking a profession specialisation node automatically spends knowledge points up to the next perk threshold (every 5 ranks).",
         },
+        recipeSearchFilter = {
+            label = "Search Selected Expansion Only",
+            desc  = "When searching recipes, only shows results from the expansion selected in the Filter dropdown. Blizzard normally shows matches from every expansion, with the current one buried partway down the list.",
+        },
         concentrationView = {
             label = "Concentration on Profession Book",
             desc  = "Adds a Concentration bar above each profession's skill bar in the Profession Book, so you can see your Concentration for both at a glance without opening each one.",

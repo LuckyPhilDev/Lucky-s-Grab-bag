@@ -202,6 +202,14 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label    = SS.recipeSearchFilter.label,
+            desc     = SS.recipeSearchFilter.desc,
+            checked  = db.searchSelectedExpansionOnly,
+            since    = "1.20.0",
+            onToggle = function(checked) db.searchSelectedExpansionOnly = checked end,
+        })
+
+        g:Toggle({
             label    = SS.concentrationView.label,
             desc     = SS.concentrationView.desc,
             checked   = db.showConcentration,

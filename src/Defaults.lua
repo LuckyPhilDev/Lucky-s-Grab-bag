@@ -51,6 +51,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     trackTransmogSets        = false,
     autoTipAlt               = true,
     spendToNextPerk          = true,
+    searchSelectedExpansionOnly = true,
     showConcentration        = true,
     showEnchantBadges        = true,
     enchantBadgesAH          = true,

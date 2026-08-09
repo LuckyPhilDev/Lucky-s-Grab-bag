@@ -41,6 +41,7 @@ features/InstanceDiag.lua
 features/BonusRoll.lua
 features/ProfessionSpendToPerk.lua
 features/ConcentrationView.lua
+features/RecipeSearchFilter.lua
 features/EnchantStatsData.lua
 features/EnchantStats.lua
 features/OmniumFolio.lua
