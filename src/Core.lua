@@ -75,6 +75,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.InstanceDiag:Init(db)
         LuckyGrabbag.ProfessionSpendToPerk:Init(db)
         LuckyGrabbag.ConcentrationView:Init(db)
+        LuckyGrabbag.RecipeSearchFilter:Init(db)
         LuckyGrabbag.EnchantStats:Init(db)
         LuckyGrabbag.OmniumFolio:Init(db, charDB)
 

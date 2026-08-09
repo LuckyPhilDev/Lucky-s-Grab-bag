@@ -36,6 +36,10 @@ LuckyGrabbag.Strings = {
         withdrawn = "Withdrawn %s treatise.",
     },
 
+    recipeSearchFilter = {
+        allExpansions = "All Expansions",
+    },
+
     concentrationView = {
         barLabel        = "Concentration",
         tooltipCurrent  = "Concentration: %d / %d",
@@ -350,6 +354,10 @@ LuckyGrabbag.Strings = {
         spendToNextPerk = {
             label = "Spend to Next Perk",
             desc  = "Clicking a profession specialisation node automatically spends knowledge points up to the next perk threshold (every 5 ranks).",
+        },
+        recipeSearchFilter = {
+            label = "Search Selected Expansion Only",
+            desc  = "When searching recipes, only shows results from the expansion selected in the Filter dropdown. An All Expansions option at the top of that list searches everything at once, which is Blizzard's normal behaviour.",
         },
         concentrationView = {
             label = "Concentration on Profession Book",
