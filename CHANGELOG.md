@@ -1,3 +1,9 @@
+## [1.19.4] - 2026-08-10
+
+### Added
+- **Search Selected Expansion Only**: searching recipes now shows only results from the expansion selected in the crafting window's Filter dropdown, with a new All Expansions option at the top of that dropdown to search everything at once. Applies to the crafting orders window too.
+- **Always Compare Items**: a new Tooltips setting that shows the comparison tooltip beside gear you hover over, without needing to hold Shift.
+
 ## [1.19.3] - 2026-08-06
 
 ### Fixed

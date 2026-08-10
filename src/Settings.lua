@@ -205,7 +205,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.recipeSearchFilter.label,
             desc     = SS.recipeSearchFilter.desc,
             checked  = db.searchSelectedExpansionOnly,
-            since    = "1.20.0",
+            since    = "1.19.4",
             onToggle = function(checked) db.searchSelectedExpansionOnly = checked end,
         })
 
@@ -607,7 +607,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.alwaysCompareItems.label,
             desc     = SS.alwaysCompareItems.desc,
             checked  = function() return C_CVar.GetCVar("alwaysCompareItems") == "1" end,
-            since    = "1.20.0",
+            since    = "1.19.4",
             onToggle = function(checked)
                 C_CVar.SetCVar("alwaysCompareItems", checked and "1" or "0")
             end,

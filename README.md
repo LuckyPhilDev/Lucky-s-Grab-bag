@@ -148,6 +148,12 @@ Automatically passes on Blizzard's Bonus Roll popup that appears at the end of i
 - Settings are saved per character, so each alt can have its own preferences.
 - Off by default; enable it in settings under Interface.
 
+### Always Compare Items
+Shows the comparison tooltip beside gear you hover over, without needing to hold Shift.
+
+- Mirrors the game's own setting, so it applies to every character and keeps its state even if the addon is disabled.
+- Toggle it in the addon settings under Interface.
+
 ### Trovehunter's Bounty Map
 Shows a clickable button when you're inside a delve that meets the configured minimum level and you have a Trovehunter's Bounty Map in your bags.
 
@@ -171,6 +177,13 @@ Clicking a profession specialisation node automatically spends additional knowle
 - Hooks the standard spec node click; works exactly like clicking a node normally, just keeps going.
 - Stops at each 5-rank perk threshold so you can review before unlocking the next one.
 - Stops early if you run out of knowledge points or the path is locked.
+- Enabled by default; can be toggled in the addon settings under Professions.
+
+### Search Selected Expansion Only
+Searching recipes normally shows results from every expansion at once. With this on, search results stay limited to the expansion selected in the crafting window's Filter dropdown.
+
+- Adds an **All Expansions** option to the top of the Filter dropdown for searching everything at once (the game's normal behaviour).
+- Applies to both the crafting window and the crafting orders window.
 - Enabled by default; can be toggled in the addon settings under Professions.
 
 ### Concentration on Profession Book
@@ -272,6 +285,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.
 - *Spend to Next Perk* — When clicking a profession specialisation node, spends knowledge points up to the next 5-rank perk threshold.
 - *Concentration on Profession Book* — Shows a Concentration bar above each profession's skill bar in the Profession Book, with a hover tooltip for the refill time.
+- *Search Selected Expansion Only* — When searching recipes, only shows results from the expansion selected in the Filter dropdown. An All Expansions option in that dropdown searches everything at once.
 - *1s Tip on Alt Work Orders* — Automatically sets the tip to 1 silver when sending a personal work order to one of your own characters.
 - *Reagent Mains* — When the warband bank opens, deposits reagents whose category is assigned to a different character.
   - *Configure mains…* — Opens the assignment window where each reagent category can be linked to one or more characters, "All" (everyone keeps), or "None".
@@ -303,6 +317,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 - *Per-Spec Omnium Folio Runes*: Remembers your Omnium Folio rune choices for each specialization and restores them when you switch specs.
 
 **Interface**
+- *Always Compare Items* — Shows the comparison tooltip beside gear you hover over instead of only while holding Shift. A game setting, so it applies to every character and stays put if you disable the addon.
 - *Keep Active Transmog Tab* and *Shift-Click Set Tracking* — Retired. Both have moved to Better Wardrobe and Transmog, which now handles them natively. The settings remain visible but are turned off and greyed out.
 - *Auto-dismiss Bonus Roll* — Automatically passes on the Bonus Roll popup at the end of instanced content. Per-character toggles for Mythic+ (with a minimum key level), Raids (with individual difficulty selection), Delves, Dungeons, and Hunts.
 
