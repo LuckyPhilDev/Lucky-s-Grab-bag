@@ -241,6 +241,8 @@ A minimap button for quick access to the addon.
 - **Middle-click** — toggle dev mode on/off.
 - **Shift+drag** — reposition the button around the minimap edge; position is saved across reloads.
 
+The addon also lists itself in panel addons such as Titan Panel, Bazooka and ChocolateBar, so its button can sit on a bar instead of the minimap.
+
 ---
 
 ## Setup
