@@ -82,6 +82,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         -- Minimap button
         LuckyGrabbag.minimapButton = LuckyMinimap:Create({
             name    = "LuckyGrabbagMinimapButton",
+            tocname = "Luckys_Grab_Bag",
             icon    = "Interface\\Icons\\INV_Misc_Bag_36",
             dbKey   = "minimap",
             db      = db,
