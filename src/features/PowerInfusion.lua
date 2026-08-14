@@ -3,6 +3,7 @@ LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.PowerInfusion = {}
 
 local POWER_INFUSION_SPELL_ID = 10060
+local MYTHIC_KEYSTONE_DIFFICULTY = 8
 local MACRO_NAME = "PI"
 local MACRO_ICON = "INV_Misc_QuestionMark"
 local CHECK_MARKUP = "|A:common-icon-checkmark:12:12|a"
@@ -817,7 +818,7 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
         elseif event == "ENCOUNTER_START" then
             dismissed = false
         elseif event == "PLAYER_ENTERING_WORLD" then
-            if GetDifficultyID() == 8 then dismissed = false end
+            if select(3, GetInstanceInfo()) == MYTHIC_KEYSTONE_DIFFICULTY then dismissed = false end
         elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
             -- Group members respeccing need a fresh inspect.
             if arg1 and arg1 ~= "player" and UnitExists(arg1) then
