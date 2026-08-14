@@ -3,9 +3,15 @@
 -- has chosen not to keep it for, clicks the Pass button to dismiss cleanly.
 -- All settings are per-character (stored in LuckyGrabbagCharDB).
 
+-- Temporarily off while the new content's difficulty IDs are verified: passing a
+-- roll the player wanted is unrecoverable, so nothing below is installed until
+-- then. To bring it back, clear the flag and drop `disabled`/`note` from the
+-- Auto-dismiss Bonus Roll toggle in Settings.lua.
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.BonusRoll = {}
 local BR = LuckyGrabbag.BonusRoll
+
+local DISABLED_FOR_TESTING = true
 
 local charDB
 
@@ -132,6 +138,7 @@ local function tryHook()
 end
 
 function BR:Init(characterDB)
+    if DISABLED_FOR_TESTING then return end
     charDB = characterDB
 
     -- BonusRollFrame lives in Blizzard_UIPanels_Game (typically loaded at login,
