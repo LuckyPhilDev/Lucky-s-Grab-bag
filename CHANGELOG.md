@@ -1,3 +1,13 @@
+## [1.19.7] - 2026-08-14
+
+### Fixed
+- Easy Confirm Purchase no longer freezes the game for several seconds when a bind on equip or refund confirmation opens with your cursor away from your bags. (Thanks for the report Holy_Z)
+- The Power Infusion picker comes back when you start a new Mythic+ run, after dismissing it in an earlier one.
+- Use Items Popup buttons now use the item pictured on them when several items in your bags share a name.
+
+### Removed
+- Auto-dismiss Bonus Roll under Interface is switched off and greyed out while it is tested against the new content, so no bonus rolls are passed for now.
+
 ## [1.19.6] - 2026-08-13
 
 ### Added

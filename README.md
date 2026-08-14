@@ -142,6 +142,8 @@ The Omnium Folio keeps the same runes when you change specialization. This featu
 ### Auto-dismiss Bonus Roll
 Automatically passes on Blizzard's Bonus Roll popup that appears at the end of instanced content, with per-character control over which content types are kept.
 
+**Temporarily switched off** while it is tested against the new content. The setting is greyed out and nothing is dismissed until it returns.
+
 - Per-content toggles for **Mythic+**, **Raids**, **Delves**, **Dungeons**, and **Hunts** in the open world.
 - For Mythic+, set a **minimum key level** to keep the roll for, so rolls from lower keys are dismissed automatically.
 - Raid difficulties are individually selectable (Raid Finder, Normal, Heroic, Mythic).
@@ -321,7 +323,7 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 **Interface**
 - *Always Compare Items* — Shows the comparison tooltip beside gear you hover over instead of only while holding Shift. A game setting, so it applies to every character and stays put if you disable the addon.
 - *Keep Active Transmog Tab* and *Shift-Click Set Tracking* — Retired. Both have moved to Better Wardrobe and Transmog, which now handles them natively. The settings remain visible but are turned off and greyed out.
-- *Auto-dismiss Bonus Roll* — Automatically passes on the Bonus Roll popup at the end of instanced content. Per-character toggles for Mythic+ (with a minimum key level), Raids (with individual difficulty selection), Delves, Dungeons, and Hunts.
+- *Auto-dismiss Bonus Roll* — Temporarily switched off while it is tested against the new content, so the setting is greyed out and no rolls are passed. Normally it passes on the Bonus Roll popup at the end of instanced content, with per-character toggles for Mythic+ (with a minimum key level), Raids (with individual difficulty selection), Delves, Dungeons, and Hunts.
 
 Settings are saved per account, except for Bonus Roll preferences and Omnium Folio rune memory, which are saved per character.
 
