@@ -140,20 +140,19 @@ local function FindBagSlotByLink(link)
 end
 
 local function FindMouseoverBagButton()
-    local frame = EnumerateFrames() ---@diagnostic disable-line: undefined-global
-    while frame do
-        if frame.GetBagID and frame:IsVisible() and frame:IsMouseOver() then
-            local ok, b = pcall(frame.GetBagID, frame)
-            if ok and b and frame.GetID then
-                local w, h = frame:GetSize()
-                if w and w > 10 and h and h > 10 then
+    for _, focus in ipairs(GetMouseFoci()) do ---@diagnostic disable-line: undefined-global
+        local frame = focus
+        while frame do
+            if frame.GetBagID and frame.GetID then
+                local ok, b = pcall(frame.GetBagID, frame)
+                if ok and b then
                     DevLog("FindMouseoverBagButton match name=" .. tostring(frame:GetName()) ..
                         " bag=" .. tostring(b) .. " slot=" .. tostring(frame:GetID()))
                     return frame, b, frame:GetID()
                 end
             end
+            frame = frame.GetParent and frame:GetParent()
         end
-        frame = EnumerateFrames(frame) ---@diagnostic disable-line: undefined-global
     end
     DevLog("FindMouseoverBagButton: no match")
 end
@@ -177,28 +176,14 @@ local function FindBagButton(bag, slot)
         if btn then return btn end
     end
 
-    -- Fallback: walk all frames (handles third-party bag addons like Bagnon, ElvUI, etc.)
-    local frame = EnumerateFrames() ---@diagnostic disable-line: undefined-global
-    local scanned, candidates = 0, 0
-    while frame do
-        scanned = scanned + 1
-        if frame.GetBagID and frame:IsVisible() then
-            local ok, b = pcall(frame.GetBagID, frame)
-            if ok and b == bag and frame:GetID() == slot then
-                candidates = candidates + 1
-                local w, h = frame:GetSize()
-                if w and w > 10 and h and h > 10 then
-                    DevLog("FindBagButton enum match name=" .. tostring(frame:GetName()) ..
-                        " size=" .. math.floor(w) .. "x" .. math.floor(h) ..
-                        " (scanned " .. scanned .. ", " .. candidates .. " candidates)")
-                    return frame
-                end
-            end
-        end
-        frame = EnumerateFrames(frame) ---@diagnostic disable-line: undefined-global
+    -- Fallback: the button under the cursor (handles third-party bag addons like Bagnon, ElvUI).
+    local mouseBtn, mouseBag, mouseSlot = FindMouseoverBagButton()
+    if mouseBtn and mouseBag == bag and mouseSlot == slot then
+        DevLog("FindBagButton mouseover match name=" .. tostring(mouseBtn:GetName()))
+        return mouseBtn
     end
-    DevLog("FindBagButton: no visible match for bag=" .. tostring(bag) .. " slot=" .. tostring(slot) ..
-        " (scanned " .. scanned .. " frames, " .. candidates .. " candidates)")
+
+    DevLog("FindBagButton: no visible match for bag=" .. tostring(bag) .. " slot=" .. tostring(slot))
 end
 
 local function GetOverlayTarget()
