@@ -110,6 +110,32 @@ LuckyGrabbag.Strings = {
         unknownRune   = "Unknown rune",
     },
 
+    decorTracking = {
+        trackMissing        = "Track Missing",
+        trackMissingTooltip = "Adds every decor piece this blueprint is missing to your decor shopping list, however many that is.",
+        addedOne            = "1 decor piece added to your shopping list.",
+        addedMany           = "%d decor pieces added to your shopping list.",
+        raisedCounts        = "Raised the count on %d pieces already on your shopping list.",
+        nothingMissing      = "Nothing missing to add, your shopping list already covers this blueprint.",
+
+        listTitle           = "Decor Shopping List",
+        listSubtitle        = "GRAB-BAG",
+        listDescription     = "Decor you are short of. Available counts what a blueprint can use, so copies already placed in a house or dyed do not count. Any vendor selling one of these is flagged for you.",
+        listEmpty           = "Nothing on the list yet. Open a blueprint's item list and press Track Missing.",
+        headerDecor         = "Decor",
+        headerAvailable     = "Available",
+        clearAll            = "Clear All",
+        clearCollected      = "Clear Collected",
+        unknownDecor        = "Unknown decor",
+        pinTooltipTitle     = "Find this piece",
+        pinTooltip          = "Click to open the map where it can be found, and point the waypoint arrow at it. Blizzard's tracker holds 15 pieces at a time.",
+        pinUntrackTooltip   = "Right-click to take it out of Blizzard's tracker.",
+        locationPending     = "Still looking up where that comes from, try again in a moment.",
+        locationUnknown     = "No known location for that piece.",
+        blizzardFull        = "Blizzard's tracker is full at %d. Take something out of it first.",
+        blizzardUntrackable = "Blizzard has no source to point you at for that piece.",
+    },
+
     reagentMains = {
         title             = "Reagent Mains",
         subtitle          = "GRAB-BAG",
@@ -151,6 +177,7 @@ LuckyGrabbag.Strings = {
             inventory    = "Inventory",
             combat       = "Combat",
             delves       = "Delves",
+            housing      = "Housing",
             interface    = "Interface",
         },
         sections = {
@@ -332,6 +359,14 @@ LuckyGrabbag.Strings = {
         delveMapMinLevel = {
             label = "Minimum Delve Level",
             desc  = "Only show the Bounty Map button in delves at or above this tier.",
+        },
+        blueprintTrackMissing = {
+            label = "Track Missing Decor Button",
+            desc  = "Adds a Track Missing button to a blueprint's item list. It puts every decor piece you are short of onto your shopping list, with the number the blueprint wants.",
+        },
+        openDecorList = {
+            label = "Open Shopping List",
+            desc  = "Opens the decor shopping list, where you can see what each piece needs, drop pieces you no longer want, and send one to Blizzard's tracker for a map pin. Also available as /grabbag decor.",
         },
         alwaysCompareItems = {
             label = "Always Compare Items",

@@ -78,6 +78,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.RecipeSearchFilter:Init(db)
         LuckyGrabbag.EnchantStats:Init(db)
         LuckyGrabbag.OmniumFolio:Init(db, charDB)
+        LuckyGrabbag.DecorTracking:Init(db)
 
         -- Minimap button
         LuckyGrabbag.minimapButton = LuckyMinimap:Create({

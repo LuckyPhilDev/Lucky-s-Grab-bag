@@ -38,7 +38,13 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     self.category = panel.category
 
     SLASH_LUCKYGB1 = "/grabbag"
-    SlashCmdList["LUCKYGB"] = function() panel:Open() end
+    SlashCmdList["LUCKYGB"] = function(msg)
+        if strtrim(msg or ""):lower() == "decor" then
+            LuckyGrabbag.DecorTracking:OpenList()
+        else
+            panel:Open()
+        end
+    end
 
     ---------------------------------------------------------------------------
     -- General
@@ -590,6 +596,30 @@ function LuckyGrabbag.Settings:Init(db, charDB)
                 db.delveMapMinLevel = val
                 LuckyGrabbag.DelveMap:ApplySetting()
             end,
+        })
+    end
+
+    ---------------------------------------------------------------------------
+    -- Housing
+    ---------------------------------------------------------------------------
+    do
+        local g = panel:Group(SS.groups.housing)
+
+        g:Toggle({
+            label    = SS.blueprintTrackMissing.label,
+            desc     = SS.blueprintTrackMissing.desc,
+            checked  = db.blueprintTrackMissing,
+            since    = "1.20.0",
+            onToggle = function(checked)
+                db.blueprintTrackMissing = checked
+                LuckyGrabbag.DecorTracking:ApplySetting()
+            end,
+        })
+
+        g:Button({
+            label   = SS.openDecorList.label,
+            desc    = SS.openDecorList.desc,
+            onClick = function() LuckyGrabbag.DecorTracking:OpenList() end,
         })
     end
 

@@ -45,4 +45,5 @@ features/RecipeSearchFilter.lua
 features/EnchantStatsData.lua
 features/EnchantStats.lua
 features/OmniumFolio.lua
+features/DecorTracking.lua
 Core.lua

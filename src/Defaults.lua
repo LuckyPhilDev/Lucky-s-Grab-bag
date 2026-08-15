@@ -57,6 +57,8 @@ LuckyGrabbag.DB_DEFAULTS = {
     showEnchantBadges        = true,
     enchantBadgesAH          = true,
     omniumFolioPerSpec       = true,
+    blueprintTrackMissing    = true,
+    decorList                = {},
 }
 
 LuckyGrabbag.CHAR_DB_DEFAULTS = {
