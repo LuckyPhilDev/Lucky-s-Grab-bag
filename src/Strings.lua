@@ -194,17 +194,6 @@ LuckyGrabbag.Strings = {
             purchasing  = "Purchasing",
             tooltips    = "Tooltips",
             wardrobe    = "Wardrobe",
-            versionInfo = "Version Info",
-        },
-        grabbagVersion = {
-            label = "Grab-bag",
-        },
-        luckyUtilsVersion = {
-            label = "Lucky's Utils",
-        },
-        discord = {
-            label = "Discord",
-            url   = "discord.gg/ptTtYyAjdZ",
         },
         devMode = {
             label = "Dev Mode",

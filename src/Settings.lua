@@ -2,38 +2,30 @@
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.Settings = {}
 
-StaticPopupDialogs["LUCKYGB_COPY_DISCORD"] = {
-    text      = "Copy the Discord link:",
-    button1   = CLOSE,
-    hasEditBox  = 1,
-    editBoxWidth = 220,
-    OnShow = function(self)
-        local editBox = self.editBox or _G[self:GetName() .. "EditBox"]
-        editBox:SetMaxLetters(0)
-        editBox:SetText("https://discord.gg/ptTtYyAjdZ")
-        editBox:HighlightText()
-        editBox:SetFocus()
-    end,
-    OnHide = function(self)
-        local editBox = self.editBox or _G[self:GetName() .. "EditBox"]
-        editBox:SetText("")
-    end,
-    timeout       = 0,
-    whileDead     = true,
-    hideOnEscape  = true,
-}
-
 function LuckyGrabbag.Settings:Init(db, charDB)
     local S = LuckyGrabbag.Strings
     local SS = S.settings
-
-    local gbVersion    = C_AddOns.GetAddOnMetadata("Luckys_Grab_Bag", "Version") or "?"
-    local utilsVersion = C_AddOns.GetAddOnMetadata("Luckys_Utils",    "Version") or "?"
 
     local panel = LuckySettings:NewRichPanel(S.addon.title, {
         addonFolder    = "Luckys_Grab_Bag",
         imagesRoot     = "images",
         minVersion     = LuckyGrabbag.WHATS_NEW_MIN_VERSION,
+        devMode        = {
+            label    = SS.devMode.label,
+            desc     = SS.devMode.desc,
+            checked  = function() return db.devMode end,
+            onToggle = function(checked) db.devMode = checked end,
+        },
+        minimapButton  = {
+            label    = SS.minimapButton.label,
+            desc     = SS.minimapButton.desc,
+            checked  = function() return not (db.minimap or {}).hide end,
+            onToggle = function(checked)
+                if LuckyGrabbag.minimapButton then
+                    LuckyGrabbag.minimapButton:SetShown_Persisted(checked)
+                end
+            end,
+        },
     })
     self.category = panel.category
 
@@ -46,34 +38,9 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         end
     end
 
-    ---------------------------------------------------------------------------
-    -- General
-    ---------------------------------------------------------------------------
-    do
-        local g = panel:Group(SS.groups.general)
-
-        g:Toggle({
-            label    = SS.devMode.label,
-            desc     = SS.devMode.desc,
-            checked  = db.devMode,
-            image    = "general/dev-mode",
-            onToggle = function(checked) db.devMode = checked end,
-        })
-
-        local minimapState = db.minimap or {}
-        g:Toggle({
-            label    = SS.minimapButton.label,
-            desc     = SS.minimapButton.desc,
-            checked  = not minimapState.hide,
-            image    = "general/minimap-button",
-            onToggle = function(checked)
-                if LuckyGrabbag.minimapButton then
-                    LuckyGrabbag.minimapButton:SetShown_Persisted(checked)
-                end
-            end,
-        })
-
-    end
+    -- Dev Mode and the minimap button live in the title bar now, so General
+    -- exists to host the What's New list.
+    panel:Group(SS.groups.general)
 
     ---------------------------------------------------------------------------
     -- Vendors
@@ -775,14 +742,6 @@ function LuckyGrabbag.Settings:Init(db, charDB)
 
     local target = panel.whatsNewGroup
     if target then
-        target:BottomSection(SS.sections.versionInfo)
-        target:BottomLabel({ label = SS.grabbagVersion.label,    value = "v" .. gbVersion })
-        target:BottomLabel({ label = SS.luckyUtilsVersion.label, value = "v" .. utilsVersion })
-        target:BottomLink({
-            label   = SS.discord.label,
-            value   = "|A:chatframe-button-copy:11:11|a " .. SS.discord.url,
-            onClick = function() StaticPopup_Show("LUCKYGB_COPY_DISCORD") end,
-        })
         LuckyPromo:AddToRichGroup(target, "Luckys_Grab_Bag")
     end
 end
