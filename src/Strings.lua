@@ -134,6 +134,15 @@ LuckyGrabbag.Strings = {
         locationUnknown     = "No known location for that piece.",
         blizzardFull        = "Blizzard's tracker is full at %d. Take something out of it first.",
         blizzardUntrackable = "Blizzard has no source to point you at for that piece.",
+
+        vendorBuyHint       = "Alt-right-click to buy the %d you still need.",
+        buyAll              = "Buy All Needed",
+        buyAllWithCost      = "Buy All Needed (%s)",
+        buyAllTooltip       = "Buys everything this vendor stocks that is on your shopping list, in the amounts you are short of. Right-click and drag to move this button.",
+        buyAllConfirm       = "Buy %d decor pieces for %s?",
+        buyAllOtherCost     = "Some are paid for with currency or items on top of that.",
+        buying              = "Buying %d x %s.",
+        cannotAfford        = "You cannot afford even one of those.",
     },
 
     reagentMains = {
@@ -367,6 +376,10 @@ LuckyGrabbag.Strings = {
         highlightTrackedDecor = {
             label = "Flag Shopping List Decor at Vendors",
             desc  = "Puts a green glow and the number you still need on any vendor item that grants a decor piece from your shopping list.",
+        },
+        decorAutoBuy = {
+            label = "Alt-Right-Click to Buy What You Need",
+            desc  = "Alt-right-click a flagged vendor item and it buys the number you are still short of, in one go. Off by default, since it spends your gold without a confirmation.",
         },
         openDecorList = {
             label = "Open Shopping List",

@@ -21,6 +21,8 @@ local R_FONT = Rich.Font
 
 local db
 local trackButton
+local buyAllButton
+local buyAllContainer
 local window
 
 local function DevLog(msg)
@@ -523,11 +525,254 @@ local function SetGlow(button, needed)
     end
 end
 
+local BUY_THROTTLE = 0.5 -- seconds between purchases, below this the server reports the item busy
+local BUY_ALL_CONFIRM_COST = 500 * 10000 -- 500 gold, over this Buy All asks first
+local buyQueue = {}
+local buyTicker
+
+local function StopBuying()
+    if buyTicker then
+        buyTicker:Cancel()
+        buyTicker = nil
+    end
+end
+
+--- How many items to buy in total: what you still need, rounded up to whole
+--- stacks, capped by the vendor's remaining stock and what you can pay.
+local function PurchaseQuantity(index, needed)
+    local info = C_MerchantFrame.GetItemInfo(index)
+    if not info then return 0 end
+
+    local stackCount = info.stackCount or 1
+    local quantity = math.ceil(needed / stackCount) * stackCount
+
+    -- numAvailable is -1 for unlimited stock.
+    if info.numAvailable and info.numAvailable >= 0 then
+        quantity = math.min(quantity, info.numAvailable * stackCount)
+    end
+
+    -- Extended-cost items are priced in currency or items rather than gold, and
+    -- the confirmation popup is where the player finds out if they can pay.
+    if info.price and info.price > 0 then
+        quantity = math.min(quantity, math.floor(GetMoney() / (info.price / stackCount)))
+    end
+
+    return quantity
+end
+
+local function StackSizeAt(index)
+    return math.max(GetMerchantItemMaxStack(index) or 1, 1)
+end
+
+--- BuyMerchantItem only buys one stack per call, and calls sent back to back
+--- fail with "Item is busy", so orders go out as a spaced run of stack-sized
+--- purchases. Spacing and approach follow BuyEmAll.
+local function ProcessBuyQueue()
+    local job = buyQueue[1]
+    if not job or not MerchantFrame:IsShown() then
+        wipe(buyQueue)
+        StopBuying()
+        return
+    end
+
+    local amount = math.min(job.remaining, job.perCall)
+    BuyMerchantItem(job.index, amount)
+    job.remaining = job.remaining - amount
+    if job.remaining < 1 then table.remove(buyQueue, 1) end
+    if #buyQueue == 0 then StopBuying() end
+end
+
+local function QueuePurchase(index, quantity, perCall)
+    buyQueue[#buyQueue + 1] = { index = index, remaining = quantity, perCall = perCall }
+    if buyTicker then return end
+
+    ProcessBuyQueue() -- the first purchase goes out now, the rest are spaced
+    if #buyQueue > 0 then
+        buyTicker = C_Timer.NewTicker(BUY_THROTTLE, ProcessBuyQueue)
+    end
+end
+
+local function TryAutoBuy(button)
+    local index = button:GetID()
+    local needed = NeededAtMerchantIndex(index)
+    if needed == 0 then return end
+
+    local quantity = PurchaseQuantity(index, needed)
+    if quantity < 1 then
+        Print(S().cannotAfford)
+        return
+    end
+
+    local perCall = StackSizeAt(index)
+    local link = GetMerchantItemLink(index)
+
+    DevLog(string.format("Auto-buying %d at merchant index %d, %d per call", quantity, index, perCall))
+    Print(string.format(S().buying, quantity, link or ""))
+
+    if link and link:match("currency") then
+        -- Currencies have no stacks to break the order into.
+        BuyMerchantItem(index, quantity)
+    elseif quantity <= perCall then
+        -- Fits in one purchase, so hand it to the button's own stack-split
+        -- handler and keep the confirmations that buying by hand would raise.
+        button.SplitStack(button, quantity)
+    else
+        QueuePurchase(index, quantity, perCall)
+    end
+end
+
+-------------------------------------------------------------------------------
+-- Buy All at the vendor
+-------------------------------------------------------------------------------
+
+--- Everything this vendor sells that is on the list, across every page, with
+--- what the gold-priced part of it would cost.
+local function NeededPurchases()
+    local purchases, goldCost, hasOtherCost = {}, 0, false
+
+    for index = 1, GetMerchantNumItems() do
+        local needed = NeededAtMerchantIndex(index)
+        if needed > 0 then
+            local quantity = PurchaseQuantity(index, needed)
+            local info = quantity > 0 and C_MerchantFrame.GetItemInfo(index)
+            if info then
+                purchases[#purchases + 1] = {
+                    index = index,
+                    quantity = quantity,
+                    perCall = StackSizeAt(index),
+                }
+                -- Price is per stack, and quantity is always whole stacks.
+                goldCost = goldCost + (info.price or 0) * math.floor(quantity / (info.stackCount or 1))
+                hasOtherCost = hasOtherCost or info.hasExtendedCost
+            end
+        end
+    end
+
+    return purchases, goldCost, hasOtherCost
+end
+
+local function RunPurchases(purchases)
+    for _, purchase in ipairs(purchases) do
+        QueuePurchase(purchase.index, purchase.quantity, purchase.perCall)
+    end
+end
+
+StaticPopupDialogs["LUCKYGB_DECOR_BUY_ALL"] = {
+    text         = "%s",
+    button1      = YES,
+    button2      = NO,
+    OnAccept     = function(dialog) RunPurchases(dialog.data or {}) end,
+    timeout      = 0,
+    whileDead    = true,
+    hideOnEscape = true,
+}
+
+local function BuyAllNeeded()
+    local purchases, goldCost, hasOtherCost = NeededPurchases()
+    if #purchases == 0 then return end
+
+    if goldCost <= BUY_ALL_CONFIRM_COST then
+        RunPurchases(purchases)
+        return
+    end
+
+    local message = string.format(S().buyAllConfirm, #purchases, GetMoneyString(goldCost, true))
+    if hasOtherCost then
+        message = message .. "\n" .. S().buyAllOtherCost
+    end
+
+    local dialog = StaticPopup_Show("LUCKYGB_DECOR_BUY_ALL", message)
+    if dialog then dialog.data = purchases end
+end
+
+local function AutoBuyEnabled()
+    return db.highlightTrackedDecor and db.decorAutoBuy
+end
+
+local function AddBuyHintToTooltip(button)
+    if not AutoBuyEnabled() or MerchantFrame.selectedTab ~= 1 then return end
+
+    local needed = NeededAtMerchantIndex(button:GetID())
+    if needed == 0 then return end
+
+    GameTooltip:AddLine(string.format(S().vendorBuyHint, needed), 0.1, 1, 0.1)
+    GameTooltip:Show()
+end
+
+local function HookMerchantButtons()
+    for i = 1, MERCHANT_ITEMS_PER_PAGE do
+        local button = _G["MerchantItem" .. i .. "ItemButton"]
+        if button and not button.lgbAutoBuyHooked then
+            button:HookScript("OnClick", function(self, mouseButton)
+                local altOnly = IsAltKeyDown() and not IsShiftKeyDown() and not IsControlKeyDown()
+                if mouseButton == "RightButton" and altOnly
+                    and AutoBuyEnabled() and MerchantFrame.selectedTab == 1
+                then
+                    TryAutoBuy(self)
+                end
+            end)
+            button.lgbAutoBuyHooked = true
+        end
+    end
+end
+
+local function CreateBuyAllButton()
+    if buyAllButton then return buyAllButton end
+
+    buyAllContainer = CreateFrame("Frame", "LGB_DecorBuyAllParent", UIParent)
+    buyAllContainer:SetSize(1, 1)
+    buyAllContainer:SetFrameStrata("HIGH")
+    LuckyGrabbag.EnableGroupDrag(buyAllContainer, MerchantFrame, "decorBuyAllPos", 5, -50)
+
+    buyAllButton = CreateFrame("Button", "LGB_DecorBuyAllButton", buyAllContainer, "UIPanelButtonTemplate")
+    buyAllButton:SetPoint("TOPLEFT", buyAllContainer, "TOPLEFT", 0, 0)
+    buyAllButton:SetHeight(24)
+    buyAllButton:SetText(S().buyAll)
+    buyAllButton:SetWidth(buyAllButton:GetTextWidth() + 26)
+    buyAllButton:SetScript("OnClick", BuyAllNeeded)
+    buyAllButton:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText(S().buyAll)
+        GameTooltip:AddLine(S().buyAllTooltip, 1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    buyAllButton:SetScript("OnLeave", GameTooltip_Hide)
+
+    buyAllContainer:RegisterDraggable(buyAllButton)
+    buyAllButton:Hide()
+
+    return buyAllButton
+end
+
+--- Only worth showing when this vendor actually stocks something on the list.
+local function UpdateBuyAllButton()
+    local purchases, goldCost = NeededPurchases()
+    local wanted = AutoBuyEnabled()
+        and MerchantFrame:IsShown()
+        and MerchantFrame.selectedTab == 1
+        and #purchases > 0
+
+    if not wanted then
+        if buyAllButton then buyAllButton:Hide() end
+        return
+    end
+
+    CreateBuyAllButton()
+    -- Everything here may be paid for in currency rather than gold.
+    buyAllButton:SetText(goldCost > 0
+        and string.format(S().buyAllWithCost, GetMoneyString(goldCost, true))
+        or S().buyAll)
+    buyAllButton:SetWidth(buyAllButton:GetTextWidth() + 26)
+    buyAllContainer:RestorePosition() -- re-anchor, the merchant window may have moved
+    buyAllButton:Show()
+end
+
 local function ClearMerchantHighlights()
     for i = 1, BUYBACK_ITEM_COUNT do
         local button = _G["MerchantItem" .. i .. "ItemButton"]
         if button then SetGlow(button, 0) end
     end
+    UpdateBuyAllButton()
 end
 
 local function RefreshMerchantHighlights()
@@ -548,11 +793,13 @@ local function RefreshMerchantHighlights()
             SetGlow(button, needed)
         end
     end
+
+    UpdateBuyAllButton()
 end
 
 -------------------------------------------------------------------------------
 
---- Everything that reads the list: the window, the vendor glows.
+--- Everything that reads the list: the window, the vendor glows, the button.
 function Feature:Refresh()
     UpdateTrackButton()
     RefreshWindow()
@@ -567,15 +814,20 @@ function Feature:Init(database)
 
     hooksecurefunc("MerchantFrame_UpdateMerchantInfo", RefreshMerchantHighlights)
     hooksecurefunc("MerchantFrame_UpdateBuybackInfo", ClearMerchantHighlights)
+    hooksecurefunc("MerchantItemButton_OnEnter", AddBuyHintToTooltip)
+    HookMerchantButtons()
 
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("ADDON_LOADED")
     eventFrame:RegisterEvent("CONTENT_TRACKING_UPDATE")
     eventFrame:RegisterEvent("HOUSING_STORAGE_UPDATED")
     eventFrame:RegisterEvent("HOUSING_STORAGE_ENTRY_UPDATED")
+    eventFrame:RegisterEvent("MERCHANT_CLOSED")
     eventFrame:SetScript("OnEvent", function(_, event, arg1)
         if event == "ADDON_LOADED" then
             if arg1 == "Blizzard_HousingBlueprint" then CreateTrackButton() end
+        elseif event == "MERCHANT_CLOSED" then
+            UpdateBuyAllButton()
         else
             Feature:Refresh()
         end

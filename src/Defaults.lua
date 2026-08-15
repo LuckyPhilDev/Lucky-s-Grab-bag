@@ -59,6 +59,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     omniumFolioPerSpec       = true,
     blueprintTrackMissing    = true,
     highlightTrackedDecor    = true,
+    decorAutoBuy             = false,
     decorList                = {},
 }
 
