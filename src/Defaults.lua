@@ -3,7 +3,7 @@
 LuckyGrabbag = LuckyGrabbag or {}
 
 -- Settings panel: any setting flagged with a `since` version at or above this
--- gets a "NEW" badge and appears in the "What's New" group. Bump this each
+-- gets a "NEW" badge and appears in the "What's New" list. Bump this each
 -- release cycle so only recent features are highlighted.
 LuckyGrabbag.WHATS_NEW_MIN_VERSION = "1.15.0"
 
