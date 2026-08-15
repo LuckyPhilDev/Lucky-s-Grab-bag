@@ -32,6 +32,18 @@ Automatically sells all grey-quality junk items from your bags whenever you open
 - Skips items with no sell value and anything currently locked.
 - Off by default; enable it in settings under Vendors.
 
+### Decor Shopping List
+Keeps a list of the housing decor a blueprint is missing, and flags those pieces when a vendor sells them.
+
+- A **Track Missing** button on a blueprint's item list adds every piece you are short of, with the number that blueprint asks for.
+- The list has no cap, unlike the 15 items the game's own tracker holds, and it records quantities rather than just the piece.
+- Counts match what a blueprint can actually use, so copies already placed in a house or carrying a dye are left out.
+- Vendors selling a listed piece get a green glow and the number you still need on the item.
+- A **Buy All Needed** button appears at any vendor stocking something on your list. It shows the total cost and asks first over 500 gold.
+- Alt-right-click a flagged item to buy just that piece in the amount you need. Off by default, since it spends gold without confirming.
+- The pin on a list row opens the map where the piece is sold and points the waypoint arrow at it.
+- Open the list from settings under Housing, or with `/grabbag decor`.
+
 ### Use Items Popup
 Displays a floating bar of buttons when you have consumable profession items in your bags — click each one to use it.
 
@@ -260,6 +272,7 @@ The addon also lists itself in panel addons such as Titan Panel, Bazooka and Cho
 | Command | Action |
 |---|---|
 | `/grabbag` | Open the addon settings panel |
+| `/grabbag decor` | Open the Decor Shopping List |
 | `/grabbag-reagent <itemID>` | Diagnose why a reagent is or isn't being auto-deposited |
 | `/combatprep` | Force-show the Combat Prep window (for testing outside group content) |
 | `/pipicker` | Force-show the Power Infusion Picker window (also `/pitarget`) |
@@ -297,6 +310,12 @@ Open with `/grabbag` or via the game's Interface Options panel. Each feature has
 **Vendors**
 - *Confirm Purchase Button* — Shows a large tick button on vendor currency, sell, "no longer refundable", and "bind on equip" popups; clicking it confirms.
   - *Overlay on Clicked Item* — Places the button directly over the vendor item you clicked instead of next to the window.
+- *Flag Shopping List Decor at Vendors* — Puts a green glow and the number you still need on any vendor item that grants a decor piece from your shopping list.
+  - *Alt-Right-Click to Buy What You Need* — Lets you alt-right-click a flagged item to buy the amount you are short of, and adds a Buy All Needed button for everything the vendor stocks. Off by default.
+
+**Housing**
+- *Track Missing Decor Button* — Adds a Track Missing button to a blueprint's item list, putting every piece you are short of onto the shopping list.
+- *Open Shopping List* — Opens the Decor Shopping List, where you can see what each piece needs, drop pieces you no longer want, and send one to the game's tracker for a map pin.
 
 **Delves**
 - *Trovehunter's Bounty Map* — Shows a clickable button for your Bounty Map when in a qualifying delve.

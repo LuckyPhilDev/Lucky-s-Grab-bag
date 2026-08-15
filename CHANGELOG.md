@@ -1,50 +1,11 @@
-## [1.19.7] - 2026-08-14
-
-### Fixed
-- Easy Confirm Purchase no longer freezes the game for several seconds when a bind on equip or refund confirmation opens with your cursor away from your bags. (Thanks for the report Holy_Z)
-- The Power Infusion picker comes back when you start a new Mythic+ run, after dismissing it in an earlier one.
-- Use Items Popup buttons now use the item pictured on them when several items in your bags share a name.
-
-### Removed
-- Auto-dismiss Bonus Roll under Interface is switched off and greyed out while it is tested against the new content, so no bonus rolls are passed for now.
-
-## [1.19.6] - 2026-08-13
+## [1.20.0] - 2026-08-15
 
 ### Added
-- **Put Lucky's Grab-bag on a panel addon.** The addon now lists itself in Titan Panel, Bazooka and ChocolateBar, so its button can sit on a bar instead of the minimap.
-
-## [1.19.5] - 2026-08-12
-
-### Improved
-- **Updated for patch 12.1.** The addon no longer shows as out of date in your addon list.
-
-## [1.19.4] - 2026-08-10
-
-### Added
-- **Search Selected Expansion Only**: searching recipes now shows only results from the expansion selected in the crafting window's Filter dropdown, with a new All Expansions option at the top of that dropdown to search everything at once. Applies to the crafting orders window too.
-- **Always Compare Items**: a new Tooltips setting that shows the comparison tooltip beside gear you hover over, without needing to hold Shift.
-
-## [1.19.3] - 2026-08-06
-
-### Fixed
-- The Power Infusion picker and the Combat Prep window no longer turn up in Decor Duels. Both now appear only in dungeons, raids, and scenarios such as delves when you are grouped.
-- The pull timer now offers the raid duration everywhere inside a raid, including small groups.
-
-### Changed
-- Keep Active Transmog Tab and Shift-Click Set Tracking have retired. Both have moved to Lucky's Better Wardrobe, which handles them natively, and their settings here are switched off.
-- Updated the Discord invite link in the settings panel.
-
-## [1.19.2] - 2026-07-16
-
-### Improved
-- Refreshed Power Infusion damage rankings with the latest simulation data.
-
-## [1.19.1] - 2026-07-12
-
-### Fixed
-- Auto-deposit no longer sends grey (junk) items to the warband bank.
-
-## [1.19.0] - 2026-07-08
-
-### Added
-- **Per-spec Omnium Folio runes**: remembers the rune choices you use in each specialization and swaps them back automatically when you change spec, with a chat message showing which runes were restored.
+- **Track the decor a blueprint is missing.** A Track Missing button on the blueprint's item list puts every piece you are short of onto a shopping list, with the number that blueprint asks for.
+  - Nothing is capped, unlike the 15 items the game's own tracker holds.
+  - Counts follow what a blueprint can use, so copies already placed in a house or dyed are left out.
+  - Open the list from settings under Housing, or with /grabbag decor.
+- **Find a listed piece on the map.** The pin on a Decor Shopping List row opens the map where that piece is sold, and points the waypoint arrow at it.
+- **Spot your shopping list at vendors.** Any vendor item that grants a piece from your list gets a green glow and the number you still need.
+- **Buy missing decor at the vendor.** Switch on Alt-Right-Click to Buy What You Need under Vendors, then alt-right-click a flagged item to buy the amount you are short of.
+  - A Buy All Needed button buys everything the vendor stocks from your list, shows the total cost, and asks first over 500 gold.
