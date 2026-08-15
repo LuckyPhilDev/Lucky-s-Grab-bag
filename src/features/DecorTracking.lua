@@ -10,7 +10,9 @@ local Feature = LuckyGrabbag.DecorTracking
 
 local DECOR_TRACKING = Enum.ContentTrackingType.Decor
 local DECOR_ENTRY = Enum.HousingCatalogEntryType.Decor
+local GLOW_TEXTURE = "Interface\\Buttons\\UI-ActionButton-Border"
 local WAYPOINT_ATLAS = "waypoint-mappin-minimap-untracked"
+local BUYBACK_ITEM_COUNT = 12 -- the buyback tab reuses the merchant item buttons, and shows more of them
 local ROW_HEIGHT = 26
 
 local Rich = LuckySettings.Rich
@@ -477,11 +479,84 @@ function Feature:OpenList()
 end
 
 -------------------------------------------------------------------------------
+-- Vendors
+-------------------------------------------------------------------------------
 
---- Everything that reads the list.
+--- How many of the decor this merchant slot grants you still need, or 0.
+local function NeededAtMerchantIndex(index)
+    local link = GetMerchantItemLink(index)
+    if not link then return 0 end
+
+    local entryInfo = C_HousingCatalog.GetCatalogEntryInfoByItem(link)
+    local required = entryInfo and db.decorList[entryInfo.recordID]
+    if not required then return 0 end
+
+    return StillNeeded(entryInfo.recordID, required)
+end
+
+local function DecorGlow(button)
+    if not button.lgbDecorGlow then
+        local glow = button:CreateTexture(nil, "OVERLAY")
+        glow:SetTexture(GLOW_TEXTURE)
+        glow:SetBlendMode("ADD")
+        glow:SetVertexColor(0.1, 1, 0.1)
+        glow:SetPoint("CENTER")
+        glow:SetSize(button:GetWidth() * 1.6, button:GetHeight() * 1.6)
+        button.lgbDecorGlow = glow
+
+        local count = button:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
+        count:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", -5, 5)
+        count:SetTextColor(1, 0.82, 0)
+        button.lgbDecorCount = count
+    end
+    return button.lgbDecorGlow
+end
+
+local function SetGlow(button, needed)
+    -- Only build the textures for a button that actually needs them.
+    if needed == 0 and not button.lgbDecorGlow then return end
+
+    DecorGlow(button):SetShown(needed > 0)
+    button.lgbDecorCount:SetShown(needed > 0)
+    if needed > 0 then
+        button.lgbDecorCount:SetText("x" .. needed)
+    end
+end
+
+local function ClearMerchantHighlights()
+    for i = 1, BUYBACK_ITEM_COUNT do
+        local button = _G["MerchantItem" .. i .. "ItemButton"]
+        if button then SetGlow(button, 0) end
+    end
+end
+
+local function RefreshMerchantHighlights()
+    if not db.highlightTrackedDecor or MerchantFrame.selectedTab ~= 1 then
+        ClearMerchantHighlights()
+        return
+    end
+
+    local numItems = GetMerchantNumItems()
+    for i = 1, BUYBACK_ITEM_COUNT do
+        local button = _G["MerchantItem" .. i .. "ItemButton"]
+        if button then
+            local index = (MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE + i
+            local needed = 0
+            if i <= MERCHANT_ITEMS_PER_PAGE and index <= numItems then
+                needed = NeededAtMerchantIndex(index)
+            end
+            SetGlow(button, needed)
+        end
+    end
+end
+
+-------------------------------------------------------------------------------
+
+--- Everything that reads the list: the window, the vendor glows.
 function Feature:Refresh()
     UpdateTrackButton()
     RefreshWindow()
+    if MerchantFrame:IsShown() then RefreshMerchantHighlights() end
 end
 
 Feature.ApplySetting = Feature.Refresh
@@ -489,6 +564,9 @@ Feature.ApplySetting = Feature.Refresh
 function Feature:Init(database)
     db = database
     db.decorList = db.decorList or {}
+
+    hooksecurefunc("MerchantFrame_UpdateMerchantInfo", RefreshMerchantHighlights)
+    hooksecurefunc("MerchantFrame_UpdateBuybackInfo", ClearMerchantHighlights)
 
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("ADDON_LOADED")

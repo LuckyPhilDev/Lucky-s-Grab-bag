@@ -364,6 +364,10 @@ LuckyGrabbag.Strings = {
             label = "Track Missing Decor Button",
             desc  = "Adds a Track Missing button to a blueprint's item list. It puts every decor piece you are short of onto your shopping list, with the number the blueprint wants.",
         },
+        highlightTrackedDecor = {
+            label = "Flag Shopping List Decor at Vendors",
+            desc  = "Puts a green glow and the number you still need on any vendor item that grants a decor piece from your shopping list.",
+        },
         openDecorList = {
             label = "Open Shopping List",
             desc  = "Opens the decor shopping list, where you can see what each piece needs, drop pieces you no longer want, and send one to Blizzard's tracker for a map pin. Also available as /grabbag decor.",
