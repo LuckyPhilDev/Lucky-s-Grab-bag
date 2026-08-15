@@ -285,8 +285,10 @@ The addon also lists itself in panel addons such as Titan Panel, Bazooka and Cho
 
 Open with `/grabbag` or via the game's Interface Options panel. Each feature has its own section with a toggle and a description.
 
-**Developer Tools**
-- *Enable Dev Mode* — Enables development-only logging and diagnostics. Has no visible effect for regular users.
+The panel opens on a **What's New** list of the settings added in recent releases, each card clicking through to where the setting lives. Two icon buttons sit in the title bar beside the addon's version:
+
+- *Dev Mode* — Enables development-only logging and diagnostics. Has no visible effect for regular users.
+- *Minimap Button* — Shows or hides the button on the minimap.
 
 **Auto Repair**
 - *Auto Repair* — Automatically repairs all gear when you open a repair vendor.
