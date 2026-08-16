@@ -625,6 +625,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
+        g:Toggle({
+            label    = SS.blueprintImportHistory.label,
+            desc     = SS.blueprintImportHistory.desc,
+            checked  = db.blueprintImportHistory,
+            since    = "1.23.0",
+            onToggle = function(checked)
+                db.blueprintImportHistory = checked
+                LuckyGrabbag.BlueprintImportHistory:ApplySetting()
+            end,
+        })
+
         g:Button({
             label   = SS.openDecorList.label,
             desc    = SS.openDecorList.desc,

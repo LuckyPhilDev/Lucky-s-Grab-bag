@@ -79,6 +79,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.EnchantStats:Init(db)
         LuckyGrabbag.OmniumFolio:Init(db, charDB)
         LuckyGrabbag.DecorTracking:Init(db)
+        LuckyGrabbag.BlueprintImportHistory:Init(db)
         LuckyGrabbag.MailSendAll:Init(db)
         LuckyGrabbag.MassDelete:Init(db)
 
