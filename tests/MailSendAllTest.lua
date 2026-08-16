@@ -1,7 +1,7 @@
 -- luacheck: globals C_Timer ATTACHMENTS_MAX_SEND CreateFrame GetSendMailItem
 -- luacheck: globals SetSendMailShowing SendMail InCombatLockdown strtrim
 -- luacheck: globals hooksecurefunc SendMailFrame SendMailNameEditBox
--- luacheck: globals SendMailSubjectEditBox SendMailBodyEditBox print
+-- luacheck: globals SendMailSubjectEditBox SendMailBodyEditBox print IsAltKeyDown
 
 -- Covers the send loop in features/MailSendAll.lua: it has to drain a category
 -- across as many mails as it takes, stop when the category runs dry, and stop
@@ -61,11 +61,15 @@ function SendMail()
     C_Timer.After(0.1, function()
         world.mailsSent = world.mailsSent + 1
         world.attached  = 0
+        if world.onSent then world.onSent() end
         runFrame:Fire("MAIL_SEND_SUCCESS")
     end)
 end
 
 function InCombatLockdown() return false end
+
+local altDown = false
+function IsAltKeyDown() return altDown end
 
 function strtrim(text) return (text:gsub("^%s+", ""):gsub("%s+$", "")) end
 
@@ -95,9 +99,10 @@ local categoryButton = {
     sourceKey = "trade-goods",
     Click = function()
         C_Timer.After(ATTACH_DELAY, function()
-            local batch = math.min(ATTACHMENTS_MAX_SEND, world.inCategory)
+            -- Only free slots get filled, so a second click on a full post is a no-op.
+            local batch = math.min(ATTACHMENTS_MAX_SEND - world.attached, world.inCategory)
             world.inCategory = world.inCategory - batch
-            world.attached   = batch
+            world.attached   = world.attached + batch
         end)
     end,
 }
@@ -115,48 +120,69 @@ local function Reset(inCategory)
     world = { inCategory = inCategory, attached = 0, mailsSent = 0 }
     lastPrinted = nil
     SendMailNameEditBox.text = "Bankalt"
-    hooks.CallMethodOnNearestAncestor(categoryButton, "TransferCategory")
 end
 
-local function SendAll(inCategory)
-    Reset(inCategory)
-    LuckyGrabbag.MailSendAll:SendAll()
+-- Baganator attaches its own bagful before the hook sees the click, which the
+-- stub button models by scheduling the same batch move.
+local function RightClick(withAlt)
+    altDown = withAlt
+    categoryButton.Click()
+    hooks.CallMethodOnNearestAncestor(categoryButton, "TransferCategory")
+    altDown = false
     RunTimers()
+end
+
+local function AltRightClick(inCategory)
+    Reset(inCategory)
+    RightClick(true)
 end
 
 -- ─── Checks ──────────────────────────────────────────────────────────────────
 
-SendAll(30)
+AltRightClick(30)
 assert(world.mailsSent == 3, "30 items should take 3 mails, took " .. world.mailsSent)
 assert(world.inCategory == 0, "the category should be empty, " .. world.inCategory .. " left")
 
-SendAll(12)
+AltRightClick(12)
 assert(world.mailsSent == 1, "an exact bagful should take 1 mail, took " .. world.mailsSent)
 
-SendAll(0)
+AltRightClick(0)
 assert(world.mailsSent == 0, "an empty category should send nothing")
 assert(lastPrinted:find("Nothing"), "an empty category should say so, said: " .. tostring(lastPrinted))
 
 -- Far more than the runaway guard allows.
-SendAll(12 * 60)
+AltRightClick(12 * 60)
 assert(world.mailsSent == 30, "the guard should cap the run at 30 mails, sent " .. world.mailsSent)
 assert(world.inCategory > 0, "a capped run should leave the rest in the bags")
 
+-- A plain right-click is Baganator's own one-bagful transfer, untouched.
+Reset(30)
+RightClick(false)
+assert(world.mailsSent == 0, "a plain right-click should send nothing")
+
+-- Alt-right-click away from a mailbox vendors or banks, so this must stay quiet.
+Reset(30)
+SendMailFrame.IsShown = function() return false end
+RightClick(true)
+SendMailFrame.IsShown = function() return true end
+assert(world.mailsSent == 0, "away from a mailbox nothing should send")
+assert(lastPrinted == nil, "away from a mailbox nothing should be said, said: " .. tostring(lastPrinted))
+
 Reset(30)
 SendMailNameEditBox.text = "  "
-LuckyGrabbag.MailSendAll:SendAll()
-RunTimers()
+RightClick(true)
 assert(world.mailsSent == 0, "no recipient should send nothing")
 assert(lastPrinted:find("recipient"), "no recipient should say so, said: " .. tostring(lastPrinted))
 
--- Baganator pools its header buttons, so a remembered one can come back pointing
--- somewhere else entirely.
-Reset(30)
-categoryButton.sourceKey = "consumables"
-LuckyGrabbag.MailSendAll:SendAll()
-RunTimers()
+-- Reopening the bag part way through a run can recycle the header button onto a
+-- different category, which has to end the run rather than mail the wrong things.
+Reset(60)
+world.onSent = function()
+    if world.mailsSent == 1 then categoryButton.sourceKey = "consumables" end
+end
+RightClick(true)
 categoryButton.sourceKey = "trade-goods"
-assert(world.mailsSent == 0, "a recycled category button should send nothing")
+assert(world.mailsSent == 1, "a recycled button should stop the run, sent " .. world.mailsSent)
 assert(lastPrinted:find("no longer on screen"), "a recycled button should say so, said: " .. tostring(lastPrinted))
 
 realPrint("MailSendAll: all checks passed")

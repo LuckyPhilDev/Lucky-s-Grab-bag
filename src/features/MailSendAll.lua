@@ -15,8 +15,6 @@ local db, runFrame
 local categoryButton, categoryIdentity
 local running, recipient, subject, body, mailsSent
 
-BINDING_NAME_LUCKYGRABBAG_MAIL_SEND_ALL = LuckyGrabbag.Strings.mailSendAll.bindingName
-
 local function Say(msg)
     print(LuckyGrabbag.PREFIX .. " " .. msg)
 end
@@ -76,6 +74,13 @@ local function SendCurrentBatch()
 end
 
 local function AttachNextBatch(onEmpty)
+    -- Baganator pools its header buttons, so reopening the bag mid-run can leave
+    -- the remembered one pointing at a different category.
+    if (categoryButton.sourceKey or categoryButton.source) ~= categoryIdentity then
+        Stop(LuckyGrabbag.Strings.mailSendAll.categoryChanged)
+        return
+    end
+
     SetSendMailShowing(true)
     categoryButton:Click("RightButton")
     WhenAttachmentsSettle(function(count)
@@ -107,15 +112,6 @@ function LuckyGrabbag.MailSendAll:SendAll()
     if running then Stop(string.format(S.cancelled, mailsSent)) return end
     if InCombatLockdown() then Say(S.inCombat) return end
     if not (SendMailFrame and SendMailFrame:IsShown()) then Say(S.notAtMailbox) return end
-    if not categoryButton then Say(S.noCategory) return end
-
-    -- Baganator pools its header buttons, so a remembered one can be pointing at
-    -- a different category by the time the key is pressed.
-    if (categoryButton.sourceKey or categoryButton.source) ~= categoryIdentity then
-        categoryButton = nil
-        Say(S.categoryChanged)
-        return
-    end
 
     recipient = strtrim(SendMailNameEditBox:GetText() or "")
     if recipient == "" then Say(S.noRecipient) return end
@@ -124,6 +120,8 @@ function LuckyGrabbag.MailSendAll:SendAll()
     subject = strtrim(SendMailSubjectEditBox:GetText() or "")
     if subject == "" then subject = S.defaultSubject end
     body = SendMailBodyEditBox:GetText() or ""
+
+    Say(string.format(S.starting, recipient))
 
     running, mailsSent = true, 0
     runFrame:RegisterEvent("MAIL_SEND_SUCCESS")
@@ -140,10 +138,18 @@ function LuckyGrabbag.MailSendAll:Init(database)
     runFrame = CreateFrame("Frame")
     runFrame:SetScript("OnEvent", OnEvent)
 
+    -- Baganator routes a category header's right-click through this Blizzard
+    -- helper, and ignores modifiers doing it, so alt-right-click has already
+    -- attached the first bagful by the time this runs.
     hooksecurefunc("CallMethodOnNearestAncestor", function(frame, method)
-        if method == "TransferCategory" or method == "TransferSection" then
-            categoryButton   = frame
-            categoryIdentity = frame.sourceKey or frame.source
+        if method ~= "TransferCategory" and method ~= "TransferSection" then return end
+
+        categoryButton   = frame
+        categoryIdentity = frame.sourceKey or frame.source
+
+        -- Away from a mailbox the same click vendors or banks instead, so stay quiet.
+        if IsAltKeyDown() and SendMailFrame and SendMailFrame:IsShown() then
+            LuckyGrabbag.MailSendAll:SendAll()
         end
     end)
 end

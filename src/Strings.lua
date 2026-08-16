@@ -178,19 +178,18 @@ LuckyGrabbag.Strings = {
     },
 
     mailSendAll = {
-        bindingName     = "Send a whole Baganator category",
         notAtMailbox    = "Open the Send Mail tab at a mailbox first.",
-        noCategory      = "Right-click a Baganator category at the mailbox first, then press the key.",
-        categoryChanged = "That Baganator category is no longer on screen. Right-click it again.",
+        categoryChanged = "That category is no longer on screen. Alt-right-click it again.",
         noRecipient     = "Type a recipient in the To field first.",
         nothingToSend   = "Nothing in that category to send.",
         inCombat        = "Mail cannot be sent in combat.",
         defaultSubject  = "Items",
+        starting        = "Sending to %s. Alt-right-click the category again to stop.",
         finished        = "Sent %d mails.",
         cancelled       = "Stopped after %d mails.",
         interrupted     = "Stopped after %d mails.",
         timedOut        = "That mail did not send, so the rest were left in your bags.",
-        hitLimit        = "Stopped at the %d mail limit. Press the key again to carry on.",
+        hitLimit        = "Stopped at the %d mail limit. Alt-right-click the category to carry on.",
     },
 
     settings = {
@@ -305,7 +304,7 @@ LuckyGrabbag.Strings = {
         },
         mailSendAll = {
             label = "Send a whole category by mail",
-            desc  = "Right-clicking a Baganator category at the mailbox loads 12 items into the post, which is one mail's worth. Bind a key under Key Bindings, Lucky's Grab-bag, and it keeps refilling and sending until the category is empty. Right-click the category, type a recipient, then press the key. Alt-M is free on a default setup. Press Escape after typing the recipient, otherwise the To field swallows the key.",
+            desc  = "Right-clicking a Baganator category at the mailbox loads 12 items into the post, which is one mail's worth. Hold Alt while you right-click and it keeps refilling and sending until the category is empty. Fill in the To field first. Alt-right-click the category again to stop a run part way.",
         },
         combatPrep = {
             label = "Combat Prep Window",
