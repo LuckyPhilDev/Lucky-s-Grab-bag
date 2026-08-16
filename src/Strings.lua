@@ -150,6 +150,10 @@ LuckyGrabbag.Strings = {
         buttonTooltip       = "Recent codes",
         buttonTooltipDetail = "The last blueprint codes you entered. Pick one to fill it in again.",
         buttonTooltipEmpty  = "Codes you enter are remembered here, the last ten of them.",
+        deleteTooltip       = "Remove this code from the list.",
+        renameTooltip       = "Give this code a name.",
+        namePaneTitle       = "Name This Code",
+        namePaneHint        = "Shows in the Recent Codes list in place of the raw code.",
     },
 
     reagentMains = {
