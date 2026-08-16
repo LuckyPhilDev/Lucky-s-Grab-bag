@@ -629,7 +629,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.blueprintImportHistory.label,
             desc     = SS.blueprintImportHistory.desc,
             checked  = db.blueprintImportHistory,
-            since    = "1.23.0",
+            since    = "1.22.1",
             onToggle = function(checked)
                 db.blueprintImportHistory = checked
                 LuckyGrabbag.BlueprintImportHistory:ApplySetting()

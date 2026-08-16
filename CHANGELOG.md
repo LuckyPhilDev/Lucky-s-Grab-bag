@@ -1,3 +1,8 @@
+## [1.22.1] - 2026-08-16
+
+### Added
+- **Blueprint Import History** The blueprint import window remembers the last 10 codes you enter, and a new button beside the code box brings one back with a click. Name each code as it saves, or rename and delete from the list.
+
 ## [1.22.0] - 2026-08-16
 
 ### Added

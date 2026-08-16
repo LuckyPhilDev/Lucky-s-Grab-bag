@@ -44,6 +44,15 @@ Keeps a list of the housing decor a blueprint is missing, and flags those pieces
 - The pin on a list row opens the map where the piece is sold and points the waypoint arrow at it.
 - Open the list from settings under Housing, or with `/grabbag decor`.
 
+### Blueprint Import History
+Remembers the last 10 blueprint share codes you enter at the import window, so a good code is never lost.
+
+- A clock button beside the code box lists your recent codes; pick one to fill it in again.
+- When a code is saved, a small panel beside the window asks for a name, so the list reads "Beach House" rather than a wall of letters.
+- Each entry in the list has a pencil to rename it and an X to remove it.
+- Codes are kept when you press Next with a valid code, and codes arriving from blueprint links are kept on import.
+- Enabled by default; can be toggled in the addon settings under Housing.
+
 ### Use Items Popup
 Displays a floating bar of buttons when you have consumable profession items in your bags — click each one to use it.
 
@@ -335,6 +344,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 
 **Housing**
 - *Track Missing Decor Button* — Adds a Track Missing button to a blueprint's item list, putting every piece you are short of onto the shopping list.
+- *Blueprint Import History* — Adds a button to the blueprint import window listing the last 10 codes you entered, with a name pane and rename and delete controls.
 - *Open Shopping List* — Opens the Decor Shopping List, where you can see what each piece needs, drop pieces you no longer want, and send one to the game's tracker for a map pin.
 
 **Delves**
