@@ -10,10 +10,14 @@ local SETTLE_STEP    = 0.2
 local SETTLE_STABLE  = 2
 local SETTLE_TIMEOUT = 4
 local SEND_TIMEOUT   = 10
+local CACHE_TIMEOUT  = 2
+local CACHE_SETTLE   = 0.3
 
 local db, runFrame
 local categoryButton, categoryIdentity
 local running, recipient, subject, body, mailsSent
+
+local cacheWaitToken = {}
 
 local function Say(msg)
     print(LuckyGrabbag.PREFIX .. " " .. msg)
@@ -30,7 +34,25 @@ end
 local function Stop(message)
     running = false
     runFrame:UnregisterAllEvents()
+    Syndicator.CallbackRegistry:UnregisterCallback("BagCacheUpdate", cacheWaitToken)
     if message then Say(message) end
+end
+
+-- A sent mail leaves Baganator's match list naming the bag slots it just emptied,
+-- and attaching from those stale slots is what strands items in the post. Baganator
+-- waits on Syndicator's rebuilt cache before it acts again, so wait on the same
+-- thing, plus a beat for the refresh Baganator hangs off that very callback.
+local function WhenBagCacheUpdates(onUpdated)
+    local fired = false
+    local function Proceed()
+        if fired or not running then return end
+        fired = true
+        Syndicator.CallbackRegistry:UnregisterCallback("BagCacheUpdate", cacheWaitToken)
+        C_Timer.After(CACHE_SETTLE, onUpdated)
+    end
+
+    Syndicator.CallbackRegistry:RegisterCallback("BagCacheUpdate", Proceed, cacheWaitToken)
+    C_Timer.After(CACHE_TIMEOUT, Proceed)
 end
 
 -- Attachments only appear a server round-trip after the item moves, so wait for
@@ -103,7 +125,9 @@ local function OnEvent(_, event)
         return
     end
 
-    AttachNextBatch(function() Stop(string.format(S.finished, mailsSent)) end)
+    WhenBagCacheUpdates(function()
+        AttachNextBatch(function() Stop(string.format(S.finished, mailsSent)) end)
+    end)
 end
 
 function LuckyGrabbag.MailSendAll:SendAll()

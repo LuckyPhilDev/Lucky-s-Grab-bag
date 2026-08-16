@@ -2,6 +2,7 @@
 -- luacheck: globals SetSendMailShowing SendMail InCombatLockdown strtrim
 -- luacheck: globals hooksecurefunc SendMailFrame SendMailNameEditBox
 -- luacheck: globals SendMailSubjectEditBox SendMailBodyEditBox print IsAltKeyDown
+-- luacheck: globals Syndicator
 
 -- Covers the send loop in features/MailSendAll.lua: it has to drain a category
 -- across as many mails as it takes, stop when the category runs dry, and stop
@@ -57,12 +58,38 @@ end
 
 function SetSendMailShowing() end
 
+-- Syndicator's cache goes stale the moment a mail leaves, and stays stale until
+-- it reports back. Baganator's match list is only trustworthy outside that window.
+local cacheCallbacks = {}
+
+Syndicator = {
+    CallbackRegistry = {
+        RegisterCallback = function(_, event, fn, owner)
+            cacheCallbacks[owner] = { event = event, fn = fn }
+        end,
+        UnregisterCallback = function(_, _, owner)
+            cacheCallbacks[owner] = nil
+        end,
+    },
+}
+
+local function FireBagCacheUpdate()
+    for owner, entry in pairs(cacheCallbacks) do
+        if entry.event == "BagCacheUpdate" then entry.fn(owner) end
+    end
+end
+
 function SendMail()
     C_Timer.After(0.1, function()
-        world.mailsSent = world.mailsSent + 1
-        world.attached  = 0
+        world.mailsSent  = world.mailsSent + 1
+        world.attached   = 0
+        world.cacheStale = true
         if world.onSent then world.onSent() end
         runFrame:Fire("MAIL_SEND_SUCCESS")
+        C_Timer.After(0.6, function()
+            world.cacheStale = false
+            FireBagCacheUpdate()
+        end)
     end)
 end
 
@@ -98,6 +125,8 @@ local ATTACH_DELAY = 0.9
 local categoryButton = {
     sourceKey = "trade-goods",
     Click = function()
+        -- Attaching off a stale cache is the bug that stranded items in the post.
+        if world.cacheStale then world.staleClicks = (world.staleClicks or 0) + 1 end
         C_Timer.After(ATTACH_DELAY, function()
             -- Only free slots get filled, so a second click on a full post is a no-op.
             local batch = math.min(ATTACHMENTS_MAX_SEND - world.attached, world.inCategory)
@@ -142,6 +171,8 @@ end
 AltRightClick(30)
 assert(world.mailsSent == 3, "30 items should take 3 mails, took " .. world.mailsSent)
 assert(world.inCategory == 0, "the category should be empty, " .. world.inCategory .. " left")
+assert(not world.staleClicks, "no batch should be attached off a stale cache, "
+    .. tostring(world.staleClicks) .. " were")
 
 AltRightClick(12)
 assert(world.mailsSent == 1, "an exact bagful should take 1 mail, took " .. world.mailsSent)
