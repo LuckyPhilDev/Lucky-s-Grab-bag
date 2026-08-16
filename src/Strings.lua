@@ -146,9 +146,10 @@ LuckyGrabbag.Strings = {
     },
 
     blueprintImportHistory = {
-        menuTitle           = "Recent Imports",
-        buttonTooltip       = "Recent imports",
-        buttonTooltipDetail = "The last blueprint codes you imported. Pick one to fill it in again.",
+        menuTitle           = "Recent Codes",
+        buttonTooltip       = "Recent codes",
+        buttonTooltipDetail = "The last blueprint codes you entered. Pick one to fill it in again.",
+        buttonTooltipEmpty  = "Codes you enter are remembered here, the last ten of them.",
     },
 
     reagentMains = {
@@ -408,7 +409,7 @@ LuckyGrabbag.Strings = {
         },
         blueprintImportHistory = {
             label = "Blueprint Import History",
-            desc  = "Adds a button to the blueprint import window listing the last 10 codes you imported. Pick one to fill it in again.",
+            desc  = "Adds a button to the blueprint import window listing the last 10 codes you entered. Pick one to fill it in again.",
         },
         highlightTrackedDecor = {
             label = "Flag Shopping List Decor at Vendors",

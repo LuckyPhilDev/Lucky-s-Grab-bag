@@ -54,10 +54,10 @@ end
 
 local function UpdateButton()
     if not historyButton then return end
-    local shown = db.blueprintImportHistory and #db.blueprintImportCodes > 0
-    historyButton:SetShown(shown)
-    DevLog(string.format("UpdateButton: setting=%s, codes=%d, shown=%s",
-        tostring(db.blueprintImportHistory), #db.blueprintImportCodes, tostring(shown)))
+    historyButton:SetShown(db.blueprintImportHistory)
+    historyButton:SetEnabled(#db.blueprintImportCodes > 0)
+    DevLog(string.format("UpdateButton: setting=%s, codes=%d",
+        tostring(db.blueprintImportHistory), #db.blueprintImportCodes))
 end
 
 local function CreateButton()
@@ -90,10 +90,12 @@ local function CreateButton()
         end
     end)
 
+    historyButton:SetMotionScriptsWhileDisabled(true)
     historyButton:HookScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:SetText(S().buttonTooltip)
-        GameTooltip:AddLine(S().buttonTooltipDetail, 1, 1, 1, true)
+        local detail = #db.blueprintImportCodes > 0 and S().buttonTooltipDetail or S().buttonTooltipEmpty
+        GameTooltip:AddLine(detail, 1, 1, 1, true)
         GameTooltip:Show()
     end)
     historyButton:HookScript("OnLeave", GameTooltip_Hide)
@@ -118,8 +120,23 @@ local function OnBlueprintUILoaded()
         return
     end
 
-    -- Every import path funnels through OnImportConfirmed: house, interior and
-    -- exterior after their confirmation popup, rooms directly.
+    -- A code counts as "put in" the moment Next accepts it, import or not.
+    if type(frame.OnInputNextClicked) == "function" then
+        hooksecurefunc(frame, "OnInputNextClicked", function(self)
+            local isValid = self.InputContent:IsInputValid()
+            DevLog("OnInputNextClicked fired, valid=" .. tostring(isValid))
+            if not isValid then return end
+
+            local code, blueprintType = self.InputContent:GetInputValues()
+            Remember(code, blueprintType)
+            UpdateButton()
+        end)
+    else
+        DevLog("OnInputNextClicked is not a function, cannot hook the Next button")
+    end
+
+    -- Codes arriving pre-filled (blueprint links) skip the input tab entirely,
+    -- so catch them at OnImportConfirmed, where every import path ends up.
     hooksecurefunc(frame, "OnImportConfirmed", function(_, code, blueprintType)
         DevLog(string.format("OnImportConfirmed fired: type=%s, code=%s...",
             tostring(blueprintType), tostring(code):sub(1, CODE_PREVIEW_LENGTH)))
