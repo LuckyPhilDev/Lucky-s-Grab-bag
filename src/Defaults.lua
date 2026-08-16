@@ -61,6 +61,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     highlightTrackedDecor    = true,
     decorAutoBuy             = false,
     decorList                = {},
+    mailSendAll              = true,
 }
 
 LuckyGrabbag.CHAR_DB_DEFAULTS = {

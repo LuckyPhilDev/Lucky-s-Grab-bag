@@ -349,6 +349,15 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label    = SS.mailSendAll.label,
+            desc     = SS.mailSendAll.desc,
+            checked  = db.mailSendAll,
+            requires = LuckyGrabbag.MailSendAll and LuckyGrabbag.MailSendAll.requires,
+            since    = "1.22.0",
+            onToggle = function(checked) db.mailSendAll = checked end,
+        })
+
+        g:Toggle({
             label    = SS.enchantBadges.label,
             desc     = SS.enchantBadges.desc,
             checked  = db.showEnchantBadges,
