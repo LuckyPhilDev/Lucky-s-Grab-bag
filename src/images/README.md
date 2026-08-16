@@ -66,6 +66,7 @@ Examples:
 | Crafting | Cooking Buttons | `crafting/cooking-buttons.tga` | _done_ |
 | Inventory | Use Items Popup | `inventory/use-items-popup.tga` | _done_ |
 | Inventory | Only in Cities | `inventory/use-items-popup.tga` (shared) | _done_ |
+| Inventory | Mass Delete | `inventory/mass-delete.tga` | _done_ |
 | Combat | Combat Prep Window | `combat/combat-prep-window.tga` | _done_ |
 | Combat | Rotation Glow | `combat/rotation-glow.tga` | _done_ |
 
