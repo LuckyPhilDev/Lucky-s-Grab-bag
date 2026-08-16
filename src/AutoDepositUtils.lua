@@ -15,6 +15,12 @@ Utils.perItemDelay = 0.25
 
 local REAGENT_BAG = (Enum and Enum.BagIndex and Enum.BagIndex.ReagentBag) or 5
 
+-- Deposits run on timer chains that outlive the bank window; every link checks
+-- this so closing (or walking away from) the bank halts the run.
+local function BankIsOpen()
+    return C_Bank.CanViewBank(Enum.BankType.Account)
+end
+
 function Utils.GetAllPlayerBagIDs()
     local ids = {}
     for bag = 0, NUM_BAG_SLOTS do table.insert(ids, bag) end
@@ -108,6 +114,7 @@ function Utils.TryDepositItem(itemID, amountToDeposit, callback)
         local toMove = math.min(stackCount, remaining)
 
         C_Timer.After(Utils.pickupDelay, function()
+            if not BankIsOpen() then ClearCursor() return end
             ClearCursor()
             local lockInfo = select(3, C_Container.GetContainerItemInfo(bag, slot))
             if lockInfo == true then
@@ -152,7 +159,7 @@ function Utils.TryDepositItem(itemID, amountToDeposit, callback)
 end
 
 function Utils.ProcessQueue(queue, index)
-    if index > #queue then return end
+    if index > #queue or not BankIsOpen() then return end
     local entry = queue[index]
     Utils.TryDepositItem(entry.itemID, entry.amount, function()
         C_Timer.After(Utils.perItemDelay, function() Utils.ProcessQueue(queue, index + 1) end)
