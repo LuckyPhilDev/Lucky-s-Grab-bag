@@ -192,6 +192,21 @@ LuckyGrabbag.Strings = {
         hitLimit        = "Stopped at the %d mail limit. Alt-right-click the category to carry on.",
     },
 
+    massDelete = {
+        openButton  = "Mass Delete",
+        openTooltip = "Puts this delete on hold and opens a list instead. Click items in your bags to queue them, then delete the lot from the list.",
+        title       = "Mass Delete",
+        hint        = "Click items in your bags to add them. Click a row to take it back out.",
+        deleteNext  = "Delete next item (%d to go)",
+        deleteLast  = "Delete the last item",
+        deleteEmpty = "Nothing to delete",
+        perClick    = "One deletion per click is a game rule, but every mouse wheel notch counts as a click, so hover here and spin the wheel to run the list down fast.",
+        more        = "+%d more",
+        finished    = "Deleted %d items.",
+        finishedOne = "Deleted 1 item.",
+        itemMoved   = "Skipped %s, it is not in your bags any more.",
+    },
+
     settings = {
         groups = {
             general      = "General",
@@ -301,6 +316,10 @@ LuckyGrabbag.Strings = {
         useItemsCityOnly = {
             label = "Only while rested",
             desc  = "Hides the popup outside rest areas.",
+        },
+        massDelete = {
+            label = "Mass Delete",
+            desc  = "Adds a Mass Delete button beside the popup that confirms deleting an item. It opens a list you fill by clicking items in your bags, then the Delete button clears the list, one item per click or mouse wheel notch, which is as fast as the game allows.",
         },
         mailSendAll = {
             label = "Send a whole category by mail",
