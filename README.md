@@ -66,6 +66,24 @@ Marks enchants, missives, and gems in your bags with a small stat code so you ca
 - Optionally tags item names in the Auction House browse list as well.
 - Can be toggled in the addon settings under Inventory.
 
+### Mass Delete
+Turns the one-at-a-time delete confirmation into a list, so a bagful of junk goes in a single pass.
+
+- The popup that confirms a deletion gains a Mass Delete button, which holds that deletion and opens the panel.
+- Click items in your bags to add them to the list, and click a row to take one back out.
+- The game allows one deletion per click, but every mouse wheel notch counts as a click, so hover the Delete button and scroll to run the list down fast.
+- An item that has left your bags since you queued it is skipped and reported.
+- Can be toggled in the addon settings under Inventory.
+
+### Send a Whole Category by Mail
+Mails an entire Baganator category to one recipient, refilling the attachment slots and sending again until the category is empty.
+
+- Fill in the To field at the mailbox, then Alt-right-click a Baganator category header to start the run.
+- Alt-right-click the category again to stop part way.
+- A run stops at 30 mails, and Alt-right-clicking the category carries on from there.
+- Requires Baganator.
+- Can be toggled in the addon settings under Inventory.
+
 ### Reagent Mains
 Assigns each reagent category to one or more designated characters. When you open the warband bank on a character not in the list, reagents in those categories are deposited automatically — useful for keeping all your Herbs on the herbalist, all your Cloth on the tailor, and so on.
 

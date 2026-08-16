@@ -1,11 +1,12 @@
-## [1.21.1] - 2026-08-15
+## [1.22.0] - 2026-08-16
+
+### Added
+- **Mass Delete** Deleting an item has an option to open the Mass Delete panel. This allows you to click items in your bag and then delete quickly by scrolling.
+- **Baganator - Mass Mail Category** Send an entire category of items to your recipient by Alt-right-clicking on a category header within Baganator. Alt-right-click the category again to stop a run part way.
 
 ### Improved
-- **New icon on the minimap button.** The button carries the addon's own artwork now, and the icons in the More from Lucky Phil row in settings are new to match.
+- **New icon on the minimap button** The button carries the addon's own artwork now, and the icons in the More from Lucky Phil row in settings are new to match.
 
-## [1.21.0] - 2026-08-15
-
-### Improved
-- **Toggle Dev Mode and the minimap button from the title bar.** Both are icon buttons in the settings title bar now, in place of the rows on the General page that held them.
-- **Read the addon's version in the settings title bar.** It sits beside the addon name, with the Lucky's Utils version in its tooltip, in place of the Version Info rows under the What's New list.
-- **Reach the Discord from the row of addon icons.** The link joins the other Lucky addons at the bottom of the settings panel, in place of the row of its own it had.
+### Fixed
+- The warbound armour, weapon and token deposits no longer send unbound Bind on Equip gear to the Warband Bank. Only gear already bound to your account, or Warbound until equipped, goes now.
+- Auto-deposit stops when you close the bank window part way through a run, instead of carrying on with the bank gone.
