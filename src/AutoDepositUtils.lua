@@ -88,7 +88,9 @@ function Utils.FindEmptyBankSlot()
     return nil, nil
 end
 
-function Utils.TryDepositItem(itemID, amountToDeposit, callback)
+-- slotFilter(bag, slot, info) may veto individual stacks; without it every
+-- bank-allowed copy of the itemID is deposited.
+function Utils.TryDepositItem(itemID, amountToDeposit, callback, slotFilter)
     local bagSlots = {}
 
     for _, bag in ipairs(Utils.GetAllPlayerBagIDs()) do
@@ -96,7 +98,8 @@ function Utils.TryDepositItem(itemID, amountToDeposit, callback)
             local info = C_Container.GetContainerItemInfo(bag, slot)
             if info and info.itemID == itemID then
                 local loc = ItemLocation:CreateFromBagAndSlot(bag, slot)
-                if C_Bank.IsItemAllowedInBankType(Enum.BankType.Account, loc) then
+                if C_Bank.IsItemAllowedInBankType(Enum.BankType.Account, loc)
+                    and (not slotFilter or slotFilter(bag, slot, info)) then
                     table.insert(bagSlots, { bag = bag, slot = slot, count = info.stackCount })
                 end
             end
@@ -163,5 +166,5 @@ function Utils.ProcessQueue(queue, index)
     local entry = queue[index]
     Utils.TryDepositItem(entry.itemID, entry.amount, function()
         C_Timer.After(Utils.perItemDelay, function() Utils.ProcessQueue(queue, index + 1) end)
-    end)
+    end, entry.slotFilter)
 end

@@ -23,6 +23,14 @@ local LUMBER_NAME_MATCH = "lumber"
 -- Deposit logic
 -- ---------------------------------------------------------------------------
 
+-- An item instance only counts as warbound if it is already bound to the
+-- account or is "Warbound until equipped". Unbound BoE copies are neither,
+-- even though the bank would accept them.
+local function IsInstanceWarbound(bag, slot, info)
+    if info.isBound then return true end
+    return C_Item.IsBoundToAccountUntilEquip(ItemLocation:CreateFromBagAndSlot(bag, slot))
+end
+
 local function DepositWarboundItems()
     -- Lumber is a standalone reagent toggle that runs independently of the
     -- warbound gear/whitelist feature, so either can trigger this pass.
@@ -31,7 +39,9 @@ local function DepositWarboundItems()
 
     local anyTypeEnabled = warbound and (db.warboundDepositArmor or db.warboundDepositWeapons
         or db.warboundDepositTokens)
-    local toDeposit = {}  -- itemID → true, built via per-slot scan
+    -- itemID → "warbound" (gear/token rules, deposit warbound copies only)
+    --        or true (whitelist/lumber, deposit every copy)
+    local toDeposit = {}
 
     -- One pass: find which itemIDs to deposit.
     -- Use C_Bank.IsItemAllowedInBankType for accurate warbound detection (requires an
@@ -53,17 +63,20 @@ local function DepositWarboundItems()
                     -- trash passes it. Poor-quality items share classID 15/0 with tier
                     -- tokens, so the type rules must also exclude them; only the explicit
                     -- whitelist above may auto-deposit junk.
+                    -- Unbound BoE gear also passes it, so the gear/token rules further
+                    -- require the instance to be explicitly warbound.
+                    local isWarbound = IsInstanceWarbound(bag, slot, info)
                     local name, _, quality, _, _, _, _, _, _, _, _, classID, subclassID = GetItemInfo(itemID)
                     if quality and quality > Enum.ItemQuality.Poor
                         and C_Bank.IsItemAllowedInBankType(Enum.BankType.Account, loc) then
-                        if anyTypeEnabled and db.warboundDepositArmor and classID == 4 then
-                            toDeposit[itemID] = true
+                        if anyTypeEnabled and isWarbound and db.warboundDepositArmor and classID == 4 then
+                            toDeposit[itemID] = "warbound"
                             DevLog(("Queueing warbound armor itemID %d"):format(itemID))
-                        elseif anyTypeEnabled and db.warboundDepositWeapons and classID == 2 then
-                            toDeposit[itemID] = true
+                        elseif anyTypeEnabled and isWarbound and db.warboundDepositWeapons and classID == 2 then
+                            toDeposit[itemID] = "warbound"
                             DevLog(("Queueing warbound weapon itemID %d"):format(itemID))
-                        elseif anyTypeEnabled and db.warboundDepositTokens and classID == 15 and subclassID == 0 then
-                            toDeposit[itemID] = true
+                        elseif anyTypeEnabled and isWarbound and db.warboundDepositTokens and classID == 15 and subclassID == 0 then
+                            toDeposit[itemID] = "warbound"
                             DevLog(("Queueing warbound token itemID %d"):format(itemID))
                         elseif db.warboundDepositLumber and classID == LUMBER_CLASS_ID
                             and name and name:lower():find(LUMBER_NAME_MATCH, 1, true) then
@@ -76,13 +89,18 @@ local function DepositWarboundItems()
         end
     end
 
-    -- Build queue with full stack counts from inventory
+    -- Build queue with full stack counts from inventory. Amounts may overcount
+    -- filtered copies; the deposit loop simply runs out of eligible stacks.
     local inventory = Utils.ScanInventory()
     local queue = {}
-    for itemID in pairs(toDeposit) do
+    for itemID, rule in pairs(toDeposit) do
         local count = inventory[itemID] or 0
         if count > 0 then
-            table.insert(queue, { itemID = itemID, amount = count })
+            table.insert(queue, {
+                itemID = itemID,
+                amount = count,
+                slotFilter = rule == "warbound" and IsInstanceWarbound or nil,
+            })
         end
     end
 
