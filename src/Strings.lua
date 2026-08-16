@@ -145,6 +145,12 @@ LuckyGrabbag.Strings = {
         cannotAfford        = "You cannot afford even one of those.",
     },
 
+    blueprintImportHistory = {
+        menuTitle           = "Recent Imports",
+        buttonTooltip       = "Recent imports",
+        buttonTooltipDetail = "The last blueprint codes you imported. Pick one to fill it in again.",
+    },
+
     reagentMains = {
         title             = "Reagent Mains",
         subtitle          = "GRAB-BAG",
@@ -399,6 +405,10 @@ LuckyGrabbag.Strings = {
         blueprintTrackMissing = {
             label = "Track Missing Decor Button",
             desc  = "Adds a Track Missing button to a blueprint's item list. It puts every decor piece you are short of onto your shopping list, with the number the blueprint wants.",
+        },
+        blueprintImportHistory = {
+            label = "Blueprint Import History",
+            desc  = "Adds a button to the blueprint import window listing the last 10 codes you imported. Pick one to fill it in again.",
         },
         highlightTrackedDecor = {
             label = "Flag Shopping List Decor at Vendors",
