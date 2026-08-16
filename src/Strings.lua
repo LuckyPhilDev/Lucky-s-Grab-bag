@@ -177,6 +177,22 @@ LuckyGrabbag.Strings = {
         other      = "Other",
     },
 
+    mailSendAll = {
+        bindingName     = "Send a whole Baganator category",
+        notAtMailbox    = "Open the Send Mail tab at a mailbox first.",
+        noCategory      = "Right-click a Baganator category at the mailbox first, then press the key.",
+        categoryChanged = "That Baganator category is no longer on screen. Right-click it again.",
+        noRecipient     = "Type a recipient in the To field first.",
+        nothingToSend   = "Nothing in that category to send.",
+        inCombat        = "Mail cannot be sent in combat.",
+        defaultSubject  = "Items",
+        finished        = "Sent %d mails.",
+        cancelled       = "Stopped after %d mails.",
+        interrupted     = "Stopped after %d mails.",
+        timedOut        = "That mail did not send, so the rest were left in your bags.",
+        hitLimit        = "Stopped at the %d mail limit. Press the key again to carry on.",
+    },
+
     settings = {
         groups = {
             general      = "General",
@@ -286,6 +302,10 @@ LuckyGrabbag.Strings = {
         useItemsCityOnly = {
             label = "Only while rested",
             desc  = "Hides the popup outside rest areas.",
+        },
+        mailSendAll = {
+            label = "Send a whole category by mail",
+            desc  = "Right-clicking a Baganator category at the mailbox loads 12 items into the post, which is one mail's worth. Bind a key under Key Bindings, Lucky's Grab-bag, and it keeps refilling and sending until the category is empty. Right-click the category, type a recipient, then press the key. Alt-M is free on a default setup. Press Escape after typing the recipient, otherwise the To field swallows the key.",
         },
         combatPrep = {
             label = "Combat Prep Window",

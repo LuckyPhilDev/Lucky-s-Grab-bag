@@ -1,0 +1,5 @@
+<Bindings>
+  <Binding name="LUCKYGRABBAG_MAIL_SEND_ALL" category="Lucky's Grab-bag">
+    LuckyGrabbag.MailSendAll:SendAll()
+  </Binding>
+</Bindings>

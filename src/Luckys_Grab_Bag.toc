@@ -46,4 +46,6 @@ features/EnchantStatsData.lua
 features/EnchantStats.lua
 features/OmniumFolio.lua
 features/DecorTracking.lua
+features/MailSendAll.lua
 Core.lua
+Bindings.xml
