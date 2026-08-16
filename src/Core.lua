@@ -80,6 +80,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.OmniumFolio:Init(db, charDB)
         LuckyGrabbag.DecorTracking:Init(db)
         LuckyGrabbag.MailSendAll:Init(db)
+        LuckyGrabbag.MassDelete:Init(db)
 
         -- Minimap button
         LuckyGrabbag.minimapButton = LuckyMinimap:Create({

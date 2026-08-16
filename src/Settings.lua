@@ -349,6 +349,16 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label     = SS.massDelete.label,
+            desc      = SS.massDelete.desc,
+            checked   = db.massDelete,
+            image     = "inventory/mass-delete",
+            imageSize = { 782, 445 },
+            since     = "1.22.0",
+            onToggle  = function(checked) db.massDelete = checked end,
+        })
+
+        g:Toggle({
             label    = SS.mailSendAll.label,
             desc     = SS.mailSendAll.desc,
             checked  = db.mailSendAll,
