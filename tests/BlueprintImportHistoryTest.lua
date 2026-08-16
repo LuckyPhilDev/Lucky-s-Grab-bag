@@ -1,5 +1,5 @@
 -- luacheck: globals CreateFrame GameTooltip GameTooltip_Hide hooksecurefunc
--- luacheck: globals C_AddOns HousingBlueprintImportFrame HousingBlueprintTypeStrings
+-- luacheck: globals C_AddOns C_Texture HousingBlueprintImportFrame HousingBlueprintTypeStrings
 
 -- Covers features/BlueprintImportHistory.lua: imports land in the history
 -- newest first, re-importing a code moves it up rather than duplicating it,
@@ -44,7 +44,8 @@ function hooksecurefunc(tbl, name, fn)
     end
 end
 
-C_AddOns = { IsAddOnLoaded = function() return true end }
+C_AddOns  = { IsAddOnLoaded = function() return true end }
+C_Texture = { GetAtlasInfo = function() return {} end }
 
 -- ─── Blizzard's import frame, reduced to what the feature touches ────────────
 

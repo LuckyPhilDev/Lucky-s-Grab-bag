@@ -54,7 +54,10 @@ end
 
 local function UpdateButton()
     if not historyButton then return end
-    historyButton:SetShown(db.blueprintImportHistory and #db.blueprintImportCodes > 0)
+    local shown = db.blueprintImportHistory and #db.blueprintImportCodes > 0
+    historyButton:SetShown(shown)
+    DevLog(string.format("UpdateButton: setting=%s, codes=%d, shown=%s",
+        tostring(db.blueprintImportHistory), #db.blueprintImportCodes, tostring(shown)))
 end
 
 local function CreateButton()
@@ -65,17 +68,23 @@ local function CreateButton()
     historyButton:SetPoint("RIGHT", input.GearDropdown, "LEFT", -6, 0)
 
     -- The template ships a gear icon on both the artwork and highlight layers.
-    for _, region in ipairs({ historyButton:GetRegions() }) do
-        if region:GetObjectType() == "Texture" then
-            region:SetAtlas(HISTORY_ATLAS, false)
-            region:SetSize(15, 15)
+    if C_Texture.GetAtlasInfo(HISTORY_ATLAS) then
+        for _, region in ipairs({ historyButton:GetRegions() }) do
+            if region:GetObjectType() == "Texture" then
+                region:SetAtlas(HISTORY_ATLAS, false)
+                region:SetSize(15, 15)
+            end
         end
+    else
+        DevLog("Atlas " .. HISTORY_ATLAS .. " does not exist, keeping the gear icon")
     end
 
     historyButton:SetupMenu(function(_, rootDescription)
+        DevLog("Menu opened with " .. #db.blueprintImportCodes .. " codes")
         rootDescription:CreateTitle(S().menuTitle)
         for _, entry in ipairs(db.blueprintImportCodes) do
             rootDescription:CreateButton(EntryLabel(entry), function()
+                DevLog("Recalling code " .. entry.code:sub(1, CODE_PREVIEW_LENGTH))
                 HousingBlueprintImportFrame.InputContent:SetShareCode(entry.code)
             end)
         end
@@ -93,15 +102,33 @@ local function CreateButton()
 end
 
 local function OnBlueprintUILoaded()
+    local frame = HousingBlueprintImportFrame
+    if not frame then
+        DevLog("HousingBlueprintImportFrame is missing, cannot attach")
+        return
+    end
+    if not frame.InputContent or not frame.InputContent.GearDropdown then
+        DevLog("Import frame layout changed: InputContent="
+            .. tostring(frame.InputContent ~= nil)
+            .. ", GearDropdown=" .. tostring(frame.InputContent and frame.InputContent.GearDropdown ~= nil))
+        return
+    end
+    if type(frame.OnImportConfirmed) ~= "function" then
+        DevLog("OnImportConfirmed is not a function, cannot hook imports")
+        return
+    end
+
     -- Every import path funnels through OnImportConfirmed: house, interior and
     -- exterior after their confirmation popup, rooms directly.
-    hooksecurefunc(HousingBlueprintImportFrame, "OnImportConfirmed", function(_, code, blueprintType)
+    hooksecurefunc(frame, "OnImportConfirmed", function(_, code, blueprintType)
+        DevLog(string.format("OnImportConfirmed fired: type=%s, code=%s...",
+            tostring(blueprintType), tostring(code):sub(1, CODE_PREVIEW_LENGTH)))
         Remember(code, blueprintType)
         UpdateButton()
     end)
 
     CreateButton()
-    HousingBlueprintImportFrame:HookScript("OnShow", UpdateButton)
+    frame:HookScript("OnShow", UpdateButton)
     UpdateButton()
 end
 
@@ -117,6 +144,7 @@ function Feature:Init(database)
     eventFrame:RegisterEvent("ADDON_LOADED")
     eventFrame:SetScript("OnEvent", function(self, _, addonName)
         if addonName == "Blizzard_HousingBlueprint" then
+            DevLog("Blizzard_HousingBlueprint loaded, attaching")
             OnBlueprintUILoaded()
             self:UnregisterEvent("ADDON_LOADED")
         end
@@ -124,7 +152,10 @@ function Feature:Init(database)
 
     -- The blueprint UI is load-on-demand, so it may already be up.
     if C_AddOns.IsAddOnLoaded("Blizzard_HousingBlueprint") then
+        DevLog("Blizzard_HousingBlueprint already loaded at Init, attaching now")
         OnBlueprintUILoaded()
         eventFrame:UnregisterEvent("ADDON_LOADED")
+    else
+        DevLog("Waiting for Blizzard_HousingBlueprint to load")
     end
 end
