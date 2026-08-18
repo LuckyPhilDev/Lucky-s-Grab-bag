@@ -3,12 +3,13 @@
 ## Notes: A collection of small quality-of-life features.
 ## Version: 1.22.1
 ## Author: Lucky Phil
-## SavedVariables: LuckyGrabbagDB
+## SavedVariables: LuckyGrabbagDB, LuckySettingsDB, LuckyRosterDB
 ## SavedVariablesPerCharacter: LuckyGrabbagCharDB
-## Dependencies: Luckys_Utils
+## OptionalDeps: Luckys_Utils
 ## X-Curse-Project-ID: 1474964
 
 
+Libs\LuckysUtils\embeds.xml
 Strings.lua
 Defaults.lua
 UIHelpers.lua
