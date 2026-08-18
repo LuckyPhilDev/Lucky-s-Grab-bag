@@ -13,9 +13,7 @@ local db
 local historyButton
 local namePane
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("BlueprintImportHistory", msg)
-end
+local DevLog = LuckyGrabbag.Logger("BlueprintImportHistory")
 
 local function S()
     return LuckyGrabbag.Strings.blueprintImportHistory

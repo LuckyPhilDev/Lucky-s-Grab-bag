@@ -38,9 +38,7 @@ local deletedCount = 0
 
 local function S() return LuckyGrabbag.Strings.massDelete end
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("MassDelete", msg)
-end
+local DevLog = LuckyGrabbag.Logger("MassDelete")
 
 local function Say(msg)
     print(LuckyGrabbag.PREFIX .. " " .. msg)

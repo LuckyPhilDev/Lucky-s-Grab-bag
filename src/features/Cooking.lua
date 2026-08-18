@@ -14,9 +14,7 @@ local campfireCooldown
 local chefsHatButton
 local chefsHatGlow
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("Cooking", msg)
-end
+local DevLog = LuckyGrabbag.Logger("Cooking")
 
 local function UpdateCampfireCooldown()
     if not campfireCooldown then return end

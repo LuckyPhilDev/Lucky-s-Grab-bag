@@ -25,9 +25,7 @@ local buyAllButton
 local buyAllContainer
 local window
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("DecorTracking", msg)
-end
+local DevLog = LuckyGrabbag.Logger("DecorTracking")
 
 local function Print(msg)
     print(LuckyGrabbag.PREFIX .. " " .. msg)

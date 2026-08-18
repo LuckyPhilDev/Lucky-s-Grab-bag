@@ -7,9 +7,7 @@ local db
 local POOR_QUALITY = (Enum and Enum.ItemQuality and Enum.ItemQuality.Poor) or 0
 local REAGENT_BAG  = (Enum and Enum.BagIndex and Enum.BagIndex.ReagentBag) or 5
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("AutoSellJunk", msg)
-end
+local DevLog = LuckyGrabbag.Logger("AutoSellJunk")
 
 -- Backpack + carried bags, plus the reagent bag when one is equipped.
 local function GetBagIDs()
@@ -22,18 +20,7 @@ local function GetBagIDs()
     return ids
 end
 
-local function FormatCost(copper)
-    local gold   = math.floor(copper / 10000)
-    local silver = math.floor((copper % 10000) / 100)
-    local cop    = copper % 100
-    if gold > 0 then
-        return string.format("%dg %ds %dc", gold, silver, cop)
-    elseif silver > 0 then
-        return string.format("%ds %dc", silver, cop)
-    else
-        return string.format("%dc", cop)
-    end
-end
+local FormatCost = LuckyUtils.FormatMoney
 
 local function SellJunk()
     if not db.autoSellJunk then return end

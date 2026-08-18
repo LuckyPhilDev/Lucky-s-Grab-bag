@@ -7,9 +7,7 @@ LuckyGrabbag.ProfessionSpendToPerk = {}
 local db
 local hooked = false
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("ProfessionSpendToPerk", msg)
-end
+local DevLog = LuckyGrabbag.Logger("ProfessionSpendToPerk")
 
 local function InstallHook()
     if hooked then return end

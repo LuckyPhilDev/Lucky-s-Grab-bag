@@ -12,9 +12,7 @@ local Utils   = LuckyGrabbag.AutoDepositUtils
 local db
 local popup
 
-local function DevLog(msg)
-    if LuckyGrabbag.DevLog then LuckyGrabbag.DevLog("ReagentMains", msg) end
-end
+local DevLog = LuckyGrabbag.Logger("ReagentMains")
 
 -- ---------------------------------------------------------------------------
 -- Bag scanning + deposit pipeline (delegated to AutoDepositUtils)

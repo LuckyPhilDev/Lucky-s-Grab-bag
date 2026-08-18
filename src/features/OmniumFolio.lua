@@ -14,9 +14,7 @@ local lastSpecID
 -- before we get a chance to restore. Suppressed while a restore is pending.
 local restoring = false
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("OmniumFolio", msg)
-end
+local DevLog = LuckyGrabbag.Logger("OmniumFolio")
 
 local function CurrentSpecID()
     local specIndex = GetSpecialization()

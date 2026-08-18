@@ -18,9 +18,7 @@ local MOVED_TO_BETTER_WARDROBE = true
 
 local db
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("TransmogSets", msg)
-end
+local DevLog = LuckyGrabbag.Logger("TransmogSets")
 
 -- Returns nil on success, an Enum.ContentTrackingError otherwise.
 -- StartTracking throws a hard Lua error on some untrackable sources, which is

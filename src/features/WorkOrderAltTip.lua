@@ -15,7 +15,7 @@ local watcher        -- polling frame; recipient EditBox can be recreated by Bli
                      -- between events, leaving our HookScript on a dead instance.
 local lastRecipient  -- text seen on last poll; only act on changes
 
-local function DevLog(msg) LuckyGrabbag.DevLog("WorkOrderAltTip", msg) end
+local DevLog = LuckyGrabbag.Logger("WorkOrderAltTip")
 
 -- ─── Roster lookup ───────────────────────────────────────────────────────────
 

@@ -4,22 +4,9 @@ LuckyGrabbag.AutoRepair = {}
 
 local db
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("AutoRepair", msg)
-end
+local DevLog = LuckyGrabbag.Logger("AutoRepair")
 
-local function FormatCost(copper)
-    local gold   = math.floor(copper / 10000)
-    local silver = math.floor((copper % 10000) / 100)
-    local cop    = copper % 100
-    if gold > 0 then
-        return string.format("%dg %ds %dc", gold, silver, cop)
-    elseif silver > 0 then
-        return string.format("%ds %dc", silver, cop)
-    else
-        return string.format("%dc", cop)
-    end
-end
+local FormatCost = LuckyUtils.FormatMoney
 
 local function TryRepair()
     if not db.autoRepair then return end

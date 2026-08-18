@@ -16,9 +16,7 @@ local db
 local weEnabledLogging = false
 local userSuppressed = false  -- user turned logging off mid-instance; respect it until they leave
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("AutoCombatLog", msg)
-end
+local DevLog = LuckyGrabbag.Logger("AutoCombatLog")
 
 -- Journal instance IDs for the newest Encounter Journal tier, i.e. the current
 -- raids. Built lazily and cached for the session; nil when journal data is

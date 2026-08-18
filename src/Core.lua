@@ -27,17 +27,8 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
             db.confirmPurchaseOverlay = nil
         end
 
-        for key, default in pairs(LuckyGrabbag.DB_DEFAULTS) do
-            if db[key] == nil then
-                db[key] = default
-            end
-        end
-
-        for key, default in pairs(LuckyGrabbag.CHAR_DB_DEFAULTS or {}) do
-            if charDB[key] == nil then
-                charDB[key] = default
-            end
-        end
+        LuckyUtils.ApplyDefaults(db, LuckyGrabbag.DB_DEFAULTS)
+        LuckyUtils.ApplyDefaults(charDB, LuckyGrabbag.CHAR_DB_DEFAULTS or {})
 
         -- Re-evaluate showQuickbuy automatically until the user explicitly changes it.
         if db.showQuickbuyAutoDefault ~= false then

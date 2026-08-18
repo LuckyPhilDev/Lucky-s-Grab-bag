@@ -20,9 +20,7 @@ local containerFrame
 local buttons = {}
 local inCombat = false
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("UseItems", msg)
-end
+local DevLog = LuckyGrabbag.Logger("UseItems")
 
 local function IsMatchingItem(itemName, itemID)
     if itemID and ITEM_ID_SET[itemID] then return true end

@@ -45,9 +45,7 @@ local hooked          = false
 local listening       = false
 local ticker
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("ConcentrationView", msg)
-end
+local DevLog = LuckyGrabbag.Logger("ConcentrationView")
 
 -- ---------------------------------------------------------------------------
 -- Data

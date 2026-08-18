@@ -10,9 +10,7 @@ local Utils   = LuckyGrabbag.AutoDepositUtils
 local db
 local popup
 
-local function DevLog(msg)
-    if LuckyGrabbag.DevLog then LuckyGrabbag.DevLog("WarboundAutoDeposit", msg) end
-end
+local DevLog = LuckyGrabbag.Logger("WarboundAutoDeposit")
 
 -- Lumber sits in classID 7 (Tradeskill) under the catch-all "Other" subclass (11),
 -- which holds far more than lumber, so we also require the name to contain "Lumber".

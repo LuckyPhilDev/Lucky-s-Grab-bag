@@ -28,9 +28,7 @@ local rotationSet    = {}     -- [spellID] = true
 local rotationValid  = false
 local suggestedSpell = nil
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("RotationGlow", msg)
-end
+local DevLog = LuckyGrabbag.Logger("RotationGlow")
 
 -- ---------------------------------------------------------------------------
 -- Spell extraction & rotation cache

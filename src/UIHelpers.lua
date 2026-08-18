@@ -15,6 +15,14 @@ function LuckyGrabbag.DevLog(tag, msg)
     _devLog("|cffaaaaaa[" .. tag .. "]|r " .. msg)
 end
 
+--- Returns a DevLog bound to one feature's tag, for the one-liner at the top
+--- of each feature file: local DevLog = LuckyGrabbag.Logger("FeatureName")
+---@param tag string
+---@return fun(msg: string)
+function LuckyGrabbag.Logger(tag)
+    return function(msg) LuckyGrabbag.DevLog(tag, msg) end
+end
+
 local GROUP_INSTANCE_TYPES = { party = true, raid = true, scenario = true }
 
 --- Instance type for windows that only make sense in group content, or nil

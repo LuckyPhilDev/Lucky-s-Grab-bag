@@ -6,9 +6,7 @@ local TREATISES = LuckyGrabbag.TreatiseData  -- defined in TreatiseData.lua
 
 local db
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("Treatise", msg)
-end
+local DevLog = LuckyGrabbag.Logger("Treatise")
 
 -- GetProfessions() can contain nils; ipairs stops at the first nil, so iterate the five slots with pairs.
 local function ForEachProfessionIndex(callback)

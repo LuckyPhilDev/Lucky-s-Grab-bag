@@ -21,9 +21,7 @@ local hooked  = false
 local userTab = nil
 local watcher = nil
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("Transmog", msg)
-end
+local DevLog = LuckyGrabbag.Logger("Transmog")
 
 local function GetWardrobeCollection()
     return TransmogFrame and TransmogFrame.WardrobeCollection

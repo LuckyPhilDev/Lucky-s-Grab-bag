@@ -15,9 +15,7 @@ local EnchantStats = LuckyGrabbag.EnchantStats
 local Data = LuckyGrabbag.EnchantStatsData
 local db
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("EnchantStats", msg)
-end
+local DevLog = LuckyGrabbag.Logger("EnchantStats")
 
 -- Dev-mode helper: report enchants we don't recognise so the data table can be
 -- extended in a later patch. Each itemID is logged at most once per session.

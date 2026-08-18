@@ -17,9 +17,7 @@ local lastClickedBagButton
 local lastClickSource -- "merchant" or "bag"
 local useContainerItemHooked = false
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("ConfirmPurchase", msg)
-end
+local DevLog = LuckyGrabbag.Logger("ConfirmPurchase")
 
 -- StaticPopup names that fire from clicking an item in the player's bags
 -- (vs the merchant frame). These need the same bag-overlay treatment.

@@ -63,9 +63,7 @@ local lastInspect = 0
 local pumpScheduled = false
 local INSPECT_INTERVAL = 1.5
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("PowerInfusion", msg)
-end
+local DevLog = LuckyGrabbag.Logger("PowerInfusion")
 
 local function KnowsPowerInfusion()
     return IsPlayerSpell(POWER_INFUSION_SPELL_ID)

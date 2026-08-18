@@ -14,9 +14,7 @@ local db
 local button
 local inCombat = false
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("DelveMap", msg)
-end
+local DevLog = LuckyGrabbag.Logger("DelveMap")
 
 -- Returns true + tier number if the player is in a delve, false otherwise.
 -- Tier is read from the scenario header widget (the same source Blizzard uses on screen).

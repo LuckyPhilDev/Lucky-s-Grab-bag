@@ -6,9 +6,7 @@ local db
 local prepFrame
 local inCombat = false
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("CombatPrep", msg)
-end
+local DevLog = LuckyGrabbag.Logger("CombatPrep")
 
 -- Instance type rather than group type, so a raid group parked in the open
 -- world or a housing decor duel does not get the window. Dungeons come back as

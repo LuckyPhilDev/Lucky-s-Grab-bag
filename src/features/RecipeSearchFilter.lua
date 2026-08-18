@@ -11,9 +11,7 @@ LuckyGrabbag.RecipeSearchFilter = {}
 local db
 local installed = false
 
-local function DevLog(msg)
-    LuckyGrabbag.DevLog("RecipeSearchFilter", msg)
-end
+local DevLog = LuckyGrabbag.Logger("RecipeSearchFilter")
 
 local function OnAllExpansionsSelected()
     db.searchAllExpansions = true
