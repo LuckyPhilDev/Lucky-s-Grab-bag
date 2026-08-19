@@ -115,6 +115,8 @@ Automatically sends warbound gear and tokens to the warband bank when you open i
 - Opens via a **Configure whitelist…** button in settings for managing custom items.
 - Off by default; can be toggled in the addon settings.
 
+If Lucky's Warband Stockist is installed, it takes over the warbound armor, weapon, and token deposits from its own Warbound tab and these toggles stand down. Lumber and the custom whitelist stay here.
+
 ### Withdraw Treatise from Warbank
 Automatically withdraws Thalassian Treatises for your current professions from the Warband Bank whenever you open it — but only if you haven't already used them this week.
 
