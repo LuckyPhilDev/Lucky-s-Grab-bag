@@ -18,6 +18,37 @@ local LUMBER_CLASS_ID   = 7
 local LUMBER_NAME_MATCH = "lumber"
 
 -- ---------------------------------------------------------------------------
+-- Hand-over to Warband Stockist
+-- ---------------------------------------------------------------------------
+
+-- Warbound gear deposit moved to Warband Stockist. A Stockist version that has
+-- the feature defines this function; when it is installed, the gear and token
+-- rules here stand down and only the whitelist and lumber rules keep running.
+-- Older or absent Stockist leaves this addon behaving exactly as before.
+local function StockistOwnsWarbound()
+    return (WarbandStorage and WarbandStorage.DepositWarboundItems) ~= nil
+end
+
+-- One-time copy of the deposit toggles into Stockist's settings, so the
+-- feature stays on for users who had it on here. Runs at the bank because
+-- both addons are guaranteed fully loaded there. Never overwrites a Stockist
+-- config the user already enabled themselves.
+local function MigrateSettingsToStockist()
+    if db.warboundMovedToStockist or not StockistOwnsWarbound() then return end
+    db.warboundMovedToStockist = true
+
+    WarbandStockistDB.warboundDeposit = WarbandStockistDB.warboundDeposit or {}
+    local cfg = WarbandStockistDB.warboundDeposit
+    if db.warboundAutoDepositEnabled and not cfg.enabled then
+        cfg.enabled = true
+        cfg.armor   = db.warboundDepositArmor
+        cfg.weapons = db.warboundDepositWeapons
+        cfg.tokens  = db.warboundDepositTokens
+        print(LuckyGrabbag.PREFIX .. " Warbound gear deposit has moved to Warband Stockist. Your settings were carried over; find them on the Warbound tab in Warband Stockist's settings.")
+    end
+end
+
+-- ---------------------------------------------------------------------------
 -- Deposit logic
 -- ---------------------------------------------------------------------------
 
@@ -35,8 +66,8 @@ local function DepositWarboundItems()
     local warbound = db.warboundAutoDepositEnabled
     if not warbound and not db.warboundDepositLumber then return end
 
-    local anyTypeEnabled = warbound and (db.warboundDepositArmor or db.warboundDepositWeapons
-        or db.warboundDepositTokens)
+    local anyTypeEnabled = warbound and not StockistOwnsWarbound()
+        and (db.warboundDepositArmor or db.warboundDepositWeapons or db.warboundDepositTokens)
     -- itemID → "warbound" (gear/token rules, deposit warbound copies only)
     --        or true (whitelist/lumber, deposit every copy)
     local toDeposit = {}
@@ -422,6 +453,7 @@ function Feature:Init(database)
     eventFrame:RegisterEvent("BANKFRAME_OPENED")
     eventFrame:SetScript("OnEvent", function()
         DevLog("BANKFRAME_OPENED received")
+        MigrateSettingsToStockist()
         C_Timer.After(0.2, DepositWarboundItems)
     end)
 end
