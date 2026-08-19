@@ -181,6 +181,7 @@ print = function(msg) lastPrinted = msg end ---@diagnostic disable-line: lowerca
 dofile("src/Strings.lua")
 LuckyGrabbag.PREFIX = LuckyGrabbag.Strings.addon.prefix
 LuckyGrabbag.DevLog = function() end
+LuckyGrabbag.Logger = function() return function() end end
 dofile("src/features/MassDelete.lua")
 
 local db = { massDelete = true }

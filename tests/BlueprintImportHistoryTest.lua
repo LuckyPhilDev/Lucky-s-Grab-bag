@@ -109,6 +109,7 @@ end
 
 dofile("src/Strings.lua")
 LuckyGrabbag.DevLog = function() end
+LuckyGrabbag.Logger = function() return function() end end
 dofile("src/features/BlueprintImportHistory.lua")
 
 local db = { blueprintImportHistory = true }
