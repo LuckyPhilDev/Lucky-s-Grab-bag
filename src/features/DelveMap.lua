@@ -12,7 +12,6 @@ local DELVE_WIDGET_IDS = { 6183, 6184, 6185 }
 
 local db
 local button
-local inCombat = false
 
 local DevLog = LuckyGrabbag.Logger("DelveMap")
 
@@ -97,12 +96,13 @@ local function RestorePosition()
 end
 
 local function Refresh()
+    -- Show and Hide are protected on a secure button; PLAYER_REGEN_ENABLED re-runs this.
+    if InCombatLockdown() then return end
+
     if not db.showDelveMap then
         if button then button:Hide() end
         return
     end
-
-    if inCombat then return end
 
     local inDelve, tier = GetDelveInfo()
     local minLevel = db.delveMapMinLevel or 8
@@ -114,17 +114,13 @@ local function Refresh()
         .. " hasMap=" .. tostring(hasMap))
 
     if inDelve and meetsLevel and hasMap then
-        if not InCombatLockdown() then
-            button:SetAttribute("item", itemName)
-            if iconFileID then
-                button:SetNormalTexture(iconFileID)
-            end
+        button:SetAttribute("item", itemName)
+        if iconFileID then
+            button:SetNormalTexture(iconFileID)
         end
         button:Show()
     else
-        if not InCombatLockdown() then
-            button:Hide()
-        end
+        button:Hide()
     end
 end
 
@@ -145,15 +141,9 @@ function LuckyGrabbag.DelveMap:Init(database)
     eventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     eventFrame:RegisterEvent("ACTIVE_DELVE_DATA_UPDATE")
     eventFrame:RegisterEvent("BAG_UPDATE")
-    eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     eventFrame:SetScript("OnEvent", function(_, event)
-        if event == "PLAYER_REGEN_DISABLED" then
-            inCombat = true
-        elseif event == "PLAYER_REGEN_ENABLED" then
-            inCombat = false
-            Refresh()
-        elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
+        if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
             -- GetInstanceInfo() is often not ready yet when these fire during
             -- a loading screen. Refresh immediately (may catch it), then retry
             -- after a short delay to cover the late-availability case.
