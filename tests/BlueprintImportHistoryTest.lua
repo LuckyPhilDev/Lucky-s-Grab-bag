@@ -107,6 +107,7 @@ end
 
 -- ─── Addon under test ────────────────────────────────────────────────────────
 
+LuckyStrings = { New = function(_, tbl) return tbl end }
 dofile("src/Strings.lua")
 LuckyGrabbag.DevLog = function() end
 LuckyGrabbag.Logger = function() return function() end end

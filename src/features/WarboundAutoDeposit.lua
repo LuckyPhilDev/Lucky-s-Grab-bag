@@ -6,6 +6,7 @@ LuckyGrabbag.WarboundAutoDeposit = {}
 
 local Feature = LuckyGrabbag.WarboundAutoDeposit
 local Utils   = LuckyGrabbag.AutoDepositUtils
+local S       = LuckyGrabbag.Strings.warboundAutoDeposit
 
 local db
 local popup
@@ -44,7 +45,7 @@ local function MigrateSettingsToStockist()
         cfg.armor   = db.warboundDepositArmor
         cfg.weapons = db.warboundDepositWeapons
         cfg.tokens  = db.warboundDepositTokens
-        print(LuckyGrabbag.PREFIX .. " Warbound gear deposit has moved to Warband Stockist. Your settings were carried over; find them on the Warbound tab in Warband Stockist's settings.")
+        print(LuckyGrabbag.PREFIX .. " " .. S.movedToStockist)
     end
 end
 
@@ -191,7 +192,7 @@ local function BuildPopup()
     local titleL = titleBar:CreateFontString(nil, "OVERLAY")
     titleL:SetFont(R_FONT, 16, "")
     titleL:SetPoint("LEFT", 14, 0)
-    titleL:SetText("Whitelist")
+    titleL:SetText(S.whitelistTitle)
     titleL:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
 
     -- Close button
@@ -224,7 +225,7 @@ local function BuildPopup()
     desc:SetPoint("TOPLEFT", 14, -14)
     desc:SetPoint("TOPRIGHT", -14, -14)
     desc:SetJustifyH("LEFT")
-    desc:SetText("Add item links or IDs to always auto-deposit them, or drag an item here from your bags. Right-click to remove.")
+    desc:SetText(S.whitelistHint)
     desc:SetWordWrap(true)
     desc:SetHeight(34)
 
@@ -238,7 +239,7 @@ local function BuildPopup()
     inputLbl:SetFont(R_FONT, 12, "")
     inputLbl:SetTextColor(R.text[1], R.text[2], R.text[3])
     inputLbl:SetPoint("LEFT", 10, 0)
-    inputLbl:SetText("Add:")
+    inputLbl:SetText(S.addLabel)
 
     local inputEdit = CreateFrame("EditBox", nil, inputRow, "InputBoxTemplate")
     inputEdit:SetSize(300, 24)
@@ -249,7 +250,7 @@ local function BuildPopup()
     local addBtn = CreateFrame("Button", nil, inputRow, "UIPanelButtonTemplate")
     addBtn:SetSize(80, 22)
     addBtn:SetPoint("LEFT", inputEdit, "RIGHT", 6, 0)
-    addBtn:SetText("Add")
+    addBtn:SetText(S.addButton)
     addBtn:SetScript("OnClick", function()
         local text = inputEdit:GetText()
         if text == "" then return end
@@ -283,7 +284,7 @@ local function BuildPopup()
     headerText:SetFont(R_FONT, 10, "")
     headerText:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
     headerText:SetPoint("LEFT", headerRow, "LEFT", 10, 0)
-    headerText:SetText("WHITELISTED ITEMS (right-click to remove)")
+    headerText:SetText(S.listHeader)
 
     -- Scroll area
     local scroll = CreateFrame("ScrollFrame", nil, body, "UIPanelScrollFrameTemplate")

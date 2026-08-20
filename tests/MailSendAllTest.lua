@@ -138,6 +138,7 @@ local categoryButton = {
 
 -- ─── Addon under test ────────────────────────────────────────────────────────
 
+LuckyStrings = { New = function(_, tbl) return tbl end }
 dofile("src/Strings.lua")
 LuckyGrabbag.PREFIX = LuckyGrabbag.Strings.addon.prefix
 dofile("src/features/MailSendAll.lua")

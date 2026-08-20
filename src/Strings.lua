@@ -3,7 +3,7 @@
 -- Format strings use Lua's standard %s / %d placeholders; pass through string.format at the call site.
 LuckyGrabbag = LuckyGrabbag or {}
 
-LuckyGrabbag.Strings = {
+LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
     addon = {
         title       = "Lucky's Grab-bag",
         prefix      = "|cff00cc00Lucky's Grab-bag:|r",
@@ -154,6 +154,15 @@ LuckyGrabbag.Strings = {
         renameTooltip       = "Give this code a name.",
         namePaneTitle       = "Name This Code",
         namePaneHint        = "Shows in the Recent Codes list in place of the raw code.",
+    },
+
+    warboundAutoDeposit = {
+        movedToStockist = "Warbound gear deposit has moved to Warband Stockist. Your settings were carried over; find them on the Warbound tab in Warband Stockist's settings.",
+        whitelistTitle  = "Whitelist",
+        whitelistHint   = "Add item links or IDs to always auto-deposit them, or drag an item here from your bags. Right-click to remove.",
+        addLabel        = "Add:",
+        addButton       = "Add",
+        listHeader      = "WHITELISTED ITEMS (right-click to remove)",
     },
 
     reagentMains = {
@@ -503,4 +512,4 @@ LuckyGrabbag.Strings = {
             desc  = "Show the Bonus Roll popup after completing hunts.",
         },
     },
-}
+})

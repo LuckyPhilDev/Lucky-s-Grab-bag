@@ -178,6 +178,7 @@ print = function(msg) lastPrinted = msg end ---@diagnostic disable-line: lowerca
 
 -- ─── Addon under test ────────────────────────────────────────────────────────
 
+LuckyStrings = { New = function(_, tbl) return tbl end }
 dofile("src/Strings.lua")
 LuckyGrabbag.PREFIX = LuckyGrabbag.Strings.addon.prefix
 LuckyGrabbag.DevLog = function() end
