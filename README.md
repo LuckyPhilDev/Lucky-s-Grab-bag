@@ -269,6 +269,16 @@ Adds a button next to the Auction House window that steps through Auctionator's 
 - Enabled by default if TestFlight is installed; disabled by default if it isn't.
 - Can be toggled on or off in the addon settings.
 
+### Profession Quest Items
+Professions hand out quests that ask for a quantity of a crafted reagent, often at a specific quality. This button takes the item straight from your quest log to the Auction House search.
+
+- Appears next to the Auction House window whenever a profession quest still needs an item.
+- With Auctionator installed, one click builds a shopping list of every outstanding item, matched on exact name, the quality the quest asks for, and how many you still owe.
+- Without it, each click searches the next item by name, wrapping back to the first. Blizzard's own search cannot filter on crafting quality, so the results carry every quality and you pick the right one.
+- Hover the button to see every item still owed, with the quality each quest asks for.
+- Stacks below the CraftSim Quickbuy and TestFlight buttons when those are visible.
+- Can be toggled on or off in the addon settings.
+
 ### Kick Macro Generator
 Creates a class-appropriate interrupt macro in one of your character macro slots.
 

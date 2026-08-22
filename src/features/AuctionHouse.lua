@@ -102,6 +102,7 @@ function LuckyGrabbag.TestflightBuy:ApplySetting()
     elseif testflightButton then
         testflightButton:Hide()
     end
+    LuckyGrabbag.QuestShopping:ApplySetting()
 end
 
 function LuckyGrabbag.Quickbuy:ApplySetting()
@@ -122,6 +123,13 @@ end
 
 function LuckyGrabbag.Quickbuy:GetButton()
     return quickbuyButton
+end
+
+-- The bottom-most visible button in the stack, so a later feature can anchor
+-- itself underneath whichever ones are switched on.
+function LuckyGrabbag.Quickbuy:GetLowestButton()
+    if testflightButton and testflightButton:IsShown() then return testflightButton end
+    if quickbuyButton and quickbuyButton:IsShown() then return quickbuyButton end
 end
 
 function LuckyGrabbag.Quickbuy:GetContainer()

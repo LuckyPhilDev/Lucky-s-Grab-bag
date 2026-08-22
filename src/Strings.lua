@@ -54,6 +54,12 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         testflightNotLoaded  = "TestFlight is not loaded.",
     },
 
+    questShopping = {
+        tooltip            = "Profession Quest Items",
+        tooltipCycle       = "Click again for the next item",
+        tooltipAuctionator = "Click to send every item to Auctionator",
+    },
+
     confirmPurchase = {
         tooltip = "Confirm Purchase",
     },
@@ -276,6 +282,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         quickbuy = {
             label = "CraftSim Quickbuy",
             desc  = "Adds a button next to the Auction House. Each click buys one row from your CraftSim shopping list.",
+        },
+        questShopping = {
+            label = "Profession Quest Items",
+            desc  = "Adds a button next to the Auction House that searches for the items your profession quests still need. With Auctionator installed it sends the whole list at once, filtered to the quality each quest asks for.",
         },
         testflightBuy = {
             label = "TestFlight Buy Next",

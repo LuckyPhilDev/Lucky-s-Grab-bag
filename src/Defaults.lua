@@ -65,6 +65,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     decorList                = {},
     mailSendAll              = true,
     massDelete               = true,
+    questShopping            = true,
 }
 
 LuckyGrabbag.CHAR_DB_DEFAULTS = {
