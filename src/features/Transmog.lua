@@ -8,7 +8,7 @@
 -- TabHeaders.selectedTabID between frames to remember the user's last tab, then
 -- restore it only on forceRefresh.
 --
--- Retired: Better Wardrobe and Transmog now does this itself, so nothing below
+-- Retired: Lucky's Wardrobe now does this itself, so nothing below
 -- is installed. The hooks are kept intact in case that ever changes; flip the
 -- flag and re-enable the setting in Settings.lua to bring the feature back.
 LuckyGrabbag = LuckyGrabbag or {}

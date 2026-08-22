@@ -8,7 +8,7 @@
 -- BW_TransmogSetModelMixin), and the individual item models in the set
 -- details pane (WardrobeSetsDetailsItemMixin).
 --
--- Retired: Better Wardrobe and Transmog now does this itself, so nothing below
+-- Retired: Lucky's Wardrobe now does this itself, so nothing below
 -- is installed. The hooks are kept intact in case that ever changes; flip the
 -- flag and re-enable the setting in Settings.lua to bring the feature back.
 LuckyGrabbag = LuckyGrabbag or {}
