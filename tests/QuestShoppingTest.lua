@@ -360,6 +360,39 @@ Click()
 assert(ah.confirmed == nil, "a stale quote must not survive a change in what is owed")
 assert(sent.terms[1].quantity == 1, "the new search should ask for the one still owed")
 
+-- ─── Buying without the confirming click ─────────────────────────────────────
+
+db.questShoppingAutoBuy = true
+-- A different shortfall, so the button starts from a clean search state.
+quests[1].objectives[1] = { "0/3 Dawn Crystal " .. ATLAS_QUEST, "item", false, 0, 3 }
+QS:ApplySetting()
+assert(Hint() == S.tooltipAuctionator, "a fresh list should still offer the search first")
+
+ah.started, ah.confirmed = nil, nil
+Click()
+assert(ah.started == nil and ah.confirmed == nil, "the first click must still only search")
+assert(Hint() == S.tooltipPriceAuto, "the hint should warn that the next click buys outright")
+
+Click()
+assert(ah.started ~= nil, "the second click should still ask for a price")
+assert(ah.confirmed == nil, "nothing is bought until the price comes back")
+
+Fire("COMMODITY_PRICE_UPDATED", 500, 500)
+assert(ah.confirmed ~= nil, "the price arriving should buy without another click")
+assert(ah.confirmed[1] == 1001, "it should still buy the quality the quest asked for")
+
+-- The gold check survives the skipped confirmation.
+QS:ApplySetting()
+Click()
+ah.confirmed = nil
+money = 10
+Fire("COMMODITY_PRICE_UPDATED", 500, 500)
+assert(ah.confirmed == nil, "auto buying must still stop at a total the player cannot afford")
+money = 1000000
+
+db.questShoppingAutoBuy = false
+Fire("COMMODITY_PURCHASE_FAILED")
+
 -- An idle quest log tick must not throw away a live quote.
 QS:ApplySetting()
 Click()

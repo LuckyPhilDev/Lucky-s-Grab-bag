@@ -278,6 +278,7 @@ Professions hand out quests that ask for a quantity of a crafted reagent, often 
 - Clicking again asks the Auction House to price the first item, and the click after that buys it. The total is printed and put on the button first, so nothing is spent before you have seen what it costs.
 - It only ever prices the item it searched for, matched on both name and quality, so a slow search cannot put the wrong thing in front of you.
 - The first click always searches and never buys, a price you cannot afford is dropped rather than confirmed, and any change to what the quest owes throws away a price it was holding.
+- **Buy without confirming** in the settings drops the price check, so the item is bought the moment the Auction House prices it. Off by default, and the gold check still applies.
 - Hover the button to see every item still owed, with the quality each quest asks for. The hint at the bottom says what the next click will do.
 - Stacks below the CraftSim Quickbuy and TestFlight buttons when those are visible.
 - Can be toggled on or off in the addon settings.

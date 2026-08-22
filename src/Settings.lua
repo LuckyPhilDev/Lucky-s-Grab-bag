@@ -157,6 +157,15 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label    = SS.questShoppingAutoBuy.label,
+            desc     = SS.questShoppingAutoBuy.desc,
+            checked  = db.questShoppingAutoBuy,
+            parent   = SS.questShopping.label,
+            since    = "1.24.0",
+            onToggle = function(checked) db.questShoppingAutoBuy = checked end,
+        })
+
+        g:Toggle({
             label    = SS.testflightBuy.label,
             desc     = SS.testflightBuy.desc,
             checked  = db.showTestflightBuy,

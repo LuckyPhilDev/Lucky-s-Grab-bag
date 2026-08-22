@@ -157,32 +157,6 @@ local function CancelQuote()
     awaiting, quote = nil, nil
 end
 
--- COMMODITY_PRICE_UPDATED carries the unit and total price, not the item, so the
--- pending request is what says which item was priced.
-local function OnCommodityEvent(event, unitPrice, totalPrice)
-    local S = LuckyGrabbag.Strings.questShopping
-
-    if event == "COMMODITY_PRICE_UPDATED" then
-        if not awaiting then return end
-        quote = {
-            itemID     = awaiting.itemID,
-            quantity   = awaiting.quantity,
-            name       = awaiting.name,
-            totalPrice = totalPrice or (unitPrice or 0) * awaiting.quantity,
-        }
-        awaiting = nil
-        Say(S.priced:format(Describe(quote.quantity, quote.name),
-            GetMoneyString(quote.totalPrice, true)))
-
-    elseif event == "COMMODITY_PRICE_UNAVAILABLE" then
-        Say(S.priceUnavailable:format(awaiting and awaiting.name or ""))
-        CancelQuote()
-
-    elseif event == "COMMODITY_PURCHASE_SUCCEEDED" or event == "COMMODITY_PURCHASE_FAILED" then
-        awaiting, quote = nil, nil
-    end
-end
-
 local function RequestQuote()
     local item = wanted[1]
     local itemID, offered = ListedItemID(item)
@@ -211,6 +185,41 @@ local function ConfirmQuote()
     DevLog("Confirming " .. description)
     C_AuctionHouse.ConfirmCommoditiesPurchase(quote.itemID, quote.quantity)
     awaiting, quote = nil, nil
+end
+
+-- COMMODITY_PRICE_UPDATED carries the unit and total price, not the item, so the
+-- pending request is what says which item was priced.
+local function OnCommodityEvent(event, unitPrice, totalPrice)
+    local S = LuckyGrabbag.Strings.questShopping
+
+    if event == "COMMODITY_PRICE_UPDATED" then
+        if not awaiting then return end
+        quote = {
+            itemID     = awaiting.itemID,
+            quantity   = awaiting.quantity,
+            name       = awaiting.name,
+            totalPrice = totalPrice or (unitPrice or 0) * awaiting.quantity,
+        }
+        awaiting = nil
+
+        local description = Describe(quote.quantity, quote.name)
+        local price = GetMoneyString(quote.totalPrice, true)
+
+        if db.questShoppingAutoBuy then
+            Say(S.buying:format(description, price))
+            ConfirmQuote()
+            return
+        end
+
+        Say(S.priced:format(description, price))
+
+    elseif event == "COMMODITY_PRICE_UNAVAILABLE" then
+        Say(S.priceUnavailable:format(awaiting and awaiting.name or ""))
+        CancelQuote()
+
+    elseif event == "COMMODITY_PURCHASE_SUCCEEDED" or event == "COMMODITY_PURCHASE_FAILED" then
+        awaiting, quote = nil, nil
+    end
 end
 
 -- ponytail: without Auctionator it is one item per click, cycling. A dropdown is
@@ -259,7 +268,7 @@ local function BuildTooltip()
             hint = S.tooltipConfirm:format(Describe(quote.quantity, quote.name),
                 GetMoneyString(quote.totalPrice, true))
         elseif searched then
-            hint = S.tooltipPrice
+            hint = db.questShoppingAutoBuy and S.tooltipPriceAuto or S.tooltipPrice
         else
             hint = S.tooltipAuctionator
         end

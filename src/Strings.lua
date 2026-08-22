@@ -61,6 +61,8 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         tooltipPrice       = "Click again to price up the first item",
         tooltipConfirm     = "Click again to buy %s for %s",
         priced             = "%s will cost %s. Click the button again to buy.",
+        buying             = "Buying %s for %s.",
+        tooltipPriceAuto   = "Click again to buy the first item outright",
         priceUnavailable   = "The Auction House would not price %s. Search again.",
         noListing          = "No listing found for %s. Search again.",
         notEnoughGold      = "Not enough gold to buy %s.",
@@ -292,6 +294,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         questShopping = {
             label = "Profession Quest Items",
             desc  = "Adds a button next to the Auction House that searches for the items your profession quests still need. With Auctionator installed it sends the whole list at once, filtered to the quality each quest asks for. Clicking again prices the first item, and once more buys it.",
+        },
+        questShoppingAutoBuy = {
+            label = "Buy without confirming",
+            desc  = "Skips the price check. The first item is bought the moment the Auction House prices it, with no second click and no chance to look at the total first.",
         },
         testflightBuy = {
             label = "TestFlight Buy Next",
