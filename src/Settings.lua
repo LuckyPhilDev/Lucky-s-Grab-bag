@@ -184,6 +184,8 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     do
         local g = panel:Group(SS.groups.crafting)
 
+        g:Section(SS.sections.quests)
+
         g:Toggle({
             label    = SS.professionQuestAutoAccept.label,
             desc     = SS.professionQuestAutoAccept.desc,
@@ -202,13 +204,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked) db.professionQuestAutoTurnIn = checked end,
         })
 
-        g:Toggle({
-            label    = SS.treatise.label,
-            desc     = SS.treatise.desc,
-            checked  = db.showTreatise,
-            image    = "crafting/treatise",
-            onToggle = function(checked) db.showTreatise = checked end,
-        })
+        g:Section(SS.sections.craftingWindow)
 
         g:Toggle({
             label     = SS.cookingButtons.label,
@@ -217,22 +213,6 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             image     = "crafting/cooking-buttons",
             imageSize = { 307, 159 },
             onToggle  = function(checked) db.showCookingButtons = checked end,
-        })
-
-        g:Toggle({
-            label    = SS.autoTipAlt.label,
-            desc     = SS.autoTipAlt.desc,
-            checked  = db.autoTipAlt,
-            since    = "1.10.0",
-            onToggle = function(checked) db.autoTipAlt = checked end,
-        })
-
-        g:Toggle({
-            label    = SS.spendToNextPerk.label,
-            desc     = SS.spendToNextPerk.desc,
-            checked  = db.spendToNextPerk,
-            since    = "1.10.0",
-            onToggle = function(checked) db.spendToNextPerk = checked end,
         })
 
         g:Toggle({
@@ -254,6 +234,32 @@ function LuckyGrabbag.Settings:Init(db, charDB)
                 db.showConcentration = checked
                 LuckyGrabbag.ConcentrationView:ApplySetting()
             end,
+        })
+
+        g:Toggle({
+            label    = SS.spendToNextPerk.label,
+            desc     = SS.spendToNextPerk.desc,
+            checked  = db.spendToNextPerk,
+            since    = "1.10.0",
+            onToggle = function(checked) db.spendToNextPerk = checked end,
+        })
+
+        g:Section(SS.sections.altsWarband)
+
+        g:Toggle({
+            label    = SS.treatise.label,
+            desc     = SS.treatise.desc,
+            checked  = db.showTreatise,
+            image    = "crafting/treatise",
+            onToggle = function(checked) db.showTreatise = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.autoTipAlt.label,
+            desc     = SS.autoTipAlt.desc,
+            checked  = db.autoTipAlt,
+            since    = "1.10.0",
+            onToggle = function(checked) db.autoTipAlt = checked end,
         })
     end
 

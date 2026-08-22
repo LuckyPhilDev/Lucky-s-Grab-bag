@@ -288,8 +288,8 @@ Professions hand out quests that ask for a quantity of a crafted reagent, often 
 ### Profession Quest Automation
 Profession quests arrive on a weekly cycle and the dialog is the same every time. Two settings take it off your hands.
 
-- **Accept profession quests** takes the quest as soon as its giver offers it.
-- **Hand in profession quests** hands one back the moment you have what it asked for.
+- **Auto Accept profession quests** takes the quest as soon as its giver offers it.
+- **Auto Hand in profession quests** hands one back the moment you have what it asked for.
 - Both are off by default, and both go strictly by the quest's own Professions tag, so nothing else on the same NPC is touched.
 - Works at an NPC who opens a shop or a trainer window first, picking the quest out of that list rather than waiting for you to find it.
 - A quest that offers a choice of rewards, or that wants gold, is always left for you.

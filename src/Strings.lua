@@ -257,10 +257,13 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             interface    = "Interface",
         },
         sections = {
-            automation  = "Automation",
-            purchasing  = "Purchasing",
-            tooltips    = "Tooltips",
-            wardrobe    = "Wardrobe",
+            automation     = "Automation",
+            purchasing     = "Purchasing",
+            tooltips       = "Tooltips",
+            wardrobe       = "Wardrobe",
+            quests         = "Quests",
+            craftingWindow = "Crafting Window",
+            altsWarband    = "Alts & Warband",
         },
         devMode = {
             label = "Dev Mode",
@@ -307,12 +310,12 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             desc  = "Adds a button next to the Auction House that steps through Auctionator's purchase workflow — selecting, buying, and confirming each item in turn.",
         },
         professionQuestAutoAccept = {
-            label = "Accept profession quests",
+            label = "Auto Accept profession quests",
             desc  = "Accepts a profession quest the moment its giver offers it. Every other quest is left alone.",
             note  = "Hold Shift as you talk to an NPC and both of these stand down for that visit, leaving the quest to you.",
         },
         professionQuestAutoTurnIn = {
-            label = "Hand in profession quests",
+            label = "Auto Hand in profession quests",
             desc  = "Hands a profession quest back as soon as you have what it asked for. One that offers a choice of rewards, or wants gold, is left for you.",
             note  = "Hold Shift as you talk to an NPC and both of these stand down for that visit, leaving the quest to you.",
         },
