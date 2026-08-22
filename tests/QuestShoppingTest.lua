@@ -1,12 +1,13 @@
 -- luacheck: globals CreateFrame GameTooltip C_QuestLog GetQuestObjectiveInfo
 -- luacheck: globals AuctionHouseFrame C_AuctionHouse Enum LuckyStrings LuckyGrabbag print
--- luacheck: globals Auctionator
+-- luacheck: globals Auctionator AuctionatorShoppingFrame C_Item C_TradeSkillUI
+-- luacheck: globals GetMoney GetMoneyString
 
 -- Covers features/QuestShopping.lua: which quests count as shopping-worthy, the
--- search term recovered from an objective line, and the crafting quality read off
--- the icon at the end of it. Blizzard draws that icon from an atlas whose name it
--- spells several ways in several cases, and the quest log's own spelling is the
--- lowercase one, so every spelling is pinned here.
+-- search term and crafting quality recovered from an objective line, and the
+-- two-stage commodity purchase. Blizzard prices a commodity before it sells it,
+-- so the buy path has to ask, wait, and only then confirm, and must never confirm
+-- a quote it did not ask for.
 --
 -- Run from the addon root: lua tests/QuestShoppingTest.lua
 
@@ -48,16 +49,53 @@ AuctionHouseFrame = {
     SearchBar = { StartSearch = function() end },
 }
 
-C_AuctionHouse = { SendBrowseQuery = function() error("should have used the search box") end }
 Enum = { AuctionHouseSortOrder = { Price = 0 } }
 
+-- Two qualities of one reagent, so a tier mismatch has something to be wrong about.
+local items = {
+    [1001] = { name = "Dawn Crystal", tier = 1 },
+    [1002] = { name = "Dawn Crystal", tier = 2 },
+    [1003] = { name = "Weavercloth" },
+}
+
+C_Item = { GetItemNameByID = function(itemID) return items[itemID] and items[itemID].name end }
+C_TradeSkillUI = {
+    GetItemReagentQualityByItemInfo = function(itemID) return items[itemID] and items[itemID].tier end,
+}
+
+local money = 1000000
+function GetMoney() return money end
+function GetMoneyString(amount) return amount .. "c" end
+
+local ah = { started = nil, confirmed = nil, cancelled = 0 }
+C_AuctionHouse = {
+    SendBrowseQuery = function() error("should have used the search box") end,
+    StartCommoditiesPurchase = function(itemID, quantity) ah.started = { itemID, quantity } end,
+    ConfirmCommoditiesPurchase = function(itemID, quantity) ah.confirmed = { itemID, quantity } end,
+    CancelCommoditiesPurchase = function() ah.cancelled = ah.cancelled + 1 end,
+}
+
+local rows = {}
+AuctionatorShoppingFrame = {
+    ResultsListing = {
+        dataProvider = {
+            GetCount = function() return #rows end,
+            GetEntryAt = function(_, index) return rows[index] end,
+        },
+    },
+}
+
+local function Row(itemID, purchaseQuantity)
+    return { itemKey = { itemID = itemID }, purchaseQuantity = purchaseQuantity }
+end
+
 local function Widget()
-    local w = { shown = false, points = {} }
+    local w = { shown = false, points = {}, scripts = {} }
     function w:Show() self.shown = true end
     function w:Hide() self.shown = false end
     function w:IsShown() return self.shown end
     function w:SetSize() end
-    function w:SetScript(_, fn) self.onClick = fn end
+    function w:SetScript(name, fn) self.scripts[name] = fn end
     function w:ClearAllPoints() self.points = {} end
     function w:SetPoint(...) self.points = { ... } end
     function w:SetNormalTexture() end
@@ -68,13 +106,26 @@ local function Widget()
     return w
 end
 
-function CreateFrame() return Widget() end
+-- Only Init calls CreateFrame, so the last one made is the event frame.
+local eventFrame
+function CreateFrame()
+    eventFrame = Widget()
+    return eventFrame
+end
+
+local function Fire(event, ...)
+    eventFrame.scripts.OnEvent(eventFrame, event, ...)
+end
 
 GameTooltip = {
     lines = {},
     SetText = function(self, text) self.lines = { text } end,
     AddLine = function(self, text) table.insert(self.lines, text) end,
 }
+
+local realPrint = print
+local printed = {}
+function print(message) table.insert(printed, message) end
 
 -- ─── Load ────────────────────────────────────────────────────────────────────
 
@@ -98,6 +149,7 @@ LuckyGrabbag.Quickbuy = {
 
 dofile("src/features/QuestShopping.lua")
 
+local S = LuckyGrabbag.Strings.questShopping
 local QS = LuckyGrabbag.QuestShopping
 local db = { questShopping = true }
 QS:Init(db)
@@ -106,6 +158,14 @@ local function Names()
     local names = {}
     for _, item in ipairs(QS:GetWanted()) do table.insert(names, item.name) end
     return names
+end
+
+local function Click() QS:GetButton().scripts.OnClick() end
+
+local function Hint()
+    GameTooltip.lines = {}
+    QS:GetButton().tooltip()
+    return GameTooltip.lines[#GameTooltip.lines]
 end
 
 -- ─── Which quests count ──────────────────────────────────────────────────────
@@ -169,15 +229,15 @@ quests = {
 QS:ApplySetting()
 
 searches = {}
-local button = QS:GetButton()
-button.onClick()
-button.onClick()
-button.onClick()
+Click()
+Click()
+Click()
 assert(table.concat(searches, "|") == "Dawn Crystal|Weavercloth|Dawn Crystal",
     "clicks should walk the list and wrap, got " .. table.concat(searches, "|"))
 
 -- The tooltip shows the raw objective text, so the quality icon renders in game.
-button.tooltip()
+GameTooltip.lines = {}
+QS:GetButton().tooltip()
 assert(GameTooltip.lines[2] == "0/1 Dawn Crystal " .. ATLAS_QUEST,
     "the tooltip should carry the unstripped line, got " .. tostring(GameTooltip.lines[2]))
 
@@ -203,7 +263,7 @@ Auctionator = { API = { v1 = {
 QS:ApplySetting()
 
 searches = {}
-QS:GetButton().onClick()
+Click()
 assert(#searches == 0, "with Auctionator present the search box should be left alone")
 assert(sent and #sent.terms == 2,
     "one click should send every outstanding item, got " .. tostring(sent and #sent.terms))
@@ -213,10 +273,101 @@ assert(sent.terms[1].isExact and sent.terms[1].tier == 1 and sent.terms[1].quant
 assert(sent.terms[2].tier == nil and sent.terms[2].quantity == 5,
     "a line with no quality should carry no tier filter and still know the shortfall")
 
-GameTooltip.lines = {}
-QS:GetButton().tooltip()
-assert(GameTooltip.lines[#GameTooltip.lines] == LuckyGrabbag.Strings.questShopping.tooltipAuctionator,
-    "the tooltip should swap the cycling hint for the Auctionator one")
+-- ─── Asking for a price, then confirming it ──────────────────────────────────
+
+quests = {
+    { title = "A Ray of Sunlight", tagID = PROFESSION,
+      objectives = { { "0/2 Dawn Crystal " .. ATLAS_QUEST, "item", false, 0, 2 } } },
+}
+-- The wrong quality sits above the right one, so taking the top row would be wrong.
+rows = { Row(1002, 2), Row(1001, 2) }
+QS:ApplySetting()
+
+ah.started, ah.confirmed, sent = nil, nil, nil
+assert(Hint() == S.tooltipAuctionator, "a fresh list should offer the search")
+
+Click()
+assert(ah.started == nil, "the first click must search, never start a purchase")
+assert(sent ~= nil, "the first click should send the list")
+assert(Hint() == S.tooltipPrice, "after searching the next click should price up")
+
+Click()
+assert(ah.started ~= nil, "the second click should ask the Auction House for a price")
+assert(ah.started[1] == 1001, "it should price the tier the quest asked for, got " .. tostring(ah.started[1]))
+assert(ah.started[2] == 2, "it should price both that are owed, got " .. tostring(ah.started[2]))
+assert(ah.confirmed == nil, "asking a price must not buy anything")
+
+-- A click while the server has not answered yet must not buy either.
+Click()
+assert(ah.confirmed == nil, "a click while waiting on the price must not buy")
+
+Fire("COMMODITY_PRICE_UPDATED", 500, 1000)
+assert(Hint() == S.tooltipConfirm:format("2x Dawn Crystal", "1000c"),
+    "once priced the tooltip should name the item and the total, got " .. tostring(Hint()))
+
+Click()
+assert(ah.confirmed ~= nil, "the click after the price should buy")
+assert(ah.confirmed[1] == 1001 and ah.confirmed[2] == 2,
+    "it should buy exactly what was priced")
+
+-- ─── When it must not buy ────────────────────────────────────────────────────
+
+-- A price the player cannot afford is dropped, not confirmed.
+QS:ApplySetting()
+Click()
+Click()
+ah.confirmed = nil
+money = 10
+Fire("COMMODITY_PRICE_UPDATED", 500, 1000)
+Click()
+assert(ah.confirmed == nil, "a total beyond the player's gold must not be confirmed")
+money = 1000000
+
+-- A quote the Auction House withdraws is cancelled, and a later click starts over.
+QS:ApplySetting()
+Click()
+Click()
+local cancelledBefore = ah.cancelled
+Fire("COMMODITY_PRICE_UNAVAILABLE")
+assert(ah.cancelled > cancelledBefore, "an unavailable price should be cancelled")
+ah.confirmed = nil
+Click()
+assert(ah.confirmed == nil, "with no live quote a click must not buy")
+
+-- A request left in flight blocks further clicks until the server answers, so
+-- clear it before the next case rather than letting it swallow them.
+Fire("COMMODITY_PURCHASE_FAILED")
+
+-- Nothing listed at the quality the quest wants: search again rather than buy.
+rows = { Row(1002, 2) }
+QS:ApplySetting()
+ah.started, sent = nil, nil
+Click()
+Click()
+assert(ah.started == nil, "with no matching listing nothing should be priced")
+assert(sent ~= nil, "it should fall back to searching again")
+rows = { Row(1002, 2), Row(1001, 2) }
+
+-- A changed shortfall drops any live quote, so the next click re-searches.
+QS:ApplySetting()
+Click()
+Click()
+Fire("COMMODITY_PRICE_UPDATED", 500, 1000)
+quests[1].objectives[1] = { "1/2 Dawn Crystal " .. ATLAS_QUEST, "item", false, 1, 2 }
+QS:ApplySetting()
+ah.confirmed, sent = nil, nil
+Click()
+assert(ah.confirmed == nil, "a stale quote must not survive a change in what is owed")
+assert(sent.terms[1].quantity == 1, "the new search should ask for the one still owed")
+
+-- An idle quest log tick must not throw away a live quote.
+QS:ApplySetting()
+Click()
+Fire("COMMODITY_PRICE_UPDATED", 500, 500)
+QS:ApplySetting()
+ah.confirmed = nil
+Click()
+assert(ah.confirmed ~= nil, "an unchanged list should keep the quote alive")
 
 Auctionator = nil
 
@@ -234,4 +385,4 @@ db.questShopping = false
 QS:ApplySetting()
 assert(not QS:GetButton().shown, "disabled, the button should stay hidden")
 
-print("QuestShopping: all checks passed")
+realPrint("QuestShopping: all checks passed")

@@ -275,7 +275,10 @@ Professions hand out quests that ask for a quantity of a crafted reagent, often 
 - Appears next to the Auction House window whenever a profession quest still needs an item.
 - With Auctionator installed, one click builds a shopping list of every outstanding item, matched on exact name, the quality the quest asks for, and how many you still owe.
 - Without it, each click searches the next item by name, wrapping back to the first. Blizzard's own search cannot filter on crafting quality, so the results carry every quality and you pick the right one.
-- Hover the button to see every item still owed, with the quality each quest asks for.
+- Clicking again asks the Auction House to price the first item, and the click after that buys it. The total is printed and put on the button first, so nothing is spent before you have seen what it costs.
+- It only ever prices the item it searched for, matched on both name and quality, so a slow search cannot put the wrong thing in front of you.
+- The first click always searches and never buys, a price you cannot afford is dropped rather than confirmed, and any change to what the quest owes throws away a price it was holding.
+- Hover the button to see every item still owed, with the quality each quest asks for. The hint at the bottom says what the next click will do.
 - Stacks below the CraftSim Quickbuy and TestFlight buttons when those are visible.
 - Can be toggled on or off in the addon settings.
 

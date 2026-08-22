@@ -11,6 +11,10 @@ local db
 local button
 local wanted = {}
 local nextIndex = 1
+local searched = false
+local signature = ""
+local awaiting   -- a quote asked for but not yet priced
+local quote      -- the server's firm price, waiting on a click to confirm
 
 local DevLog = LuckyGrabbag.Logger("QuestShopping")
 
@@ -68,6 +72,14 @@ local function Collect()
     return found
 end
 
+local function Signature(items)
+    local parts = {}
+    for _, item in ipairs(items) do
+        table.insert(parts, item.name .. tostring(item.tier) .. item.missing)
+    end
+    return table.concat(parts, ";")
+end
+
 -- ─── Searching ───────────────────────────────────────────────────────────────
 
 -- Auctionator searches an exact name at an exact crafting quality, and takes the
@@ -105,14 +117,123 @@ local function NativeSearch(name)
     })
 end
 
+-- ─── Buying ──────────────────────────────────────────────────────────────────
+
+-- Blizzard prices a commodity purchase in two stages: ask for a quote, then
+-- confirm the exact total it answers with. One click each, so the price is always
+-- on screen before any gold moves, and a quote that goes stale is thrown away
+-- rather than confirmed blind.
+local function Say(message)
+    print(LuckyGrabbag.Strings.addon.prefix .. " " .. message)
+end
+
+local function Describe(quantity, name)
+    return quantity .. "x " .. name
+end
+
+-- Auctionator's result rows are the only place the searched item's id is on offer,
+-- which is where CraftSim reads it from too. Matching on name and quality rather
+-- than taking the top row means a slow search cannot sell us the wrong thing.
+local function ListedItemID(item)
+    local listing = AuctionatorShoppingFrame and AuctionatorShoppingFrame.ResultsListing ---@diagnostic disable-line: undefined-global
+    local provider = listing and listing.dataProvider
+    if not provider then return nil end
+
+    for index = 1, provider:GetCount() do
+        local row = provider:GetEntryAt(index)
+        local itemID = row and row.itemKey and row.itemKey.itemID
+        if itemID and C_Item.GetItemNameByID(itemID) == item.name
+            and (item.tier == nil
+                or C_TradeSkillUI.GetItemReagentQualityByItemInfo(itemID) == item.tier) then
+            return itemID, row.purchaseQuantity
+        end
+    end
+end
+
+local function CancelQuote()
+    if (awaiting or quote) and LuckyGrabbag.Quickbuy:IsAuctionHouseOpen() then
+        C_AuctionHouse.CancelCommoditiesPurchase()
+    end
+    awaiting, quote = nil, nil
+end
+
+-- COMMODITY_PRICE_UPDATED carries the unit and total price, not the item, so the
+-- pending request is what says which item was priced.
+local function OnCommodityEvent(event, unitPrice, totalPrice)
+    local S = LuckyGrabbag.Strings.questShopping
+
+    if event == "COMMODITY_PRICE_UPDATED" then
+        if not awaiting then return end
+        quote = {
+            itemID     = awaiting.itemID,
+            quantity   = awaiting.quantity,
+            name       = awaiting.name,
+            totalPrice = totalPrice or (unitPrice or 0) * awaiting.quantity,
+        }
+        awaiting = nil
+        Say(S.priced:format(Describe(quote.quantity, quote.name),
+            GetMoneyString(quote.totalPrice, true)))
+
+    elseif event == "COMMODITY_PRICE_UNAVAILABLE" then
+        Say(S.priceUnavailable:format(awaiting and awaiting.name or ""))
+        CancelQuote()
+
+    elseif event == "COMMODITY_PURCHASE_SUCCEEDED" or event == "COMMODITY_PURCHASE_FAILED" then
+        awaiting, quote = nil, nil
+    end
+end
+
+local function RequestQuote()
+    local item = wanted[1]
+    local itemID, offered = ListedItemID(item)
+    if not itemID then
+        Say(LuckyGrabbag.Strings.questShopping.noListing:format(item.name))
+        return false
+    end
+
+    local quantity = math.min(item.missing, offered or item.missing)
+    awaiting = { itemID = itemID, quantity = quantity, name = item.name }
+    DevLog("Asking for a price on " .. Describe(quantity, item.name))
+    C_AuctionHouse.StartCommoditiesPurchase(itemID, quantity)
+    return true
+end
+
+local function ConfirmQuote()
+    local S = LuckyGrabbag.Strings.questShopping
+    local description = Describe(quote.quantity, quote.name)
+
+    if quote.totalPrice > GetMoney() then
+        Say(S.notEnoughGold:format(description))
+        CancelQuote()
+        return
+    end
+
+    DevLog("Confirming " .. description)
+    C_AuctionHouse.ConfirmCommoditiesPurchase(quote.itemID, quote.quantity)
+    awaiting, quote = nil, nil
+end
+
 -- ponytail: without Auctionator it is one item per click, cycling. A dropdown is
 -- four times the code for a list that is nearly always one line long.
 local function OnClick()
     if #wanted == 0 then return end
 
     if HasAuctionator() then
-        DevLog("Sending " .. #wanted .. " item(s) to Auctionator")
-        AuctionatorSearch()
+        if quote then
+            ConfirmQuote()
+        elseif awaiting then
+            DevLog("Still waiting on a price")
+        elseif searched then
+            -- Pricing only ever follows a search this button ran, so a stray click
+            -- at a freshly opened Auction House cannot start a purchase.
+            if not RequestQuote() then
+                AuctionatorSearch()
+            end
+        else
+            DevLog("Sending " .. #wanted .. " item(s) to Auctionator")
+            AuctionatorSearch()
+            searched = true
+        end
         return
     end
 
@@ -132,8 +253,19 @@ local function BuildTooltip()
         -- The raw objective text is used verbatim so the quality icon renders.
         GameTooltip:AddLine(item.text, 0.91, 0.86, 0.78)
     end
-    local hint = HasAuctionator() and S.tooltipAuctionator
-        or #wanted > 1 and S.tooltipCycle
+    local hint
+    if HasAuctionator() then
+        if quote then
+            hint = S.tooltipConfirm:format(Describe(quote.quantity, quote.name),
+                GetMoneyString(quote.totalPrice, true))
+        elseif searched then
+            hint = S.tooltipPrice
+        else
+            hint = S.tooltipAuctionator
+        end
+    elseif #wanted > 1 then
+        hint = S.tooltipCycle
+    end
     if hint then
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine(hint, 0.54, 0.49, 0.42)
@@ -170,7 +302,17 @@ function LuckyGrabbag.QuestShopping:ApplySetting()
 
     local active = db.questShopping and LuckyGrabbag.Quickbuy:IsAuctionHouseOpen()
     wanted = active and Collect() or {}
-    nextIndex = 1
+
+    -- The quest log ticks over constantly, so only a real change in what is owed
+    -- rewinds the cycle or drops back out of buying. Buying one of a stack does
+    -- change it, which is what puts the smaller shortfall into the next search.
+    local current = Signature(wanted)
+    if current ~= signature then
+        signature = current
+        nextIndex = 1
+        searched = false
+        CancelQuote()
+    end
 
     if #wanted > 0 then
         CreateButton()
@@ -196,9 +338,17 @@ function LuckyGrabbag.QuestShopping:Init(database)
 
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("QUEST_LOG_UPDATE")
-    eventFrame:SetScript("OnEvent", function()
-        if LuckyGrabbag.Quickbuy:IsAuctionHouseOpen() then
-            LuckyGrabbag.QuestShopping:ApplySetting()
+    eventFrame:RegisterEvent("COMMODITY_PRICE_UPDATED")
+    eventFrame:RegisterEvent("COMMODITY_PRICE_UNAVAILABLE")
+    eventFrame:RegisterEvent("COMMODITY_PURCHASE_SUCCEEDED")
+    eventFrame:RegisterEvent("COMMODITY_PURCHASE_FAILED")
+    eventFrame:SetScript("OnEvent", function(_, event, ...)
+        if event == "QUEST_LOG_UPDATE" then
+            if LuckyGrabbag.Quickbuy:IsAuctionHouseOpen() then
+                LuckyGrabbag.QuestShopping:ApplySetting()
+            end
+        else
+            OnCommodityEvent(event, ...)
         end
     end)
 end

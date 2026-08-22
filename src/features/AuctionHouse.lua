@@ -56,10 +56,20 @@ end
 
 -- ─── TestFlight ──────────────────────────────────────────────────────────────
 
+function LuckyGrabbag.TestflightBuy:CanBuy()
+    return TestFlight ~= nil and TestFlight.GUI ~= nil and TestFlight.GUI.Auctionator ~= nil ---@diagnostic disable-line: undefined-global
+end
+
+-- Advances Auctionator's purchase by one step: pick the row, buy it, confirm the
+-- dialog. One step per click is Blizzard's rule, not TestFlight's choice.
+function LuckyGrabbag.TestflightBuy:BuyNext()
+    if not self:CanBuy() then return false end
+    TestFlight.GUI.Auctionator:BuyButtonOnClick() ---@diagnostic disable-line: undefined-global
+    return true
+end
+
 local function OnTestflightClick()
-    if TestFlight and TestFlight.GUI and TestFlight.GUI.Auctionator then ---@diagnostic disable-line: undefined-global
-        TestFlight.GUI.Auctionator:BuyButtonOnClick() ---@diagnostic disable-line: undefined-global
-    else
+    if not LuckyGrabbag.TestflightBuy:BuyNext() then
         local S = LuckyGrabbag.Strings
         print(S.addon.errorPrefix .. " " .. S.auctionHouse.testflightNotLoaded)
     end
