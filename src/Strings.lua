@@ -67,6 +67,8 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         noListing          = "No listing found for %s. Search again.",
         notEnoughGold      = "Not enough gold to buy %s.",
         allBought          = "Bought everything on the list. Reopen the Auction House to shop again.",
+        questCostsGold     = "That profession quest asks for gold, so it is left for you to finish.",
+        questRewardChoice  = "That profession quest offers a choice of rewards, so it is left for you to finish.",
     },
 
     confirmPurchase = {
@@ -303,6 +305,14 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         testflightBuy = {
             label = "TestFlight Buy Next",
             desc  = "Adds a button next to the Auction House that steps through Auctionator's purchase workflow — selecting, buying, and confirming each item in turn.",
+        },
+        professionQuestAutoAccept = {
+            label = "Accept profession quests",
+            desc  = "Accepts a profession quest the moment its giver offers it. Every other quest is left alone.",
+        },
+        professionQuestAutoTurnIn = {
+            label = "Hand in profession quests",
+            desc  = "Hands a profession quest back as soon as you have what it asked for. One that offers a choice of rewards, or wants gold, is left for you.",
         },
         treatise = {
             label = "Withdraw Treatise from Warbank",

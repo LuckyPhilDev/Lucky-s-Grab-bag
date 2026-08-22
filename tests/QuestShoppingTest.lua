@@ -1,7 +1,9 @@
 -- luacheck: globals CreateFrame GameTooltip C_QuestLog GetQuestObjectiveInfo
 -- luacheck: globals AuctionHouseFrame C_AuctionHouse Enum LuckyStrings LuckyGrabbag print
 -- luacheck: globals Auctionator AuctionatorShoppingFrame C_Item C_TradeSkillUI
--- luacheck: globals GetMoney GetMoneyString
+-- luacheck: globals GetMoney GetMoneyString GetQuestID IsQuestCompletable
+-- luacheck: globals GetNumQuestChoices GetQuestMoneyToGet AcceptQuest CompleteQuest
+-- luacheck: globals GetQuestReward C_GossipInfo
 
 -- Covers features/QuestShopping.lua: which quests count as shopping-worthy, the
 -- search term and crafting quality recovered from an objective line, and the
@@ -126,6 +128,27 @@ GameTooltip = {
 local realPrint = print
 local printed = {}
 function print(message) table.insert(printed, message) end
+
+-- The quest giver's dialog, as the accept and hand-in path sees it.
+local dialog = { questID = 0, completable = true, choices = 0, moneyToGet = 0,
+                 accepted = 0, completed = 0, rewarded = nil }
+
+function GetQuestID() return dialog.questID end
+function IsQuestCompletable() return dialog.completable end
+function GetNumQuestChoices() return dialog.choices end
+function GetQuestMoneyToGet() return dialog.moneyToGet end
+function AcceptQuest() dialog.accepted = dialog.accepted + 1 end
+function CompleteQuest() dialog.completed = dialog.completed + 1 end
+function GetQuestReward(index) dialog.rewarded = index end
+
+-- The gossip window an NPC with a shop or a trainer tab opens instead.
+local gossip = { available = {}, active = {}, selected = {} }
+C_GossipInfo = {
+    GetAvailableQuests = function() return gossip.available end,
+    GetActiveQuests    = function() return gossip.active end,
+    SelectAvailableQuest = function(questID) table.insert(gossip.selected, "available:" .. questID) end,
+    SelectActiveQuest    = function(questID) table.insert(gossip.selected, "active:" .. questID) end,
+}
 
 -- ─── Load ────────────────────────────────────────────────────────────────────
 
@@ -490,5 +513,117 @@ quests = {
 db.questShopping = false
 QS:ApplySetting()
 assert(not QS:GetButton().shown, "disabled, the button should stay hidden")
+
+-- ─── Accepting and handing in, profession quests only ───────────────────────
+
+quests = {
+    { title = "A Ray of Sunlight", tagID = PROFESSION },
+    { title = "Lost Animals" },
+}
+db.questShopping = true
+
+local function Offer(event, questID)
+    dialog.questID = questID
+    Fire(event)
+end
+
+-- Switched off, the dialogs are left alone.
+dialog.accepted, dialog.completed = 0, 0
+Offer("QUEST_DETAIL", 1)
+Offer("QUEST_PROGRESS", 1)
+assert(dialog.accepted == 0 and dialog.completed == 0, "off, it should touch nothing")
+
+db.professionQuestAutoAccept = true
+Offer("QUEST_DETAIL", 1)
+assert(dialog.accepted == 1, "a profession quest should be accepted")
+
+Offer("QUEST_DETAIL", 2)
+assert(dialog.accepted == 1, "an ordinary quest must be left alone")
+
+-- Accepting and handing in are separate switches.
+Offer("QUEST_PROGRESS", 1)
+assert(dialog.completed == 0, "handing in is off, so nothing should be completed")
+
+db.professionQuestAutoTurnIn = true
+Offer("QUEST_PROGRESS", 1)
+assert(dialog.completed == 1, "a profession quest should be handed in")
+
+Offer("QUEST_PROGRESS", 2)
+assert(dialog.completed == 1, "an ordinary quest must still be left alone")
+
+-- One that wants gold, or that has something to choose, stays the player's call.
+dialog.moneyToGet = 5000
+Offer("QUEST_PROGRESS", 1)
+assert(dialog.completed == 1, "a quest asking for gold must not be handed in")
+dialog.moneyToGet = 0
+
+dialog.completable = false
+Offer("QUEST_PROGRESS", 1)
+assert(dialog.completed == 1, "a quest you cannot yet complete must not be forced")
+dialog.completable = true
+
+dialog.choices = 2
+Offer("QUEST_COMPLETE", 1)
+assert(dialog.rewarded == nil, "a choice of rewards must be left to the player")
+
+dialog.choices = 1
+Offer("QUEST_COMPLETE", 1)
+assert(dialog.rewarded == 1, "a single reward should be taken at index 1")
+
+dialog.choices, dialog.rewarded = 0, nil
+Offer("QUEST_COMPLETE", 1)
+assert(dialog.rewarded == 0, "no reward to choose should take index 0")
+
+dialog.rewarded = nil
+Offer("QUEST_COMPLETE", 2)
+assert(dialog.rewarded == nil, "an ordinary quest's reward must not be taken")
+
+-- ─── Picking the quest out of a gossip window ───────────────────────────────
+
+-- quests[1] is the profession quest, quests[2] an ordinary one.
+gossip.available = { { questID = 2 }, { questID = 1 } }
+gossip.active = {}
+gossip.selected = {}
+Fire("GOSSIP_SHOW")
+assert(gossip.selected[1] == "available:1",
+    "it should pick the profession quest out of the list, got " .. tostring(gossip.selected[1]))
+assert(#gossip.selected == 1, "one selection per gossip window is enough")
+
+-- The NPC reopens gossip after a selection, so an untakeable quest must not loop.
+Fire("GOSSIP_SHOW")
+assert(#gossip.selected == 1, "a quest already tried should not be selected again")
+
+Fire("GOSSIP_CLOSED")
+Fire("GOSSIP_SHOW")
+assert(#gossip.selected == 2, "a fresh visit to the NPC should try again")
+
+-- A finished quest is handed back before a new one is taken.
+gossip.selected = {}
+gossip.active = { { questID = 1, isComplete = true } }
+Fire("GOSSIP_CLOSED")
+Fire("GOSSIP_SHOW")
+assert(gossip.selected[1] == "active:1", "a finished profession quest should go first")
+
+-- An unfinished one is left where it is.
+gossip.selected = {}
+gossip.active = { { questID = 1, isComplete = false } }
+gossip.available = {}
+Fire("GOSSIP_CLOSED")
+Fire("GOSSIP_SHOW")
+assert(#gossip.selected == 0, "a quest that is not finished should be left alone")
+
+-- Ordinary quests are never touched, whichever list they are in.
+gossip.active = { { questID = 2, isComplete = true } }
+gossip.available = { { questID = 2 } }
+Fire("GOSSIP_CLOSED")
+Fire("GOSSIP_SHOW")
+assert(#gossip.selected == 0, "an ordinary quest must be left alone in gossip too")
+
+-- Switched off, gossip is left alone entirely.
+db.professionQuestAutoAccept, db.professionQuestAutoTurnIn = false, false
+gossip.available = { { questID = 1 } }
+Fire("GOSSIP_CLOSED")
+Fire("GOSSIP_SHOW")
+assert(#gossip.selected == 0, "off, it should not touch the gossip window")
 
 realPrint("QuestShopping: all checks passed")

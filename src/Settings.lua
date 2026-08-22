@@ -185,6 +185,22 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         local g = panel:Group(SS.groups.crafting)
 
         g:Toggle({
+            label    = SS.professionQuestAutoAccept.label,
+            desc     = SS.professionQuestAutoAccept.desc,
+            checked  = db.professionQuestAutoAccept,
+            since    = "1.24.0",
+            onToggle = function(checked) db.professionQuestAutoAccept = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.professionQuestAutoTurnIn.label,
+            desc     = SS.professionQuestAutoTurnIn.desc,
+            checked  = db.professionQuestAutoTurnIn,
+            since    = "1.24.0",
+            onToggle = function(checked) db.professionQuestAutoTurnIn = checked end,
+        })
+
+        g:Toggle({
             label    = SS.treatise.label,
             desc     = SS.treatise.desc,
             checked  = db.showTreatise,

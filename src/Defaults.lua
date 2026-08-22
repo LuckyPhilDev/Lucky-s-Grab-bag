@@ -67,6 +67,8 @@ LuckyGrabbag.DB_DEFAULTS = {
     massDelete               = true,
     questShopping            = true,
     questShoppingAutoBuy     = false,
+    professionQuestAutoAccept = false,
+    professionQuestAutoTurnIn = false,
 }
 
 LuckyGrabbag.CHAR_DB_DEFAULTS = {

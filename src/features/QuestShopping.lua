@@ -308,6 +308,97 @@ local function OnClick()
     NativeSearch(item.name)
 end
 
+-- ─── Automating the quests themselves ────────────────────────────────────────
+
+-- The tag lookup works on any quest id, in the log or merely being offered, which
+-- is what keeps this to profession quests and nothing else on the same NPC.
+local function IsProfessionQuest(questID)
+    local tag = questID and questID ~= 0 and C_QuestLog.GetQuestTagInfo(questID)
+    return tag ~= nil and tag.tagID == PROFESSION_TAG_ID
+end
+
+local function OfferedQuestIsProfession()
+    return IsProfessionQuest(GetQuestID())
+end
+
+-- Quests picked out of a gossip window this visit. An NPC reopens its gossip
+-- after each selection, so without this a quest that cannot be taken, a full log
+-- being the usual reason, would be selected over and over.
+local gossipTried = {}
+
+-- An NPC with a shop or a trainer tab opens gossip rather than the quest itself,
+-- so the quest has to be picked off that list first. Selecting one raises the
+-- QUEST_DETAIL or QUEST_PROGRESS that the handler below answers.
+local function OnGossipShow()
+    local function Pick(quests, select, what)
+        for _, quest in ipairs(quests or {}) do
+            if not gossipTried[quest.questID] and IsProfessionQuest(quest.questID) then
+                gossipTried[quest.questID] = true
+                DevLog("Selecting " .. what .. " quest " .. quest.questID .. " from the gossip list")
+                select(quest.questID)
+                return true
+            end
+        end
+    end
+
+    -- Finished quests first, so a weekly can be handed back and taken again in one
+    -- visit rather than needing the window reopened.
+    if db.professionQuestAutoTurnIn then
+        local finished = {}
+        for _, quest in ipairs(C_GossipInfo.GetActiveQuests() or {}) do
+            if quest.isComplete then table.insert(finished, quest) end
+        end
+        if Pick(finished, C_GossipInfo.SelectActiveQuest, "finished") then return end
+    end
+
+    if db.professionQuestAutoAccept then
+        Pick(C_GossipInfo.GetAvailableQuests(), C_GossipInfo.SelectAvailableQuest, "offered")
+    end
+end
+
+local function OnQuestDialog(event)
+    if not (db.professionQuestAutoAccept or db.professionQuestAutoTurnIn) then return end
+
+    local questID = GetQuestID()
+    local tag = questID and questID ~= 0 and C_QuestLog.GetQuestTagInfo(questID)
+    DevLog(event .. ": questID=" .. tostring(questID) ..
+        " tagID=" .. tostring(tag and tag.tagID) ..
+        " tagName=" .. tostring(tag and tag.tagName))
+
+    if not OfferedQuestIsProfession() then return end
+    local S = LuckyGrabbag.Strings.questShopping
+
+    if event == "QUEST_DETAIL" then
+        if db.professionQuestAutoAccept then
+            DevLog("Accepting quest " .. tostring(questID))
+            AcceptQuest()
+        end
+        return
+    end
+
+    if not db.professionQuestAutoTurnIn then return end
+
+    if event == "QUEST_PROGRESS" then
+        -- Handing over gold is a decision, not a formality.
+        if GetQuestMoneyToGet() > 0 then
+            Say(S.questCostsGold)
+        elseif IsQuestCompletable() then
+            DevLog("Completing quest " .. tostring(GetQuestID()))
+            CompleteQuest()
+        end
+
+    elseif event == "QUEST_COMPLETE" then
+        local choices = GetNumQuestChoices() or 0
+        if choices > 1 then
+            Say(S.questRewardChoice)
+            return
+        end
+        -- Index 0 when there is nothing to choose between, 1 when there is one.
+        DevLog("Taking the reward for quest " .. tostring(GetQuestID()))
+        GetQuestReward(choices)
+    end
+end
+
 -- ─── Button ──────────────────────────────────────────────────────────────────
 
 local function BuildTooltip()
@@ -408,8 +499,21 @@ function LuckyGrabbag.QuestShopping:Init(database)
     eventFrame:RegisterEvent("COMMODITY_PRICE_UNAVAILABLE")
     eventFrame:RegisterEvent("COMMODITY_PURCHASE_SUCCEEDED")
     eventFrame:RegisterEvent("COMMODITY_PURCHASE_FAILED")
+    eventFrame:RegisterEvent("QUEST_DETAIL")
+    eventFrame:RegisterEvent("QUEST_PROGRESS")
+    eventFrame:RegisterEvent("QUEST_COMPLETE")
+    eventFrame:RegisterEvent("GOSSIP_SHOW")
+    eventFrame:RegisterEvent("GOSSIP_CLOSED")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
-        if event == "AUCTION_HOUSE_SHOW" then
+        if event == "GOSSIP_SHOW" then
+            if db.professionQuestAutoAccept or db.professionQuestAutoTurnIn then
+                OnGossipShow()
+            end
+        elseif event == "GOSSIP_CLOSED" then
+            gossipTried = {}
+        elseif event:sub(1, 6) == "QUEST_" and event ~= "QUEST_LOG_UPDATE" then
+            OnQuestDialog(event)
+        elseif event == "AUCTION_HOUSE_SHOW" then
             -- A fresh visit is the one thing that puts a stood-down button back.
             -- Quickbuy's own handler runs first and would have left it hidden.
             standDown = false
