@@ -299,8 +299,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             desc  = "Adds a button next to the Auction House. Each click buys one row from your CraftSim shopping list.",
         },
         questShopping = {
-            label = "Profession Quest Items",
-            desc  = "Adds a button next to the Auction House that searches for the items your profession quests still need. With Auctionator installed it sends the whole list at once, filtered to the quality each quest asks for. Clicking again prices the first item, and once more buys it.",
+            label = "Easy buy profession quest items",
+            labelNoAuctionator = "Find profession quest items",
+            desc  = "Adds a button next to the Auction House that sends every item your profession quests still need to Auctionator at once, filtered to the quality each quest asks for. Clicking again prices the first item, and once more buys it.",
+            descNoAuctionator = "Adds a button next to the Auction House that searches for the items your profession quests still need, one per click. Buying needs Auctionator, and Blizzard's own search cannot filter on crafting quality, so every quality comes back and you pick the right one.",
         },
         questShoppingAutoBuy = {
             label = "Buy without confirming",

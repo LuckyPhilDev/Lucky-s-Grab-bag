@@ -42,6 +42,44 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     -- exists to host the What's New list.
     panel:Group(SS.groups.general)
 
+    -- The button belongs to the Auction House and the quests belong to Professions,
+    -- so the pair is offered on both pages against the same saved values. byLabel
+    -- is per group, so the child row nests correctly in each.
+    --
+    -- Buying reads the item id off Auctionator's own result rows, so without it the
+    -- button can only ever search. Name and description both say so rather than
+    -- promising a buy that will not happen, and the child row locks itself.
+    --
+    -- Deliberately the same Check the `requires` field runs, so the name, the
+    -- description and the child's greying can never disagree with each other.
+    local AUCTIONATOR = { addon = "Auctionator" }
+
+    local function questShoppingToggles(g)
+        local canBuy = LuckyDeps:Check(AUCTIONATOR.addon)
+        local label = canBuy and SS.questShopping.label or SS.questShopping.labelNoAuctionator
+
+        g:Toggle({
+            label    = label,
+            desc     = canBuy and SS.questShopping.desc or SS.questShopping.descNoAuctionator,
+            checked  = function() return db.questShopping end,
+            since    = "1.24.0",
+            onToggle = function(checked)
+                db.questShopping = checked
+                LuckyGrabbag.QuestShopping:ApplySetting()
+            end,
+        })
+
+        g:Toggle({
+            label    = SS.questShoppingAutoBuy.label,
+            desc     = SS.questShoppingAutoBuy.desc,
+            checked  = function() return db.questShoppingAutoBuy end,
+            parent   = label,
+            requires = AUCTIONATOR,
+            since    = "1.24.0",
+            onToggle = function(checked) db.questShoppingAutoBuy = checked end,
+        })
+    end
+
     ---------------------------------------------------------------------------
     -- Vendors
     ---------------------------------------------------------------------------
@@ -145,25 +183,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        g:Toggle({
-            label    = SS.questShopping.label,
-            desc     = SS.questShopping.desc,
-            checked  = db.questShopping,
-            since    = "1.24.0",
-            onToggle = function(checked)
-                db.questShopping = checked
-                LuckyGrabbag.QuestShopping:ApplySetting()
-            end,
-        })
-
-        g:Toggle({
-            label    = SS.questShoppingAutoBuy.label,
-            desc     = SS.questShoppingAutoBuy.desc,
-            checked  = db.questShoppingAutoBuy,
-            parent   = SS.questShopping.label,
-            since    = "1.24.0",
-            onToggle = function(checked) db.questShoppingAutoBuy = checked end,
-        })
+        questShoppingToggles(g)
 
         g:Toggle({
             label    = SS.testflightBuy.label,
@@ -203,6 +223,8 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             since    = "1.24.0",
             onToggle = function(checked) db.professionQuestAutoTurnIn = checked end,
         })
+
+        questShoppingToggles(g)
 
         g:Section(SS.sections.craftingWindow)
 
