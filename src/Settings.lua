@@ -63,7 +63,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             desc      = canBuy and SS.questShopping.desc or SS.questShopping.descNoAuctionator,
             checked   = function() return db.questShopping end,
             image     = "auction-house/quest-item-search",
-            imageSize = { 479, 186 },
+            imageSize = { 477, 198 },
             since     = "1.24.0",
             onToggle  = function(checked)
                 db.questShopping = checked
@@ -78,7 +78,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             parent    = label,
             requires  = AUCTIONATOR,
             image     = "auction-house/quest-item-buy",
-            imageSize = { 529, 180 },
+            imageSize = { 489, 208 },
             since     = "1.24.0",
             onToggle  = function(checked) db.questShoppingAutoBuy = checked end,
         })
