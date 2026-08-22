@@ -58,14 +58,15 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         tooltip            = "Profession Quest Items",
         tooltipCycle       = "Click again for the next item",
         tooltipAuctionator = "Click to send every item to Auctionator",
-        tooltipPrice       = "Click again to price up the first item",
+        tooltipPrice       = "Click again to price up the next item",
         tooltipConfirm     = "Click again to buy %s for %s",
         priced             = "%s will cost %s. Click the button again to buy.",
         buying             = "Buying %s for %s.",
-        tooltipPriceAuto   = "Click again to buy the first item outright",
+        tooltipPriceAuto   = "Click again to buy the next item outright",
         priceUnavailable   = "The Auction House would not price %s. Search again.",
         noListing          = "No listing found for %s. Search again.",
         notEnoughGold      = "Not enough gold to buy %s.",
+        allBought          = "Bought everything on the list. Reopen the Auction House to shop again.",
     },
 
     confirmPurchase = {

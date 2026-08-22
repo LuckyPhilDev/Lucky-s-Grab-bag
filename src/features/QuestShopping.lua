@@ -15,6 +15,9 @@ local searched = false
 local signature = ""
 local awaiting   -- a quote asked for but not yet priced
 local quote      -- the server's firm price, waiting on a click to confirm
+local bought = {}  -- bought since the quest log last moved, so clicks walk on
+local pendingKey   -- what a confirmed purchase was for, until it settles
+local standDown    -- the whole list has been bought, so the button retires
 
 local DevLog = LuckyGrabbag.Logger("QuestShopping")
 
@@ -157,8 +160,26 @@ local function CancelQuote()
     awaiting, quote = nil, nil
 end
 
+local function KeyFor(item)
+    return item.name .. tostring(item.tier)
+end
+
+-- Buying does not show up in the quest log straight away, so without a record of
+-- what has already gone through, click after click would keep buying the first
+-- item on the list. Anything bought steps aside until the log catches up.
+local function NextWanted()
+    for _, item in ipairs(wanted) do
+        if not bought[KeyFor(item)] then return item end
+    end
+end
+
 local function RequestQuote()
-    local item = wanted[1]
+    local item = NextWanted()
+    if not item then
+        DevLog("Everything on the list has been bought once already")
+        return false
+    end
+
     local itemID, offered = ListedItemID(item)
     if not itemID then
         Say(LuckyGrabbag.Strings.questShopping.noListing:format(item.name))
@@ -166,7 +187,7 @@ local function RequestQuote()
     end
 
     local quantity = math.min(item.missing, offered or item.missing)
-    awaiting = { itemID = itemID, quantity = quantity, name = item.name }
+    awaiting = { itemID = itemID, quantity = quantity, name = item.name, key = KeyFor(item) }
     DevLog("Asking for a price on " .. Describe(quantity, item.name))
     C_AuctionHouse.StartCommoditiesPurchase(itemID, quantity)
     return true
@@ -183,8 +204,33 @@ local function ConfirmQuote()
     end
 
     DevLog("Confirming " .. description)
+    pendingKey = quote.key
+    bought[quote.key] = true
     C_AuctionHouse.ConfirmCommoditiesPurchase(quote.itemID, quote.quantity)
     awaiting, quote = nil, nil
+end
+
+-- Auctionator names the list this button drives after the caller, so the same name
+-- it was created under is the one to take away again.
+local function DeleteList()
+    local manager = Auctionator and Auctionator.Shopping and Auctionator.Shopping.ListManager
+    if not manager then return end
+
+    local listName = CALLER_ID .. " (" .. (AUCTIONATOR_L_TEMPORARY_LOWER_CASE or "temporary") .. ")" ---@diagnostic disable-line: undefined-global
+    if manager:GetIndexForName(listName) then
+        DevLog("Deleting " .. listName)
+        manager:Delete(listName)
+    end
+end
+
+-- Once everything owed has been through the till, the list and the button both go
+-- away until the Auction House is opened afresh. A button that cannot be clicked
+-- is a purchase that cannot be made twice.
+local function Finish()
+    standDown = true
+    DeleteList()
+    if button then button:Hide() end
+    Say(LuckyGrabbag.Strings.questShopping.allBought)
 end
 
 -- COMMODITY_PRICE_UPDATED carries the unit and total price, not the item, so the
@@ -198,6 +244,7 @@ local function OnCommodityEvent(event, unitPrice, totalPrice)
             itemID     = awaiting.itemID,
             quantity   = awaiting.quantity,
             name       = awaiting.name,
+            key        = awaiting.key,
             totalPrice = totalPrice or (unitPrice or 0) * awaiting.quantity,
         }
         awaiting = nil
@@ -217,7 +264,15 @@ local function OnCommodityEvent(event, unitPrice, totalPrice)
         Say(S.priceUnavailable:format(awaiting and awaiting.name or ""))
         CancelQuote()
 
-    elseif event == "COMMODITY_PURCHASE_SUCCEEDED" or event == "COMMODITY_PURCHASE_FAILED" then
+    elseif event == "COMMODITY_PURCHASE_SUCCEEDED" then
+        pendingKey = nil
+        awaiting, quote = nil, nil
+        if not NextWanted() then Finish() end
+
+    elseif event == "COMMODITY_PURCHASE_FAILED" then
+        -- Nothing was bought, so let the next click try that item again.
+        if pendingKey then bought[pendingKey] = nil end
+        pendingKey = nil
         awaiting, quote = nil, nil
     end
 end
@@ -320,10 +375,11 @@ function LuckyGrabbag.QuestShopping:ApplySetting()
         signature = current
         nextIndex = 1
         searched = false
+        bought = {}
         CancelQuote()
     end
 
-    if #wanted > 0 then
+    if #wanted > 0 and not standDown then
         CreateButton()
         AnchorButton()
         button:Show()
@@ -346,13 +402,20 @@ function LuckyGrabbag.QuestShopping:Init(database)
     db = database
 
     local eventFrame = CreateFrame("Frame")
+    eventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
     eventFrame:RegisterEvent("QUEST_LOG_UPDATE")
     eventFrame:RegisterEvent("COMMODITY_PRICE_UPDATED")
     eventFrame:RegisterEvent("COMMODITY_PRICE_UNAVAILABLE")
     eventFrame:RegisterEvent("COMMODITY_PURCHASE_SUCCEEDED")
     eventFrame:RegisterEvent("COMMODITY_PURCHASE_FAILED")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
-        if event == "QUEST_LOG_UPDATE" then
+        if event == "AUCTION_HOUSE_SHOW" then
+            -- A fresh visit is the one thing that puts a stood-down button back.
+            -- Quickbuy's own handler runs first and would have left it hidden.
+            standDown = false
+            bought = {}
+            LuckyGrabbag.QuestShopping:ApplySetting()
+        elseif event == "QUEST_LOG_UPDATE" then
             if LuckyGrabbag.Quickbuy:IsAuctionHouseOpen() then
                 LuckyGrabbag.QuestShopping:ApplySetting()
             end

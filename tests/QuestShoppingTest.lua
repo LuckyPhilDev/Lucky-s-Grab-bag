@@ -256,9 +256,19 @@ lowestButton = nil
 -- ─── Auctionator takes the whole list at once ────────────────────────────────
 
 local sent
-Auctionator = { API = { v1 = {
-    MultiSearchAdvanced = function(callerID, terms) sent = { callerID = callerID, terms = terms } end,
-} } }
+local lists = {}
+Auctionator = {
+    API = { v1 = {
+        MultiSearchAdvanced = function(callerID, terms)
+            sent = { callerID = callerID, terms = terms }
+            lists[callerID .. " (temporary)"] = true
+        end,
+    } },
+    Shopping = { ListManager = {
+        GetIndexForName = function(_, name) return lists[name] and 1 or nil end,
+        Delete = function(_, name) lists[name] = nil end,
+    } },
+}
 
 QS:ApplySetting()
 
@@ -309,10 +319,12 @@ Click()
 assert(ah.confirmed ~= nil, "the click after the price should buy")
 assert(ah.confirmed[1] == 1001 and ah.confirmed[2] == 2,
     "it should buy exactly what was priced")
+Fire("COMMODITY_PURCHASE_SUCCEEDED")
 
 -- ─── When it must not buy ────────────────────────────────────────────────────
 
 -- A price the player cannot afford is dropped, not confirmed.
+quests[1].objectives[1] = { "0/4 Dawn Crystal " .. ATLAS_QUEST, "item", false, 0, 4 }
 QS:ApplySetting()
 Click()
 Click()
@@ -324,6 +336,7 @@ assert(ah.confirmed == nil, "a total beyond the player's gold must not be confir
 money = 1000000
 
 -- A quote the Auction House withdraws is cancelled, and a later click starts over.
+quests[1].objectives[1] = { "0/5 Dawn Crystal " .. ATLAS_QUEST, "item", false, 0, 5 }
 QS:ApplySetting()
 Click()
 Click()
@@ -340,6 +353,7 @@ Fire("COMMODITY_PURCHASE_FAILED")
 
 -- Nothing listed at the quality the quest wants: search again rather than buy.
 rows = { Row(1002, 2) }
+quests[1].objectives[1] = { "0/6 Dawn Crystal " .. ATLAS_QUEST, "item", false, 0, 6 }
 QS:ApplySetting()
 ah.started, sent = nil, nil
 Click()
@@ -349,16 +363,17 @@ assert(sent ~= nil, "it should fall back to searching again")
 rows = { Row(1002, 2), Row(1001, 2) }
 
 -- A changed shortfall drops any live quote, so the next click re-searches.
+quests[1].objectives[1] = { "0/7 Dawn Crystal " .. ATLAS_QUEST, "item", false, 0, 7 }
 QS:ApplySetting()
 Click()
 Click()
 Fire("COMMODITY_PRICE_UPDATED", 500, 1000)
-quests[1].objectives[1] = { "1/2 Dawn Crystal " .. ATLAS_QUEST, "item", false, 1, 2 }
+quests[1].objectives[1] = { "1/7 Dawn Crystal " .. ATLAS_QUEST, "item", false, 1, 7 }
 QS:ApplySetting()
 ah.confirmed, sent = nil, nil
 Click()
 assert(ah.confirmed == nil, "a stale quote must not survive a change in what is owed")
-assert(sent.terms[1].quantity == 1, "the new search should ask for the one still owed")
+assert(sent.terms[1].quantity == 6, "the new search should ask only for what is still owed")
 
 -- ─── Buying without the confirming click ─────────────────────────────────────
 
@@ -394,13 +409,71 @@ db.questShoppingAutoBuy = false
 Fire("COMMODITY_PURCHASE_FAILED")
 
 -- An idle quest log tick must not throw away a live quote.
+quests[1].objectives[1] = { "0/8 Dawn Crystal " .. ATLAS_QUEST, "item", false, 0, 8 }
 QS:ApplySetting()
+Click()
 Click()
 Fire("COMMODITY_PRICE_UPDATED", 500, 500)
 QS:ApplySetting()
 ah.confirmed = nil
 Click()
 assert(ah.confirmed ~= nil, "an unchanged list should keep the quote alive")
+
+-- ─── Buying walks down the list ──────────────────────────────────────────────
+
+-- The quest log lags a purchase, so what has been bought has to step aside under
+-- its own steam or every click buys the same thing again.
+quests = {
+    { title = "A Ray of Sunlight", tagID = PROFESSION,
+      objectives = { { "0/2 Dawn Crystal " .. ATLAS_QUEST, "item", false, 0, 2 } } },
+    { title = "Tailoring Services Requested", tagID = PROFESSION,
+      objectives = { { "0/5 Weavercloth", "item", false, 0, 5 } } },
+}
+rows = { Row(1001, 2), Row(1003, 5) }
+QS:ApplySetting()
+
+Click()                                     -- search
+Click()                                     -- price the crystal
+assert(ah.started[1] == 1001, "the first item should be priced first")
+Fire("COMMODITY_PRICE_UPDATED", 500, 1000)
+Click()                                     -- buy it
+assert(ah.confirmed[1] == 1001, "the first item should be the one bought")
+Fire("COMMODITY_PURCHASE_SUCCEEDED")
+
+-- The quest log has not caught up, but the next click must move on regardless.
+Click()
+assert(ah.started[1] == 1003,
+    "after buying, the next click should price the second item, got " .. tostring(ah.started[1]))
+Fire("COMMODITY_PRICE_UPDATED", 100, 500)
+Click()
+assert(ah.confirmed[1] == 1003, "the second item should be the one bought now")
+Fire("COMMODITY_PURCHASE_SUCCEEDED")
+
+-- With the whole list bought the button stands down and takes its list with it.
+assert(not QS:GetButton().shown, "the button should go away once everything is bought")
+assert(lists["Lucky's Grab-bag (temporary)"] == nil, "the shopping list should be deleted too")
+
+-- A quest log tick must not bring it back, only a fresh visit to the Auction House.
+QS:ApplySetting()
+assert(not QS:GetButton().shown, "a quest log tick should not revive the button")
+
+Fire("AUCTION_HOUSE_SHOW")
+assert(QS:GetButton().shown, "reopening the Auction House should bring the button back")
+
+-- A purchase that fails leaves its item available to try again.
+QS:ApplySetting()
+quests[1].objectives[1] = { "0/3 Dawn Crystal " .. ATLAS_QUEST, "item", false, 0, 3 }
+QS:ApplySetting()
+Click()
+Click()
+Fire("COMMODITY_PRICE_UPDATED", 500, 1500)
+Click()
+Fire("COMMODITY_PURCHASE_FAILED")
+ah.started = nil
+Click()
+assert(ah.started and ah.started[1] == 1001,
+    "a failed purchase should leave that item next in line, got " .. tostring(ah.started and ah.started[1]))
+Fire("COMMODITY_PURCHASE_FAILED")
 
 Auctionator = nil
 

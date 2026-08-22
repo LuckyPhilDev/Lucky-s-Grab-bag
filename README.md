@@ -277,6 +277,8 @@ Professions hand out quests that ask for a quantity of a crafted reagent, often 
 - Without it, each click searches the next item by name, wrapping back to the first. Blizzard's own search cannot filter on crafting quality, so the results carry every quality and you pick the right one.
 - Clicking again asks the Auction House to price the first item, and the click after that buys it. The total is printed and put on the button first, so nothing is spent before you have seen what it costs.
 - It only ever prices the item it searched for, matched on both name and quality, so a slow search cannot put the wrong thing in front of you.
+- Buying one item moves the button on to the next one owed, without waiting for the quest log to catch up, so holding down clicks cannot buy the same thing twice.
+- Once the whole list has been bought, the button and its shopping list both go away. Opening the Auction House again is the only thing that brings them back.
 - The first click always searches and never buys, a price you cannot afford is dropped rather than confirmed, and any change to what the quest owes throws away a price it was holding.
 - **Buy without confirming** in the settings drops the price check, so the item is bought the moment the Auction House prices it. Off by default, and the gold check still applies.
 - Hover the button to see every item still owed, with the quality each quest asks for. The hint at the bottom says what the next click will do.
