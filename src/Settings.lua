@@ -59,24 +59,28 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         local label = canBuy and SS.questShopping.label or SS.questShopping.labelNoAuctionator
 
         g:Toggle({
-            label    = label,
-            desc     = canBuy and SS.questShopping.desc or SS.questShopping.descNoAuctionator,
-            checked  = function() return db.questShopping end,
-            since    = "1.24.0",
-            onToggle = function(checked)
+            label     = label,
+            desc      = canBuy and SS.questShopping.desc or SS.questShopping.descNoAuctionator,
+            checked   = function() return db.questShopping end,
+            image     = "auction-house/quest-item-search",
+            imageSize = { 479, 186 },
+            since     = "1.24.0",
+            onToggle  = function(checked)
                 db.questShopping = checked
                 LuckyGrabbag.QuestShopping:ApplySetting()
             end,
         })
 
         g:Toggle({
-            label    = SS.questShoppingAutoBuy.label,
-            desc     = SS.questShoppingAutoBuy.desc,
-            checked  = function() return db.questShoppingAutoBuy end,
-            parent   = label,
-            requires = AUCTIONATOR,
-            since    = "1.24.0",
-            onToggle = function(checked) db.questShoppingAutoBuy = checked end,
+            label     = SS.questShoppingAutoBuy.label,
+            desc      = SS.questShoppingAutoBuy.desc,
+            checked   = function() return db.questShoppingAutoBuy end,
+            parent    = label,
+            requires  = AUCTIONATOR,
+            image     = "auction-house/quest-item-buy",
+            imageSize = { 529, 180 },
+            since     = "1.24.0",
+            onToggle  = function(checked) db.questShoppingAutoBuy = checked end,
         })
     end
 
