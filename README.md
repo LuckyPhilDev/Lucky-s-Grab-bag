@@ -191,12 +191,6 @@ Automatically passes on Blizzard's Bonus Roll popup that appears at the end of i
 - Settings are saved per character, so each alt can have its own preferences.
 - Off by default; enable it in settings under Interface.
 
-### Always Compare Items
-Shows the comparison tooltip beside gear you hover over, without needing to hold Shift.
-
-- Mirrors the game's own setting, so it applies to every character and keeps its state even if the addon is disabled.
-- Toggle it in the addon settings under Interface.
-
 ### Trovehunter's Bounty Map
 Shows a clickable button when you're inside a delve that meets the configured minimum level and you have a Trovehunter's Bounty Map in your bags.
 
@@ -398,8 +392,6 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Per-Spec Omnium Folio Runes*: Remembers your Omnium Folio rune choices for each specialization and restores them when you switch specs.
 
 **Interface**
-- *Always Compare Items* — Shows the comparison tooltip beside gear you hover over instead of only while holding Shift. A game setting, so it applies to every character and stays put if you disable the addon.
-- *Keep Active Transmog Tab* and *Shift-Click Set Tracking* — Retired. Both have moved to Better Wardrobe and Transmog, which now handles them natively. The settings remain visible but are turned off and greyed out.
 - *Auto-dismiss Bonus Roll* — Temporarily switched off while it is tested against the new content, so the setting is greyed out and no rolls are passed. Normally it passes on the Bonus Roll popup at the end of instanced content, with per-character toggles for Mythic+ (with a minimum key level), Raids (with individual difficulty selection), Delves, Dungeons, and Hunts.
 
 Settings are saved per account, except for Bonus Roll preferences and Omnium Folio rune memory, which are saved per character.

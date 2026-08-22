@@ -261,6 +261,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             purchasing     = "Purchasing",
             tooltips       = "Tooltips",
             wardrobe       = "Wardrobe",
+            bonusRolls     = "Bonus Rolls",
             quests         = "Quests",
             craftingWindow = "Crafting Window",
             altsWarband    = "Alts & Warband",

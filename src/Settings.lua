@@ -693,41 +693,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     do
         local g = panel:Group(SS.groups.interface)
 
-        g:Section(SS.sections.tooltips)
-
-        -- Backed by the CVar itself, not saved variables: it already persists
-        -- account-wide, and a mirror in the DB would only drift from it.
-        g:Toggle({
-            label    = SS.alwaysCompareItems.label,
-            desc     = SS.alwaysCompareItems.desc,
-            checked  = function() return C_CVar.GetCVar("alwaysCompareItems") == "1" end,
-            since    = "1.19.4",
-            onToggle = function(checked)
-                C_CVar.SetCVar("alwaysCompareItems", checked and "1" or "0")
-            end,
-        })
-
-        g:Section(SS.sections.wardrobe)
-
-        g:Toggle({
-            label    = SS.transmog.label,
-            desc     = SS.transmog.desc,
-            note     = SS.transmog.note,
-            checked  = false,
-            disabled = true,
-            since    = "1.6.0",
-            onToggle = function() end,
-        })
-
-        g:Toggle({
-            label    = SS.trackTransmogSets.label,
-            desc     = SS.trackTransmogSets.desc,
-            note     = SS.trackTransmogSets.note,
-            checked  = false,
-            disabled = true,
-            since    = "1.17.0",
-            onToggle = function() end,
-        })
+        g:Section(SS.sections.bonusRolls)
 
         g:Toggle({
             label    = SS.bonusRoll.label,
