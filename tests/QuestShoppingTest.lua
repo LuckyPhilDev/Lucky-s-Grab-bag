@@ -3,7 +3,7 @@
 -- luacheck: globals Auctionator AuctionatorShoppingFrame C_Item C_TradeSkillUI
 -- luacheck: globals GetMoney GetMoneyString GetQuestID IsQuestCompletable
 -- luacheck: globals GetNumQuestChoices GetQuestMoneyToGet AcceptQuest CompleteQuest
--- luacheck: globals GetQuestReward C_GossipInfo
+-- luacheck: globals GetQuestReward C_GossipInfo IsShiftKeyDown
 
 -- Covers features/QuestShopping.lua: which quests count as shopping-worthy, the
 -- search term and crafting quality recovered from an objective line, and the
@@ -140,6 +140,9 @@ function GetQuestMoneyToGet() return dialog.moneyToGet end
 function AcceptQuest() dialog.accepted = dialog.accepted + 1 end
 function CompleteQuest() dialog.completed = dialog.completed + 1 end
 function GetQuestReward(index) dialog.rewarded = index end
+
+local shiftHeld = false
+function IsShiftKeyDown() return shiftHeld end
 
 -- The gossip window an NPC with a shop or a trainer tab opens instead.
 local gossip = { available = {}, active = {}, selected = {} }
@@ -618,6 +621,29 @@ gossip.available = { { questID = 2 } }
 Fire("GOSSIP_CLOSED")
 Fire("GOSSIP_SHOW")
 assert(#gossip.selected == 0, "an ordinary quest must be left alone in gossip too")
+
+-- ─── Holding Shift stands it down ────────────────────────────────────────────
+
+gossip.selected = {}
+gossip.available = { { questID = 1 } }
+gossip.active = {}
+dialog.accepted, dialog.completed = 0, 0
+shiftHeld = true
+
+Fire("GOSSIP_CLOSED")
+Fire("GOSSIP_SHOW")
+assert(#gossip.selected == 0, "with Shift held the gossip window should be left alone")
+
+Offer("QUEST_DETAIL", 1)
+assert(dialog.accepted == 0, "with Shift held a quest should not be accepted")
+
+Offer("QUEST_PROGRESS", 1)
+assert(dialog.completed == 0, "with Shift held a quest should not be handed in")
+
+-- Letting go puts it straight back to work.
+shiftHeld = false
+Offer("QUEST_DETAIL", 1)
+assert(dialog.accepted == 1, "releasing Shift should accept again")
 
 -- Switched off, gossip is left alone entirely.
 db.professionQuestAutoAccept, db.professionQuestAutoTurnIn = false, false

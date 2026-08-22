@@ -321,6 +321,14 @@ local function OfferedQuestIsProfession()
     return IsProfessionQuest(GetQuestID())
 end
 
+-- Holding Shift as you talk to an NPC stands the automation down for that visit,
+-- for a quest worth reading or a reward worth picking by hand.
+local function HeldOff()
+    if not IsShiftKeyDown() then return false end
+    DevLog("Shift held, leaving the quest alone")
+    return true
+end
+
 -- Quests picked out of a gossip window this visit. An NPC reopens its gossip
 -- after each selection, so without this a quest that cannot be taken, a full log
 -- being the usual reason, would be selected over and over.
@@ -358,6 +366,7 @@ end
 
 local function OnQuestDialog(event)
     if not (db.professionQuestAutoAccept or db.professionQuestAutoTurnIn) then return end
+    if HeldOff() then return end
 
     local questID = GetQuestID()
     local tag = questID and questID ~= 0 and C_QuestLog.GetQuestTagInfo(questID)
@@ -506,7 +515,8 @@ function LuckyGrabbag.QuestShopping:Init(database)
     eventFrame:RegisterEvent("GOSSIP_CLOSED")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "GOSSIP_SHOW" then
-            if db.professionQuestAutoAccept or db.professionQuestAutoTurnIn then
+            if (db.professionQuestAutoAccept or db.professionQuestAutoTurnIn)
+                and not HeldOff() then
                 OnGossipShow()
             end
         elseif event == "GOSSIP_CLOSED" then

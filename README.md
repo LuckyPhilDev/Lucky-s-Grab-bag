@@ -293,6 +293,7 @@ Profession quests arrive on a weekly cycle and the dialog is the same every time
 - Both are off by default, and both go strictly by the quest's own Professions tag, so nothing else on the same NPC is touched.
 - Works at an NPC who opens a shop or a trainer window first, picking the quest out of that list rather than waiting for you to find it.
 - A quest that offers a choice of rewards, or that wants gold, is always left for you.
+- Hold Shift as you talk to an NPC to stand both settings down for that visit, for a quest worth reading first.
 
 ### Kick Macro Generator
 Creates a class-appropriate interrupt macro in one of your character macro slots.

@@ -188,6 +188,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.professionQuestAutoAccept.label,
             desc     = SS.professionQuestAutoAccept.desc,
             checked  = db.professionQuestAutoAccept,
+            note     = SS.professionQuestAutoAccept.note,
             since    = "1.24.0",
             onToggle = function(checked) db.professionQuestAutoAccept = checked end,
         })
@@ -196,6 +197,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.professionQuestAutoTurnIn.label,
             desc     = SS.professionQuestAutoTurnIn.desc,
             checked  = db.professionQuestAutoTurnIn,
+            note     = SS.professionQuestAutoTurnIn.note,
             since    = "1.24.0",
             onToggle = function(checked) db.professionQuestAutoTurnIn = checked end,
         })
