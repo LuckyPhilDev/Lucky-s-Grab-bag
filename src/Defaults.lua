@@ -2,10 +2,22 @@
 -- Edit values here to change the out-of-box behavior for new installs.
 LuckyGrabbag = LuckyGrabbag or {}
 
+local ADDON_NAME = ...
+
 -- Settings panel: any setting flagged with a `since` version at or above this
--- gets a "NEW" badge and appears in the "What's New" list. Bump this each
--- release cycle so only recent features are highlighted.
-LuckyGrabbag.WHATS_NEW_MIN_VERSION = "1.20.0"
+-- gets a "NEW" badge and appears in the "What's New" list. Worked out from the
+-- .toc version rather than kept by hand, so a release cannot ship still
+-- trumpeting features from several cycles ago.
+local WHATS_NEW_MINOR_SPAN = 2
+
+local function whatsNewFloor()
+    local version = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version") or ""
+    local major, minor = version:match("^(%d+)%.(%d+)")
+    if not major then return "0.0.0" end
+    return major .. "." .. math.max(tonumber(minor) - WHATS_NEW_MINOR_SPAN, 0) .. ".0"
+end
+
+LuckyGrabbag.WHATS_NEW_MIN_VERSION = whatsNewFloor()
 
 LuckyGrabbag.DB_DEFAULTS = {
     devMode                  = false,
