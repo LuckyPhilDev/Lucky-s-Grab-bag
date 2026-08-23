@@ -191,8 +191,8 @@ Automatically passes on Blizzard's Bonus Roll popup that appears at the end of i
 - Settings are saved per character, so each alt can have its own preferences.
 - Off by default; enable it in settings under Interface.
 
-### Trovehunter's Bounty Map
-Shows a clickable button when you're inside a delve that meets the configured minimum level and you have a Trovehunter's Bounty Map in your bags.
+### Trovehunter's Bounty
+Shows a clickable button when you're inside a delve that meets the configured minimum level and you have a Trovehunter's Bounty, or last season's Trovehunter's Bounty Map, in your bags.
 
 - Appears automatically on entering a qualifying delve; hides when you leave or use the map.
 - **Minimum delve level** is configurable in settings (default: level 8).
@@ -370,7 +370,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Open Shopping List* — Opens the Decor Shopping List, where you can see what each piece needs, drop pieces you no longer want, and send one to the game's tracker for a map pin.
 
 **Delves**
-- *Trovehunter's Bounty Map* — Shows a clickable button for your Bounty Map when in a qualifying delve.
+- *Trovehunter's Bounty* — Shows a clickable button for your Trovehunter's Bounty when in a qualifying delve.
   - *Minimum Delve Level* — The minimum delve level required for the button to appear (1–11).
 
 **Inventory**
