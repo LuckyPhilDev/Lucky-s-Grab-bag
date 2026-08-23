@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.24.1] - 2026-08-23
 
 ### Fixed
 - The Trovehunter's Bounty button appears in delves again now that Season 2 has its own map item. Last season's Bounty Map is still recognised if you have one left.
