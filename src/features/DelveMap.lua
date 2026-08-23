@@ -1,8 +1,12 @@
--- Lucky's Grab-bag: Trovehunter's Bounty Map button in delves
+-- Lucky's Grab-bag: Trovehunter's Bounty button in delves
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.DelveMap = {}
 
-local BOUNTY_MAP_ITEM_ID = 252415
+-- One map item per season; the bag scan accepts any of them.
+local BOUNTY_MAP_ITEM_IDS = {
+    [252415] = true, -- Trovehunter's Bounty Map (Midnight Season 1)
+    [274374] = true, -- Trovehunter's Bounty (Midnight Season 2)
+}
 local DELVE_DIFFICULTY_ID = 208
 local BUTTON_SIZE = 42
 
@@ -12,6 +16,7 @@ local DELVE_WIDGET_IDS = { 6183, 6184, 6185 }
 
 local db
 local button
+local foundMapID = 274374 -- the map last seen in bags, for the tooltip
 
 local DevLog = LuckyGrabbag.Logger("DelveMap")
 
@@ -46,12 +51,13 @@ local function GetDelveInfo()
     return true, 0
 end
 
--- Scans bags for the Trovehunter's Bounty Map.
+-- Scans bags for a Trovehunter's Bounty map from any season.
 local function HasBountyMap()
     for bag = 0, NUM_BAG_SLOTS do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local info = C_Container.GetContainerItemInfo(bag, slot)
-            if info and info.itemID == BOUNTY_MAP_ITEM_ID then
+            if info and BOUNTY_MAP_ITEM_IDS[info.itemID] then
+                foundMapID = info.itemID
                 return true, info.itemName, info.iconFileID
             end
         end
@@ -66,7 +72,7 @@ local function CreateButton()
         template = "SecureActionButtonTemplate",
         size     = BUTTON_SIZE,
         tooltip  = function()
-            GameTooltip:SetItemByID(BOUNTY_MAP_ITEM_ID)
+            GameTooltip:SetItemByID(foundMapID)
         end,
     })
     btn:RegisterForClicks("AnyDown", "AnyUp")

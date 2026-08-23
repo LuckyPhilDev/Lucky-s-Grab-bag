@@ -450,12 +450,12 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             desc  = "Only log raids from the current raid tier. Older raids never start logging. Mythic+ keys are always current content.",
         },
         delveMap = {
-            label = "Trovehunter's Bounty Map",
-            desc  = "Floating button to use your Trovehunter's Bounty Map when you're inside a delve that meets the minimum level. Right-click and drag to reposition.",
+            label = "Trovehunter's Bounty",
+            desc  = "Floating button to use your Trovehunter's Bounty, or last season's Bounty Map, when you're inside a delve that meets the minimum level. Right-click and drag to reposition.",
         },
         delveMapMinLevel = {
             label = "Minimum Delve Level",
-            desc  = "Only show the Bounty Map button in delves at or above this tier.",
+            desc  = "Only show the Trovehunter's Bounty button in delves at or above this tier.",
         },
         blueprintTrackMissing = {
             label = "Track Missing Decor Button",
