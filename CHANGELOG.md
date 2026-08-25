@@ -1,8 +1,9 @@
-## [Unreleased]
+## [1.24.2] - 2026-08-25
 
 ### Fixed
 - Profession quests are taken and handed back at an NPC who lists several quests at once, instead of needing each one opened by hand. (Thanks for the report Tuulani)
-- Combat Prep and Concentration View show their text on a Russian client, instead of empty boxes.
+- Combat Prep and Concentration View show their text on a Russian client, instead of empty boxes. (Thanks for the report Grelle)
+- The preview screenshot in settings goes away when you move off its row, instead of staying on screen until you reach a setting that has none. (Thanks for the report Tuulani)
 
 ## [1.24.1] - 2026-08-23
 
