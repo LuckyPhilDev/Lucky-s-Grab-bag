@@ -329,21 +329,24 @@ local function HeldOff()
     return true
 end
 
--- Quests picked out of a gossip window this visit. An NPC reopens its gossip
--- after each selection, so without this a quest that cannot be taken, a full log
--- being the usual reason, would be selected over and over.
-local gossipTried = {}
+-- Quests picked out of a list this visit. An NPC reopens its list after each
+-- selection, so without this a quest that cannot be taken, a full log being the
+-- usual reason, would be selected over and over.
+local tried = {}
 
 -- An NPC with a shop or a trainer tab opens gossip rather than the quest itself,
 -- so the quest has to be picked off that list first. Selecting one raises the
 -- QUEST_DETAIL or QUEST_PROGRESS that the handler below answers.
 local function OnGossipShow()
-    local function Pick(quests, select, what)
+    DevLog("Gossip list: " .. #(C_GossipInfo.GetActiveQuests() or {}) .. " active, " ..
+        #(C_GossipInfo.GetAvailableQuests() or {}) .. " available")
+
+    local function Pick(quests, choose, what)
         for _, quest in ipairs(quests or {}) do
-            if not gossipTried[quest.questID] and IsProfessionQuest(quest.questID) then
-                gossipTried[quest.questID] = true
+            if not tried[quest.questID] and IsProfessionQuest(quest.questID) then
+                tried[quest.questID] = true
                 DevLog("Selecting " .. what .. " quest " .. quest.questID .. " from the gossip list")
-                select(quest.questID)
+                choose(quest.questID)
                 return true
             end
         end
@@ -361,6 +364,41 @@ local function OnGossipShow()
 
     if db.professionQuestAutoAccept then
         Pick(C_GossipInfo.GetAvailableQuests(), C_GossipInfo.SelectAvailableQuest, "offered")
+    end
+end
+
+-- An NPC offering more than one quest and no gossip text opens the greeting list
+-- instead, which the gossip API cannot see. Selection there is by list position,
+-- so the indices are read fresh each time the list is shown.
+local function OnQuestGreeting()
+    local numActive, numAvailable = GetNumActiveQuests(), GetNumAvailableQuests()
+    DevLog("Greeting list: " .. numActive .. " active, " .. numAvailable .. " available")
+
+    local function Pick(count, questIDAt, choose, what)
+        for index = 1, count do
+            local questID = questIDAt(index)
+            if questID and not tried[questID] and IsProfessionQuest(questID) then
+                tried[questID] = true
+                DevLog("Selecting " .. what .. " quest " .. questID .. " from the greeting list")
+                choose(index)
+                return true
+            end
+        end
+    end
+
+    if db.professionQuestAutoTurnIn then
+        local function FinishedQuestID(index)
+            local _, isComplete = GetActiveTitle(index)
+            return isComplete and GetActiveQuestID(index) or nil
+        end
+        if Pick(numActive, FinishedQuestID, SelectActiveQuest, "finished") then return end
+    end
+
+    if db.professionQuestAutoAccept then
+        local function AvailableQuestID(index)
+            return select(5, GetAvailableQuestInfo(index))
+        end
+        Pick(numAvailable, AvailableQuestID, SelectAvailableQuest, "offered")
     end
 end
 
@@ -512,15 +550,23 @@ function LuckyGrabbag.QuestShopping:Init(database)
     eventFrame:RegisterEvent("QUEST_PROGRESS")
     eventFrame:RegisterEvent("QUEST_COMPLETE")
     eventFrame:RegisterEvent("GOSSIP_SHOW")
-    eventFrame:RegisterEvent("GOSSIP_CLOSED")
+    eventFrame:RegisterEvent("QUEST_GREETING")
+    -- Walking away is the only reliable end of a visit: gossip closes and reopens
+    -- between every selection, so clearing the picked list there would let a quest
+    -- that refuses to be taken be selected on a loop.
+    eventFrame:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
-        if event == "GOSSIP_SHOW" then
+        if event == "GOSSIP_SHOW" or event == "QUEST_GREETING" then
             if (db.professionQuestAutoAccept or db.professionQuestAutoTurnIn)
                 and not HeldOff() then
-                OnGossipShow()
+                if event == "GOSSIP_SHOW" then OnGossipShow() else OnQuestGreeting() end
             end
-        elseif event == "GOSSIP_CLOSED" then
-            gossipTried = {}
+        elseif event == "PLAYER_INTERACTION_MANAGER_FRAME_HIDE" then
+            local interaction = ...
+            if interaction == Enum.PlayerInteractionType.Gossip
+                or interaction == Enum.PlayerInteractionType.QuestGiver then
+                tried = {}
+            end
         elseif event:sub(1, 6) == "QUEST_" and event ~= "QUEST_LOG_UPDATE" then
             OnQuestDialog(event)
         elseif event == "AUCTION_HOUSE_SHOW" then
