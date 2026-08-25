@@ -390,7 +390,7 @@ local function CreateBar(index, professionName)
     if fontPath then
         label:SetFont(fontPath, fontSize, fontFlags)
     else
-        label:SetFont("Fonts\\FRIZQT__.TTF", 10)
+        label:SetFont(LuckyUI.BODY_FONT, 10)
     end
 
     -- AlignLabel lines the label's left edge up with the subcategory text once
@@ -400,7 +400,7 @@ local function CreateBar(index, professionName)
     label:SetText(LuckyGrabbag.Strings.concentrationView.barLabel)
 
     local text = bar:CreateFontString(nil, "OVERLAY")
-    text:SetFont("Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
+    text:SetFont(LuckyUI.BODY_FONT, 10, "OUTLINE")
     text:SetPoint("CENTER", bar, "CENTER", 0, 2)
     text:SetTextColor(1, 1, 1)
     text:SetShadowOffset(1, -1)
