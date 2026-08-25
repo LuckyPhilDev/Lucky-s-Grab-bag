@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Fixed
+- Combat Prep and Concentration View show their text on a Russian client, instead of empty boxes.
+
 ## [1.24.1] - 2026-08-23
 
 ### Fixed

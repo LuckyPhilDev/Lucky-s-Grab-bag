@@ -155,7 +155,7 @@ local function CreateStyledButton(parent, opts)
 
     -- Label
     local label = btn:CreateFontString(nil, "OVERLAY")
-    label:SetFont("Fonts\\FRIZQT__.TTF", 12, "")
+    label:SetFont(LuckyUI.BODY_FONT, 12, "")
     label:SetPoint("CENTER", 0, 0)
     if isPrimary then
         label:SetTextColor(C.bgDark[1], C.bgDark[2], C.bgDark[3])
@@ -217,7 +217,7 @@ local function CreateCancelButton(parent)
     btn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 0.6)
 
     local label = btn:CreateFontString(nil, "OVERLAY")
-    label:SetFont("Fonts\\FRIZQT__.TTF", 12, "")
+    label:SetFont(LuckyUI.BODY_FONT, 12, "")
     label:SetPoint("CENTER", 0, 0)
     label:SetText(LuckyGrabbag.Strings.combatPrep.cancelLabel)
     label:SetTextColor(C.danger[1], C.danger[2], C.danger[3])
