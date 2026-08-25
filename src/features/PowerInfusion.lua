@@ -7,24 +7,18 @@ local MYTHIC_KEYSTONE_DIFFICULTY = 8
 local MACRO_NAME = "PI"
 local MACRO_ICON = "INV_Misc_QuestionMark"
 local CHECK_MARKUP = "|A:common-icon-checkmark:12:12|a"
-local STAR_MARKUP = "|A:auctionhouse-icon-favorite:12:12|a"
 
 local ROWS_PER_COLUMN = 10
 local ROW_WIDTH       = 215
 local ROW_HEIGHT      = 20
 local COL_GAP         = 4
 local PAD             = 10
-local HEADER_HEIGHT   = 54  -- title + current-target line + target-count tabs, below the top padding
 local CHEVRON_W       = 16  -- expand/collapse toggle for columns past the first
 local CHEVRON_GAP     = 2
 
--- Target-count tabs. Each entry maps a tab to the index into a spec's
--- PowerInfusionData.GAIN { single, 3-target, 5-target } table.
-local TARGET_TABS = {
-    { idx = 1, label = "1" },
-    { idx = 2, label = "3" },
-    { idx = 3, label = "5" },
-}
+-- Title, wrapped season notice, and current-target line, below the top
+-- padding. Measured from the notice once it has text, in CreatePicker.
+local headerHeight = 54
 
 local ROLE_ORDER = { DAMAGER = 1, NONE = 2, HEALER = 3, TANK = 4 }
 
@@ -44,14 +38,10 @@ local rowPool = {}
 local inCombat = false
 local mockCandidates  -- dev tool: fake roster from /pipicker mock
 local dismissed = false  -- X button; resets on new boss or new M+ key
-local targetIdx = 1  -- selected target-count tab (index into GAIN); set in Init
 local expanded = false  -- show columns past the first (raids); set in Init
-local tabButtons = {}  -- target-count tab buttons, in TARGET_TABS order
 local Refresh
-local StyleTabs
 
 local C = LuckyUI.C
-local PIData = LuckyGrabbag.PowerInfusionData
 
 -- Spec inspection: one pending request at a time, throttled, only while the
 -- picker is visible and out of combat. Results are cached by GUID.
@@ -77,8 +67,6 @@ end
 
 local function SortCandidates(list)
     table.sort(list, function(a, b)
-        local ga, gb = a.rating or 0, b.rating or 0
-        if ga ~= gb then return ga > gb end
         local ra, rb = ROLE_ORDER[a.role] or 5, ROLE_ORDER[b.role] or 5
         if ra ~= rb then return ra < rb end
         return a.display < b.display
@@ -109,7 +97,6 @@ local function GetCandidates()
                         role    = role,
                         guid    = guid,
                         specID  = specID,
-                        rating  = PIData.Gain(specID, targetIdx) or 0,
                     })
                 end
             end
@@ -210,8 +197,7 @@ local MOCK_NAMES = {
     "Ashenvale", "Quickdraw", "Nightbloom", "Stormcaller", "Emberlyn",
     "Frostwhisper", "Ironbelly", "Suntouched", "Voidstep", "Brambleroot",
 }
--- One spec per mock class, spread across the rating tiers so the star,
--- tooltip, and sort order all get exercised.
+-- One spec per mock class, so the spec icons and tooltips all get exercised.
 local MOCK_SPECS = {
     MAGE = 64, HUNTER = 254, ROGUE = 261, WARLOCK = 265, DRUID = 102,
     SHAMAN = 262, WARRIOR = 71, PALADIN = 70, DEATHKNIGHT = 251,
@@ -263,7 +249,6 @@ local function BuildMockCandidates(count)
             class   = class,
             role    = role,
             specID  = specID,
-            rating  = PIData.Gain(specID, targetIdx) or 0,
         })
     end
     SortCandidates(list)
@@ -385,28 +370,10 @@ local function AcquireRow(i)
 
     row:SetScript("OnEnter", function(self)
         local c = self.candidate
-        if not c or not c.rating or c.rating == 0 then return end
-        local S = LuckyGrabbag.Strings.powerInfusion
+        local _, specName = c and c.specID and GetSpecializationInfoByID(c.specID)
+        if not specName then return end
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        local _, specName = GetSpecializationInfoByID(c.specID)
-        GameTooltip:SetText(specName or "", 1, 1, 1)
-        local gain = PIData.GAIN[c.specID]
-        if gain then
-            GameTooltip:AddLine(S.gainHeader, 0.7, 0.7, 0.7)
-            local labels = { S.target1, S.target3, S.target5 }
-            for i = 1, 3 do
-                -- Active target count in gold, the others muted.
-                local r, g, b = 0.6, 0.6, 0.6
-                if i == targetIdx then r, g, b = 1, 0.82, 0 end
-                GameTooltip:AddDoubleLine(labels[i], string.format("+%.1f%%", gain[i]), r, g, b, r, g, b)
-            end
-        end
-        local tier = PIData.Tier(c.specID, targetIdx)
-        if tier == "STRONG" then
-            GameTooltip:AddLine(S.recStrong, 0.1, 1, 0.1)
-        elseif tier == "GOOD" then
-            GameTooltip:AddLine(S.recGood, 1, 0.82, 0)
-        end
+        GameTooltip:SetText(specName, 1, 1, 1)
         GameTooltip:Show()
     end)
     row:SetScript("OnLeave", function()
@@ -422,30 +389,6 @@ function Refresh()
     local S = LuckyGrabbag.Strings.powerInfusion
     local list = GetCandidates()
     local target = charDB.piTarget
-
-    -- Ratings and order follow the selected tab. GetCandidates rebuilds for
-    -- real groups, but the mock roster is cached, so recompute and re-sort
-    -- here to cover both paths.
-    for _, c in ipairs(list) do
-        c.rating = PIData.Gain(c.specID, targetIdx) or 0
-    end
-    SortCandidates(list)
-
-    -- Winner of each target count earns a numbered star (1 / 3 / 5), so the
-    -- cross-target standouts stay visible whatever tab is selected.
-    local topSpec = {}
-    local topGain = {}
-    for _, c in ipairs(list) do
-        if c.specID then
-            for idx = 1, 3 do
-                local g = PIData.Gain(c.specID, idx)
-                if g and (not topGain[idx] or g > topGain[idx]) then
-                    topGain[idx] = g
-                    topSpec[idx] = c.specID
-                end
-            end
-        end
-    end
 
     if not mockCandidates then QueueInspects(list) end
 
@@ -472,7 +415,7 @@ function Refresh()
     local n = #list
     if n == 0 then
         pickerFrame.emptyLabel:Show()
-        pickerFrame:SetSize(PAD * 2 + 220, PAD + HEADER_HEIGHT + 16 + PAD)
+        pickerFrame:SetSize(PAD * 2 + 220, PAD + headerHeight + 16 + PAD)
         return
     end
     pickerFrame.emptyLabel:Hide()
@@ -490,23 +433,11 @@ function Refresh()
         row:ClearAllPoints()
         row:SetPoint("TOPLEFT", pickerFrame, "TOPLEFT",
             PAD + col * (ROW_WIDTH + COL_GAP),
-            -(PAD + HEADER_HEIGHT + rowInCol * ROW_HEIGHT))
+            -(PAD + headerHeight + rowInCol * ROW_HEIGHT))
 
         local selected = (candidate.full == target)
         local icon = SpecIcon(candidate.specID)
-        local stars = ""
-        if candidate.specID then
-            for idx = 1, 3 do
-                if topSpec[idx] == candidate.specID then
-                    stars = stars .. "  " .. STAR_MARKUP
-                        .. LuckyUI.WC.goldPrimary .. TARGET_TABS[idx].label .. LuckyUI.WC.reset
-                end
-            end
-        end
-        local gain = candidate.rating > 0
-            and (" " .. LuckyUI.WC.textMuted .. string.format("%.1f%%", candidate.rating) .. LuckyUI.WC.reset)
-            or ""
-        row.text:SetText(icon .. candidate.display .. gain .. stars .. (selected and (" " .. CHECK_MARKUP) or ""))
+        row.text:SetText(icon .. candidate.display .. (selected and (" " .. CHECK_MARKUP) or ""))
         local cc = RAID_CLASS_COLORS[candidate.class]
         if cc then
             row.text:SetTextColor(cc.r, cc.g, cc.b)
@@ -525,7 +456,7 @@ function Refresh()
     if hasOverflow then
         chevron:ClearAllPoints()
         chevron:SetPoint("TOPLEFT", pickerFrame, "TOPLEFT",
-            colsRight + CHEVRON_GAP, -(PAD + HEADER_HEIGHT))
+            colsRight + CHEVRON_GAP, -(PAD + headerHeight))
         chevron:SetHeight(rowsPerCol * ROW_HEIGHT)
         chevron.text:SetText(expanded and "<" or ">")
         chevron:Show()
@@ -534,7 +465,7 @@ function Refresh()
     end
 
     local width = colsRight + (hasOverflow and (CHEVRON_GAP + CHEVRON_W) or 0) + PAD
-    pickerFrame:SetSize(width, PAD + HEADER_HEIGHT + rowsPerCol * ROW_HEIGHT + PAD)
+    pickerFrame:SetSize(width, PAD + headerHeight + rowsPerCol * ROW_HEIGHT + PAD)
 end
 
 local function UpdateVisibility()
@@ -573,19 +504,6 @@ local function UpdateVisibility()
     pickerFrame:Show()
     PumpInspect()  -- Refresh ran before Show, so its queueing was gated off
     DevLog("Shown")
-end
-
--- Selected tab gold and backed; the rest muted and flat.
-function StyleTabs()
-    for _, btn in ipairs(tabButtons) do
-        if btn.idx == targetIdx then
-            btn.selTex:Show()
-            btn.text:SetTextColor(C.goldPrimary[1], C.goldPrimary[2], C.goldPrimary[3])
-        else
-            btn.selTex:Hide()
-            btn.text:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
-        end
-    end
 end
 
 local function CreatePicker()
@@ -666,64 +584,27 @@ local function CreatePicker()
     chevron:Hide()
     f.chevron = chevron
 
+    -- Standing notice that this season has no gain data, which is why the list
+    -- is a plain roster rather than a ranking.
+    local notice = f:CreateFontString(nil, "OVERLAY")
+    notice:SetFont(LuckyUI.BODY_FONT, 11, "")
+    notice:SetPoint("TOPLEFT", PAD, -(PAD + 18))
+    notice:SetWidth(ROW_WIDTH)
+    notice:SetJustifyH("LEFT")
+    notice:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
+    notice:SetText(S.noRankings)
+
     local current = f:CreateFontString(nil, "OVERLAY")
     current:SetFont(LuckyUI.BODY_FONT, 11, "")
-    current:SetPoint("TOPLEFT", PAD, -(PAD + 16))
+    current:SetPoint("TOPLEFT", notice, "BOTTOMLEFT", 0, -6)
     current:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
     f.currentLine = current
 
-    -- Target-count switcher: "Targets" label followed by 1 / 3 / 5 tabs. The
-    -- selected tab drives both the sort order and the tooltip highlight.
-    local tabsLabel = f:CreateFontString(nil, "OVERLAY")
-    tabsLabel:SetFont(LuckyUI.BODY_FONT, 11, "")
-    tabsLabel:SetPoint("TOPLEFT", PAD, -(PAD + 34))
-    tabsLabel:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
-    tabsLabel:SetText(S.targetsLabel)
-
-    local TAB_W, TAB_H = 20, 16
-    local prev
-    for i, t in ipairs(TARGET_TABS) do
-        local btn = CreateFrame("Button", nil, f)
-        btn:SetSize(TAB_W, TAB_H)
-        if prev then
-            btn:SetPoint("LEFT", prev, "RIGHT", 2, 0)
-        else
-            btn:SetPoint("LEFT", tabsLabel, "RIGHT", 8, 0)
-        end
-
-        local sel = btn:CreateTexture(nil, "BACKGROUND")
-        sel:SetAllPoints()
-        sel:SetColorTexture(C.goldAccent[1], C.goldAccent[2], C.goldAccent[3], 0.25)
-        btn.selTex = sel
-
-        local hl = btn:CreateTexture(nil, "HIGHLIGHT")
-        hl:SetAllPoints()
-        hl:SetColorTexture(C.highlight[1], C.highlight[2], C.highlight[3], C.highlight[4])
-
-        local txt = btn:CreateFontString(nil, "OVERLAY")
-        txt:SetFont(LuckyUI.BODY_FONT, 11, "")
-        txt:SetAllPoints()
-        txt:SetJustifyH("CENTER")
-        txt:SetText(t.label)
-        btn.text = txt
-        btn.idx = t.idx
-
-        btn:SetScript("OnClick", function()
-            if targetIdx == t.idx then return end
-            targetIdx = t.idx
-            db.piTargetCount = t.idx
-            StyleTabs()
-            Refresh()
-        end)
-
-        tabButtons[i] = btn
-        prev = btn
-    end
-    StyleTabs()
+    headerHeight = 18 + math.max(notice:GetStringHeight(), 26) + 6 + 16
 
     local empty = f:CreateFontString(nil, "OVERLAY")
     empty:SetFont(LuckyUI.BODY_FONT, 11, "")
-    empty:SetPoint("TOPLEFT", PAD, -(PAD + HEADER_HEIGHT))
+    empty:SetPoint("TOPLEFT", PAD, -(PAD + headerHeight))
     empty:SetWidth(220)
     empty:SetJustifyH("LEFT")
     empty:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
@@ -763,7 +644,6 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
     local _, class = UnitClass("player")
     if class ~= "PRIEST" and not db.devMode then return end
 
-    targetIdx = db.piTargetCount or 1
     expanded = db.piExpanded or false
 
     DevLog("Init called")

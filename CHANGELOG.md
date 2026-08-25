@@ -3,6 +3,9 @@
 ### Fixed
 - The Spend to Next Perk setting says the profession specialisation node is Shift-clicked, which is the click that actually spends the points. (Thanks for the report Halliday)
 
+### Removed
+- The Power Infusion Picker's gain percentages, target count tabs and stars have gone while Season 2 rankings are unavailable, and the window says so above your group list.
+
 ## [1.24.2] - 2026-08-25
 
 ### Fixed
