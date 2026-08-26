@@ -562,6 +562,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label    = SS.piFocusFirst.label,
+            desc     = SS.piFocusFirst.desc,
+            checked  = db.piFocusFirst,
+            parent   = SS.piPicker.label,
+            onToggle = function(checked)
+                db.piFocusFirst = checked
+                LuckyGrabbag.PowerInfusion:UpdateMacro()
+            end,
+        })
+
+        g:Toggle({
             label    = SS.autoCombatLog.label,
             desc     = SS.autoCombatLog.desc,
             checked  = db.autoCombatLog,
