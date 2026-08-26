@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.24.3] - 2026-08-26
 
 ### Added
 - **Auto-dismiss Bonus Roll** The setting is usable again, passing the Bonus Roll popup in any content you have not ticked to keep it in.
@@ -7,6 +7,7 @@
 - **Power Infusion Picker** The PI macro no longer goes dead when your picked player leaves the group: it falls back to your focus, then to yourself. A setting under the picker casts on your focus first instead. (Thanks for the report Halliday)
 
 ### Fixed
+- Settings and windows open again where an older copy of Lucky's Utils is installed alongside the addon.
 - The Spend to Next Perk setting says the profession specialisation node is Shift-clicked, which is the click that actually spends the points. (Thanks for the report Halliday)
 
 ### Removed

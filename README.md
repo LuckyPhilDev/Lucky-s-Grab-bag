@@ -155,6 +155,7 @@ For priests: a small floating window in dungeons, raids, and scenarios that lets
 - Parties list everyone with damage dealers first; raids list damage dealers only.
 - Each name shows its spec icon; hover one for the spec name.
 - Season 2 damage gain rankings are not available, so the window says so and lists your group unranked, tanks and healers last.
+- If your picked player leaves the group the macro falls back to your focus, then to yourself, so PI never goes dead. A setting under the picker casts on your focus first instead.
 - In large raids only the top column is shown; a chevron expands the rest when you want them.
 - Appears automatically when you are grouped inside a dungeon, raid, or scenario, including delves with other players, and out of combat; hides during combat.
 - Your chosen target is saved per character.
@@ -182,8 +183,6 @@ The Omnium Folio keeps the same runes when you change specialization. This featu
 
 ### Auto-dismiss Bonus Roll
 Automatically passes on Blizzard's Bonus Roll popup that appears at the end of instanced content, with per-character control over which content types are kept.
-
-**Temporarily switched off** while it is tested against the new content. The setting is greyed out and nothing is dismissed until it returns.
 
 - Per-content toggles for **Mythic+**, **Raids**, **Delves**, **Dungeons**, and **Hunts** in the open world.
 - For Mythic+, set a **minimum key level** to keep the roll for, so rolls from lower keys are dismissed automatically.
