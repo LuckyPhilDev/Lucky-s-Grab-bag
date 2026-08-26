@@ -497,7 +497,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         spendToNextPerk = {
             label = "Spend to Next Perk",
-            desc  = "Clicking a profession specialisation node automatically spends knowledge points up to the next perk threshold (every 5 ranks).",
+            desc  = "Shift-clicking a profession specialisation node automatically spends knowledge points up to the next perk threshold (every 5 ranks).",
         },
         recipeSearchFilter = {
             label = "Search Selected Expansion Only",

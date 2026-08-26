@@ -1,5 +1,5 @@
 -- Lucky's Grab-bag: Auto-spend profession knowledge to next perk.
--- When clicking a profession specialisation node, automatically purchase
+-- When Shift-clicking a profession specialisation node, automatically purchase
 -- additional ranks up to the next 5-point perk boundary.
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.ProfessionSpendToPerk = {}
