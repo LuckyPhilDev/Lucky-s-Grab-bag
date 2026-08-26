@@ -153,8 +153,8 @@ For priests: a small floating window in dungeons, raids, and scenarios that lets
 - Click a name to update the 'PI' macro, which casts Power Infusion on that player.
 - The first click creates the macro and picks it up so you can drop it onto your action bar.
 - Parties list everyone with damage dealers first; raids list damage dealers only.
-- Each name shows its spec icon and the percentage damage gain Power Infusion gives that spec, using current-season simulation data. Hover a name for the full breakdown.
-- Switch between single-target, 3-target, and 5-target tabs to compare gains for different fights. The list reorders to match, and a numbered star marks the best target for each scenario.
+- Each name shows its spec icon; hover one for the spec name.
+- Season 2 damage gain rankings are not available, so the window says so and lists your group unranked, tanks and healers last.
 - In large raids only the top column is shown; a chevron expands the rest when you want them.
 - Appears automatically when you are grouped inside a dungeon, raid, or scenario, including delves with other players, and out of combat; hides during combat.
 - Your chosen target is saved per character.

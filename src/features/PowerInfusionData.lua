@@ -1,5 +1,9 @@
 -- Lucky's Grab-bag: Power Infusion gain per specialization.
 --
+-- ponytail: parked. Nothing reads this while the numbers are a season out of
+-- date, so the picker shows an unranked group list instead. Refresh GAIN from
+-- the sources below and wire Gain/Tier back into PowerInfusion.lua to revive it.
+--
 -- Source: bloodmallet.com Power Infusion charts (tier MID1). Three fight
 -- styles, each a stand-still fight at a different target count:
 --   castingpatchwerk   -> 1 target   (single target)

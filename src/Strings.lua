@@ -103,17 +103,11 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         currentFmt   = "Casts on: %s",
         noTarget     = "nobody yet",
         notInGroup   = "Join a party or raid to pick a target.",
+        noRankings   = "Season 2 rankings are not available yet, so this is your group list.",
         targetSet    = "Power Infusion macro now casts on %s.",
         macroCreated = "Created the 'PI' macro and picked it up. Drop it onto your action bar.",
         slotsFull    = "Your macro slots are full. Free a slot and pick a target again.",
         inCombat     = "Cannot update macros during combat.",
-        targetsLabel = "Targets",
-        gainHeader   = "DPS gain from Power Infusion:",
-        target1      = "Single target",
-        target3      = "3 targets",
-        target5      = "5 targets",
-        recStrong    = "Strong Power Infusion target",
-        recGood      = "Good Power Infusion target",
     },
 
     autoCombatLog = {
@@ -423,7 +417,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         piPicker = {
             label = "Power Infusion Picker",
-            desc  = "For priests: shows a window in dungeons, raids, and grouped scenarios such as delves to pick who receives your Power Infusion. Clicking a name updates a 'PI' macro that casts Power Infusion on that player. Drag the macro to your action bar once, then pick new targets any time. Right-click drag to move the window. Players who gain the most from it are starred.",
+            desc  = "For priests: shows a window in dungeons, raids, and grouped scenarios such as delves to pick who receives your Power Infusion. Clicking a name updates a 'PI' macro that casts Power Infusion on that player. Drag the macro to your action bar once, then pick new targets any time. Right-click drag to move the window.",
         },
         autoCombatLog = {
             label = "Auto Combat Logging",
