@@ -209,9 +209,9 @@ When you submit a personal crafting work order to one of your own characters, th
 - Enabled by default; can be toggled in the addon settings under Professions.
 
 ### Spend to Next Perk
-Clicking a profession specialisation node automatically spends additional knowledge points until you reach the next perk, so you can unlock a perk in one click instead of five.
+Shift-clicking a profession specialisation node automatically spends additional knowledge points until you reach the next perk, so you can unlock a perk in one click instead of five.
 
-- Hooks the standard spec node click; works exactly like clicking a node normally, just keeps going.
+- Hooks the standard spec node purchase; works exactly like Shift-clicking a node normally, just keeps going.
 - Stops at each 5-rank perk threshold so you can review before unlocking the next one.
 - Stops early if you run out of knowledge points or the path is locked.
 - Enabled by default; can be toggled in the addon settings under Professions.
@@ -351,7 +351,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 **Professions**
 - *Withdraw Treatise from Warbank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
 - *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.
-- *Spend to Next Perk* — When clicking a profession specialisation node, spends knowledge points up to the next 5-rank perk threshold.
+- *Spend to Next Perk* — When Shift-clicking a profession specialisation node, spends knowledge points up to the next 5-rank perk threshold.
 - *Concentration on Profession Book* — Shows a Concentration bar above each profession's skill bar in the Profession Book, with a hover tooltip for the refill time.
 - *Search Selected Expansion Only* — When searching recipes, only shows results from the expansion selected in the Filter dropdown. An All Expansions option in that dropdown searches everything at once.
 - *1s Tip on Alt Work Orders* — Automatically sets the tip to 1 silver when sending a personal work order to one of your own characters.
