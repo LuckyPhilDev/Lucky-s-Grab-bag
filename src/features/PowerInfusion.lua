@@ -282,6 +282,17 @@ local function MergePIMacro(existing, castLine, spellName)
     return table.concat(lines, "\n")
 end
 
+-- The cast line tries the picked player and the focus, in the order the
+-- piFocusFirst setting puts them, then falls through to normal casting
+-- (current friendly target, else yourself), so the macro keeps working when
+-- the picked player has left the group.
+local function BuildCastLine(spellName, targetFull)
+    local named = "[@" .. targetFull .. ",help,nodead]"
+    local focus = "[@focus,help,nodead]"
+    if db.piFocusFirst then named, focus = focus, named end
+    return "/cast " .. named .. focus .. "[] " .. spellName
+end
+
 -- Writes the PI macro to cast on the given Name or Name-Realm. Creates the
 -- per-character macro on first use and puts it on the cursor for bar placement.
 -- On later updates only our cast line changes, so any lines the player added
@@ -301,7 +312,7 @@ local function WriteMacro(targetFull)
         return false
     end
 
-    local castLine = "/cast [@" .. targetFull .. "] " .. spellName
+    local castLine = BuildCastLine(spellName, targetFull)
 
     local idx = GetMacroIndexByName(MACRO_NAME)
     if idx and idx > 0 then
@@ -620,6 +631,25 @@ function LuckyGrabbag.PowerInfusion:ApplySetting()
     UpdateVisibility()
 end
 
+-- Rewrites the existing macro's cast line for the current settings and saved
+-- target. Silent, and never creates a macro: used at login so macros written
+-- by older versions gain the fallback clauses, and when the focus-order
+-- setting changes. In combat it skips; the next pick catches up.
+function LuckyGrabbag.PowerInfusion:UpdateMacro()
+    if not charDB or not charDB.piTarget then return end
+    if InCombatLockdown() then return end
+    local idx = GetMacroIndexByName(MACRO_NAME)
+    if not idx or idx == 0 then return end
+    local spellName = C_Spell.GetSpellName(POWER_INFUSION_SPELL_ID)
+    if not spellName then return end
+    local castLine = BuildCastLine(spellName, charDB.piTarget)
+    local body = MergePIMacro(GetMacroBody(idx) or "", castLine, spellName)
+    if body ~= GetMacroBody(idx) then
+        EditMacro(idx, MACRO_NAME, MACRO_ICON, body)
+        DevLog("Macro cast line rewritten")
+    end
+end
+
 -- Every gate UpdateVisibility applies, for /gbdiag.
 function LuckyGrabbag.PowerInfusion:GetDiagState()
     return {
@@ -707,5 +737,9 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
         UpdateVisibility()
     end)
 
-    C_Timer.After(1, UpdateVisibility)
+    C_Timer.After(1, function()
+        UpdateVisibility()
+        -- Delayed so spell data is loaded before the login migration runs.
+        LuckyGrabbag.PowerInfusion:UpdateMacro()
+    end)
 end

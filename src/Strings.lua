@@ -417,7 +417,11 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         piPicker = {
             label = "Power Infusion Picker",
-            desc  = "For priests: shows a window in dungeons, raids, and grouped scenarios such as delves to pick who receives your Power Infusion. Clicking a name updates a 'PI' macro that casts Power Infusion on that player. Drag the macro to your action bar once, then pick new targets any time. Right-click drag to move the window.",
+            desc  = "For priests: shows a window in dungeons, raids, and grouped scenarios such as delves to pick who receives your Power Infusion. Clicking a name updates a 'PI' macro that casts Power Infusion on that player, falling back to your focus and then yourself when they are unavailable. Drag the macro to your action bar once, then pick new targets any time. Right-click drag to move the window.",
+        },
+        piFocusFirst = {
+            label = "Focus Before Picked Player",
+            desc  = "The PI macro casts on your focus ahead of the picked player, instead of only when the picked player is unavailable.",
         },
         autoCombatLog = {
             label = "Auto Combat Logging",
