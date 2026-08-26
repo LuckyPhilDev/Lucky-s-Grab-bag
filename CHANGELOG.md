@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+### Added
+- **Auto-dismiss Bonus Roll** The setting is usable again, passing the Bonus Roll popup in any content you have not ticked to keep it in.
+
 ### Fixed
 - The Spend to Next Perk setting says the profession specialisation node is Shift-clicked, which is the click that actually spends the points. (Thanks for the report Halliday)
 

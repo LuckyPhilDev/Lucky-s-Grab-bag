@@ -726,10 +726,9 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.bonusRoll.label,
             desc     = SS.bonusRoll.desc,
             note     = SS.bonusRoll.note,
-            checked  = false,
-            disabled = true,
+            checked  = charDB.bonusRollAutoDismiss,
             since    = "1.7.0",
-            onToggle = function() end,
+            onToggle = function(checked) charDB.bonusRollAutoDismiss = checked end,
         })
 
         g:Toggle({

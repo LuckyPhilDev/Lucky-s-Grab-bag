@@ -512,7 +512,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         bonusRoll = {
             label = "Auto-dismiss Bonus Roll",
             desc  = "Automatically passes on the Bonus Roll popup that appears at the end of content, except in the situations selected below.",
-            note  = "Turned off while it's tested against the new content, so nothing is dismissed for now. It will be back in a coming update.",
+            note  = "This is a per-character setting.",
         },
         bonusRollKeepInMythicPlus = {
             label = "Keep in Mythic+",
