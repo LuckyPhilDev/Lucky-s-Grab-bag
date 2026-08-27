@@ -39,6 +39,7 @@ features/Transmog.lua
 features/TransmogSets.lua
 features/WorkOrderAltTip.lua
 features/InstanceDiag.lua
+features/ItemIDTip.lua
 features/BonusRoll.lua
 features/ProfessionSpendToPerk.lua
 features/ConcentrationView.lua
