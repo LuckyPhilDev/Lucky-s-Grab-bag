@@ -372,6 +372,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             label = "Only while rested",
             desc  = "Hides the popup outside rest areas.",
         },
+        useItemsShowCombinable = {
+            label = "Show finishing reagents",
+            desc  = "Adds a button for finishing reagents that combine into a better one, such as 5 Multicraft Matrix into a Multicraft Manifold. Appears once you hold 5.",
+        },
         massDelete = {
             label = "Mass Delete",
             desc  = "Adds a Mass Delete button beside the popup that confirms deleting an item. It opens a list you fill by clicking items in your bags, then the Delete button clears the list, one item per click or mouse wheel notch, which is as fast as the game allows.",

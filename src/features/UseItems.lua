@@ -6,6 +6,14 @@ local ITEM_NAME_PATTERNS  = LuckyGrabbag.UseItemsData.itemNamePatterns   -- defi
 local THALASSIAN_SUFFIXES = LuckyGrabbag.UseItemsData.thalassianSuffixes  -- defined in UseItemsData.lua
 local TREATISE_PATTERN    = LuckyGrabbag.UseItemsData.treatisePattern     -- defined in UseItemsData.lua
 
+local COMBINE_COUNT       = LuckyGrabbag.UseItemsData.combineCount       -- defined in UseItemsData.lua
+
+-- itemID -> position in the data file's list, which is also its button position.
+local COMBINABLE_ORDER = {}
+for index, id in ipairs(LuckyGrabbag.UseItemsData.combinableItemIDs or {}) do
+    COMBINABLE_ORDER[id] = index
+end
+
 local ITEM_ID_SET = {}
 for _, id in ipairs(LuckyGrabbag.UseItemsData.itemIDs or {}) do
     ITEM_ID_SET[id] = true
@@ -24,6 +32,7 @@ local DevLog = LuckyGrabbag.Logger("UseItems")
 
 local function IsMatchingItem(itemName, itemID)
     if itemID and ITEM_ID_SET[itemID] then return true end
+    if itemID and COMBINABLE_ORDER[itemID] then return db.useItemsShowCombinable end
     if not itemName then return false end
     for _, pattern in ipairs(ITEM_NAME_PATTERNS) do
         if string.find(itemName, pattern, 1, true) then
@@ -47,7 +56,9 @@ end
 local function ScanBags()
     local found = {}
     local totalSlots, totalItems = 0, 0
-    for bag = 0, NUM_BAG_SLOTS do
+    -- Includes the reagent bag, where finishing reagents and other profession
+    -- consumables file themselves automatically.
+    for _, bag in ipairs(LuckyGrabbag.AutoDepositUtils.GetAllPlayerBagIDs()) do
         local numSlots = C_Container.GetContainerNumSlots(bag)
         totalSlots = totalSlots + numSlots
         for slot = 1, numSlots do
@@ -72,6 +83,7 @@ local function ScanBags()
                             itemName = itemName,
                             icon = info.iconFileID,
                             count = info.stackCount or 1,
+                            combinable = COMBINABLE_ORDER[info.itemID],
                         }
                     else
                         found[info.itemID].count = found[info.itemID].count + (info.stackCount or 1)
@@ -83,9 +95,18 @@ local function ScanBags()
     DevLog("Scanned " .. totalSlots .. " slots, " .. totalItems .. " items occupied")
     local items = {}
     for _, item in pairs(found) do
-        table.insert(items, item)
+        -- A combine consumes a full set, so a smaller pile has nothing to offer yet.
+        if item.combinable and item.count < COMBINE_COUNT then
+            DevLog("  SKIP (only " .. item.count .. " of " .. COMBINE_COUNT .. "): " .. item.itemName)
+        else
+            table.insert(items, item)
+        end
     end
-    table.sort(items, function(a, b) return a.itemName < b.itemName end)
+    table.sort(items, function(a, b)
+        if a.combinable and b.combinable then return a.combinable < b.combinable end
+        if a.combinable or b.combinable then return b.combinable ~= nil end
+        return a.itemName < b.itemName
+    end)
     return items
 end
 

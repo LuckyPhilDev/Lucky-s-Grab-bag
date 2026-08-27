@@ -39,6 +39,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     showCookingButtons       = true,
     showUseItems             = true,
     useItemsCityOnly         = false,
+    useItemsShowCombinable   = false,
     showDelveMap             = true,
     delveMapMinLevel         = 8,
     showCombatPrep           = false,
