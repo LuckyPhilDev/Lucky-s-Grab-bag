@@ -373,8 +373,8 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             desc  = "Hides the popup outside rest areas.",
         },
         useItemsShowCombinable = {
-            label = "Show combinable reagents",
-            desc  = "Adds buttons for finishing reagents that combine into a better version, such as 5 Multicraft Matrix into a Multicraft Manifold. A button appears once you hold a full set of 5. Off by default: most players would rather spend these than upgrade them.",
+            label = "Show finishing reagents",
+            desc  = "Adds a button for finishing reagents that combine into a better one, such as 5 Multicraft Matrix into a Multicraft Manifold. Appears once you hold 5.",
         },
         massDelete = {
             label = "Mass Delete",

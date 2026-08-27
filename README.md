@@ -60,7 +60,7 @@ Displays a floating bar of buttons when you have consumable profession items in 
 - Thalassian Treatises are automatically hidden if already used this week, if your character hasn't learned that profession for the current expansion, or if your Midnight skill is below 25.
 - One button per item type; shows stack count when you have multiples.
 - Optionally restrict to cities and inns only via the "Only in Cities" setting.
-- Optionally include finishing reagents that combine into a better version, such as 5 **Multicraft Matrix** into a **Multicraft Manifold**, via the "Show combinable reagents" setting. A button appears only once you hold a full set of 5. Off by default.
+- Optionally include finishing reagents that combine into a better one, such as 5 **Multicraft Matrix** into a **Multicraft Manifold**, via the "Show finishing reagents" setting. A button appears only once you hold 5. Off by default.
 - Draggable via right-click drag; position is saved account-wide and persists across reloads.
 - Auto-hides when no matching items remain in your bags.
 - Respects combat lockdown — buttons won't change mid-combat.
@@ -376,7 +376,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 **Inventory**
 - *Use Items Popup* — Displays a floating bar of buttons for consumable profession items in your bags.
   - *Only while rested* — Restricts the popup to cities and inns.
-  - *Show combinable reagents*: Adds buttons for finishing reagents that combine into a better version, such as 5 Multicraft Matrix into a Multicraft Manifold. Off by default.
+  - *Show finishing reagents*: Adds a button for finishing reagents that combine into a better one, such as 5 Multicraft Matrix into a Multicraft Manifold. Off by default.
 
 **Rotation Glow**
 - *Rotation Glow* — Animates the suggested next-cast spell on the Essential Cooldown Viewer, using Blizzard's assisted combat data.
