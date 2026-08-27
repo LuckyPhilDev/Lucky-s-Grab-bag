@@ -1,4 +1,7 @@
-## [Unreleased]
+## [1.24.4] - 2026-08-28
+
+### Added
+- **Show finishing reagents** The Use Items Popup can carry crafting finishing reagents that combine into a better one, such as 5 Multicraft Matrix into a Multicraft Manifold. Off by default, and a button appears once you hold 5. (Thanks for the suggestion Nickyjean01)
 
 ### Fixed
 - Buying anything of your own at the Auction House no longer announces that the profession quest shopping list is finished, or retires the shopping button. (Thanks for the report Perigee)
