@@ -6,8 +6,13 @@ local ITEM_NAME_PATTERNS  = LuckyGrabbag.UseItemsData.itemNamePatterns   -- defi
 local THALASSIAN_SUFFIXES = LuckyGrabbag.UseItemsData.thalassianSuffixes  -- defined in UseItemsData.lua
 local TREATISE_PATTERN    = LuckyGrabbag.UseItemsData.treatisePattern     -- defined in UseItemsData.lua
 
-local COMBINE_COUNT       = LuckyGrabbag.UseItemsData.combineCount            -- defined in UseItemsData.lua
-local COMBINABLE_PATTERNS = LuckyGrabbag.UseItemsData.combinableNamePatterns  -- defined in UseItemsData.lua
+local COMBINE_COUNT       = LuckyGrabbag.UseItemsData.combineCount       -- defined in UseItemsData.lua
+
+-- itemID -> position in the data file's list, which is also its button position.
+local COMBINABLE_ORDER = {}
+for index, id in ipairs(LuckyGrabbag.UseItemsData.combinableItemIDs or {}) do
+    COMBINABLE_ORDER[id] = index
+end
 
 local ITEM_ID_SET = {}
 for _, id in ipairs(LuckyGrabbag.UseItemsData.itemIDs or {}) do
@@ -25,19 +30,9 @@ local inCombat = false
 
 local DevLog = LuckyGrabbag.Logger("UseItems")
 
-local function IsCombinableItem(itemName)
-    if not itemName then return false end
-    for _, pattern in ipairs(COMBINABLE_PATTERNS) do
-        if string.find(itemName, pattern, 1, true) then
-            return true
-        end
-    end
-    return false
-end
-
 local function IsMatchingItem(itemName, itemID)
     if itemID and ITEM_ID_SET[itemID] then return true end
-    if IsCombinableItem(itemName) then return db.useItemsShowCombinable end
+    if itemID and COMBINABLE_ORDER[itemID] then return db.useItemsShowCombinable end
     if not itemName then return false end
     for _, pattern in ipairs(ITEM_NAME_PATTERNS) do
         if string.find(itemName, pattern, 1, true) then
@@ -88,7 +83,7 @@ local function ScanBags()
                             itemName = itemName,
                             icon = info.iconFileID,
                             count = info.stackCount or 1,
-                            combinable = IsCombinableItem(itemName),
+                            combinable = COMBINABLE_ORDER[info.itemID],
                         }
                     else
                         found[info.itemID].count = found[info.itemID].count + (info.stackCount or 1)
@@ -107,7 +102,11 @@ local function ScanBags()
             table.insert(items, item)
         end
     end
-    table.sort(items, function(a, b) return a.itemName < b.itemName end)
+    table.sort(items, function(a, b)
+        if a.combinable and b.combinable then return a.combinable < b.combinable end
+        if a.combinable or b.combinable then return b.combinable ~= nil end
+        return a.itemName < b.itemName
+    end)
     return items
 end
 
