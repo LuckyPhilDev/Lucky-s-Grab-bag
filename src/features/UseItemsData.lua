@@ -24,6 +24,23 @@ LuckyGrabbag.UseItemsData = {
     -- treatise-specific filtering logic (profession eligibility, weekly quest status).
     treatisePattern = "Thalassian Treatise on",
 
+    -- Finishing crafting reagents whose "use" is "Combine 5 to create <better item>".
+    -- Opt-in via db.useItemsShowCombinable: a working crafter carries these permanently,
+    -- so the buttons would never clear out on their own.
+    -- Matched by name, not ID: each of these ships in several quality tiers that share
+    -- one name but have separate item IDs, and a tier we failed to list would go missing.
+    combinableNamePatterns = {
+        "Multicraft Matrix",          -- -> Multicraft Manifold
+        "Resourceful Rebar",          -- -> Resourceful Routing
+        "Ingenious Identifier",       -- -> Ingenious Identity
+        "Apprentice's Scribbles",     -- -> Artisan's Ledger
+        "Artisan's Ledger",           -- -> Mentor's Helpful Handiwork
+        "Mentor's Helpful Handiwork", -- -> Artisan's Consortium Gold Star
+    },
+
+    -- How many of a combinable item one combine consumes. Every item above uses 5.
+    combineCount = 5,
+
     -- Explicit item IDs that should always get a "use" button, regardless of name.
     -- Treatises are matched by name pattern above and intentionally omitted here.
     itemIDs = {
