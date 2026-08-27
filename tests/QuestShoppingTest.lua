@@ -51,7 +51,10 @@ AuctionHouseFrame = {
     SearchBar = { StartSearch = function() end },
 }
 
-Enum = { AuctionHouseSortOrder = { Price = 0 } }
+Enum = {
+    AuctionHouseSortOrder = { Price = 0 },
+    PlayerInteractionType = { Gossip = 1, QuestGiver = 2 },
+}
 
 -- Two qualities of one reagent, so a tier mismatch has something to be wrong about.
 local items = {
@@ -117,6 +120,10 @@ end
 
 local function Fire(event, ...)
     eventFrame.scripts.OnEvent(eventFrame, event, ...)
+end
+
+local function LeaveNPC()
+    Fire("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", Enum.PlayerInteractionType.Gossip)
 end
 
 GameTooltip = {
@@ -501,6 +508,19 @@ assert(ah.started and ah.started[1] == 1001,
     "a failed purchase should leave that item next in line, got " .. tostring(ah.started and ah.started[1]))
 Fire("COMMODITY_PURCHASE_FAILED")
 
+-- ─── The player's own buying is not the list's ───────────────────────────────
+
+-- A purchase this button never started must leave the button and chat alone.
+quests[1].objectives[1] = { "0/4 Dawn Crystal " .. ATLAS_QUEST, "item", false, 0, 4 }
+QS:ApplySetting()
+local quietBefore = #printed
+Fire("COMMODITY_PURCHASE_SUCCEEDED")
+Fire("COMMODITY_PURCHASE_FAILED")
+Fire("COMMODITY_PRICE_UNAVAILABLE")
+assert(#printed == quietBefore,
+    "an unrelated purchase should say nothing, got " .. tostring(printed[#printed]))
+assert(QS:GetButton().shown, "an unrelated purchase should leave the button up")
+
 Auctionator = nil
 
 -- ─── Nothing to buy, and switched off ────────────────────────────────────────
@@ -596,14 +616,14 @@ assert(#gossip.selected == 1, "one selection per gossip window is enough")
 Fire("GOSSIP_SHOW")
 assert(#gossip.selected == 1, "a quest already tried should not be selected again")
 
-Fire("GOSSIP_CLOSED")
+LeaveNPC()
 Fire("GOSSIP_SHOW")
 assert(#gossip.selected == 2, "a fresh visit to the NPC should try again")
 
 -- A finished quest is handed back before a new one is taken.
 gossip.selected = {}
 gossip.active = { { questID = 1, isComplete = true } }
-Fire("GOSSIP_CLOSED")
+LeaveNPC()
 Fire("GOSSIP_SHOW")
 assert(gossip.selected[1] == "active:1", "a finished profession quest should go first")
 
@@ -611,14 +631,14 @@ assert(gossip.selected[1] == "active:1", "a finished profession quest should go 
 gossip.selected = {}
 gossip.active = { { questID = 1, isComplete = false } }
 gossip.available = {}
-Fire("GOSSIP_CLOSED")
+LeaveNPC()
 Fire("GOSSIP_SHOW")
 assert(#gossip.selected == 0, "a quest that is not finished should be left alone")
 
 -- Ordinary quests are never touched, whichever list they are in.
 gossip.active = { { questID = 2, isComplete = true } }
 gossip.available = { { questID = 2 } }
-Fire("GOSSIP_CLOSED")
+LeaveNPC()
 Fire("GOSSIP_SHOW")
 assert(#gossip.selected == 0, "an ordinary quest must be left alone in gossip too")
 
@@ -630,7 +650,7 @@ gossip.active = {}
 dialog.accepted, dialog.completed = 0, 0
 shiftHeld = true
 
-Fire("GOSSIP_CLOSED")
+LeaveNPC()
 Fire("GOSSIP_SHOW")
 assert(#gossip.selected == 0, "with Shift held the gossip window should be left alone")
 
@@ -648,7 +668,7 @@ assert(dialog.accepted == 1, "releasing Shift should accept again")
 -- Switched off, gossip is left alone entirely.
 db.professionQuestAutoAccept, db.professionQuestAutoTurnIn = false, false
 gossip.available = { { questID = 1 } }
-Fire("GOSSIP_CLOSED")
+LeaveNPC()
 Fire("GOSSIP_SHOW")
 assert(#gossip.selected == 0, "off, it should not touch the gossip window")
 

@@ -235,6 +235,8 @@ end
 
 -- COMMODITY_PRICE_UPDATED carries the unit and total price, not the item, so the
 -- pending request is what says which item was priced.
+-- They also fire for the player's own shopping, so every branch has to establish
+-- the purchase was one this button started.
 local function OnCommodityEvent(event, unitPrice, totalPrice)
     local S = LuckyGrabbag.Strings.questShopping
 
@@ -261,17 +263,20 @@ local function OnCommodityEvent(event, unitPrice, totalPrice)
         Say(S.priced:format(description, price))
 
     elseif event == "COMMODITY_PRICE_UNAVAILABLE" then
-        Say(S.priceUnavailable:format(awaiting and awaiting.name or ""))
+        if not awaiting then return end
+        Say(S.priceUnavailable:format(awaiting.name))
         CancelQuote()
 
     elseif event == "COMMODITY_PURCHASE_SUCCEEDED" then
+        if not pendingKey then return end
         pendingKey = nil
         awaiting, quote = nil, nil
         if not NextWanted() then Finish() end
 
     elseif event == "COMMODITY_PURCHASE_FAILED" then
+        if not pendingKey then return end
         -- Nothing was bought, so let the next click try that item again.
-        if pendingKey then bought[pendingKey] = nil end
+        bought[pendingKey] = nil
         pendingKey = nil
         awaiting, quote = nil, nil
     end
