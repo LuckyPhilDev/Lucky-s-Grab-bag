@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Fixed
+- Buying anything of your own at the Auction House no longer announces that the profession quest shopping list is finished, or retires the shopping button. (Thanks for the report Perigee)
+
 ## [1.24.3] - 2026-08-26
 
 ### Added
