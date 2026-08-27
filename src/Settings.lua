@@ -424,8 +424,6 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             desc      = SS.useItemsShowCombinable.desc,
             checked   = db.useItemsShowCombinable,
             parent    = SS.useItems.label,
-            image     = "inventory/use-items-popup",
-            imageSize = { 400, 119 },
             onToggle  = function(checked)
                 db.useItemsShowCombinable = checked
                 LuckyGrabbag.UseItems:ApplySetting()
