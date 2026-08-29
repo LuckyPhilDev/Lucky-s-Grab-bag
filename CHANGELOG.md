@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.25.0] - 2026-08-29
 
 ### Improved
 - **Auto-dismiss Bonus Roll** Lucky's Loot Wishlist now runs this, so installing it moves the setting there and greys out the copy here. Without Wishlist the setting works as it always has.
