@@ -522,6 +522,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             desc     = "Automatically passes on the Bonus Roll popup that appears at the end of content, except in the situations selected below.",
             note     = "This is a per-character setting.",
             noteMoved = "Lucky's Loot Wishlist is installed and runs this instead. Manage it there, in Alerts.",
+            warning  = "Every popup this passes is a bonus roll you never make, so anything that boss might have given you is missed for that kill.",
         },
         bonusRollKeepInMythicPlus = {
             label = "Keep in Mythic+",

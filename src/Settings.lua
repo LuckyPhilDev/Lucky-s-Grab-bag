@@ -750,6 +750,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.bonusRoll.label,
             desc     = SS.bonusRoll.desc,
             note     = bonusRollMoved and SS.bonusRoll.noteMoved or SS.bonusRoll.note,
+            warning  = SS.bonusRoll.warning,
             disabled = bonusRollMoved,
             checked  = charDB.bonusRollAutoDismiss,
             since    = "1.7.0",
