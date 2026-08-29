@@ -5,6 +5,9 @@
 - **Warning on Auto-dismiss Bonus Roll** A red icon sits beside the setting. Hover it and it says that every popup passed is a bonus roll you never make.
 - **Combat Prep Window** The window only turns up where its buttons do something: in a group in a dungeon, or leading or assisting a raid. Soloing old content, running a delve, or raiding as a plain member no longer brings up buttons you cannot use. (Thanks for the suggestion Halliday)
 
+### Fixed
+- Minimum key level and Difficulties under Auto-dismiss Bonus Roll grey out along with the settings above them, instead of staying usable while the feature is switched off.
+
 ## [1.24.4] - 2026-08-28
 
 ### Added
