@@ -9,6 +9,16 @@ local BR = LuckyGrabbag.BonusRoll
 
 local charDB
 
+local WISHLIST = "Luckys_Loot_Wishlist"
+
+-- Lucky's Loot Wishlist owns this feature when it is installed, so the two do
+-- not both race to click Pass. The flag is toc metadata, readable before the
+-- addon loads, so a Wishlist too old to have the feature does not disable ours.
+function BR.HandedOff()
+    return LuckyDeps:IsEnabled(WISHLIST)
+        and C_AddOns.GetAddOnMetadata(WISHLIST, "X-BlocksBonusRolls") ~= nil
+end
+
 -- Maps detected context → per-character "keep popup here" flag
 local KEEP_KEYS = {
     mythicplus = "bonusRollKeepInMythicPlus",
@@ -97,6 +107,7 @@ end
 
 local function onBonusRollShow()
     if not charDB or not charDB.bonusRollAutoDismiss then return end
+    if BR.HandedOff() then return end
 
     local ctx = detectContext()
 

@@ -183,7 +183,7 @@ The Omnium Folio keeps the same runes when you change specialization. This featu
 - On by default; turn it off in settings under Combat.
 
 ### Auto-dismiss Bonus Roll
-Automatically passes on Blizzard's Bonus Roll popup that appears at the end of instanced content, with per-character control over which content types are kept.
+Automatically passes on Blizzard's Bonus Roll popup that appears at the end of instanced content, with per-character control over which content types are kept. Lucky's Loot Wishlist carries the same feature, so with both installed it is managed there and greyed out here.
 
 - Per-content toggles for **Mythic+**, **Raids**, **Delves**, **Dungeons**, and **Hunts** in the open world.
 - For Mythic+, set a **minimum key level** to keep the roll for, so rolls from lower keys are dismissed automatically.
@@ -393,7 +393,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Per-Spec Omnium Folio Runes*: Remembers your Omnium Folio rune choices for each specialization and restores them when you switch specs.
 
 **Interface**
-- *Auto-dismiss Bonus Roll* — Temporarily switched off while it is tested against the new content, so the setting is greyed out and no rolls are passed. Normally it passes on the Bonus Roll popup at the end of instanced content, with per-character toggles for Mythic+ (with a minimum key level), Raids (with individual difficulty selection), Delves, Dungeons, and Hunts.
+- *Auto-dismiss Bonus Roll* — Passes on the Bonus Roll popup at the end of instanced content, with per-character toggles for Mythic+ (with a minimum key level), Raids (with individual difficulty selection), Delves, Dungeons, and Hunts. Managed in Lucky's Loot Wishlist when that is installed.
 
 Settings are saved per account, except for Bonus Roll preferences and Omnium Folio rune memory, which are saved per character.
 

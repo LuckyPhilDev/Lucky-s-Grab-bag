@@ -518,9 +518,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             desc  = "Shows the same stat tag next to item names in the Auction House browse list.",
         },
         bonusRoll = {
-            label = "Auto-dismiss Bonus Roll",
-            desc  = "Automatically passes on the Bonus Roll popup that appears at the end of content, except in the situations selected below.",
-            note  = "This is a per-character setting.",
+            label    = "Auto-dismiss Bonus Roll",
+            desc     = "Automatically passes on the Bonus Roll popup that appears at the end of content, except in the situations selected below.",
+            note     = "This is a per-character setting.",
+            noteMoved = "Lucky's Loot Wishlist is installed and runs this instead. Manage it there, in Alerts.",
         },
         bonusRollKeepInMythicPlus = {
             label = "Keep in Mythic+",

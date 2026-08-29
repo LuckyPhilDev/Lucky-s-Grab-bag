@@ -744,10 +744,13 @@ function LuckyGrabbag.Settings:Init(db, charDB)
 
         g:Section(SS.sections.bonusRolls)
 
+        local bonusRollMoved = LuckyGrabbag.BonusRoll.HandedOff()
+
         g:Toggle({
             label    = SS.bonusRoll.label,
             desc     = SS.bonusRoll.desc,
-            note     = SS.bonusRoll.note,
+            note     = bonusRollMoved and SS.bonusRoll.noteMoved or SS.bonusRoll.note,
+            disabled = bonusRollMoved,
             checked  = charDB.bonusRollAutoDismiss,
             since    = "1.7.0",
             onToggle = function(checked) charDB.bonusRollAutoDismiss = checked end,
