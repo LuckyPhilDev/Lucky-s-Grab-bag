@@ -8,15 +8,18 @@ local inCombat = false
 
 local DevLog = LuckyGrabbag.Logger("CombatPrep")
 
--- Instance type rather than group type, so a raid group parked in the open
--- world or a housing decor duel does not get the window. Dungeons come back as
--- "party" because IsChallengeModeActive() only turns true once the key starts,
--- which would miss pre-key M+ and plain mythic.
+-- Instance type as well as group, so a raid group parked in the open world and
+-- a solo transmog run both miss out. Dungeons come back as "party" because
+-- IsChallengeModeActive() only turns true once the key starts, which would miss
+-- pre-key M+ and plain mythic. Scenarios are out because a solo delve still
+-- counts as a group once Brann is along. In a raid the buttons only work for
+-- the leader and assists, so everyone else is spared a window of dead buttons.
 local function IsInQualifyingContent()
     local instanceType = LuckyGrabbag.GroupInstanceType()
-    if not instanceType then return false end
-    -- Delves and other scenarios only count when there are people to pull with.
-    return instanceType ~= "scenario" or IsInGroup()
+    if instanceType == "raid" then
+        return UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")
+    end
+    return instanceType == "party" and IsInGroup()
 end
 
 -- Picks the appropriate pull timer for current content. Raids use the raid
@@ -94,7 +97,7 @@ local function UpdateVisibility()
         DevLog("Shown (in qualifying content)")
     else
         prepFrame:Hide()
-        DevLog("Hidden (not in a dungeon, raid, or grouped scenario)")
+        DevLog("Hidden (not grouped in a dungeon, or not raid leader or assist)")
     end
 end
 
@@ -362,6 +365,7 @@ function LuckyGrabbag.CombatPrep:Init(database)
     eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+    eventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("CHALLENGE_MODE_START")
     eventFrame:RegisterEvent("CHALLENGE_MODE_COMPLETED")

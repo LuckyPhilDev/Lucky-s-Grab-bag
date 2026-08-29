@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Improved
+- **Combat Prep Window** The window only turns up where its buttons do something: in a group in a dungeon, or leading or assisting a raid. Soloing old content, running a delve, or raiding as a plain member no longer brings up buttons you cannot use. (Thanks for the suggestion Halliday)
+
 ## [1.24.4] - 2026-08-28
 
 ### Added

@@ -138,7 +138,7 @@ Animates the suggested next-cast spell on Blizzard's Cooldown Manager, using the
 - Off by default; enable it in the addon settings.
 
 ### Combat Prep Window
-A small floating window that appears automatically in dungeons, raids, and scenarios when you're out of combat, giving quick access to pull timers, ready checks, and break countdowns.
+A small floating window that appears automatically when you're out of combat and in a group in a dungeon, or leading or assisting a raid, giving quick access to pull timers, ready checks, and break countdowns.
 
 - **Pull Timer** — starts a countdown for the configured duration. Separate durations for Mythic+ (default 10s) and raids (default 12s); the button shows whichever applies to the content you're in. A cancel button beside it lets you stop the countdown early.
 - **Ready Check** — initiates a ready check for the group. Can be hidden in settings.
@@ -382,7 +382,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Rotation Glow* — Animates the suggested next-cast spell on the Essential Cooldown Viewer, using Blizzard's assisted combat data.
 
 **Combat Prep**
-- *Combat Prep Window* — Shows a floating window with pull timer, ready check, and break timer buttons in dungeons, raids, and scenarios.
+- *Combat Prep Window* — Shows a floating window with pull timer, ready check, and break timer buttons while you are in a group in a dungeon, or leading or assisting a raid.
   - *Ready Check Button* — Show or hide the ready check button.
   - *Pull Timer (Mythic+)* — How long the pull countdown lasts in dungeons (3–30 seconds).
   - *Pull Timer (Raid)* — How long the pull countdown lasts in raids (3–30 seconds).
