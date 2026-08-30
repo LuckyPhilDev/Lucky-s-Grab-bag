@@ -28,6 +28,8 @@ features/WarboundAutoDeposit.lua
 features/UseItemsData.lua
 features/UseItems.lua
 features/DelveMap.lua
+features/DungeonPortalsData.lua
+features/DungeonPortals.lua
 features/KickMacro.lua
 features/CombatPrep.lua
 features/RotationGlow.lua

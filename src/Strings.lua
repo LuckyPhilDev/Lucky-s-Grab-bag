@@ -21,6 +21,13 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         devModeOff    = "OFF",
     },
 
+    dungeonPortals = {
+        toggleTitle = "Dungeon Teleports",
+        toggleDesc  = "Show a teleport button on the dungeon and raid entrances you have earned the teleport for.",
+        stateOn     = "|cff00cc00Shown|r",
+        stateOff    = "|cffff4040Hidden|r",
+    },
+
     autoRepair = {
         repaired      = "Repaired all items (%s from %s)",
         guildFunds    = "guild funds",
@@ -256,6 +263,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             tooltips       = "Tooltips",
             wardrobe       = "Wardrobe",
             bonusRolls     = "Bonus Rolls",
+            worldMap       = "World Map",
             quests         = "Quests",
             craftingWindow = "Crafting Window",
             altsWarband    = "Alts & Warband",
@@ -454,6 +462,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         delveMap = {
             label = "Trovehunter's Bounty",
             desc  = "Floating button to use your Trovehunter's Bounty, or last season's Bounty Map, when you're inside a delve that meets the minimum level. Right-click and drag to reposition.",
+        },
+        dungeonPortals = {
+            label = "Dungeon Teleports",
+            desc  = "Puts a teleport button on the dungeon and raid entrance icons on the world map. Only the instances whose teleport you have earned get one.",
         },
         delveMapMinLevel = {
             label = "Minimum Delve Level",

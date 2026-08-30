@@ -742,6 +742,19 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     do
         local g = panel:Group(SS.groups.interface)
 
+        g:Section(SS.sections.worldMap)
+
+        g:Toggle({
+            label    = SS.dungeonPortals.label,
+            desc     = SS.dungeonPortals.desc,
+            checked  = db.dungeonPortals,
+            since    = "1.26.0",
+            onToggle = function(checked)
+                db.dungeonPortals = checked
+                LuckyGrabbag.DungeonPortals:ApplySetting()
+            end,
+        })
+
         g:Section(SS.sections.bonusRolls)
 
         local bonusRollMoved = LuckyGrabbag.BonusRoll.HandedOff()
