@@ -205,6 +205,7 @@ Puts a teleport button on the dungeon and raid entrance icons on the world map, 
 
 - Hover a button to see the teleport's tooltip, including its cooldown; click to cast.
 - Covers dungeon teleports from Wrath of the Lich King onward and the raid teleports from Shadowlands onward.
+- The active Abundance event icon carries a button for Dundun's Abundant Travel Method once you own the toy.
 - A round button below the map's Map Pin button toggles the teleports on and off.
 - Can be toggled in the addon settings.
 
@@ -401,7 +402,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Per-Spec Omnium Folio Runes*: Remembers your Omnium Folio rune choices for each specialization and restores them when you switch specs.
 
 **Interface**
-- *Dungeon Teleports* — Shows a teleport button on the world map's dungeon and raid entrances you have earned the teleport for.
+- *Dungeon Teleports* — Shows a teleport button on the world map's dungeon and raid entrances you have earned the teleport for, and Dundun's Abundant Travel Method on the active Abundance event.
 - *Auto-dismiss Bonus Roll* — Passes on the Bonus Roll popup at the end of instanced content, with per-character toggles for Mythic+ (with a minimum key level), Raids (with individual difficulty selection), Delves, Dungeons, and Hunts. Managed in Lucky's Loot Wishlist when that is installed.
 
 Settings are saved per account, except for Bonus Roll preferences and Omnium Folio rune memory, which are saved per character.
