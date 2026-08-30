@@ -23,7 +23,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
 
     dungeonPortals = {
         toggleTitle = "Dungeon Teleports",
-        toggleDesc  = "Show a teleport button on the dungeon and raid entrances you have earned the teleport for.",
+        toggleDesc  = "Show a teleport button on the dungeon and raid entrances you have earned the teleport for, and on the active Abundance event once you own Dundun's Abundant Travel Method.",
         stateOn     = "|cff00cc00Shown|r",
         stateOff    = "|cffff4040Hidden|r",
     },
@@ -465,7 +465,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         dungeonPortals = {
             label = "Dungeon Teleports",
-            desc  = "Puts a teleport button on the dungeon and raid entrance icons on the world map. Only the instances whose teleport you have earned get one.",
+            desc  = "Puts a teleport button on the dungeon and raid entrance icons on the world map. Only the instances whose teleport you have earned get one, and the active Abundance event gets Dundun's Abundant Travel Method once you own the toy.",
         },
         delveMapMinLevel = {
             label = "Minimum Delve Level",

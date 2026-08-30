@@ -178,6 +178,80 @@ local function UpdatePin(pin)
     btn:Show()
 end
 
+local TRAVEL_TOY = LuckyGrabbag.ABUNDANCE_TRAVEL_TOY_ID
+-- The active Abundance event's POI pin gets Dundun's Abundant Travel Method,
+-- a toy rather than a spell, so the badge casts through /use.
+local function EventButton(pin)
+    if pin.luckyAbundance then return pin.luckyAbundance end
+
+    local btn = CreateBadge({
+        parent   = pin,
+        template = "InsecureActionButtonTemplate",
+        size     = BUTTON_SIZE,
+        tooltip  = function()
+            if PlayerHasToy(TRAVEL_TOY) then
+                GameTooltip:SetToyByItemID(TRAVEL_TOY)
+            else
+                GameTooltip:SetItemByID(TRAVEL_TOY)
+            end
+        end,
+    })
+    -- The event pin's art runs well past a dungeon pin's, so sit further out.
+    btn:SetPoint("CENTER", pin, "TOPRIGHT", 2, 2)
+    btn:SetFrameLevel(pin:GetFrameLevel() + 3)
+    btn:SetAttribute("type", "macro")
+    btn:SetAttribute("macrotext", "/use item:" .. TRAVEL_TOY)
+    btn:RegisterForClicks("AnyUp", "AnyDown")
+
+    pin.luckyAbundance = btn
+    return btn
+end
+
+local QUELTHALAS_CONTINENT = 2537
+
+local function EventPoiID(pin)
+    return pin.areaPoiID or (pin.poiInfo and pin.poiInfo.areaPoiID)
+end
+
+-- Zone maps give the same event a different POI ID than the continent map, so
+-- IDs alone cannot carry the match. The continent IDs are stable though, so
+-- the active site's atlas is read from there once and zone pins match on it.
+local abundanceAtlas
+local function AbundanceAtlas()
+    if abundanceAtlas then return abundanceAtlas end
+    for poiID in pairs(LuckyGrabbag.ABUNDANCE_POI_IDS) do
+        local info = C_AreaPoiInfo.GetAreaPOIInfo(QUELTHALAS_CONTINENT, poiID)
+        if info and info.atlasName then
+            abundanceAtlas = info.atlasName
+            DevLog("Abundance atlas: " .. abundanceAtlas)
+            break
+        end
+    end
+    return abundanceAtlas
+end
+
+local function IsAbundancePoi(pin, poiID)
+    if LuckyGrabbag.ABUNDANCE_POI_IDS[poiID] then return true end
+    local atlas = pin.poiInfo and pin.poiInfo.atlasName
+    return atlas ~= nil and atlas == AbundanceAtlas()
+end
+
+local function UpdateEventPin(pin)
+    local poiID = EventPoiID(pin)
+    local show = db.dungeonPortals
+        and poiID and IsAbundancePoi(pin, poiID)
+        and (PlayerHasToy(TRAVEL_TOY) or C_Item.GetItemCount(TRAVEL_TOY) > 0)
+    if not show then
+        if pin.luckyAbundance then pin.luckyAbundance:Hide() end
+        return false
+    end
+
+    local btn = EventButton(pin)
+    btn.icon:SetTexture(C_Item.GetItemIconByID(TRAVEL_TOY) or FALLBACK_ICON)
+    btn:Show()
+    return true
+end
+
 local mapToggle
 
 local function UpdateMapToggle()
@@ -192,6 +266,14 @@ local function Refresh()
     for pin in WorldMapFrame:EnumeratePinsByTemplate("DungeonEntrancePinTemplate") do
         UpdatePin(pin)
     end
+
+    -- Event POIs have moved between pin templates across patches, so match on
+    -- the POI ID over every pin instead of trusting a template name.
+    WorldMapFrame:ExecuteOnAllPins(function(pin)
+        if EventPoiID(pin) then
+            UpdateEventPin(pin)
+        end
+    end)
 end
 
 -- The same badge, sat in the map's top-right corner as the on/off switch.
@@ -244,6 +326,11 @@ function LuckyGrabbag.DungeonPortals:Init(database)
     UpdateMapToggle()
 
     WorldMapFrame:HookScript("OnShow", Refresh)
+    -- Navigating between maps re-acquires pins without a full provider
+    -- refresh, so the map change needs its own hook.
+    hooksecurefunc(WorldMapFrame, "OnMapChanged", function()
+        C_Timer.After(0, Refresh)
+    end)
     hooksecurefunc(WorldMapFrame, "RefreshAllDataProviders", function()
         -- Pins are acquired during the refresh, so let it finish first.
         C_Timer.After(0, Refresh)

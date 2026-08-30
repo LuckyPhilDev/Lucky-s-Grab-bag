@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Added
+- **Dundun's Abundant Travel Method** The active Abundance event icon on the world map carries a button to use the toy, teleporting you straight to the event.
+
 ## [1.26.0] - 2026-08-30
 
 ### Added

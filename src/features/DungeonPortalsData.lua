@@ -127,3 +127,13 @@ LuckyGrabbag.RAID_PORTAL_SPELLS = {
     [1193] = 373191, -- Sanctum of Domination
     [1195] = 373192, -- Sepulcher of the First Ones
 }
+
+-- The Abundance event in Quel'Thalas: the active site shows as one of these
+-- area POIs, and Dundun's Abundant Travel Method teleports straight to it.
+LuckyGrabbag.ABUNDANCE_POI_IDS = {
+    [8671] = true, -- Zul'Aman Skinning Den
+    [8672] = true, -- Eversong Enchanting Crypt
+    [8675] = true, -- Voidstorm Voidburrow
+    [8676] = true, -- Harandar Herbalism Grotto
+}
+LuckyGrabbag.ABUNDANCE_TRAVEL_TOY_ID = 266370 -- Dundun's Abundant Travel Method
