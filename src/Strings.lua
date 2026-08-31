@@ -23,7 +23,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
 
     dungeonPortals = {
         toggleTitle      = "Map Teleports",
-        toggleDesc       = "Show a teleport button on the dungeon and raid entrances you have earned the teleport for, on the spot each of your class teleports lands, and on the active Abundance event once you own Dundun's Abundant Travel Method.",
+        toggleDesc       = "Buttons on the map for every teleport you know: dungeon and raid entrances, class teleports, and teleport toys.",
         toggleRightClick = "Right-click to choose which teleports show",
         portalHint       = "Right-click to open the portal for your group",
         stateOn     = "|cff00cc00Shown|r",
@@ -467,7 +467,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         dungeonPortals = {
             label = "Map Teleports",
-            desc  = "Puts teleport buttons on the world map: on dungeon and raid entrances whose teleport you have earned, on your class teleports' destinations, and on the active Abundance event once you own Dundun's Abundant Travel Method. Each kind can be hidden below.",
+            desc  = "Buttons on the world map for every teleport you know: dungeon and raid entrances, class teleports where they land, and teleport toys like Dundun's Abundant Travel Method. Each kind can be hidden below.",
         },
         dungeonPortalsDungeons = {
             label = "Dungeon and Raid Teleports",

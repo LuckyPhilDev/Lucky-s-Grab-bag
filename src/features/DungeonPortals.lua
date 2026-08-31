@@ -337,9 +337,23 @@ end
 
 local mapToggle
 
+local CATEGORY_KEYS = { "dungeonPortalsDungeons", "dungeonPortalsClass", "dungeonPortalsToys" }
+
+local function AnyCategoryShown()
+    for _, key in ipairs(CATEGORY_KEYS) do
+        if db[key] then return true end
+    end
+    return false
+end
+
+-- Every category unticked is the feature off, however the master is set.
+local function IsEnabled()
+    return db.dungeonPortals and AnyCategoryShown()
+end
+
 local function UpdateMapToggle()
     if not mapToggle then return end
-    local on = db.dungeonPortals
+    local on = IsEnabled()
     mapToggle.icon:SetDesaturated(not on)
     mapToggle.ring:SetColorTexture(on and 0.85 or 0.4, on and 0.65 or 0.4, on and 0.25 or 0.4, 1)
 end
@@ -372,7 +386,7 @@ local function CreateMapToggle()
             GameTooltip:AddLine(S.toggleTitle)
             GameTooltip:AddLine(S.toggleDesc, 0.91, 0.86, 0.78, true)
             GameTooltip:AddLine(S.toggleRightClick, 0.54, 0.49, 0.42)
-            GameTooltip:AddLine(db.dungeonPortals and S.stateOn or S.stateOff)
+            GameTooltip:AddLine(IsEnabled() and S.stateOn or S.stateOff)
         end,
     })
     -- Below Blizzard's own Map Pin button, found the way Krowi's map button
@@ -397,7 +411,16 @@ local function CreateMapToggle()
             LuckyGrabbag.DungeonPortals:OpenCategoryMenu(self)
             return
         end
-        db.dungeonPortals = not db.dungeonPortals
+        if IsEnabled() then
+            db.dungeonPortals = false
+        else
+            -- Switching on with nothing ticked brings every category back;
+            -- a master switch that lights up an empty feature helps nobody.
+            db.dungeonPortals = true
+            if not AnyCategoryShown() then
+                for _, key in ipairs(CATEGORY_KEYS) do db[key] = true end
+            end
+        end
         Refresh()
         -- Redo the tooltip so the Shown/Hidden line follows the click.
         self:GetScript("OnEnter")(self)
@@ -405,8 +428,6 @@ local function CreateMapToggle()
 
     return btn
 end
-
-local CATEGORY_KEYS = { "dungeonPortalsDungeons", "dungeonPortalsClass", "dungeonPortalsToys" }
 
 --- The category toggles as a context menu, for the map button's right-click.
 function LuckyGrabbag.DungeonPortals:OpenCategoryMenu(owner)
