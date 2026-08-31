@@ -371,6 +371,7 @@ local function CreateMapToggle()
         tooltip = function()
             GameTooltip:AddLine(S.toggleTitle)
             GameTooltip:AddLine(S.toggleDesc, 0.91, 0.86, 0.78, true)
+            GameTooltip:AddLine(S.toggleRightClick, 0.54, 0.49, 0.42)
             GameTooltip:AddLine(db.dungeonPortals and S.stateOn or S.stateOff)
         end,
     })
@@ -390,7 +391,12 @@ local function CreateMapToggle()
     end
     btn:SetFrameStrata("HIGH")
     btn.icon:SetTexture(TOGGLE_ICON)
-    btn:SetScript("OnClick", function(self)
+    btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    btn:SetScript("OnClick", function(self, mouseBtn)
+        if mouseBtn == "RightButton" then
+            LuckyGrabbag.DungeonPortals:OpenCategoryMenu(self)
+            return
+        end
         db.dungeonPortals = not db.dungeonPortals
         Refresh()
         -- Redo the tooltip so the Shown/Hidden line follows the click.
@@ -398,6 +404,24 @@ local function CreateMapToggle()
     end)
 
     return btn
+end
+
+local CATEGORY_KEYS = { "dungeonPortalsDungeons", "dungeonPortalsClass", "dungeonPortalsToys" }
+
+--- The category toggles as a context menu, for the map button's right-click.
+function LuckyGrabbag.DungeonPortals:OpenCategoryMenu(owner)
+    local SS = LuckyGrabbag.Strings.settings
+    MenuUtil.CreateContextMenu(owner, function(_, root)
+        root:CreateTitle(LuckyGrabbag.Strings.dungeonPortals.toggleTitle)
+        for _, key in ipairs(CATEGORY_KEYS) do
+            root:CreateCheckbox(SS[key].label,
+                function() return db[key] end,
+                function()
+                    db[key] = not db[key]
+                    self:ApplySetting()
+                end)
+        end
+    end)
 end
 
 function LuckyGrabbag.DungeonPortals:ApplySetting()
