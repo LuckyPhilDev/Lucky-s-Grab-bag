@@ -252,15 +252,15 @@ local function UpdateEventPin(pin)
     return true
 end
 
-local CITY_SIZE = 24
+local CLASS_BADGE_SIZE = 24
 
-local isMage = false
-local cityPins = {}
+local classTeleports -- this class's LuckyGrabbag.CLASS_TELEPORTS list, nil for classes without one
+local classPins = {}
 
 -- Where the teleport lands on the open map, or nothing when it lands off it.
 -- Projecting through world coordinates lets one landing point serve the city
 -- map, its zone, the continent and the Azeroth map alike.
-local function CityMapPosition(entry, mapID)
+local function ClassMapPosition(entry, mapID)
     local instance, world = C_Map.GetWorldPosFromMapPos(entry.map, CreateVector2D(entry.x, entry.y))
     if not instance then return end
     local pos = select(2, C_Map.GetMapPosFromWorldPos(instance, world, mapID))
@@ -272,14 +272,14 @@ end
 
 -- The holder rides the canvas so its spot follows pan and zoom; the badge on
 -- it is counter-scaled to stay the same size on screen.
-local function CityPin(entry)
+local function ClassPin(entry)
     local holder = CreateFrame("Frame", nil, WorldMapFrame.ScrollContainer.Child)
     holder:SetSize(1, 1)
 
     local btn = CreateBadge({
         parent   = holder,
         template = "InsecureActionButtonTemplate",
-        size     = CITY_SIZE,
+        size     = CLASS_BADGE_SIZE,
         tooltip  = function(self)
             GameTooltip:SetSpellByID(self.spellID)
             if self.portalID then
@@ -293,35 +293,37 @@ local function CityPin(entry)
     btn:RegisterForClicks("AnyUp", "AnyDown")
 
     local pin = { holder = holder, btn = btn }
-    cityPins[entry] = pin
+    classPins[entry] = pin
     return pin
 end
 
-local function ApplyCityScale()
+local function ApplyClassScale()
     local scale = WorldMapFrame:GetCanvasScale()
     if not scale or scale <= 0 then return end
-    for _, pin in pairs(cityPins) do
+    for _, pin in pairs(classPins) do
         pin.btn:SetScale(1 / scale)
     end
 end
 
-local function UpdateCityPins()
+local function UpdateClassPins()
+    if not classTeleports then return end
     local mapID = WorldMapFrame:GetMapID()
-    for _, entry in ipairs(LuckyGrabbag.MAGE_TELEPORTS) do
+    local show = db.dungeonPortals and db.dungeonPortalsClass and mapID
+    for _, entry in ipairs(classTeleports) do
         local spellID, x, y
-        if isMage and db.dungeonPortals and db.dungeonPortalsClass and mapID then
+        if show then
             spellID = KnownSpell(entry.teleport)
-            if spellID then x, y = CityMapPosition(entry, mapID) end
+            if spellID then x, y = ClassMapPosition(entry, mapID) end
         end
 
-        local pin = cityPins[entry]
+        local pin = classPins[entry]
         if x then
-            pin = pin or CityPin(entry)
+            pin = pin or ClassPin(entry)
             local canvas = WorldMapFrame.ScrollContainer.Child
             pin.holder:SetPoint("CENTER", canvas, "TOPLEFT", x * canvas:GetWidth(), -y * canvas:GetHeight())
             local info = C_Spell.GetSpellInfo(spellID)
             pin.btn.spellID = spellID
-            pin.btn.portalID = KnownSpell(entry.portal)
+            pin.btn.portalID = entry.portal and KnownSpell(entry.portal)
             pin.btn:SetAttribute("spell1", spellID)
             pin.btn:SetAttribute("spell2", pin.btn.portalID)
             pin.btn.icon:SetTexture(info and info.iconID or FALLBACK_ICON)
@@ -330,7 +332,7 @@ local function UpdateCityPins()
             pin.holder:Hide()
         end
     end
-    ApplyCityScale()
+    ApplyClassScale()
 end
 
 local mapToggle
@@ -356,7 +358,7 @@ local function Refresh()
         end
     end)
 
-    UpdateCityPins()
+    UpdateClassPins()
 end
 
 -- The same badge, sat in the map's top-right corner as the on/off switch.
@@ -404,13 +406,13 @@ end
 
 function LuckyGrabbag.DungeonPortals:Init(database)
     db = database
-    isMage = select(2, UnitClass("player")) == "MAGE"
+    classTeleports = LuckyGrabbag.CLASS_TELEPORTS[select(2, UnitClass("player"))]
 
     mapToggle = CreateMapToggle()
     UpdateMapToggle()
 
-    if isMage then
-        hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ApplyCityScale)
+    if classTeleports then
+        hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ApplyClassScale)
     end
 
     WorldMapFrame:HookScript("OnShow", Refresh)

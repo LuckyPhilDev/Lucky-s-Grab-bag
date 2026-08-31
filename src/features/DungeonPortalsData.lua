@@ -128,12 +128,26 @@ LuckyGrabbag.RAID_PORTAL_SPELLS = {
     [1195] = 373192, -- Sepulcher of the First Ones
 }
 
--- Mage city teleports, each with the spot the spell lands on its own zone map
--- (normalized coordinates), so the badge can be projected onto whichever map
--- is open. A list of spells means one destination with a spell per faction.
--- Spell IDs and landing points cross-checked against EnhanceQoL's teleport
--- compendium and MDungeonTeleports.
-LuckyGrabbag.MAGE_TELEPORTS = {
+-- Class teleports, keyed by class file name, each with the spot the spell
+-- lands on its own zone map (normalized coordinates), so the badge can be
+-- projected onto whichever map is open. A list of spells means one destination
+-- with a spell per faction. Spell IDs and landing points cross-checked against
+-- EnhanceQoL's teleport compendium and MDungeonTeleports.
+--
+-- Deliberately absent: a monk's Zen Pilgrimage and a druid's Dreamwalk land in
+-- instances no browsable map can reach, and a shaman's Astral Recall has no
+-- fixed destination at all.
+LuckyGrabbag.CLASS_TELEPORTS = {}
+
+LuckyGrabbag.CLASS_TELEPORTS.DRUID = {
+    { teleport = 18960, map = 80, x = 0.5200, y = 0.4000 }, -- Moonglade (Nighthaven)
+}
+
+LuckyGrabbag.CLASS_TELEPORTS.DEATHKNIGHT = {
+    { teleport = 50977, map = 648, x = 0.2706, y = 0.2994 }, -- Death Gate (Acherus, above the Broken Shore)
+}
+
+LuckyGrabbag.CLASS_TELEPORTS.MAGE = {
     { teleport = 3561,    portal = 10059,   map = 84,   x = 0.4571, y = 0.9038 }, -- Stormwind
     { teleport = 3562,    portal = 11416,   map = 87,   x = 0.2551, y = 0.0914 }, -- Ironforge
     { teleport = 3565,    portal = 11419,   map = 62,   x = 0.4595, y = 0.1972 }, -- Darnassus (lands in Darkshore)
