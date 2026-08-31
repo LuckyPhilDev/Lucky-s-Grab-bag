@@ -468,6 +468,18 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             label = "Dungeon Teleports",
             desc  = "Puts a teleport button on the dungeon and raid entrance icons on the world map. Only the instances whose teleport you have earned get one, and the active Abundance event gets Dundun's Abundant Travel Method once you own the toy. On a mage, every city Teleport you know gets a button where the spell lands, and Right-click opens the portal instead.",
         },
+        dungeonPortalsDungeons = {
+            label = "Dungeon and Raid Teleports",
+            desc  = "Buttons on the dungeon and raid entrance icons for the teleports you have earned.",
+        },
+        dungeonPortalsClass = {
+            label = "Class Teleports",
+            desc  = "Buttons for your class's own teleports: a mage's city Teleports, placed where each spell lands.",
+        },
+        dungeonPortalsToys = {
+            label = "Toy Teleports",
+            desc  = "Buttons for teleport toys, such as Dundun's Abundant Travel Method on the active Abundance event.",
+        },
         delveMapMinLevel = {
             label = "Minimum Delve Level",
             desc  = "Only show the Trovehunter's Bounty button in delves at or above this tier.",

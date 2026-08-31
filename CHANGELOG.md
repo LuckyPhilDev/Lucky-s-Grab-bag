@@ -2,6 +2,7 @@
 
 ### Added
 - **Mage Teleports on the Map** On a mage, the world map shows a button for every city Teleport you know, placed where the spell lands, from the city map all the way out to the continent view. Click to teleport, Right-click to open the portal for your group. (Thanks for the suggestion Ilkka)
+- **Teleport categories** The map teleports can be hidden by kind in settings: dungeon and raid teleports, class teleports, and toy teleports each have their own toggle.
 
 ## [1.26.1] - 2026-08-30
 

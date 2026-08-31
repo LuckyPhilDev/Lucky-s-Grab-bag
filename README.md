@@ -208,7 +208,7 @@ Puts a teleport button on the dungeon and raid entrance icons on the world map, 
 - The active Abundance event icon carries a button for Dundun's Abundant Travel Method once you own the toy.
 - On a mage, every city Teleport you know gets a button on the map where the spell lands; Right-click opens the portal for your group instead.
 - A round button below the map's Map Pin button toggles the teleports on and off.
-- Can be toggled in the addon settings.
+- Can be toggled in the addon settings, where dungeon and raid teleports, class teleports, and toy teleports can also be hidden individually.
 
 ### 1s Tip on Alt Work Orders
 When you submit a personal crafting work order to one of your own characters, the tip is automatically set to 1 silver so you don't have to clear the field each time.

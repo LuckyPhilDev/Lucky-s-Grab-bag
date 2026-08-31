@@ -164,7 +164,7 @@ end
 -- Pins are pooled and handed to whichever dungeon needs one next, so every
 -- refresh re-reads the pin rather than trusting the button already on it.
 local function UpdatePin(pin)
-    local spellID = db.dungeonPortals and TeleportForPin(pin)
+    local spellID = db.dungeonPortals and db.dungeonPortalsDungeons and TeleportForPin(pin)
     if not spellID then
         if pin.luckyPortal then pin.luckyPortal:Hide() end
         return
@@ -238,7 +238,7 @@ end
 
 local function UpdateEventPin(pin)
     local poiID = EventPoiID(pin)
-    local show = db.dungeonPortals
+    local show = db.dungeonPortals and db.dungeonPortalsToys
         and poiID and IsAbundancePoi(pin, poiID)
         and (PlayerHasToy(TRAVEL_TOY) or C_Item.GetItemCount(TRAVEL_TOY) > 0)
     if not show then
@@ -309,7 +309,7 @@ local function UpdateCityPins()
     local mapID = WorldMapFrame:GetMapID()
     for _, entry in ipairs(LuckyGrabbag.MAGE_TELEPORTS) do
         local spellID, x, y
-        if isMage and db.dungeonPortals and mapID then
+        if isMage and db.dungeonPortals and db.dungeonPortalsClass and mapID then
             spellID = KnownSpell(entry.teleport)
             if spellID then x, y = CityMapPosition(entry, mapID) end
         end
