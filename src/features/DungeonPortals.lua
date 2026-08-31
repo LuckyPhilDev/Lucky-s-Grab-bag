@@ -252,6 +252,87 @@ local function UpdateEventPin(pin)
     return true
 end
 
+local CITY_SIZE = 24
+
+local isMage = false
+local cityPins = {}
+
+-- Where the teleport lands on the open map, or nothing when it lands off it.
+-- Projecting through world coordinates lets one landing point serve the city
+-- map, its zone, the continent and the Azeroth map alike.
+local function CityMapPosition(entry, mapID)
+    local instance, world = C_Map.GetWorldPosFromMapPos(entry.map, CreateVector2D(entry.x, entry.y))
+    if not instance then return end
+    local pos = select(2, C_Map.GetMapPosFromWorldPos(instance, world, mapID))
+    if not pos then return end
+    local x, y = pos:GetXY()
+    if x <= 0 or x >= 1 or y <= 0 or y >= 1 then return end
+    return x, y
+end
+
+-- The holder rides the canvas so its spot follows pan and zoom; the badge on
+-- it is counter-scaled to stay the same size on screen.
+local function CityPin(entry)
+    local holder = CreateFrame("Frame", nil, WorldMapFrame.ScrollContainer.Child)
+    holder:SetSize(1, 1)
+
+    local btn = CreateBadge({
+        parent   = holder,
+        template = "InsecureActionButtonTemplate",
+        size     = CITY_SIZE,
+        tooltip  = function(self)
+            GameTooltip:SetSpellByID(self.spellID)
+            if self.portalID then
+                GameTooltip:AddLine(LuckyGrabbag.Strings.dungeonPortals.portalHint, 0.91, 0.86, 0.78)
+            end
+        end,
+    })
+    btn:SetPoint("CENTER", holder, "CENTER")
+    btn:SetFrameStrata("HIGH")
+    btn:SetAttribute("type", "spell")
+    btn:RegisterForClicks("AnyUp", "AnyDown")
+
+    local pin = { holder = holder, btn = btn }
+    cityPins[entry] = pin
+    return pin
+end
+
+local function ApplyCityScale()
+    local scale = WorldMapFrame:GetCanvasScale()
+    if not scale or scale <= 0 then return end
+    for _, pin in pairs(cityPins) do
+        pin.btn:SetScale(1 / scale)
+    end
+end
+
+local function UpdateCityPins()
+    local mapID = WorldMapFrame:GetMapID()
+    for _, entry in ipairs(LuckyGrabbag.MAGE_TELEPORTS) do
+        local spellID, x, y
+        if isMage and db.dungeonPortals and mapID then
+            spellID = KnownSpell(entry.teleport)
+            if spellID then x, y = CityMapPosition(entry, mapID) end
+        end
+
+        local pin = cityPins[entry]
+        if x then
+            pin = pin or CityPin(entry)
+            local canvas = WorldMapFrame.ScrollContainer.Child
+            pin.holder:SetPoint("CENTER", canvas, "TOPLEFT", x * canvas:GetWidth(), -y * canvas:GetHeight())
+            local info = C_Spell.GetSpellInfo(spellID)
+            pin.btn.spellID = spellID
+            pin.btn.portalID = KnownSpell(entry.portal)
+            pin.btn:SetAttribute("spell1", spellID)
+            pin.btn:SetAttribute("spell2", pin.btn.portalID)
+            pin.btn.icon:SetTexture(info and info.iconID or FALLBACK_ICON)
+            pin.holder:Show()
+        elseif pin then
+            pin.holder:Hide()
+        end
+    end
+    ApplyCityScale()
+end
+
 local mapToggle
 
 local function UpdateMapToggle()
@@ -274,6 +355,8 @@ local function Refresh()
             UpdateEventPin(pin)
         end
     end)
+
+    UpdateCityPins()
 end
 
 -- The same badge, sat in the map's top-right corner as the on/off switch.
@@ -321,9 +404,14 @@ end
 
 function LuckyGrabbag.DungeonPortals:Init(database)
     db = database
+    isMage = select(2, UnitClass("player")) == "MAGE"
 
     mapToggle = CreateMapToggle()
     UpdateMapToggle()
+
+    if isMage then
+        hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ApplyCityScale)
+    end
 
     WorldMapFrame:HookScript("OnShow", Refresh)
     -- Navigating between maps re-acquires pins without a full provider
