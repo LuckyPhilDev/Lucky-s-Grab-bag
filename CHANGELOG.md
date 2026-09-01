@@ -5,7 +5,7 @@
 - **Teleport categories** The teleport buttons are grouped under one Map Teleports setting, with a toggle each for dungeon and raid teleports, class teleports, and toy teleports. Right-clicking the round button on the map opens the same toggles as a menu.
 
 ### Fixed
-- The Mass Delete button on the delete confirmation no longer throws an error when opening the list, which could happen on items such as Cyrce's Circlet.
+- The Mass Delete button on the delete confirmation no longer throws an error when opening the list, which could happen on items such as Cyrce's Circlet. (Thanks for the report Perigee)
 
 ## [1.26.1] - 2026-08-30
 
