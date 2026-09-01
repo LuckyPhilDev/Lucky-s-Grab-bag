@@ -22,8 +22,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
     },
 
     dungeonPortals = {
-        toggleTitle = "Dungeon Teleports",
-        toggleDesc  = "Show a teleport button on the dungeon and raid entrances you have earned the teleport for, and on the active Abundance event once you own Dundun's Abundant Travel Method.",
+        toggleTitle      = "Map Teleports",
+        toggleDesc       = "Buttons on the map for every teleport you know: dungeon and raid entrances, class teleports, and teleport toys.",
+        toggleRightClick = "Right-click to choose which teleports show",
+        portalHint       = "Right-click to open the portal for your group",
         stateOn     = "|cff00cc00Shown|r",
         stateOff    = "|cffff4040Hidden|r",
     },
@@ -464,8 +466,20 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             desc  = "Floating button to use your Trovehunter's Bounty, or last season's Bounty Map, when you're inside a delve that meets the minimum level. Right-click and drag to reposition.",
         },
         dungeonPortals = {
-            label = "Dungeon Teleports",
-            desc  = "Puts a teleport button on the dungeon and raid entrance icons on the world map. Only the instances whose teleport you have earned get one, and the active Abundance event gets Dundun's Abundant Travel Method once you own the toy.",
+            label = "Map Teleports",
+            desc  = "Buttons on the world map for every teleport you know: dungeon and raid entrances, class teleports where they land, and teleport toys like Dundun's Abundant Travel Method. Each kind can be hidden below.",
+        },
+        dungeonPortalsDungeons = {
+            label = "Dungeon and Raid Teleports",
+            desc  = "Buttons on the dungeon and raid entrance icons for the teleports you have earned.",
+        },
+        dungeonPortalsClass = {
+            label = "Class Teleports",
+            desc  = "Buttons for your class's own teleports, placed where each spell lands: a mage's city Teleports.",
+        },
+        dungeonPortalsToys = {
+            label = "Toy Teleports",
+            desc  = "Buttons for teleport toys, such as Dundun's Abundant Travel Method on the active Abundance event.",
         },
         delveMapMinLevel = {
             label = "Minimum Delve Level",

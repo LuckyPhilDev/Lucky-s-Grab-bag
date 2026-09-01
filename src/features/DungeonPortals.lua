@@ -164,7 +164,7 @@ end
 -- Pins are pooled and handed to whichever dungeon needs one next, so every
 -- refresh re-reads the pin rather than trusting the button already on it.
 local function UpdatePin(pin)
-    local spellID = db.dungeonPortals and TeleportForPin(pin)
+    local spellID = db.dungeonPortals and db.dungeonPortalsDungeons and TeleportForPin(pin)
     if not spellID then
         if pin.luckyPortal then pin.luckyPortal:Hide() end
         return
@@ -238,7 +238,7 @@ end
 
 local function UpdateEventPin(pin)
     local poiID = EventPoiID(pin)
-    local show = db.dungeonPortals
+    local show = db.dungeonPortals and db.dungeonPortalsToys
         and poiID and IsAbundancePoi(pin, poiID)
         and (PlayerHasToy(TRAVEL_TOY) or C_Item.GetItemCount(TRAVEL_TOY) > 0)
     if not show then
@@ -252,11 +252,108 @@ local function UpdateEventPin(pin)
     return true
 end
 
+local CLASS_BADGE_SIZE = 24
+
+local classTeleports -- this class's LuckyGrabbag.CLASS_TELEPORTS list, nil for classes without one
+local classPins = {}
+
+-- Where the teleport lands on the open map, or nothing when it lands off it.
+-- Projecting through world coordinates lets one landing point serve the city
+-- map, its zone, the continent and the Azeroth map alike.
+local function ClassMapPosition(entry, mapID)
+    local instance, world = C_Map.GetWorldPosFromMapPos(entry.map, CreateVector2D(entry.x, entry.y))
+    if not instance then return end
+    local pos = select(2, C_Map.GetMapPosFromWorldPos(instance, world, mapID))
+    if not pos then return end
+    local x, y = pos:GetXY()
+    if x <= 0 or x >= 1 or y <= 0 or y >= 1 then return end
+    return x, y
+end
+
+-- The holder rides the canvas so its spot follows pan and zoom; the badge on
+-- it is counter-scaled to stay the same size on screen.
+local function ClassPin(entry)
+    local holder = CreateFrame("Frame", nil, WorldMapFrame.ScrollContainer.Child)
+    holder:SetSize(1, 1)
+
+    local btn = CreateBadge({
+        parent   = holder,
+        template = "InsecureActionButtonTemplate",
+        size     = CLASS_BADGE_SIZE,
+        tooltip  = function(self)
+            GameTooltip:SetSpellByID(self.spellID)
+            if self.portalID then
+                GameTooltip:AddLine(LuckyGrabbag.Strings.dungeonPortals.portalHint, 0.91, 0.86, 0.78)
+            end
+        end,
+    })
+    btn:SetPoint("CENTER", holder, "CENTER")
+    btn:SetFrameStrata("HIGH")
+    btn:SetAttribute("type", "spell")
+    btn:RegisterForClicks("AnyUp", "AnyDown")
+
+    local pin = { holder = holder, btn = btn }
+    classPins[entry] = pin
+    return pin
+end
+
+local function ApplyClassScale()
+    local scale = WorldMapFrame:GetCanvasScale()
+    if not scale or scale <= 0 then return end
+    for _, pin in pairs(classPins) do
+        pin.btn:SetScale(1 / scale)
+    end
+end
+
+local function UpdateClassPins()
+    if not classTeleports then return end
+    local mapID = WorldMapFrame:GetMapID()
+    local show = db.dungeonPortals and db.dungeonPortalsClass and mapID
+    for _, entry in ipairs(classTeleports) do
+        local spellID, x, y
+        if show then
+            spellID = KnownSpell(entry.teleport)
+            if spellID then x, y = ClassMapPosition(entry, mapID) end
+        end
+
+        local pin = classPins[entry]
+        if x then
+            pin = pin or ClassPin(entry)
+            local canvas = WorldMapFrame.ScrollContainer.Child
+            pin.holder:SetPoint("CENTER", canvas, "TOPLEFT", x * canvas:GetWidth(), -y * canvas:GetHeight())
+            local info = C_Spell.GetSpellInfo(spellID)
+            pin.btn.spellID = spellID
+            pin.btn.portalID = entry.portal and KnownSpell(entry.portal)
+            pin.btn:SetAttribute("spell1", spellID)
+            pin.btn:SetAttribute("spell2", pin.btn.portalID)
+            pin.btn.icon:SetTexture(info and info.iconID or FALLBACK_ICON)
+            pin.holder:Show()
+        elseif pin then
+            pin.holder:Hide()
+        end
+    end
+    ApplyClassScale()
+end
+
 local mapToggle
+
+local CATEGORY_KEYS = { "dungeonPortalsDungeons", "dungeonPortalsClass", "dungeonPortalsToys" }
+
+local function AnyCategoryShown()
+    for _, key in ipairs(CATEGORY_KEYS) do
+        if db[key] then return true end
+    end
+    return false
+end
+
+-- Every category unticked is the feature off, however the master is set.
+local function IsEnabled()
+    return db.dungeonPortals and AnyCategoryShown()
+end
 
 local function UpdateMapToggle()
     if not mapToggle then return end
-    local on = db.dungeonPortals
+    local on = IsEnabled()
     mapToggle.icon:SetDesaturated(not on)
     mapToggle.ring:SetColorTexture(on and 0.85 or 0.4, on and 0.65 or 0.4, on and 0.25 or 0.4, 1)
 end
@@ -274,6 +371,8 @@ local function Refresh()
             UpdateEventPin(pin)
         end
     end)
+
+    UpdateClassPins()
 end
 
 -- The same badge, sat in the map's top-right corner as the on/off switch.
@@ -286,7 +385,8 @@ local function CreateMapToggle()
         tooltip = function()
             GameTooltip:AddLine(S.toggleTitle)
             GameTooltip:AddLine(S.toggleDesc, 0.91, 0.86, 0.78, true)
-            GameTooltip:AddLine(db.dungeonPortals and S.stateOn or S.stateOff)
+            GameTooltip:AddLine(S.toggleRightClick, 0.54, 0.49, 0.42)
+            GameTooltip:AddLine(IsEnabled() and S.stateOn or S.stateOff)
         end,
     })
     -- Below Blizzard's own Map Pin button, found the way Krowi's map button
@@ -305,8 +405,22 @@ local function CreateMapToggle()
     end
     btn:SetFrameStrata("HIGH")
     btn.icon:SetTexture(TOGGLE_ICON)
-    btn:SetScript("OnClick", function(self)
-        db.dungeonPortals = not db.dungeonPortals
+    btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    btn:SetScript("OnClick", function(self, mouseBtn)
+        if mouseBtn == "RightButton" then
+            LuckyGrabbag.DungeonPortals:OpenCategoryMenu(self)
+            return
+        end
+        if IsEnabled() then
+            db.dungeonPortals = false
+        else
+            -- Switching on with nothing ticked brings every category back;
+            -- a master switch that lights up an empty feature helps nobody.
+            db.dungeonPortals = true
+            if not AnyCategoryShown() then
+                for _, key in ipairs(CATEGORY_KEYS) do db[key] = true end
+            end
+        end
         Refresh()
         -- Redo the tooltip so the Shown/Hidden line follows the click.
         self:GetScript("OnEnter")(self)
@@ -315,15 +429,36 @@ local function CreateMapToggle()
     return btn
 end
 
+--- The category toggles as a context menu, for the map button's right-click.
+function LuckyGrabbag.DungeonPortals:OpenCategoryMenu(owner)
+    local SS = LuckyGrabbag.Strings.settings
+    MenuUtil.CreateContextMenu(owner, function(_, root)
+        root:CreateTitle(LuckyGrabbag.Strings.dungeonPortals.toggleTitle)
+        for _, key in ipairs(CATEGORY_KEYS) do
+            root:CreateCheckbox(SS[key].label,
+                function() return db[key] end,
+                function()
+                    db[key] = not db[key]
+                    self:ApplySetting()
+                end)
+        end
+    end)
+end
+
 function LuckyGrabbag.DungeonPortals:ApplySetting()
     if WorldMapFrame:IsShown() then Refresh() end
 end
 
 function LuckyGrabbag.DungeonPortals:Init(database)
     db = database
+    classTeleports = LuckyGrabbag.CLASS_TELEPORTS[select(2, UnitClass("player"))]
 
     mapToggle = CreateMapToggle()
     UpdateMapToggle()
+
+    if classTeleports then
+        hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ApplyClassScale)
+    end
 
     WorldMapFrame:HookScript("OnShow", Refresh)
     -- Navigating between maps re-acquires pins without a full provider

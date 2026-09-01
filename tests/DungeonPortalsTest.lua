@@ -72,4 +72,22 @@ learn()
 assert(RaidTeleportFor(1296, "Liberation of Undermine") == nil, "a raid teleport not yet earned")
 assert(RaidTeleportFor(1273, "Nerub-ar Palace") == nil, "a raid with no teleport spell")
 
+-- The class teleport table is pure data; what can rot is a typo'd coordinate
+-- or a spell ID pasted twice, so that is what gets checked.
+local seenSpell = {}
+for class, entries in pairs(LuckyGrabbag.CLASS_TELEPORTS) do
+    for i, entry in ipairs(entries) do
+        local where = class .. " entry " .. i
+        assert(type(entry.map) == "number", where .. " has a destination map")
+        assert(entry.x > 0 and entry.x < 1 and entry.y > 0 and entry.y < 1,
+            where .. " lands inside its map")
+        for _, list in ipairs({ entry.teleport, entry.portal }) do
+            for _, spellID in ipairs(type(list) == "table" and list or { list }) do
+                assert(not seenSpell[spellID], "spell " .. spellID .. " appears once")
+                seenSpell[spellID] = true
+            end
+        end
+    end
+end
+
 print("DungeonPortals: all checks passed")

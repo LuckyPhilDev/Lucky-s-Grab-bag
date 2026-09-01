@@ -128,6 +128,53 @@ LuckyGrabbag.RAID_PORTAL_SPELLS = {
     [1195] = 373192, -- Sepulcher of the First Ones
 }
 
+-- Class teleports, keyed by class file name, each with the spot the spell
+-- lands on its own zone map (normalized coordinates), so the badge can be
+-- projected onto whichever map is open. A list of spells means one destination
+-- with a spell per faction. Spell IDs and landing points cross-checked against
+-- EnhanceQoL's teleport compendium and MDungeonTeleports.
+--
+-- Deliberately absent: a monk's Zen Pilgrimage and a druid's Dreamwalk land in
+-- instances no browsable map can reach, and a shaman's Astral Recall has no
+-- fixed destination at all.
+LuckyGrabbag.CLASS_TELEPORTS = {}
+
+-- Held back until their landing points are confirmed in game: neither badge
+-- turned up where it should. Moonglade's coordinates are a guess, and Acherus
+-- sits on its own instance map, which may not project onto the Broken Isles
+-- at all. Move these into CLASS_TELEPORTS once each is verified.
+--   DRUID:       { teleport = 18960, map = 80,  x = 0.5200, y = 0.4000 } Moonglade
+--   DEATHKNIGHT: { teleport = 50977, map = 648, x = 0.2706, y = 0.2994 } Death Gate
+
+LuckyGrabbag.CLASS_TELEPORTS.MAGE = {
+    { teleport = 3561,    portal = 10059,   map = 84,   x = 0.4571, y = 0.9038 }, -- Stormwind
+    { teleport = 3562,    portal = 11416,   map = 87,   x = 0.2551, y = 0.0914 }, -- Ironforge
+    { teleport = 3565,    portal = 11419,   map = 62,   x = 0.4595, y = 0.1972 }, -- Darnassus (lands in Darkshore)
+    { teleport = 32271,   portal = 32266,   map = 103,  x = 0.4787, y = 0.5900 }, -- Exodar
+    { teleport = 3567,    portal = 11417,   map = 85,   x = 0.5265, y = 0.8984 }, -- Orgrimmar
+    { teleport = 3563,    portal = 11418,   map = 90,   x = 0.8110, y = 0.2105 }, -- Undercity
+    { teleport = 3566,    portal = 11420,   map = 88,   x = 0.4667, y = 0.4921 }, -- Thunder Bluff
+    { teleport = 32272,   portal = 32267,   map = 110,  x = 0.7214, y = 0.5997 }, -- Silvermoon
+    { teleport = { 33690, 35715 }, portal = { 33691, 35717 },
+      map = 111, x = 0.5528, y = 0.3909 },                                        -- Shattrath
+    { teleport = 49359,   portal = 49360,   map = 70,   x = 0.6628, y = 0.4828 }, -- Theramore
+    { teleport = 49358,   portal = 49361,   map = 51,   x = 0.4703, y = 0.5505 }, -- Stonard
+    { teleport = 53140,   portal = 53142,   map = 125,  x = 0.2372, y = 0.4670 }, -- Dalaran, Northrend
+    { teleport = 88342,   portal = 88345,   map = 245,  x = 0.7357, y = 0.6079 }, -- Tol Barad (Alliance)
+    { teleport = 88344,   portal = 88346,   map = 245,  x = 0.5480, y = 0.7819 }, -- Tol Barad (Horde)
+    { teleport = 132621,  portal = 132620,  map = 1530, x = 0.8637, y = 0.6319 }, -- Vale of Eternal Blossoms (Alliance)
+    { teleport = 132627,  portal = 132626,  map = 1530, x = 0.6186, y = 0.2213 }, -- Vale of Eternal Blossoms (Horde)
+    { teleport = 176248,  portal = 176246,  map = 622,  x = 0.4715, y = 0.4759 }, -- Stormshield
+    { teleport = 176242,  portal = 176244,  map = 624,  x = 0.5217, y = 0.4921 }, -- Warspear
+    { teleport = 224869,  portal = 224871,  map = 627,  x = 0.6042, y = 0.4440 }, -- Dalaran, Broken Isles
+    { teleport = 281403,  portal = 281400,  map = 1161, x = 0.6960, y = 0.1996 }, -- Boralus
+    { teleport = 281404,  portal = 281402,  map = 1165, x = 0.4978, y = 0.4114 }, -- Dazar'alor
+    { teleport = 344587,  portal = 344597,  map = 1670, x = 0.5229, y = 0.7460 }, -- Oribos
+    { teleport = 395277,  portal = 395289,  map = 2112, x = 0.5432, y = 0.4788 }, -- Valdrakken
+    { teleport = 446540,  portal = 446534,  map = 2339, x = 0.4249, y = 0.2905 }, -- Dornogal
+    { teleport = 1259190, portal = 1259194, map = 2393, x = 0.5279, y = 0.6556 }, -- Silvermoon City
+}
+
 -- The Abundance event in Quel'Thalas: the active site shows as one of these
 -- area POIs, and Dundun's Abundant Travel Method teleports straight to it.
 LuckyGrabbag.ABUNDANCE_POI_IDS = {

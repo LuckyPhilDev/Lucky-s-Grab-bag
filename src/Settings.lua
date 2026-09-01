@@ -755,6 +755,20 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
+        for _, key in ipairs({ "dungeonPortalsDungeons", "dungeonPortalsClass", "dungeonPortalsToys" }) do
+            g:Toggle({
+                label    = SS[key].label,
+                desc     = SS[key].desc,
+                checked  = db[key],
+                parent   = SS.dungeonPortals.label,
+                since    = "1.26.2",
+                onToggle = function(checked)
+                    db[key] = checked
+                    LuckyGrabbag.DungeonPortals:ApplySetting()
+                end,
+            })
+        end
+
         g:Section(SS.sections.bonusRolls)
 
         local bonusRollMoved = LuckyGrabbag.BonusRoll.HandedOff()
