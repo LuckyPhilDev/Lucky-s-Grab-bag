@@ -139,13 +139,12 @@ LuckyGrabbag.RAID_PORTAL_SPELLS = {
 -- fixed destination at all.
 LuckyGrabbag.CLASS_TELEPORTS = {}
 
-LuckyGrabbag.CLASS_TELEPORTS.DRUID = {
-    { teleport = 18960, map = 80, x = 0.5200, y = 0.4000 }, -- Moonglade (Nighthaven)
-}
-
-LuckyGrabbag.CLASS_TELEPORTS.DEATHKNIGHT = {
-    { teleport = 50977, map = 648, x = 0.2706, y = 0.2994 }, -- Death Gate (Acherus, above the Broken Shore)
-}
+-- Held back until their landing points are confirmed in game: neither badge
+-- turned up where it should. Moonglade's coordinates are a guess, and Acherus
+-- sits on its own instance map, which may not project onto the Broken Isles
+-- at all. Move these into CLASS_TELEPORTS once each is verified.
+--   DRUID:       { teleport = 18960, map = 80,  x = 0.5200, y = 0.4000 } Moonglade
+--   DEATHKNIGHT: { teleport = 50977, map = 648, x = 0.2706, y = 0.2994 } Death Gate
 
 LuckyGrabbag.CLASS_TELEPORTS.MAGE = {
     { teleport = 3561,    portal = 10059,   map = 84,   x = 0.4571, y = 0.9038 }, -- Stormwind

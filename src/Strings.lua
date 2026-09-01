@@ -475,7 +475,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         dungeonPortalsClass = {
             label = "Class Teleports",
-            desc  = "Buttons for your class's own teleports, placed where each spell lands: a mage's city Teleports, a druid's Teleport: Moonglade, a death knight's Death Gate.",
+            desc  = "Buttons for your class's own teleports, placed where each spell lands: a mage's city Teleports.",
         },
         dungeonPortalsToys = {
             label = "Toy Teleports",
