@@ -4,6 +4,9 @@
 - **Mage Teleports on the Map** On a mage, the world map shows a button for every city Teleport you know, placed where the spell lands, from the city map all the way out to the continent view. Click to teleport, Right-click to open the portal for your group. (Thanks for the suggestion Ilkka)
 - **Teleport categories** The teleport buttons are grouped under one Map Teleports setting, with a toggle each for dungeon and raid teleports, class teleports, and toy teleports. Right-clicking the round button on the map opens the same toggles as a menu.
 
+### Fixed
+- The Mass Delete button on the delete confirmation no longer throws an error when opening the list, which could happen on items such as Cyrce's Circlet.
+
 ## [1.26.1] - 2026-08-30
 
 ### Added

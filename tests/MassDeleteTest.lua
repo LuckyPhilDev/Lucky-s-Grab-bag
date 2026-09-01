@@ -1,7 +1,7 @@
 -- luacheck: globals CreateFrame UIParent UISpecialFrames GameTooltip wipe print
 -- luacheck: globals hooksecurefunc C_Container GetCursorInfo ClearCursor
 -- luacheck: globals DeleteCursorItem StaticPopup1 StaticPopup_Hide LuckySettings
--- luacheck: globals EnumerateFrames
+-- luacheck: globals EnumerateFrames issecretvalue
 
 -- Covers features/MassDelete.lua: the Mass Delete button rides the game's own
 -- delete popup, bag clicks toggle items in and out of the queue, and the
@@ -84,8 +84,18 @@ function EnumerateFrames(current)
     end
 end
 
+-- Restricted frames answer IsVisible and their own getters with secret values,
+-- which the real client errors on if they are tested before being recognised.
+-- Stood in for by sentinels the stubbed issecretvalue owns up to.
+local secretTrue, secretBagID = {}, {}
+
+function issecretvalue(value)
+    return value == secretTrue or value == secretBagID
+end
+
 -- A bag window the way an addon draws one: an item button nested two frames
--- deep, plus a decoy frame and a hidden bag button that must both be skipped.
+-- deep, plus a decoy frame, a hidden bag button, and two restricted frames
+-- that look like bag buttons but must all be skipped.
 local function OpenFakeBags()
     local window = Widget()
     window.GetParent = function() return UIParent end
@@ -99,7 +109,15 @@ local function OpenFakeBags()
     local hidden = Widget()
     hidden.IsVisible = function() return false end
     hidden.GetBagID  = function() return 4 end
-    enumFrames = { Widget(), hidden, button }
+    local restricted = Widget()
+    restricted.IsVisible = function() return secretTrue end
+    restricted.GetBagID  = function() return 0 end
+    restricted.GetParent = function() return UIParent end
+    local secretBag = Widget()
+    secretBag.IsVisible = function() return true end
+    secretBag.GetBagID  = function() return secretBagID end
+    secretBag.GetParent = function() return UIParent end
+    enumFrames = { Widget(), hidden, restricted, secretBag, button }
     return window
 end
 
@@ -349,6 +367,8 @@ ClickButton(OpenBtn())
 assert(Panel().point[2] == bagWindow, "the panel should anchor to the bag window, got " .. tostring(Panel().point[2]))
 assert(Panel().point[1] == "TOPRIGHT" and Panel().point[3] == "TOPLEFT",
     "the panel should hang off the window's left edge with tops level")
+assert(Panel().point[2] ~= UIParent,
+    "a restricted frame's secret answers should be skipped, not read as the bag window")
 
 -- No bag window on screen at entry: fall back, then snap over on the next bag click.
 Reset({ [0] = { Item("[Junk A]"), Item("[Junk B]") } })

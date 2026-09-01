@@ -206,6 +206,15 @@ local function BuildPanel()
     deleteButton:SetScript("OnLeave", function() GameTooltip:Hide() end)
 end
 
+local IsSecret = issecretvalue or function() return false end
+
+-- A restricted frame answers IsVisible with a secret boolean, and testing a
+-- secret in a condition is a Lua error once our own execution is tainted.
+local function IsPlainlyVisible(frame)
+    local visible = frame:IsVisible()
+    return not IsSecret(visible) and visible
+end
+
 -- The window the player's bag slots are drawn in, whatever addon draws it:
 -- any visible button that answers GetBagID with a backpack bag sits inside
 -- it, and its top-level ancestor is the window itself. No frame names to
@@ -213,9 +222,9 @@ end
 local function FindBagWindow()
     local frame = EnumerateFrames()
     while frame do
-        if frame:IsVisible() and frame.GetBagID then
+        if frame.GetBagID and IsPlainlyVisible(frame) then
             local ok, bag = pcall(frame.GetBagID, frame)
-            if ok and type(bag) == "number" and bag >= 0 and bag <= LAST_BAG then
+            if ok and not IsSecret(bag) and type(bag) == "number" and bag >= 0 and bag <= LAST_BAG then
                 local top = frame
                 local parent = top:GetParent()
                 while parent and parent ~= UIParent do
