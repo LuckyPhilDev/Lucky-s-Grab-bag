@@ -168,6 +168,7 @@ end
 local function EnsureWatcher()
     if watcher then return end
     watcher = CreateFrame("Frame")
+    watcher:Hide()
     local accum = 0
     local pollCount = 0
     watcher:SetScript("OnUpdate", function(_, elapsed)
@@ -245,6 +246,7 @@ local function InstallHooks()
 
     DumpFormStructure("install")
     EnsureWatcher()
+    if form:IsShown() then watcher:Show() end
 
     -- Re-resolve and hook the recipient editbox whenever the form is shown,
     -- since some patches build it lazily on order-type change.
@@ -277,11 +279,15 @@ local function InstallHooks()
     end
 
     if form.HookScript then
-        form:HookScript("OnShow", function() C_Timer.After(0, function()
-            HookRecipient()
-            TrySetTip("form-shown")
-        end) end)
-        DevLog("Hooked Form:OnShow.")
+        form:HookScript("OnShow", function()
+            watcher:Show()
+            C_Timer.After(0, function()
+                HookRecipient()
+                TrySetTip("form-shown")
+            end)
+        end)
+        form:HookScript("OnHide", function() watcher:Hide() end)
+        DevLog("Hooked Form:OnShow/OnHide.")
     end
 
     hooked = true
