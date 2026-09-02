@@ -166,6 +166,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
                 LuckyGrabbag.DecorTracking:ApplySetting()
             end,
         })
+
+        g:Toggle({
+            label    = SS.decorVendorPreview.label,
+            desc     = SS.decorVendorPreview.desc,
+            checked  = db.decorVendorPreview,
+            since    = "1.27.0",
+            onToggle = function(checked)
+                db.decorVendorPreview = checked
+                LuckyGrabbag.DecorPreview:ApplySetting()
+            end,
+        })
     end
 
     ---------------------------------------------------------------------------

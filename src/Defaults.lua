@@ -80,6 +80,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     blueprintImportCodes     = {},
     highlightTrackedDecor    = true,
     decorAutoBuy             = false,
+    decorVendorPreview       = true,
     decorList                = {},
     mailSendAll              = true,
     massDelete               = true,

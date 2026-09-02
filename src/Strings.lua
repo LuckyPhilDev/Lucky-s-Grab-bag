@@ -501,6 +501,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             label = "Alt-Right-Click to Buy What You Need",
             desc  = "Alt-right-click a flagged vendor item and it buys the number you are still short of, in one go. Off by default, since it spends your gold without a confirmation.",
         },
+        decorVendorPreview = {
+            label = "Preview Decor at Vendors",
+            desc  = "Hovering a vendor item that grants a decor piece shows the piece as a rotating model beside its tooltip, on whichever side has the room.",
+        },
         openDecorList = {
             label = "Open Shopping List",
             desc  = "Opens the decor shopping list, where you can see what each piece needs, drop pieces you no longer want, and send one to Blizzard's tracker for a map pin. Also available as /grabbag decor.",
