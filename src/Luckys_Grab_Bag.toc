@@ -50,6 +50,7 @@ features/EnchantStatsData.lua
 features/EnchantStats.lua
 features/OmniumFolio.lua
 features/DecorTracking.lua
+features/DecorPreview.lua
 features/BlueprintImportHistory.lua
 features/MailSendAll.lua
 features/MassDelete.lua

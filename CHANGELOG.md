@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Added
+- **Decor Preview** Hovering a vendor item that grants a decor piece shows the piece as a rotating model beside its tooltip, so you can see the furniture before you buy it.
+
 ## [1.26.2] - 2026-09-01
 
 ### Added
