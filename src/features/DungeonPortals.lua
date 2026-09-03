@@ -4,9 +4,7 @@ LuckyGrabbag.DungeonPortals = {}
 
 local BUTTON_SIZE = 20
 local TOGGLE_SIZE = 24
-local TOGGLE_ICON = "Interface/Icons/Spell_Arcane_PortalDalaran"
-local ICON_INSET = 1
-local FALLBACK_ICON = 134400
+local BADGE_ICON = "portal"
 
 local db
 local spellsByDungeonName
@@ -91,8 +89,11 @@ local function TeleportForPin(pin)
     return LuckyGrabbag.DungeonPortals.TeleportFor(journalInstanceID, EJ_GetInstanceInfo(journalInstanceID))
 end
 
--- A round gold-ringed button in the map's own language: the icon fills the
--- circle out to a thin gold ring, over a dark backing for the masked edge.
+-- The same flat portal glyph on every teleport, whatever it casts: the pin
+-- underneath already says where it goes, so spell art only adds noise.
+local lastBadgeClick = 0
+local function NoteBadgeClick() lastBadgeClick = GetTime() end
+
 local function CreateBadge(opts)
     local btn = LuckyGrabbag.CreateIconButton({
         parent   = opts.parent,
@@ -100,44 +101,18 @@ local function CreateBadge(opts)
         size     = opts.size,
         tooltip  = opts.tooltip,
     })
-    -- Clicks land out to the gold ring and a hair beyond, not just the icon.
     btn:SetHitRectInsets(-2, -2, -2, -2)
 
-    -- Texture:SetMask no longer does anything in the live client, so each
-    -- texture is rounded with its own MaskTexture instead.
-    local function Rounded(texture)
-        local mask = btn:CreateMaskTexture()
-        mask:SetAllPoints(texture)
-        mask:SetTexture("Interface/CharacterFrame/TempPortraitAlphaMask",
-            "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
-        texture:AddMaskTexture(mask)
-    end
+    local icon = LuckyIcon(BADGE_ICON)
+    btn:SetNormalTexture(icon)
+    local gold = LuckyUI.C.goldIcon
+    btn:GetNormalTexture():SetVertexColor(gold[1], gold[2], gold[3])
+    -- The square highlight the helper sets would frame a round glyph, so the
+    -- glyph lights itself up instead.
+    btn:SetHighlightTexture(icon, "ADD")
+    btn:GetHighlightTexture():SetAlpha(0.35) ---@diagnostic disable-line: undefined-field
 
-    local ring = btn:CreateTexture(nil, "BACKGROUND", nil, 0)
-    ring:SetAllPoints()
-    ring:SetColorTexture(0.85, 0.65, 0.25, 1)
-    Rounded(ring)
-    btn.ring = ring
-
-    local rim = btn:CreateTexture(nil, "BACKGROUND", nil, 1)
-    rim:SetPoint("TOPLEFT", 1, -1)
-    rim:SetPoint("BOTTOMRIGHT", -1, 1)
-    rim:SetColorTexture(0.08, 0.07, 0.05, 1)
-    Rounded(rim)
-
-    local icon = btn:CreateTexture(nil, "ARTWORK")
-    icon:SetPoint("TOPLEFT", ICON_INSET, -ICON_INSET)
-    icon:SetPoint("BOTTOMRIGHT", -ICON_INSET, ICON_INSET)
-    -- Crop the icon's baked-in border so the circle edge stays clean.
-    icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
-    Rounded(icon)
-    btn.icon = icon
-
-    -- Same round hover glow as the minimap button; plain it draws its black
-    -- backing as an opaque square, so force ADD.
-    btn:SetHighlightTexture("Interface/Minimap/UI-Minimap-ZoomButton-Highlight")
-    btn:GetHighlightTexture():SetBlendMode("ADD") ---@diagnostic disable-line: undefined-field
-
+    if opts.template then btn:SetScript("PostClick", NoteBadgeClick) end
     return btn
 end
 
@@ -171,10 +146,8 @@ local function UpdatePin(pin)
     end
 
     local btn = PortalButton(pin)
-    local info = C_Spell.GetSpellInfo(spellID)
     btn.spellID = spellID
     btn:SetAttribute("spell", spellID)
-    btn.icon:SetTexture(info and info.iconID or FALLBACK_ICON)
     btn:Show()
 end
 
@@ -246,9 +219,7 @@ local function UpdateEventPin(pin)
         return false
     end
 
-    local btn = EventButton(pin)
-    btn.icon:SetTexture(C_Item.GetItemIconByID(TRAVEL_TOY) or FALLBACK_ICON)
-    btn:Show()
+    EventButton(pin):Show()
     return true
 end
 
@@ -321,12 +292,10 @@ local function UpdateClassPins()
             pin = pin or ClassPin(entry)
             local canvas = WorldMapFrame.ScrollContainer.Child
             pin.holder:SetPoint("CENTER", canvas, "TOPLEFT", x * canvas:GetWidth(), -y * canvas:GetHeight())
-            local info = C_Spell.GetSpellInfo(spellID)
             pin.btn.spellID = spellID
             pin.btn.portalID = entry.portal and KnownSpell(entry.portal)
             pin.btn:SetAttribute("spell1", spellID)
             pin.btn:SetAttribute("spell2", pin.btn.portalID)
-            pin.btn.icon:SetTexture(info and info.iconID or FALLBACK_ICON)
             pin.holder:Show()
         elseif pin then
             pin.holder:Hide()
@@ -354,8 +323,9 @@ end
 local function UpdateMapToggle()
     if not mapToggle then return end
     local on = IsEnabled()
-    mapToggle.icon:SetDesaturated(not on)
-    mapToggle.ring:SetColorTexture(on and 0.85 or 0.4, on and 0.65 or 0.4, on and 0.25 or 0.4, 1)
+    local tex = mapToggle:GetNormalTexture()
+    tex:SetDesaturated(not on)
+    tex:SetAlpha(on and 1 or 0.6)
 end
 
 local function Refresh()
@@ -404,7 +374,6 @@ local function CreateMapToggle()
         btn:SetPoint("TOPRIGHT", WorldMapFrame.ScrollContainer, "TOPRIGHT", -8, -8)
     end
     btn:SetFrameStrata("HIGH")
-    btn.icon:SetTexture(TOGGLE_ICON)
     btn:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     btn:SetScript("OnClick", function(self, mouseBtn)
         if mouseBtn == "RightButton" then
@@ -455,6 +424,18 @@ function LuckyGrabbag.DungeonPortals:Init(database)
 
     mapToggle = CreateMapToggle()
     UpdateMapToggle()
+
+    -- A teleport is a long cast, invisible behind the map. Closing the map
+    -- when the cast starts puts the cast bar in view, which is the feedback
+    -- a click needs; a cast that fails leaves the map where it was.
+    local caster = CreateFrame("Frame")
+    caster:RegisterUnitEvent("UNIT_SPELLCAST_START", "player")
+    caster:RegisterUnitEvent("UNIT_SPELLCAST_SUCCEEDED", "player")
+    caster:SetScript("OnEvent", function()
+        if GetTime() - lastBadgeClick < 0.5 and WorldMapFrame:IsShown() then
+            HideUIPanel(WorldMapFrame)
+        end
+    end)
 
     if classTeleports then
         hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ApplyClassScale)
