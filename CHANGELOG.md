@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.27.1] - 2026-09-03
 
 ### Improved
 - **Map Teleports** Every teleport button on the world map now carries the same portal glyph instead of its spell's icon, so the map reads as a map again and the button underneath tells you where it goes. (Thanks for the suggestion Peri)
