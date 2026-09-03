@@ -44,6 +44,9 @@ Keeps a list of the housing decor a blueprint is missing, and flags those pieces
 - The pin on a list row opens the map where the piece is sold and points the waypoint arrow at it.
 - Open the list from settings under Housing, or with `/grabbag decor`.
 
+### Decor Preview
+Hovering a vendor item that grants a decor piece shows the piece as a rotating model beside its tooltip, so you can see the furniture before you buy it.
+
 ### Blueprint Import History
 Remembers the last 10 blueprint share codes you enter at the import window, so a good code is never lost.
 
@@ -373,6 +376,7 @@ The panel opens on a **What's New** list of the settings added in recent release
   - *Overlay on Clicked Item* — Places the button directly over the vendor item you clicked instead of next to the window.
 - *Flag Shopping List Decor at Vendors* — Puts a green glow and the number you still need on any vendor item that grants a decor piece from your shopping list.
   - *Alt-Right-Click to Buy What You Need* — Lets you alt-right-click a flagged item to buy the amount you are short of, and adds a Buy All Needed button for everything the vendor stocks. Off by default.
+- *Preview Decor at Vendors* — Hovering a vendor item that grants a decor piece shows the piece as a rotating model beside its tooltip.
 
 **Housing**
 - *Track Missing Decor Button* — Adds a Track Missing button to a blueprint's item list, putting every piece you are short of onto the shopping list.
