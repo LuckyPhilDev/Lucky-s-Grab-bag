@@ -3,8 +3,12 @@ LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.DungeonPortals = {}
 
 local BUTTON_SIZE = 20
-local TOGGLE_SIZE = 24
+local TOGGLE_SIZE = 32
 local BADGE_ICON = "portal"
+
+-- The four diagonals give the glyph a one pixel dark edge, which is what keeps
+-- it legible over painted map art without a second piece of art to bake.
+local OUTLINE_OFFSETS = { { -1, 1 }, { 1, 1 }, { -1, -1 }, { 1, -1 } }
 
 local db
 local spellsByDungeonName
@@ -104,6 +108,16 @@ local function CreateBadge(opts)
     btn:SetHitRectInsets(-2, -2, -2, -2)
 
     local icon = LuckyIcon(BADGE_ICON)
+    if opts.outline then
+        for _, offset in ipairs(OUTLINE_OFFSETS) do
+            local edge = btn:CreateTexture(nil, "BACKGROUND")
+            edge:SetTexture(icon)
+            edge:SetVertexColor(0, 0, 0, 0.85)
+            edge:SetPoint("TOPLEFT", offset[1], offset[2])
+            edge:SetPoint("BOTTOMRIGHT", offset[1], offset[2])
+        end
+    end
+
     btn:SetNormalTexture(icon)
     local gold = LuckyUI.C.goldIcon
     btn:GetNormalTexture():SetVertexColor(gold[1], gold[2], gold[3])
@@ -125,6 +139,7 @@ local function PortalButton(pin)
         parent   = pin,
         template = "InsecureActionButtonTemplate",
         size     = BUTTON_SIZE,
+        outline  = true,
         tooltip  = function(self) GameTooltip:SetSpellByID(self.spellID) end,
     })
     btn:SetPoint("CENTER", pin, "TOPRIGHT", -4, -4)
@@ -161,6 +176,7 @@ local function EventButton(pin)
         parent   = pin,
         template = "InsecureActionButtonTemplate",
         size     = BUTTON_SIZE,
+        outline  = true,
         tooltip  = function()
             if PlayerHasToy(TRAVEL_TOY) then
                 GameTooltip:SetToyByItemID(TRAVEL_TOY)
@@ -251,6 +267,7 @@ local function ClassPin(entry)
         parent   = holder,
         template = "InsecureActionButtonTemplate",
         size     = CLASS_BADGE_SIZE,
+        outline  = true,
         tooltip  = function(self)
             GameTooltip:SetSpellByID(self.spellID)
             if self.portalID then
@@ -322,10 +339,12 @@ end
 
 local function UpdateMapToggle()
     if not mapToggle then return end
+    -- The glyph's art is white and takes its colour from the vertex tint, so
+    -- desaturating the texture would change nothing; the tint has to go grey.
+    local gold = LuckyUI.C.goldIcon
     local on = IsEnabled()
-    local tex = mapToggle:GetNormalTexture()
-    tex:SetDesaturated(not on)
-    tex:SetAlpha(on and 1 or 0.6)
+    mapToggle:GetNormalTexture():SetVertexColor(
+        on and gold[1] or 0.45, on and gold[2] or 0.45, on and gold[3] or 0.45)
 end
 
 local function Refresh()
@@ -359,6 +378,24 @@ local function CreateMapToggle()
             GameTooltip:AddLine(IsEnabled() and S.stateOn or S.stateOff)
         end,
     })
+    -- The round backing and ring Blizzard's own map buttons wear, at the sizes
+    -- its Map Pin button uses, so the two read as a pair.
+    local backing = btn:CreateTexture(nil, "BACKGROUND")
+    backing:SetTexture("Interface/Minimap/UI-Minimap-Background")
+    backing:SetSize(25, 25)
+    backing:SetPoint("TOPLEFT", 3, -4)
+
+    local border = btn:CreateTexture(nil, "OVERLAY")
+    border:SetTexture("Interface/Minimap/MiniMap-TrackingBorder")
+    border:SetSize(54, 54)
+    border:SetPoint("TOPLEFT")
+
+    for _, tex in ipairs({ btn:GetNormalTexture(), btn:GetHighlightTexture() }) do
+        tex:ClearAllPoints()
+        tex:SetSize(20, 20)
+        tex:SetPoint("TOPLEFT", 7, -6)
+    end
+
     -- Below Blizzard's own Map Pin button, found the way Krowi's map button
     -- library finds it: overlay frames carry no names, only their mixin.
     local pinButton
@@ -369,7 +406,9 @@ local function CreateMapToggle()
         end
     end
     if pinButton then
-        btn:SetPoint("TOP", pinButton, "BOTTOM", 0, -4)
+        -- Both buttons carry the same padding inside their frame, so edge to
+        -- edge here is the gap Blizzard leaves between the circles themselves.
+        btn:SetPoint("TOP", pinButton, "BOTTOM", 0, 0)
     else
         btn:SetPoint("TOPRIGHT", WorldMapFrame.ScrollContainer, "TOPRIGHT", -8, -8)
     end
