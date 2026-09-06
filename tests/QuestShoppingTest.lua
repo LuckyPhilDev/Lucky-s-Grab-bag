@@ -563,6 +563,10 @@ assert(dialog.accepted == 1, "a profession quest should be accepted")
 Offer("QUEST_DETAIL", 2)
 assert(dialog.accepted == 1, "an ordinary quest must be left alone")
 
+-- A dialog with no quest id behind it, which the tag lookup cannot be asked about.
+Offer("QUEST_DETAIL", 0)
+assert(dialog.accepted == 1, "a dialog without a quest id must be left alone")
+
 -- Accepting and handing in are separate switches.
 Offer("QUEST_PROGRESS", 1)
 assert(dialog.completed == 0, "handing in is off, so nothing should be completed")
