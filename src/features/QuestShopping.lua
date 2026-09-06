@@ -319,7 +319,7 @@ end
 -- is what keeps this to profession quests and nothing else on the same NPC.
 local function IsProfessionQuest(questID)
     local tag = questID and questID ~= 0 and C_QuestLog.GetQuestTagInfo(questID)
-    return tag ~= nil and tag.tagID == PROFESSION_TAG_ID
+    return tag and tag.tagID == PROFESSION_TAG_ID
 end
 
 local function OfferedQuestIsProfession()

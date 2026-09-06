@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Fixed
+- Talking to a quest giver no longer throws a Lua error when the dialog has no quest behind it, so Profession Quest auto accept and auto turn-in stay quiet on ordinary NPCs.
+
 ## [1.27.1] - 2026-09-03
 
 ### Improved
