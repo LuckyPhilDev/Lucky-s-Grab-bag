@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+### Improved
+- **Map Teleports** Clicking a city teleport on the world map opens the portal for your group when you are in one. Right-click still teleports you alone.
+
 ### Fixed
 - Talking to a quest giver no longer throws a Lua error when the dialog has no quest behind it, so Profession Quest auto accept and auto turn-in stay quiet on ordinary NPCs.
 
