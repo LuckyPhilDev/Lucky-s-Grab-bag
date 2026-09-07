@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.27.2] - 2026-09-07
 
 ### Improved
 - **Map Teleports** Clicking a city teleport on the world map opens the portal for your group when you are in one. Right-click still teleports you alone.

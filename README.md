@@ -209,7 +209,7 @@ Puts teleport buttons on the world map: on dungeon and raid entrances, on your c
 - Hover a button to see the teleport's tooltip, including its cooldown; click to cast and the map closes as the teleport begins.
 - Covers dungeon teleports from Wrath of the Lich King onward and the raid teleports from Shadowlands onward.
 - The active Abundance event icon carries a button for Dundun's Abundant Travel Method once you own the toy.
-- Class teleports get a button where each spell lands: a mage's city Teleports, with Right-click opening the portal for your group.
+- Class teleports get a button where each spell lands: a mage's city Teleports cast the portal when you are in a group and the solo teleport when you are not, with Right-click casting the other.
 - A round button below the map's Map Pin button toggles the teleports on and off; right-click it to choose which kinds show.
 - Can be toggled in the addon settings, where dungeon and raid teleports, class teleports, and toy teleports can also be hidden individually.
 
