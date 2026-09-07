@@ -26,6 +26,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         toggleDesc       = "Buttons on the map for every teleport you know: dungeon and raid entrances, class teleports, and teleport toys.",
         toggleRightClick = "Right-click to choose which teleports show",
         portalHint       = "Right-click to open the portal for your group",
+        teleportHint     = "Right-click to teleport yourself",
         stateOn     = "|cff00cc00Shown|r",
         stateOff    = "|cffff4040Hidden|r",
     },

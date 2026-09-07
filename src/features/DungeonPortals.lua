@@ -270,8 +270,8 @@ local function ClassPin(entry)
         outline  = true,
         tooltip  = function(self)
             GameTooltip:SetSpellByID(self.spellID)
-            if self.portalID then
-                GameTooltip:AddLine(LuckyGrabbag.Strings.dungeonPortals.portalHint, 0.91, 0.86, 0.78)
+            if self.hint then
+                GameTooltip:AddLine(self.hint, 0.91, 0.86, 0.78)
             end
         end,
     })
@@ -309,10 +309,17 @@ local function UpdateClassPins()
             pin = pin or ClassPin(entry)
             local canvas = WorldMapFrame.ScrollContainer.Child
             pin.holder:SetPoint("CENTER", canvas, "TOPLEFT", x * canvas:GetWidth(), -y * canvas:GetHeight())
-            pin.btn.spellID = spellID
-            pin.btn.portalID = entry.portal and KnownSpell(entry.portal)
-            pin.btn:SetAttribute("spell1", spellID)
-            pin.btn:SetAttribute("spell2", pin.btn.portalID)
+            -- In a group the portal is what the click is nearly always for, so
+            -- it takes the left click there and the solo teleport swaps to the right.
+            local portalID = entry.portal and KnownSpell(entry.portal)
+            local S = LuckyGrabbag.Strings.dungeonPortals
+            local grouped = portalID and IsInGroup()
+            local alternate = grouped and spellID or portalID
+
+            pin.btn.spellID = grouped and portalID or spellID
+            pin.btn.hint = alternate and (grouped and S.teleportHint or S.portalHint)
+            pin.btn:SetAttribute("spell1", pin.btn.spellID)
+            pin.btn:SetAttribute("spell2", alternate)
             pin.holder:Show()
         elseif pin then
             pin.holder:Hide()
@@ -478,6 +485,12 @@ function LuckyGrabbag.DungeonPortals:Init(database)
 
     if classTeleports then
         hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ApplyClassScale)
+
+        -- Joining or leaving a group swaps which spell each badge casts, and
+        -- the map is often already open when that happens.
+        local roster = CreateFrame("Frame")
+        roster:RegisterEvent("GROUP_ROSTER_UPDATE")
+        roster:SetScript("OnEvent", function() self:ApplySetting() end)
     end
 
     WorldMapFrame:HookScript("OnShow", Refresh)
