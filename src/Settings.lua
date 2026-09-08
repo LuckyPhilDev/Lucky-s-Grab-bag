@@ -753,6 +753,16 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     do
         local g = panel:Group(SS.groups.interface)
 
+        g:Section(SS.sections.tradingPost)
+
+        g:Toggle({
+            label    = SS.rememberTradingPostAnimations.label,
+            desc     = SS.rememberTradingPostAnimations.desc,
+            checked  = db.rememberTradingPostAnimations,
+            since    = "1.27.3",
+            onToggle = function(checked) db.rememberTradingPostAnimations = checked end,
+        })
+
         g:Section(SS.sections.worldMap)
 
         g:Toggle({

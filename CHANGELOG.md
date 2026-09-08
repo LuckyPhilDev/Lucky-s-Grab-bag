@@ -1,3 +1,8 @@
+## [1.27.3] - 2026-09-08
+
+### Added
+- **Trading Post Animations** Combat Animation and Mount Special remember your checkbox choices between items and visits to the Trading Post. (Thanks for the suggestion Ilkka)
+
 ## [1.27.2] - 2026-09-07
 
 ### Improved

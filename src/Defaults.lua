@@ -64,6 +64,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     autoCombatLogCurrentSeasonOnly = true,
     showConfirmPurchase      = true,
     confirmPurchaseOnSide    = false,
+    rememberTradingPostAnimations = true,
     -- Retired, both moved to Lucky's Wardrobe.
     keepTransmogTab          = false,
     trackTransmogSets        = false,

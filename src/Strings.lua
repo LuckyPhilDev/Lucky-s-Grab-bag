@@ -267,6 +267,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             wardrobe       = "Wardrobe",
             bonusRolls     = "Bonus Rolls",
             worldMap       = "World Map",
+            tradingPost    = "Trading Post",
             quests         = "Quests",
             craftingWindow = "Crafting Window",
             altsWarband    = "Alts & Warband",
@@ -513,6 +514,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         alwaysCompareItems = {
             label = "Always Compare Items",
             desc  = "Shows the comparison tooltip beside gear you hover over. Turn it off to see comparisons only while holding Shift. This is a game setting, so it applies to every character and stays put if you disable the addon.",
+        },
+        rememberTradingPostAnimations = {
+            label = "Remember Trading Post Animations",
+            desc  = "Remembers your Combat Animation and Mount Special checkbox choices in the Trading Post when you change items, reopen the window, or log back in. Applies across your characters.",
         },
         transmog = {
             label = "Keep Active Transmog Tab",
