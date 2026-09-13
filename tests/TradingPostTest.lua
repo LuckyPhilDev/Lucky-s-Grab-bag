@@ -54,6 +54,7 @@ for _, alreadyLoaded in ipairs({ false, true }) do
     end
     _G.PerksProgramFrame = frame
     local category, hasAnimation, attackEnabled, mountEnabled = "transmog", true, true, true
+    local hasSetList = false
 
     function frame:GetAttackAnimationSetting() return self.attackAnimationPlaying end
     function frame:GetMountSpecialPreviewSetting() return self.mountSpecialAnimPlaying end
@@ -63,6 +64,8 @@ for _, alreadyLoaded in ipairs({ false, true }) do
         if old ~= value then
             -- Blizzard rebuilds the current model synchronously before the click hook runs.
             footer:UpdateTransmogControls(category, false)
+            -- The rebuild refreshes a set's item list, which reports the same set as a new product.
+            if hasSetList then footer:UpdateTransmogControls(category, true) end
         end
         self.actorAttacking = self.attackAnimationPlaying
     end
@@ -161,6 +164,14 @@ for _, alreadyLoaded in ipairs({ false, true }) do
     Select("pet")
     Select("transmog")
     assert(frame.actorAttacking == false and not mount:IsShown())
+    hasSetList = true
+    Select("transmog")
+    assert(frame.actorAttacking == true and attack:GetChecked() == true,
+        "a set's list refresh turns the animation back on, and restoring must not loop against it")
+    assert(db.tradingPostCombatAnimation == false)
+    hasSetList = false
+    Select("transmog")
+    assert(frame.actorAttacking == false and attack:GetChecked() == false)
 
     db.rememberTradingPostAnimations = false
     Select("transmog")

@@ -26,16 +26,20 @@ local function InstallHooks()
         end
     end)
 
+    local restoringCombatAnimation = false
     hooksecurefunc(footer, "UpdateTransmogControls", function(self, _, newProduct)
         local saved = db.tradingPostCombatAnimation
         if not db.rememberTradingPostAnimations or saved == nil or not newProduct then return end
-        if not self.ToggleAttackAnimation:IsShown() then return end
+        if restoringCombatAnimation or not self.ToggleAttackAnimation:IsShown() then return end
 
         -- Same-item refreshes also run during a click, before its new choice is saved.
         if frame:GetAttackAnimationSetting() ~= saved then
+            -- Restoring rebuilds the model, and a set's item list refresh re-enters here after Blizzard turns the animation back on.
+            restoringCombatAnimation = true
             frame:PlayerSetAttackAnimationOnClick(saved)
+            restoringCombatAnimation = false
         end
-        self.ToggleAttackAnimation:SetChecked(saved)
+        self.ToggleAttackAnimation:SetChecked(frame:GetAttackAnimationSetting())
     end)
     hooksecurefunc(footer, "UpdateMountControls", function(self, _, newProduct)
         local saved = db.tradingPostMountSpecial
