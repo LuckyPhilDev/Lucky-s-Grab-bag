@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Fixed
+- Viewing a set in the Trading Post with Combat Animation unchecked no longer throws a Lua error.
+
 ## [1.27.3] - 2026-09-08
 
 ### Added
