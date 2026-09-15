@@ -224,6 +224,12 @@ When you submit a personal crafting work order to one of your own characters, th
 - Always overwrites the tip when the recipient changes, even if you'd typed something larger.
 - Enabled by default; can be toggled in the addon settings under Professions.
 
+### Alt Crafter Buttons
+A panel beside the Crafting Orders window lists your characters who have the profession for the item you are ordering. Click a name to make it a Personal order with that character in the To field.
+
+- A character appears once you have logged in on it with Grab-bag enabled.
+- Enabled by default; can be toggled in the addon settings under Professions.
+
 ### Spend to Next Perk
 Shift-clicking a profession specialisation node automatically spends additional knowledge points until you reach the next perk, so you can unlock a perk in one click instead of five.
 
@@ -371,6 +377,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Concentration on Profession Book* — Shows a Concentration bar above each profession's skill bar in the Profession Book, with a hover tooltip for the refill time.
 - *Search Selected Expansion Only* — When searching recipes, only shows results from the expansion selected in the Filter dropdown. An All Expansions option in that dropdown searches everything at once.
 - *1s Tip on Alt Work Orders* — Automatically sets the tip to 1 silver when sending a personal work order to one of your own characters.
+- *Alt Crafter Buttons*: Lists your characters with the profession for the item beside the Crafting Orders window; click one to send them a Personal order.
 - *Reagent Mains* — When the warband bank opens, deposits reagents whose category is assigned to a different character.
   - *Configure mains…* — Opens the assignment window where each reagent category can be linked to one or more characters, "All" (everyone keeps), or "None".
 

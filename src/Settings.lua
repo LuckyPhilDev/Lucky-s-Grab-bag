@@ -304,7 +304,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.craftingOrderAlts.label,
             desc     = SS.craftingOrderAlts.desc,
             checked  = db.craftingOrderAlts,
-            since    = "1.27.4",
+            since    = "1.28.0",
             onToggle = function(checked) db.craftingOrderAlts = checked end,
         })
     end
