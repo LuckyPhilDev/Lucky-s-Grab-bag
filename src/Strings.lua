@@ -177,6 +177,11 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         namePaneHint        = "Shows in the Recent Codes list in place of the raw code.",
     },
 
+    craftingOrderAlts = {
+        title   = "YOUR CRAFTERS",
+        tooltip = "Click to fill in the To field with this character.",
+    },
+
     warboundAutoDeposit = {
         movedToStockist = "Warbound gear deposit has moved to Warband Stockist. Your settings were carried over; find them on the Warbound tab in Warband Stockist's settings.",
         whitelistTitle  = "Whitelist",
@@ -532,6 +537,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         autoTipAlt = {
             label = "1s Tip on Alt Work Orders",
             desc  = "When sending a personal work order to one of your own characters, automatically sets the tip to 1 silver.",
+        },
+        craftingOrderAlts = {
+            label = "Alt Crafter Buttons",
+            desc  = "Adds a panel beside the Crafting Orders window listing your characters with the profession for the item you are ordering. Click a name to make it a Personal order to that character. A character shows up once you have logged in on it with Grab-bag enabled.",
         },
         spendToNextPerk = {
             label = "Spend to Next Perk",

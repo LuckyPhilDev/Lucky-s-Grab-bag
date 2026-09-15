@@ -69,6 +69,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     keepTransmogTab          = false,
     trackTransmogSets        = false,
     autoTipAlt               = true,
+    craftingOrderAlts        = true,
     spendToNextPerk          = true,
     searchSelectedExpansionOnly = true,
     searchAllExpansions      = false,
