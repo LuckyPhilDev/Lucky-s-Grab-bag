@@ -299,6 +299,14 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             since    = "1.10.0",
             onToggle = function(checked) db.autoTipAlt = checked end,
         })
+
+        g:Toggle({
+            label    = SS.craftingOrderAlts.label,
+            desc     = SS.craftingOrderAlts.desc,
+            checked  = db.craftingOrderAlts,
+            since    = "1.27.4",
+            onToggle = function(checked) db.craftingOrderAlts = checked end,
+        })
     end
 
     ---------------------------------------------------------------------------
