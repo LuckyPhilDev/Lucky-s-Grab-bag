@@ -444,7 +444,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         delveCompanion = {
             label = "Per-Spec Companion Loadout",
-            desc  = "Remembers your delve companion's role and curios for each specialization, and puts them back when a delve hands them to you empty or you switch specs. A chat message shows what was restored.",
+            desc  = "Remembers your delve companion's role and curios for each specialization. Refills any slot a delve hands back empty, and swaps the whole loadout when you switch specs. A slot you set yourself is left alone. A chat message shows what was restored.",
         },
         piPicker = {
             label = "Power Infusion Picker",

@@ -13,7 +13,9 @@ local SYNC_DELAY = 2
 
 local db, charDB
 local syncing = false
+local pendingSpecSwap = false
 local blockedByCombat = false
+local lastSpecID
 
 local DevLog = LuckyGrabbag.Logger("DelveCompanion")
 
@@ -75,7 +77,9 @@ function DelveCompanion.Snapshot()
     end
 end
 
-function DelveCompanion.Restore()
+-- A slot with something in it is the player's own choice, so only a spec change
+-- is allowed to replace one. Every other sync fills the slots a delve emptied.
+function DelveCompanion.Restore(replaceFilledSlots)
     local configID, key, specID = Context()
     if not configID then return end
 
@@ -90,8 +94,10 @@ function DelveCompanion.Restore()
     local restored = {}
     for nodeID, entryID in pairs(saved) do
         local nodeInfo = C_Traits.GetNodeInfo(configID, nodeID)
-        if nodeInfo and nodeInfo.ID == nodeID
-            and (not nodeInfo.activeEntry or nodeInfo.activeEntry.entryID ~= entryID)
+        local activeEntry = nodeInfo and nodeInfo.activeEntry
+        local mayWrite = not activeEntry
+            or (replaceFilledSlots and activeEntry.entryID ~= entryID)
+        if nodeInfo and nodeInfo.ID == nodeID and mayWrite
             and HasEntry(nodeInfo, entryID)
             and C_Traits.SetSelection(configID, nodeID, entryID)
         then
@@ -113,7 +119,8 @@ function DelveCompanion.Restore()
     end
 end
 
-local function Sync()
+local function Sync(afterSpecChange)
+    pendingSpecSwap = pendingSpecSwap or afterSpecChange
     if syncing then return end
     if InCombatLockdown() then
         blockedByCombat = true
@@ -121,7 +128,9 @@ local function Sync()
     end
     syncing = true
     C_Timer.After(SYNC_DELAY, function()
-        DelveCompanion.Restore()
+        local specSwap = pendingSpecSwap
+        pendingSpecSwap = false
+        DelveCompanion.Restore(specSwap)
         DelveCompanion.Snapshot()
         syncing = false
     end)
@@ -140,13 +149,19 @@ eventFrame:SetScript("OnEvent", function(_, event, arg1)
         if not blockedByCombat then return end
         blockedByCombat = false
     end
-    Sync()
+
+    local _, _, specID = Context()
+    -- The first spec we see is whatever the companion is already set up for, so
+    -- it is not a swap.
+    local specChanged = specID and lastSpecID and specID ~= lastSpecID
+    lastSpecID = specID or lastSpecID
+    Sync(specChanged)
 end)
 
 -- Called from the settings panel so enabling mid-session seeds the current spec.
 function DelveCompanion:ApplySetting()
     if not db or not db.delveCompanionPerSpec then return end
-    Sync()
+    Sync(false)
 end
 
 function DelveCompanion:Init(database, characterDatabase)

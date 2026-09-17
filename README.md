@@ -207,7 +207,8 @@ Shows a clickable button when you're inside a delve that meets the configured mi
 Your delve companion's role and curios sometimes come back empty on entering a delve, and they carry over unchanged when you switch specialization. This remembers the loadout you run in each spec and puts it back.
 
 - Records every slot on the companion panel whenever you change one.
-- Restores them on entering a delve, on switching spec, and when combat ends if a restore was waiting.
+- Refills any slot a delve emptied, on entering a delve and when combat ends if a restore was waiting.
+- Never overwrites a slot you have set yourself. Switching spec is the one case that swaps a loadout that is already filled in.
 - A chat message lists what was put back.
 - Leaves the loadout alone while you have unsaved changes open at the Delver's Supplies.
 - Remembered per character, so each alt keeps its own choices.
