@@ -203,6 +203,16 @@ Shows a clickable button when you're inside a delve that meets the configured mi
 - Respects combat lockdown — the button won't change mid-combat.
 - Can be toggled in the addon settings.
 
+### Per-Spec Delve Companion Loadout
+Your delve companion's role and curios sometimes come back empty on entering a delve, and they carry over unchanged when you switch specialization. This remembers the loadout you run in each spec and puts it back.
+
+- Records every slot on the companion panel whenever you change one.
+- Refills any slot a delve emptied, on entering a delve and when combat ends if a restore was waiting.
+- Never overwrites a slot you have set yourself. Switching spec is the one case that swaps a loadout that is already filled in.
+- A chat message lists what was put back.
+- Leaves the loadout alone while you have unsaved changes open at the Delver's Supplies.
+- Remembered per character, so each alt keeps its own choices.
+
 ### Map Teleports
 Puts teleport buttons on the world map: on dungeon and raid entrances, on your class teleports' destinations, and on the active Abundance event.
 
@@ -396,6 +406,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 **Delves**
 - *Trovehunter's Bounty* — Shows a clickable button for your Trovehunter's Bounty when in a qualifying delve.
   - *Minimum Delve Level* — The minimum delve level required for the button to appear (1–11).
+- *Per-Spec Companion Loadout*: Remembers your delve companion's role and curios for each specialization and puts them back when a delve hands them to you empty or you switch specs.
 
 **Inventory**
 - *Use Items Popup* — Displays a floating bar of buttons for consumable profession items in your bags.
@@ -421,7 +432,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Map Teleports* — Shows a teleport button on the world map's dungeon and raid entrances you have earned the teleport for, your class teleports where each spell lands, and Dundun's Abundant Travel Method on the active Abundance event. Each kind of teleport has its own toggle.
 - *Auto-dismiss Bonus Roll* — Passes on the Bonus Roll popup at the end of instanced content, with per-character toggles for Mythic+ (with a minimum key level), Raids (with individual difficulty selection), Delves, Dungeons, and Hunts. Managed in Lucky's Loot Wishlist when that is installed.
 
-Settings are saved per account, except for Bonus Roll preferences and Omnium Folio rune memory, which are saved per character.
+Settings are saved per account, except for Bonus Roll preferences, Omnium Folio rune memory, and delve companion loadout memory, which are saved per character.
 
 ---
 

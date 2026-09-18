@@ -718,6 +718,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
                 LuckyGrabbag.DelveMap:ApplySetting()
             end,
         })
+
+        g:Toggle({
+            label    = SS.delveCompanion.label,
+            desc     = SS.delveCompanion.desc,
+            checked  = db.delveCompanionPerSpec,
+            since    = "1.29.0",
+            onToggle = function(checked)
+                db.delveCompanionPerSpec = checked
+                LuckyGrabbag.DelveCompanion:ApplySetting()
+            end,
+        })
     end
 
     ---------------------------------------------------------------------------

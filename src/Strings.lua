@@ -125,6 +125,12 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         stopped = "Combat logging off.",
     },
 
+    delveCompanion = {
+        restored      = "Restored your delve companion loadout for %s: %s",
+        restoreFailed = "Could not restore your delve companion loadout. Set it manually at the Delver's Supplies.",
+        unknownChoice = "Unknown choice",
+    },
+
     omniumFolio = {
         restored      = "Restored Omnium Folio runes for %s: %s",
         restoreFailed = "Could not restore your Omnium Folio runes. Open the Omnium Folio and set them manually.",
@@ -435,6 +441,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         omniumFolio = {
             label = "Per-Spec Omnium Folio Runes",
             desc  = "Remembers your Omnium Folio rune choices for each specialization and restores them when you switch specs. A chat message shows which runes were swapped back.",
+        },
+        delveCompanion = {
+            label = "Per-Spec Companion Loadout",
+            desc  = "Remembers your delve companion's role and curios for each specialization. Refills any slot a delve hands back empty, and swaps the whole loadout when you switch specs. A slot you set yourself is left alone. A chat message shows what was restored.",
         },
         piPicker = {
             label = "Power Infusion Picker",

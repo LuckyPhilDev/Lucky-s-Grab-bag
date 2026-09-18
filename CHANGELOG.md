@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Added
+- **Per-Spec Companion Loadout** Your delve companion's role and curios are remembered for each specialization and put back when a delve hands them to you empty or you switch specs.
+
 ## [1.28.0] - 2026-09-15
 
 ### Added

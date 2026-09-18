@@ -77,6 +77,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     showEnchantBadges        = true,
     enchantBadgesAH          = true,
     omniumFolioPerSpec       = true,
+    delveCompanionPerSpec    = true,
     blueprintTrackMissing    = true,
     blueprintImportHistory   = true,
     blueprintImportCodes     = {},
