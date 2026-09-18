@@ -236,7 +236,7 @@ local function WithdrawTreatises(job, queue)
         local treatise = table.remove(queue, 1)
         local withdrawn = FindAndWithdrawTreatise(treatise.itemID, treatise.name, function()
             job:Tick()
-            processNext()
+            job:After(0, processNext)
         end)
         if not withdrawn then
             job:Tick()

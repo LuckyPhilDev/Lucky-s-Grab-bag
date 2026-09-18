@@ -204,7 +204,7 @@ function Utils.RunQueue(job, queue)
         local entry = queue[index]
         Utils.TryDepositItem(entry.itemID, entry.amount, function()
             job:Tick()
-            C_Timer.After(Utils.perItemDelay, function() depositFrom(index + 1) end)
+            job:After(Utils.perItemDelay, function() depositFrom(index + 1) end)
         end, entry.slotFilter)
     end
     depositFrom(1)
