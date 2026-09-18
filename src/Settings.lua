@@ -405,6 +405,16 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             parent   = SS.warboundAutoDeposit.label,
             onClick  = function() LuckyGrabbag.WarboundAutoDeposit:OpenPopup() end,
         })
+
+        g:Section(SS.sections.bankQueue)
+        -- Stockist owns the mode once it is a version that has the setting. It
+        -- loads after this panel is built, so ask whether it is enabled rather
+        -- than loaded.
+        LuckyBankRun:AddModeSetting(g, {
+            since   = "1.29.0",
+            ownedBy = LuckyDeps:IsEnabled("Luckys_Warbank_Stockist", "1.13.0") and "Warband Stockist" or nil,
+        })
+        LuckyBankRun:AddSettingsToggle(g, "1.29.0")
     end
 
     ---------------------------------------------------------------------------

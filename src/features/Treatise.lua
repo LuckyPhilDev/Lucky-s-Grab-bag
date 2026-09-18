@@ -203,7 +203,8 @@ local function FindAndWithdrawTreatise(itemID, profName, onDone)
     return false
 end
 
-local function WithdrawEligibleTreatises()
+local function PlanTreatises()
+    if not db.showTreatise then return {} end
     DevLog("Scanning for eligible treatises")
     local variantLines = ActiveVariantLineLookup()
     GetCharacterSkillLines()
@@ -216,18 +217,29 @@ local function WithdrawEligibleTreatises()
                 DevLog("  Skipping " .. treatise.name .. " — unmet item requirements (skill too low)")
             elseif not IsEligibleThisWeek(treatise.questID, treatise.name) then
                 DevLog("  Skipping " .. treatise.name .. " — already used this week")
-            else
+            elseif not IsItemInBags(treatise.itemID) then
                 table.insert(queue, treatise)
             end
         end
     end
 
+    return queue
+end
+
+local function WithdrawTreatises(job, queue)
     -- Process one treatise at a time; each withdrawal's onDone callback starts the next.
     local function processNext()
-        if #queue == 0 then return end
+        if #queue == 0 then
+            job:Done()
+            return
+        end
         local treatise = table.remove(queue, 1)
-        local withdrawn = FindAndWithdrawTreatise(treatise.itemID, treatise.name, processNext)
+        local withdrawn = FindAndWithdrawTreatise(treatise.itemID, treatise.name, function()
+            job:Tick()
+            job:After(0, processNext)
+        end)
         if not withdrawn then
+            job:Tick()
             processNext()  -- nothing to wait for, move on immediately
         end
     end
@@ -270,15 +282,7 @@ end
 function LuckyGrabbag.Treatise:Init(database)
     db = database
 
-    local eventFrame = CreateFrame("Frame")
-    eventFrame:RegisterEvent("BANKFRAME_OPENED")
-    eventFrame:SetScript("OnEvent", function()
-        DevLog("BANKFRAME_OPENED received")
-        C_Timer.After(0.2, function()
-            DevLog("Timer fired — showTreatise=" .. tostring(db.showTreatise))
-            if db.showTreatise then
-                WithdrawEligibleTreatises()
-            end
-        end)
-    end)
+    -- After the deposits, which free bag space, and before Warband Stockist's
+    -- restock and bank sort.
+    LuckyBankRun:OnBankOpen(40, { direction = "withdraw", plan = PlanTreatises, run = WithdrawTreatises })
 end

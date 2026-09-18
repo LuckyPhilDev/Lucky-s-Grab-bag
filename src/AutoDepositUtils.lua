@@ -89,19 +89,20 @@ function Utils.FindEmptyBankSlot()
 end
 
 -- slotFilter(bag, slot, info) may veto individual stacks; without it every
--- bank-allowed copy of the itemID is deposited.
+-- stack the Warband Bank accepts (anything not soulbound) is depositable.
+local function IsDepositable(bag, slot, info, slotFilter)
+    return C_Bank.IsItemAllowedInBankType(Enum.BankType.Account, ItemLocation:CreateFromBagAndSlot(bag, slot))
+        and (not slotFilter or slotFilter(bag, slot, info))
+end
+
 function Utils.TryDepositItem(itemID, amountToDeposit, callback, slotFilter)
     local bagSlots = {}
 
     for _, bag in ipairs(Utils.GetAllPlayerBagIDs()) do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local info = C_Container.GetContainerItemInfo(bag, slot)
-            if info and info.itemID == itemID then
-                local loc = ItemLocation:CreateFromBagAndSlot(bag, slot)
-                if C_Bank.IsItemAllowedInBankType(Enum.BankType.Account, loc)
-                    and (not slotFilter or slotFilter(bag, slot, info)) then
-                    table.insert(bagSlots, { bag = bag, slot = slot, count = info.stackCount })
-                end
+            if info and info.itemID == itemID and IsDepositable(bag, slot, info, slotFilter) then
+                table.insert(bagSlots, { bag = bag, slot = slot, count = info.stackCount })
             end
         end
     end
@@ -161,10 +162,50 @@ function Utils.TryDepositItem(itemID, amountToDeposit, callback, slotFilter)
     depositNext(1, amountToDeposit)
 end
 
-function Utils.ProcessQueue(queue, index)
-    if index > #queue or not BankIsOpen() then return end
-    local entry = queue[index]
-    Utils.TryDepositItem(entry.itemID, entry.amount, function()
-        C_Timer.After(Utils.perItemDelay, function() Utils.ProcessQueue(queue, index + 1) end)
-    end, entry.slotFilter)
+-- Trims a deposit queue to what the Warband Bank will take, in one pass over
+-- the bags. A soulbound item never leaves the bags, so queueing it would retry
+-- it on every bank open.
+function Utils.DepositableOnly(queue)
+    local entries = {}
+    for _, entry in ipairs(queue) do entries[entry.itemID] = entry end
+
+    local counts = {}
+    for _, bag in ipairs(Utils.GetAllPlayerBagIDs()) do
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local info = C_Container.GetContainerItemInfo(bag, slot)
+            local entry = info and entries[info.itemID]
+            if entry and IsDepositable(bag, slot, info, entry.slotFilter) then
+                counts[info.itemID] = (counts[info.itemID] or 0) + (info.stackCount or 1)
+            end
+        end
+    end
+
+    local depositable = {}
+    for _, entry in ipairs(queue) do
+        local count = counts[entry.itemID]
+        if count then
+            entry.amount = math.min(entry.amount, count)
+            depositable[#depositable + 1] = entry
+        end
+    end
+    return depositable
+end
+
+-- The run half of a deposit job in the shared Lucky bank run: deposits a queue
+-- its plan built with DepositableOnly, ticking each item off. Closing the bank
+-- ends the run, so a queue that stops there has nothing to report.
+function Utils.RunQueue(job, queue)
+    local function depositFrom(index)
+        if index > #queue then
+            job:Done()
+            return
+        end
+        if not BankIsOpen() then return end
+        local entry = queue[index]
+        Utils.TryDepositItem(entry.itemID, entry.amount, function()
+            job:Tick()
+            job:After(Utils.perItemDelay, function() depositFrom(index + 1) end)
+        end, entry.slotFilter)
+    end
+    depositFrom(1)
 end
