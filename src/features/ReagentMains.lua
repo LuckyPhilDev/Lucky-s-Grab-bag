@@ -24,17 +24,13 @@ local function CharKeeps(set, charKey)
     return set[charKey] == true
 end
 
-local function DepositUnmatchedReagents(job)
-    if not db.reagentMainsEnabled then
-        job:Done()
-        return
-    end
+local function PlanUnmatchedReagents()
+    if not db.reagentMainsEnabled then return {} end
 
     local charKey = LuckyRoster:GetKey()
     if (db.reagentExcludedAlts or {})[charKey] then
         DevLog("Character is excluded from reagent deposit")
-        job:Done()
-        return
+        return {}
     end
     local mains   = db.reagentMains or {}
     local inventory = Utils.ScanInventory()
@@ -56,7 +52,7 @@ local function DepositUnmatchedReagents(job)
     end
 
     DevLog(("Depositing %d unmatched reagent stack(s)"):format(#queue))
-    Utils.RunQueue(queue, job)
+    return Utils.DepositableOnly(queue)
 end
 
 -- ---------------------------------------------------------------------------
@@ -644,5 +640,5 @@ function Feature:Init(database)
 
     LuckyRoster:RegisterCallback(function() Feature:RefreshPopup() end)
 
-    LuckyBankRun:OnBankOpen(15, DepositUnmatchedReagents)
+    LuckyBankRun:OnBankOpen(15, { plan = PlanUnmatchedReagents, run = Utils.RunQueue })
 end

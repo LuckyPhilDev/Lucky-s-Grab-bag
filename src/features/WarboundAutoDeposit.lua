@@ -61,14 +61,11 @@ local function IsInstanceWarbound(bag, slot, info)
     return C_Item.IsBoundToAccountUntilEquip(ItemLocation:CreateFromBagAndSlot(bag, slot))
 end
 
-local function DepositWarboundItems(job)
+local function PlanDeposits()
     -- Lumber is a standalone reagent toggle that runs independently of the
     -- warbound gear/whitelist feature, so either can trigger this pass.
     local warbound = db.warboundAutoDepositEnabled
-    if not warbound and not db.warboundDepositLumber then
-        job:Done()
-        return
-    end
+    if not warbound and not db.warboundDepositLumber then return {} end
 
     local anyTypeEnabled = warbound and not StockistOwnsWarbound()
         and (db.warboundDepositArmor or db.warboundDepositWeapons or db.warboundDepositTokens)
@@ -138,7 +135,7 @@ local function DepositWarboundItems(job)
     end
 
     DevLog(("Depositing %d warbound/whitelisted item type(s)"):format(#queue))
-    Utils.RunQueue(queue, job)
+    return Utils.DepositableOnly(queue)
 end
 
 -- ---------------------------------------------------------------------------
@@ -453,8 +450,11 @@ function Feature:Init(database)
 
     -- First of the bank-open jobs across the Lucky addons: deposits free bag
     -- space for the withdrawals that follow.
-    LuckyBankRun:OnBankOpen(10, function(job)
-        MigrateSettingsToStockist()
-        DepositWarboundItems(job)
-    end)
+    LuckyBankRun:OnBankOpen(10, {
+        plan = function()
+            MigrateSettingsToStockist()
+            return PlanDeposits()
+        end,
+        run = Utils.RunQueue,
+    })
 end

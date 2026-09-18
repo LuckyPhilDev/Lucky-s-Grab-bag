@@ -203,7 +203,8 @@ local function FindAndWithdrawTreatise(itemID, profName, onDone)
     return false
 end
 
-local function WithdrawEligibleTreatises(job)
+local function PlanTreatises()
+    if not db.showTreatise then return {} end
     DevLog("Scanning for eligible treatises")
     local variantLines = ActiveVariantLineLookup()
     GetCharacterSkillLines()
@@ -222,7 +223,10 @@ local function WithdrawEligibleTreatises(job)
         end
     end
 
-    job:Plan(queue)
+    return queue
+end
+
+local function WithdrawTreatises(job, queue)
     -- Process one treatise at a time; each withdrawal's onDone callback starts the next.
     local function processNext()
         if #queue == 0 then
@@ -280,12 +284,5 @@ function LuckyGrabbag.Treatise:Init(database)
 
     -- After the deposits, which free bag space, and before Warband Stockist's
     -- restock and bank sort.
-    LuckyBankRun:OnBankOpen(40, function(job)
-        DevLog("Bank job started, showTreatise=" .. tostring(db.showTreatise))
-        if db.showTreatise then
-            WithdrawEligibleTreatises(job)
-        else
-            job:Done()
-        end
-    end)
+    LuckyBankRun:OnBankOpen(40, { plan = PlanTreatises, run = WithdrawTreatises })
 end

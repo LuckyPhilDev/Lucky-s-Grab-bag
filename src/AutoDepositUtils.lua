@@ -191,12 +191,10 @@ function Utils.DepositableOnly(queue)
     return depositable
 end
 
--- Runs the queue as a job in the shared Lucky bank run: plans it, ticks each
--- item off, and hands over when done. Closing the bank ends the run, so a
--- queue that stops there has nothing to report.
-function Utils.RunQueue(queue, job)
-    queue = Utils.DepositableOnly(queue)
-    job:Plan(queue)
+-- The run half of a deposit job in the shared Lucky bank run: deposits a queue
+-- its plan built with DepositableOnly, ticking each item off. Closing the bank
+-- ends the run, so a queue that stops there has nothing to report.
+function Utils.RunQueue(job, queue)
     local function depositFrom(index)
         if index > #queue then
             job:Done()
