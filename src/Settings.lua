@@ -407,6 +407,12 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Section(SS.sections.bankQueue)
+        -- Stockist owns the mode whenever it is installed. It loads after this
+        -- panel is built, so ask whether it is enabled rather than loaded.
+        LuckyBankRun:AddModeSetting(g, {
+            since   = "1.29.0",
+            ownedBy = LuckyDeps:IsEnabled("Luckys_Warbank_Stockist") and "Warband Stockist" or nil,
+        })
         LuckyBankRun:AddSettingsToggle(g, "1.29.0")
     end
 
