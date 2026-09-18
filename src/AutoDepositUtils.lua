@@ -161,10 +161,22 @@ function Utils.TryDepositItem(itemID, amountToDeposit, callback, slotFilter)
     depositNext(1, amountToDeposit)
 end
 
-function Utils.ProcessQueue(queue, index)
-    if index > #queue or not BankIsOpen() then return end
-    local entry = queue[index]
-    Utils.TryDepositItem(entry.itemID, entry.amount, function()
-        C_Timer.After(Utils.perItemDelay, function() Utils.ProcessQueue(queue, index + 1) end)
-    end, entry.slotFilter)
+-- Runs the queue as a job in the shared Lucky bank run: plans it, ticks each
+-- item off, and hands over when done. Closing the bank ends the run, so a
+-- queue that stops there has nothing to report.
+function Utils.RunQueue(queue, job)
+    job:Plan(queue)
+    local function depositFrom(index)
+        if index > #queue then
+            job:Done()
+            return
+        end
+        if not BankIsOpen() then return end
+        local entry = queue[index]
+        Utils.TryDepositItem(entry.itemID, entry.amount, function()
+            job:Tick()
+            C_Timer.After(Utils.perItemDelay, function() depositFrom(index + 1) end)
+        end, entry.slotFilter)
+    end
+    depositFrom(1)
 end

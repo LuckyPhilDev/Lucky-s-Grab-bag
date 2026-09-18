@@ -2,6 +2,7 @@
 
 ### Added
 - **Per-Spec Companion Loadout** Your delve companion's role and curios are remembered for each specialization and put back when a delve hands them to you empty or you switch specs.
+- **Bank Queue** A window beside the bank lists the items still to move, with a count and a progress bar, as your reagent, lumber, whitelist and treatise moves run. It shares one queue with Warband Stockist, so the two addons take turns instead of moving items at the same time. (Thanks for the suggestion Halliday)
 
 ## [1.28.0] - 2026-09-15
 

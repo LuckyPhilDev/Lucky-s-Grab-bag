@@ -282,6 +282,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             quests         = "Quests",
             craftingWindow = "Crafting Window",
             altsWarband    = "Alts & Warband",
+            bankQueue      = "Bank Queue",
         },
         devMode = {
             label = "Dev Mode",

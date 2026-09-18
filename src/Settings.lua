@@ -405,6 +405,9 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             parent   = SS.warboundAutoDeposit.label,
             onClick  = function() LuckyGrabbag.WarboundAutoDeposit:OpenPopup() end,
         })
+
+        g:Section(SS.sections.bankQueue)
+        LuckyBankRun:AddSettingsToggle(g, "1.29.0")
     end
 
     ---------------------------------------------------------------------------
