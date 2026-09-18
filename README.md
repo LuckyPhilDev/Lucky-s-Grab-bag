@@ -121,6 +121,13 @@ Automatically sends warbound gear and tokens to the warband bank when you open i
 
 If Lucky's Warband Stockist is installed, it takes over the warbound armor, weapon, and token deposits from its own Warbound tab and these toggles stand down. Lumber and the custom whitelist stay here.
 
+### Bank Queue
+A window beside the bank lists the items your Reagent Mains, lumber, whitelist and treatise moves still have to make, with a count and a progress bar.
+
+- A **Pause** button stops after the current item, and **Resume** carries on.
+- **Manual** mode lists everything first and waits for you to press **Start**.
+- Shares one queue with Lucky's Warband Stockist, which owns the Auto or Manual choice when installed.
+
 ### Withdraw Treatise from Warbank
 Automatically withdraws Thalassian Treatises for your current professions from the Warband Bank whenever you open it — but only if you haven't already used them this week.
 
@@ -409,6 +416,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Per-Spec Companion Loadout*: Remembers your delve companion's role and curios for each specialization and puts them back when a delve hands them to you empty or you switch specs.
 
 **Inventory**
+- *Bank Queue*: Choose Auto or Manual for your bank moves, or hide the queue window.
 - *Use Items Popup* — Displays a floating bar of buttons for consumable profession items in your bags.
   - *Only while rested* — Restricts the popup to cities and inns.
   - *Show finishing reagents*: Adds a button for finishing reagents that combine into a better one, such as 5 Multicraft Matrix into a Multicraft Manifold. Off by default.

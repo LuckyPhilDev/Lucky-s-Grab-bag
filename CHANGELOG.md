@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.29.0] - 2026-09-18
 
 ### Added
 - **Per-Spec Companion Loadout** Your delve companion's role and curios are remembered for each specialization and put back when a delve hands them to you empty or you switch specs.
@@ -8,12 +8,3 @@
 
 ### Fixed
 - Reagent Mains and the Custom Item Whitelist no longer try to deposit soulbound items, which the Warband Bank refuses, every time you open the bank.
-
-## [1.28.0] - 2026-09-15
-
-### Added
-- **Alt Crafter Buttons** Your characters with the profession for an item are listed in a panel beside the Crafting Orders window. Click one to make it a Personal order with their name in the To field.
-
-### Fixed
-- Viewing a set in the Trading Post with Combat Animation unchecked no longer throws a Lua error.
-
