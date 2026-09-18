@@ -640,5 +640,5 @@ function Feature:Init(database)
 
     LuckyRoster:RegisterCallback(function() Feature:RefreshPopup() end)
 
-    LuckyBankRun:OnBankOpen(15, { plan = PlanUnmatchedReagents, run = Utils.RunQueue })
+    LuckyBankRun:OnBankOpen(15, { direction = "deposit", plan = PlanUnmatchedReagents, run = Utils.RunQueue })
 end

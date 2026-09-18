@@ -451,6 +451,7 @@ function Feature:Init(database)
     -- First of the bank-open jobs across the Lucky addons: deposits free bag
     -- space for the withdrawals that follow.
     LuckyBankRun:OnBankOpen(10, {
+        direction = "deposit",
         plan = function()
             MigrateSettingsToStockist()
             return PlanDeposits()

@@ -284,5 +284,5 @@ function LuckyGrabbag.Treatise:Init(database)
 
     -- After the deposits, which free bag space, and before Warband Stockist's
     -- restock and bank sort.
-    LuckyBankRun:OnBankOpen(40, { plan = PlanTreatises, run = WithdrawTreatises })
+    LuckyBankRun:OnBankOpen(40, { direction = "withdraw", plan = PlanTreatises, run = WithdrawTreatises })
 end
