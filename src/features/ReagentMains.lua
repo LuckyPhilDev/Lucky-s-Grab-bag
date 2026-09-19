@@ -25,7 +25,7 @@ local function CharKeeps(set, charKey)
 end
 
 local function PlanUnmatchedReagents()
-    if not db.reagentMainsEnabled then return {} end
+    if not db.reagentMainsEnabled or Utils.StockistOwnsBank() then return {} end
 
     local charKey = LuckyRoster:GetKey()
     if (db.reagentExcludedAlts or {})[charKey] then

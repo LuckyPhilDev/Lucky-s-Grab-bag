@@ -15,6 +15,12 @@ Utils.perItemDelay = 0.25
 
 local REAGENT_BAG = (Enum and Enum.BagIndex and Enum.BagIndex.ReagentBag) or 5
 
+-- Warband Stockist 2.0 runs Reagent Mains, Lumber, the whitelist and the
+-- treatise as sets of its own, so those features stand down while it is on.
+function Utils.StockistOwnsBank()
+    return LuckyDeps:IsEnabled("Luckys_Warbank_Stockist", "2.0.0")
+end
+
 -- Deposits run on timer chains that outlive the bank window; every link checks
 -- this so closing (or walking away from) the bank halts the run.
 local function BankIsOpen()

@@ -197,7 +197,7 @@ local function FindAndWithdrawTreatise(itemID, profName, onDone)
 end
 
 local function PlanTreatises()
-    if not db.showTreatise then return {} end
+    if not db.showTreatise or LuckyGrabbag.AutoDepositUtils.StockistOwnsBank() then return {} end
     DevLog("Scanning for eligible treatises")
     local variantLines = ActiveVariantLineLookup()
     GetCharacterSkillLines()

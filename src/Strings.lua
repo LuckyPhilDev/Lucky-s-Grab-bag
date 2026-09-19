@@ -193,6 +193,11 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         tooltip = "Click to fill in the To field with this character.",
     },
 
+    stockistHandover = {
+        moved        = "Reagent Mains, Lumber, Treatise and your Custom Item Whitelist now run from Warband Stockist. Your settings carried over as sets on its Sets page.",
+        whitelistSet = "Custom Item Whitelist",
+    },
+
     warboundAutoDeposit = {
         movedToStockist = "Warbound gear deposit has moved to Warband Stockist. Your settings were carried over; find them on the Warbound tab in Warband Stockist's settings.",
         whitelistTitle  = "Whitelist",
