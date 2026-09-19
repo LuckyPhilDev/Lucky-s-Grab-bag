@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+### Added
+- **Dundun Finder** A button appears in bountiful delves once you have unlocked the Shrine of Abundance. Clicking it targets Dundun, pings him and marks him with a star.
+
 ### Fixed
 - The Bank Queue no longer lists a Thalassian Treatise when your Warband Bank has none to withdraw.
 

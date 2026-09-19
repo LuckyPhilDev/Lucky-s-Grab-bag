@@ -131,6 +131,11 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         unknownChoice = "Unknown choice",
     },
 
+    dundunFinder = {
+        tooltipTitle = "Find Dundun",
+        tooltipBody  = "Targets Dundun, pings him and marks him with a star. Right-click and drag to move.",
+    },
+
     omniumFolio = {
         restored      = "Restored Omnium Folio runes for %s: %s",
         restoreFailed = "Could not restore your Omnium Folio runes. Open the Omnium Folio and set them manually.",
@@ -442,6 +447,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         omniumFolio = {
             label = "Per-Spec Omnium Folio Runes",
             desc  = "Remembers your Omnium Folio rune choices for each specialization and restores them when you switch specs. A chat message shows which runes were swapped back.",
+        },
+        dundunFinder = {
+            label = "Dundun Finder",
+            desc  = "Floating button inside a bountiful delve, once Delver's Journey rank 3 has unlocked the Shrine of Abundance. Clicking it targets Dundun, pings him and marks him with a star. Right-click and drag to reposition.",
         },
         delveCompanion = {
             label = "Per-Spec Companion Loadout",

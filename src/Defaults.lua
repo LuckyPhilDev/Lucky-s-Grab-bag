@@ -42,6 +42,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     useItemsShowCombinable   = false,
     showDelveMap             = true,
     delveMapMinLevel         = 8,
+    showDundunFinder         = true,
     dungeonPortals           = true,
     dungeonPortalsDungeons   = true,
     dungeonPortalsClass      = true,

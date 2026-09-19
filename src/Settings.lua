@@ -730,6 +730,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label    = SS.dundunFinder.label,
+            desc     = SS.dundunFinder.desc,
+            checked  = db.showDundunFinder,
+            since    = "1.29.1",
+            onToggle = function(checked)
+                db.showDundunFinder = checked
+                LuckyGrabbag.DundunFinder:ApplySetting()
+            end,
+        })
+
+        g:Toggle({
             label    = SS.delveCompanion.label,
             desc     = SS.delveCompanion.desc,
             checked  = db.delveCompanionPerSpec,
