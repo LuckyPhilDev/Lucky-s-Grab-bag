@@ -112,6 +112,7 @@ Assigns each reagent category to one or more designated characters. When you ope
 - Opens via a **Configure mains…** button next to the toggle in settings.
 - Existing assignments from Warband Stockist are imported automatically the first time you log in.
 - Off by default; can be toggled in the addon settings.
+- With Lucky's Warband Stockist 2.0 or later installed, Stockist runs this instead, as one standard set per category, and your mains carry over.
 
 ### Auto-Deposit Warbound Items
 Automatically sends warbound gear and tokens to the warband bank when you open it.
@@ -125,7 +126,7 @@ Automatically sends warbound gear and tokens to the warband bank when you open i
 - Opens via a **Configure whitelist…** button in settings for managing custom items.
 - Off by default; can be toggled in the addon settings.
 
-If Lucky's Warband Stockist is installed, it takes over the warbound armor, weapon, and token deposits from its own Warbound tab and these toggles stand down. Lumber and the custom whitelist stay here.
+If Lucky's Warband Stockist is installed, it takes over the warbound armor, weapon, and token deposits and these toggles stand down. From Stockist 2.0, Lumber and the custom whitelist move there too, as sets on its Sets page.
 
 ### Bank Queue
 A window beside the bank lists the items your Reagent Mains, lumber, whitelist and treatise moves still have to make, with a count and a progress bar.
@@ -144,6 +145,7 @@ Automatically withdraws Thalassian Treatises for your current professions from t
 - Skips withdrawal if the treatise is already in your bags (prevents duplicates).
 - Prints a confirmation message for each treatise withdrawn.
 - Enabled by default; can be toggled in the addon settings.
+- With Lucky's Warband Stockist 2.0 or later installed, its Weekly Treatise set does this instead.
 
 ### Rotation Glow
 Animates the suggested next-cast spell on Blizzard's Cooldown Manager, using the game's built-in assisted combat data.
