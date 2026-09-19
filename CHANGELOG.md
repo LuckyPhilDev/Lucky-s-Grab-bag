@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Fixed
+- The Bank Queue no longer lists a Thalassian Treatise when your Warband Bank has none to withdraw.
+
 ## [1.29.0] - 2026-09-18
 
 ### Added
