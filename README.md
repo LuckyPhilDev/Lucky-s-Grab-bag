@@ -210,6 +210,12 @@ Shows a clickable button when you're inside a delve that meets the configured mi
 - Respects combat lockdown — the button won't change mid-combat.
 - Can be toggled in the addon settings.
 
+### Dundun Finder
+Shows a button inside a delve once Delver's Journey rank 3 has unlocked the Shrine of Abundance. Clicking it targets Dundun, pings him and marks him with a star, so the shrine is easy to spot.
+
+- Right-click drag to reposition; position is saved across reloads.
+- Can be toggled in the addon settings.
+
 ### Per-Spec Delve Companion Loadout
 Your delve companion's role and curios sometimes come back empty on entering a delve, and they carry over unchanged when you switch specialization. This remembers the loadout you run in each spec and puts it back.
 
@@ -413,6 +419,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 **Delves**
 - *Trovehunter's Bounty* — Shows a clickable button for your Trovehunter's Bounty when in a qualifying delve.
   - *Minimum Delve Level* — The minimum delve level required for the button to appear (1–11).
+- *Dundun Finder*: Shows a button in delves that targets, pings and marks Dundun.
 - *Per-Spec Companion Loadout*: Remembers your delve companion's role and curios for each specialization and puts them back when a delve hands them to you empty or you switch specs.
 
 **Inventory**
