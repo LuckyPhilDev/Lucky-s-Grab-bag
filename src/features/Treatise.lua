@@ -140,67 +140,60 @@ local function WaitForBagUpdate(onReady, maxWait)
     C_Timer.After(maxWait, finish)
 end
 
+local function FindInWarbank(itemID)
+    for _, bagIndex in ipairs(C_Bank.FetchPurchasedBankTabIDs(Enum.BankType.Account) or {}) do
+        for slot = 1, C_Container.GetContainerNumSlots(bagIndex) do
+            local info = C_Container.GetContainerItemInfo(bagIndex, slot)
+            if info and info.itemID == itemID then
+                return bagIndex, slot, info.stackCount or 1
+            end
+        end
+    end
+end
+
 local function FindAndWithdrawTreatise(itemID, profName, onDone)
     local function done() if onDone then onDone() end end
 
     if IsItemInBags(itemID) then
-        DevLog("  " .. profName .. " treatise already in bags — skipping")
+        DevLog("  " .. profName .. " treatise already in bags, skipping")
         return false
     end
-    local tabIDs = C_Bank.FetchPurchasedBankTabIDs(Enum.BankType.Account)
-    if not tabIDs or #tabIDs == 0 then
-        DevLog("  No warband bank tabs found via C_Bank.FetchPurchasedBankTabIDs")
+    local bagIndex, slot, stackCount = FindInWarbank(itemID)
+    if not bagIndex then
+        DevLog("  itemID " .. itemID .. " not found in any Warband Bank tab")
         return false
     end
-    DevLog("  Warband bank tabs: " .. #tabIDs)
-    for tabNum, bagIndex in ipairs(tabIDs) do
-        local numSlots = C_Container.GetContainerNumSlots(bagIndex)
-        DevLog("  Tab " .. tabNum .. " (bagIndex=" .. tostring(bagIndex) .. "): " .. numSlots .. " slots")
-        for slot = 1, numSlots do
-            local info = C_Container.GetContainerItemInfo(bagIndex, slot)
-            if info then
-                DevLog("    Slot " .. slot .. ": itemID=" .. tostring(info.itemID) .. " (want " .. itemID .. ")")
-                if info.itemID == itemID then
-                    local stackCount = info.stackCount or 1
-                    DevLog("    Match — stack=" .. stackCount .. ", taking 1")
-                    ClearCursor()
-                    if stackCount > 1 then
-                        C_Container.SplitContainerItem(bagIndex, slot, 1)
-                    else
-                        C_Container.PickupContainerItem(bagIndex, slot)
-                    end
+    DevLog("  Found in bagIndex=" .. bagIndex .. " slot=" .. slot .. " stack=" .. stackCount .. ", taking 1")
+    ClearCursor()
+    if stackCount > 1 then
+        C_Container.SplitContainerItem(bagIndex, slot, 1)
+    else
+        C_Container.PickupContainerItem(bagIndex, slot)
+    end
 
-                    -- Wait for cursor to actually hold the item before placing. SplitContainerItem
-                    -- is async; placing too early strands the item in the warband tab with its slot
-                    -- locked, which then blocks the next withdrawal until the bank is reopened.
-                    WaitFor(CursorHasItem, function(ok)
-                        if not ok then
-                            DevLog("    Cursor never picked up item — aborting this withdrawal")
-                            ClearCursor()
-                            done()
-                            return
-                        end
-                        local destBag, destSlot = FindEmptyBagSlot()
-                        if not destBag then
-                            DevLog("    No empty bag slot — clearing cursor")
-                            ClearCursor()
-                            done()
-                            return
-                        end
-                        DevLog("    Placing into bag=" .. destBag .. " slot=" .. destSlot)
-                        C_Container.PickupContainerItem(destBag, destSlot)
-                        print(LuckyGrabbag.PREFIX .. " " .. string.format(LuckyGrabbag.Strings.treatise.withdrawn, profName))
-                        -- Wait for bag state to settle before allowing the next withdrawal to
-                        -- scan the warband tab, otherwise the tab data can be stale.
-                        WaitForBagUpdate(done)
-                    end, 0.05, 1.0)
-                    return true
-                end
-            end
+    -- SplitContainerItem is async; placing too early strands the item in the warband tab with its
+    -- slot locked, which then blocks the next withdrawal until the bank is reopened.
+    WaitFor(CursorHasItem, function(ok)
+        if not ok then
+            DevLog("    Cursor never picked up item, aborting this withdrawal")
+            ClearCursor()
+            done()
+            return
         end
-    end
-    DevLog("  itemID " .. itemID .. " not found in any Warband Bank tab")
-    return false
+        local destBag, destSlot = FindEmptyBagSlot()
+        if not destBag then
+            DevLog("    No empty bag slot, clearing cursor")
+            ClearCursor()
+            done()
+            return
+        end
+        DevLog("    Placing into bag=" .. destBag .. " slot=" .. destSlot)
+        C_Container.PickupContainerItem(destBag, destSlot)
+        print(LuckyGrabbag.PREFIX .. " " .. string.format(LuckyGrabbag.Strings.treatise.withdrawn, profName))
+        -- Stale warband tab data otherwise reaches the next withdrawal's scan.
+        WaitForBagUpdate(done)
+    end, 0.05, 1.0)
+    return true
 end
 
 local function PlanTreatises()
@@ -217,7 +210,11 @@ local function PlanTreatises()
                 DevLog("  Skipping " .. treatise.name .. " — unmet item requirements (skill too low)")
             elseif not IsEligibleThisWeek(treatise.questID, treatise.name) then
                 DevLog("  Skipping " .. treatise.name .. " — already used this week")
-            elseif not IsItemInBags(treatise.itemID) then
+            elseif IsItemInBags(treatise.itemID) then
+                DevLog("  Skipping " .. treatise.name .. ", already in bags")
+            elseif not FindInWarbank(treatise.itemID) then
+                DevLog("  Skipping " .. treatise.name .. ", none in the Warband Bank")
+            else
                 table.insert(queue, treatise)
             end
         end
