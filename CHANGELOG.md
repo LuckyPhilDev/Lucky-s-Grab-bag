@@ -1,7 +1,7 @@
 ## [Unreleased]
 
 ### Added
-- **Dundun Finder** A button appears in delves once you have unlocked the Shrine of Abundance. Clicking it targets Dundun, pings him and marks him with a star.
+- **Dundun Finder** A button appears in bountiful delves once you have unlocked the Shrine of Abundance. Clicking it targets Dundun, pings him and marks him with a star.
 
 ## [1.29.0] - 2026-09-18
 

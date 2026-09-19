@@ -450,7 +450,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         dundunFinder = {
             label = "Dundun Finder",
-            desc  = "Floating button inside a delve, once Delver's Journey rank 3 has unlocked the Shrine of Abundance. Clicking it targets Dundun, pings him and marks him with a star. Right-click and drag to reposition.",
+            desc  = "Floating button inside a bountiful delve, once Delver's Journey rank 3 has unlocked the Shrine of Abundance. Clicking it targets Dundun, pings him and marks him with a star. Right-click and drag to reposition.",
         },
         delveCompanion = {
             label = "Per-Spec Companion Loadout",
