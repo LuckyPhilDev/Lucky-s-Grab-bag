@@ -7,6 +7,9 @@ local BOUNTIFUL_ATLAS = "delves-bountiful"
 local UNLOCK_RENOWN = 3
 local ICON = 647701 -- inv_pet_mouse
 local BUTTON_SIZE = 42
+-- Square crop of the icon's texture around the mouse's eyes.
+local EYES_CROP = { left = 0.24, right = 0.80, top = 0.13, bottom = 0.69 }
+local ZOOM_IN, ZOOM_HOLD, ZOOM_OUT = 0.12, 0.6, 0.3
 
 local MACRO = [[
 /cleartarget
@@ -17,6 +20,7 @@ local MACRO = [[
 
 local db
 local button
+local zoomElapsed
 
 local DevLog = LuckyGrabbag.Logger("DundunFinder")
 
@@ -45,6 +49,36 @@ local function HasUnlocked()
     return factionID and (C_MajorFactions.GetCurrentRenownLevel(factionID) or 0) >= UNLOCK_RENOWN
 end
 
+local function SetZoom(texture, amount)
+    texture:SetTexCoord(
+        EYES_CROP.left * amount, 1 - (1 - EYES_CROP.right) * amount,
+        EYES_CROP.top * amount, 1 - (1 - EYES_CROP.bottom) * amount)
+end
+
+local function ZoomAmount(elapsed)
+    if elapsed < ZOOM_IN then return elapsed / ZOOM_IN end
+    elapsed = elapsed - ZOOM_IN - ZOOM_HOLD
+    if elapsed < 0 then return 1 end
+    return math.max(0, 1 - elapsed / ZOOM_OUT)
+end
+
+-- A plain driver frame, so no script is ever set on the secure button.
+local zoomDriver = CreateFrame("Frame")
+zoomDriver:Hide()
+zoomDriver:SetScript("OnUpdate", function(self, delta)
+    zoomElapsed = zoomElapsed + delta
+    local amount = ZoomAmount(zoomElapsed)
+    SetZoom(button:GetNormalTexture(), amount)
+    if amount == 0 then self:Hide() end
+end)
+
+-- The macro clears the target first, so any target afterwards is Dundun.
+local function OnPostClick()
+    if not UnitExists("target") then return end
+    zoomElapsed = 0
+    zoomDriver:Show()
+end
+
 local function CreateButton()
     local S = LuckyGrabbag.Strings.dundunFinder
     local btn = LuckyGrabbag.CreateIconButton({
@@ -61,6 +95,7 @@ local function CreateButton()
     btn:RegisterForClicks("LeftButtonDown", "LeftButtonUp")
     btn:SetAttribute("type", "macro")
     btn:SetAttribute("macrotext", MACRO)
+    btn:HookScript("PostClick", OnPostClick)
     btn:SetFrameStrata("HIGH")
     btn:SetClampedToScreen(true)
     btn:SetMovable(true)
