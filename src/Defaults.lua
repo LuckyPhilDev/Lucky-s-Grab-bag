@@ -88,6 +88,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     decorList                = {},
     mailSendAll              = true,
     massDelete               = true,
+    massDisenchantAutoOpen   = false,
     questShopping            = true,
     questShoppingAutoBuy     = false,
     professionQuestAutoAccept = false,

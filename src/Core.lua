@@ -80,6 +80,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.BlueprintImportHistory:Init(db)
         LuckyGrabbag.MailSendAll:Init(db)
         LuckyGrabbag.MassDelete:Init(db)
+        LuckyGrabbag.MassDisenchant:Init(db)
         LuckyGrabbag.QuestShopping:Init(db)
 
         -- Minimap button

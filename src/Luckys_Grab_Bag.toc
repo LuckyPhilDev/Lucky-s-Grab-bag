@@ -58,5 +58,6 @@ features/DecorPreview.lua
 features/BlueprintImportHistory.lua
 features/MailSendAll.lua
 features/MassDelete.lua
+features/MassDisenchant.lua
 features/QuestShopping.lua
 Core.lua

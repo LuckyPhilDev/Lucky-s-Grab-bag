@@ -88,6 +88,12 @@ Turns the one-at-a-time delete confirmation into a list, so a bagful of junk goe
 - An item that has left your bags since you queued it is skipped and reported.
 - Can be toggled in the addon settings under Inventory.
 
+### Mass Disenchant
+Lists uncommon and rare weapons or armor in your bags, so you can disenchant through them without hunting each one down.
+
+- Run `/grabbag disenchant`, select an item, then press Disenchant Next. Right-click an item to leave it out for this session.
+- An optional setting under **Professions > Disenchanting** opens the window after you successfully disenchant an item in a rested area.
+
 ### Send a Whole Category by Mail
 Mails an entire Baganator category to one recipient, refilling the attachment slots and sending again until the category is empty.
 
@@ -367,6 +373,7 @@ The addon also lists itself in panel addons such as Titan Panel, Bazooka and Cho
 |---|---|
 | `/grabbag` | Open the addon settings panel |
 | `/grabbag decor` | Open the Decor Shopping List |
+| `/grabbag disenchant` | Open Mass Disenchant |
 | `/grabbag-reagent <itemID>` | Diagnose why a reagent is or isn't being auto-deposited |
 | `/combatprep` | Force-show the Combat Prep window (for testing outside group content) |
 | `/pipicker` | Force-show the Power Infusion Picker window (also `/pitarget`) |

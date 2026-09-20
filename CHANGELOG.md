@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Added
+
+- **Mass Disenchant** Your bag gear sits in one window, ready to disenchant without digging through your bags. An option can open it automatically after you disenchant in a rested area.
+
 ## [1.29.1] - 2026-09-19
 
 ### Added
