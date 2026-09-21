@@ -87,52 +87,40 @@ end
 local function BuildNamePane()
     if namePane then return namePane end
 
-    local Rich = LuckySettings.Rich
-    local R = Rich.Theme
+    local C = LuckyUI.C
+    local FONT = LuckyUI.BODY_FONT
 
     -- Parented to the import window, so it follows its visibility and position.
-    local f = CreateFrame("Frame", "LGB_BlueprintCodeNamePane", HousingBlueprintImportFrame)
-    f:SetSize(240, 130)
+    local f = CreateFrame("Frame", "LGB_BlueprintCodeNamePane", HousingBlueprintImportFrame, "BackdropTemplate")
+    f:SetSize(240, 150)
     f:SetPoint("TOPLEFT", HousingBlueprintImportFrame, "TOPRIGHT", 12, 0)
-    Rich.FillBg(f, R.bg)
+    f:SetBackdrop(LuckyUI.Backdrop)
+    f:SetBackdropColor(C.bgDark[1], C.bgDark[2], C.bgDark[3], C.bgDark[4])
+    f:SetBackdropBorderColor(C.goldAccent[1], C.goldAccent[2], C.goldAccent[3])
     f:Hide()
-
-    local title = f:CreateFontString(nil, "OVERLAY")
-    title:SetFont(Rich.Font, 14, "")
-    title:SetPoint("TOPLEFT", 12, -12)
-    title:SetText(S().namePaneTitle)
-    title:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
-
-    local close = CreateFrame("Button", nil, f, "UIPanelCloseButton")
-    close:SetPoint("TOPRIGHT", 0, 0)
-    close:SetScript("OnClick", function() f:Hide() end)
+    LuckyUI.CreateHeader(f, S().namePaneTitle)
 
     local codeLine = f:CreateFontString(nil, "OVERLAY")
-    codeLine:SetFont(Rich.Font, 11, "")
-    codeLine:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -6)
-    codeLine:SetTextColor(R.textFaint[1], R.textFaint[2], R.textFaint[3])
+    codeLine:SetFont(FONT, 11, "")
+    codeLine:SetPoint("TOPLEFT", 12, -(LuckyUI.HEADER_HEIGHT + 11))
+    codeLine:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
     f.codeLine = codeLine
 
-    local editBox = CreateFrame("EditBox", nil, f, "InputBoxTemplate")
-    editBox:SetSize(206, 20)
-    editBox:SetPoint("TOPLEFT", codeLine, "BOTTOMLEFT", 6, -10)
-    editBox:SetAutoFocus(false)
-    editBox:SetMaxLetters(40)
+    local editBox = LuckyUI.CreateInput(f, { width = 216, height = 22, maxLetters = 40 })
+    editBox:SetPoint("TOPLEFT", codeLine, "BOTTOMLEFT", 0, -8)
     f.editBox = editBox
 
     local hint = f:CreateFontString(nil, "OVERLAY")
-    hint:SetFont(Rich.Font, 10, "")
-    hint:SetPoint("TOPLEFT", editBox, "BOTTOMLEFT", -6, -6)
+    hint:SetFont(FONT, 10, "")
+    hint:SetPoint("TOPLEFT", editBox, "BOTTOMLEFT", 0, -6)
     hint:SetPoint("RIGHT", -12, 0)
     hint:SetJustifyH("LEFT")
     hint:SetWordWrap(true)
     hint:SetText(S().namePaneHint)
-    hint:SetTextColor(R.textDim[1], R.textDim[2], R.textDim[3])
+    hint:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
 
-    local save = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    save:SetSize(90, 22)
+    local save = LuckyUI.CreateButton(f, SAVE, 90, 22, "primary")
     save:SetPoint("BOTTOMRIGHT", -12, 10)
-    save:SetText(SAVE)
     f.saveButton = save
 
     local function SaveName()

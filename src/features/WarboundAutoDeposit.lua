@@ -143,8 +143,8 @@ end
 -- ---------------------------------------------------------------------------
 
 local Rich = LuckySettings.Rich
-local R = Rich.Theme
-local R_FONT = Rich.Font
+local C = LuckyUI.C
+local FONT = LuckyUI.BODY_FONT
 
 local function HandleItemDrop()
     local infoType, itemID = GetCursorInfo()
@@ -160,52 +160,8 @@ end
 local function BuildPopup()
     if popup then return popup end
 
-    local f = CreateFrame("Frame", "LuckyGrabbagWarboundWhitelistPopup", UIParent)
-    f:SetSize(540, 480)
-    f:SetFrameStrata("DIALOG")
-    f:SetClampedToScreen(true)
-    f:EnableMouse(true)
-    f:Hide()
-    Rich.FillBg(f, R.bg)
-    table.insert(UISpecialFrames, "LuckyGrabbagWarboundWhitelistPopup")
-
-    -- Title bar (drag handle)
-    local titleBar = CreateFrame("Frame", nil, f)
-    titleBar:SetHeight(40)
-    titleBar:SetPoint("TOPLEFT")
-    titleBar:SetPoint("TOPRIGHT")
-    Rich.FillBg(titleBar, R.bg2)
-    Rich.EdgeRule(titleBar, "BOTTOM", R.border)
-    titleBar:EnableMouse(true)
-    titleBar:RegisterForDrag("LeftButton")
-    titleBar:SetScript("OnDragStart", function() f:StartMoving() end)
-    titleBar:SetScript("OnDragStop", function()
-        f:StopMovingOrSizing()
-        local point, _, relPoint, x, y = f:GetPoint()
-        db.warboundWhitelistPopupPos = { point = point, relPoint = relPoint, x = x, y = y }
-    end)
-    f:SetMovable(true)
-    f:SetClampedToScreen(true)
-
-    local titleL = titleBar:CreateFontString(nil, "OVERLAY")
-    titleL:SetFont(R_FONT, 16, "")
-    titleL:SetPoint("LEFT", 14, 0)
-    titleL:SetText(S.whitelistTitle)
-    titleL:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
-
-    -- Close button
-    local close = CreateFrame("Button", nil, titleBar, "UIPanelCloseButton")
-    close:SetPoint("RIGHT", -4, 0)
-    close:SetScript("OnClick", function() f:Hide() end)
-
-    -- Restore saved position
-    local saved = db.warboundWhitelistPopupPos
-    f:ClearAllPoints()
-    if saved and saved.point then
-        f:SetPoint(saved.point, UIParent, saved.relPoint or saved.point, saved.x or 0, saved.y or 0)
-    else
-        f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-    end
+    local f, titleBar = LuckyUI.CreateWindow("LuckyGrabbagWarboundWhitelistPopup", 540, 480, S.whitelistTitle,
+        { db = db, key = "warboundWhitelistPopupPos" })
 
     -- Content body
     local body = CreateFrame("Frame", nil, f)
@@ -217,8 +173,8 @@ local function BuildPopup()
 
     -- Description
     local desc = body:CreateFontString(nil, "OVERLAY")
-    desc:SetFont(R_FONT, 12, "")
-    desc:SetTextColor(R.text[1], R.text[2], R.text[3])
+    desc:SetFont(FONT, 12, "")
+    desc:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
     desc:SetSpacing(3)
     desc:SetPoint("TOPLEFT", 14, -14)
     desc:SetPoint("TOPRIGHT", -14, -14)
@@ -234,21 +190,17 @@ local function BuildPopup()
     inputRow:SetPoint("RIGHT", -14, 0)
 
     local inputLbl = inputRow:CreateFontString(nil, "OVERLAY")
-    inputLbl:SetFont(R_FONT, 12, "")
-    inputLbl:SetTextColor(R.text[1], R.text[2], R.text[3])
+    inputLbl:SetFont(FONT, 12, "")
+    inputLbl:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
     inputLbl:SetPoint("LEFT", 10, 0)
     inputLbl:SetText(S.addLabel)
 
-    local inputEdit = CreateFrame("EditBox", nil, inputRow, "InputBoxTemplate")
-    inputEdit:SetSize(300, 24)
-    inputEdit:SetPoint("LEFT", inputLbl, "RIGHT", 10, -2)
-    inputEdit:SetAutoFocus(false)
+    local inputEdit = LuckyUI.CreateInput(inputRow, { width = 300, height = 22 })
+    inputEdit:SetPoint("LEFT", inputLbl, "RIGHT", 10, 0)
     f.inputEdit = inputEdit
 
-    local addBtn = CreateFrame("Button", nil, inputRow, "UIPanelButtonTemplate")
-    addBtn:SetSize(80, 22)
+    local addBtn = LuckyUI.CreateButton(inputRow, S.addButton, 80, 22, "primary")
     addBtn:SetPoint("LEFT", inputEdit, "RIGHT", 6, 0)
-    addBtn:SetText(S.addButton)
     addBtn:SetScript("OnClick", function()
         local text = inputEdit:GetText()
         if text == "" then return end
@@ -275,12 +227,12 @@ local function BuildPopup()
     headerRow:SetHeight(22)
     headerRow:SetPoint("TOPLEFT", inputRow, "BOTTOMLEFT", 0, -10)
     headerRow:SetPoint("RIGHT", -14, 0)
-    Rich.FillBg(headerRow, R.bg3)
-    Rich.EdgeRule(headerRow, "BOTTOM", R.border)
+    Rich.FillBg(headerRow, C.bgInput)
+    Rich.EdgeRule(headerRow, "BOTTOM", C.borderDark)
 
     local headerText = headerRow:CreateFontString(nil, "OVERLAY")
-    headerText:SetFont(R_FONT, 10, "")
-    headerText:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
+    headerText:SetFont(FONT, 10, "")
+    headerText:SetTextColor(C.goldPrimary[1], C.goldPrimary[2], C.goldPrimary[3])
     headerText:SetPoint("LEFT", headerRow, "LEFT", 10, 0)
     headerText:SetText(S.listHeader)
 
@@ -322,8 +274,8 @@ local function BuildItemRow(parent, itemID, yOffset)
 
     -- Item name (clickable)
     local itemLabel = row:CreateFontString(nil, "OVERLAY")
-    itemLabel:SetFont(R_FONT, 12, "")
-    itemLabel:SetTextColor(R.text[1], R.text[2], R.text[3])
+    itemLabel:SetFont(FONT, 12, "")
+    itemLabel:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
     itemLabel:SetPoint("LEFT", iconTex, "RIGHT", 8, 0)
     itemLabel:SetWidth(350)
     itemLabel:SetJustifyH("LEFT")

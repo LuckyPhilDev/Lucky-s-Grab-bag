@@ -264,6 +264,16 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         itemMoved   = "Skipped %s, it is not in your bags any more.",
     },
 
+    massDisenchant = {
+        title       = "Mass Disenchant",
+        hint        = "Choose an item, then press Disenchant Next. Right-click an item to omit it for this session.",
+        empty       = "No uncommon or rare weapons or armor in your bags.",
+        destroyNext = "Disenchant Next",
+        omitHint    = "Right-click to omit this item for this session.",
+        inCombat    = "Cannot open Mass Disenchant in combat.",
+        noSkill     = "Learn Enchanting's Disenchant spell first.",
+    },
+
     settings = {
         groups = {
             general      = "General",
@@ -286,6 +296,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             tradingPost    = "Trading Post",
             quests         = "Quests",
             craftingWindow = "Crafting Window",
+            disenchanting  = "Disenchanting",
             altsWarband    = "Alts & Warband",
             bankQueue      = "Bank Queue",
         },
@@ -573,6 +584,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         concentrationView = {
             label = "Concentration on Profession Book",
             desc  = "Adds a Concentration bar above each profession's skill bar in the Profession Book, so you can see your Concentration for both at a glance without opening each one.",
+        },
+        massDisenchantAutoOpen = {
+            label = "Open Mass Disenchant Automatically",
+            desc  = "Opens the Mass Disenchant window after you successfully disenchant an item in a rested area.",
         },
         enchantBadges = {
             label = "Stat Badges",

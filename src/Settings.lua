@@ -31,8 +31,11 @@ function LuckyGrabbag.Settings:Init(db, charDB)
 
     SLASH_LUCKYGB1 = "/grabbag"
     SlashCmdList["LUCKYGB"] = function(msg)
-        if strtrim(msg or ""):lower() == "decor" then
+        local command = strtrim(msg or ""):lower()
+        if command == "decor" then
             LuckyGrabbag.DecorTracking:OpenList()
+        elseif command == "disenchant" then
+            LuckyGrabbag.MassDisenchant:Open()
         else
             panel:Open()
         end
@@ -280,6 +283,16 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             checked  = db.spendToNextPerk,
             since    = "1.10.0",
             onToggle = function(checked) db.spendToNextPerk = checked end,
+        })
+
+        g:Section(SS.sections.disenchanting)
+
+        g:Toggle({
+            label    = SS.massDisenchantAutoOpen.label,
+            desc     = SS.massDisenchantAutoOpen.desc,
+            checked  = db.massDisenchantAutoOpen,
+            since    = "1.30.0",
+            onToggle = function(checked) db.massDisenchantAutoOpen = checked end,
         })
 
         g:Section(SS.sections.altsWarband)

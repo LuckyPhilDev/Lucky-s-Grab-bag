@@ -17,16 +17,15 @@ local DELETE_POPUPS = {
 local POPUP_EXTRA = 32
 
 local PANEL_WIDTH = 260
-local TITLE_H     = 30
+local TITLE_H     = LuckyUI.HEADER_HEIGHT + 1
 local HINT_H      = 34
 local ROW_H       = 22
 local FOOTER_H    = 44
 local MAX_ROWS    = 12
 local LAST_BAG    = 5 -- backpack, four bags, reagent bag
 
-local Rich   = LuckySettings.Rich
-local R      = Rich.Theme
-local R_FONT = Rich.Font
+local C      = LuckyUI.C
+local FONT   = LuckyUI.BODY_FONT
 
 local db
 local panel, overflowText, deleteButton, openButton
@@ -104,7 +103,7 @@ local function BuildRow(index)
     row.icon:SetPoint("LEFT")
 
     row.text = row:CreateFontString(nil, "OVERLAY")
-    row.text:SetFont(R_FONT, 11, "")
+    row.text:SetFont(FONT, 11, "")
     row.text:SetPoint("LEFT", row.icon, "RIGHT", 6, 0)
     row.text:SetPoint("RIGHT")
     row.text:SetJustifyH("LEFT")
@@ -127,15 +126,8 @@ end
 local function BuildPanel()
     if panel then return end
 
-    panel = CreateFrame("Frame", "LGB_MassDeletePanel", UIParent)
-    panel:SetWidth(PANEL_WIDTH)
-    panel:SetFrameStrata("DIALOG")
-    panel:SetClampedToScreen(true)
-    panel:SetMovable(true)
-    panel:EnableMouse(true)
-    panel:Hide()
-    Rich.FillBg(panel, R.bg)
-    table.insert(UISpecialFrames, "LGB_MassDeletePanel")
+    local titleBar
+    panel, titleBar = LuckyUI.CreateWindow("LGB_MassDeletePanel", PANEL_WIDTH, 100, S().title)
 
     -- Escape or the close button lands here; a finished run has already
     -- cleared `active`, so this only tidies up an abandoned session.
@@ -146,15 +138,6 @@ local function BuildPanel()
         DevLog("Cancelled")
     end)
 
-    local titleBar = CreateFrame("Frame", nil, panel)
-    titleBar:SetHeight(TITLE_H)
-    titleBar:SetPoint("TOPLEFT")
-    titleBar:SetPoint("TOPRIGHT")
-    Rich.FillBg(titleBar, R.bg2)
-    Rich.EdgeRule(titleBar, "BOTTOM", R.border)
-    titleBar:EnableMouse(true)
-    titleBar:RegisterForDrag("LeftButton")
-    titleBar:SetScript("OnDragStart", function() panel:StartMoving() end)
     titleBar:SetScript("OnDragStop", function()
         panel:StopMovingOrSizing()
         -- A drag is a deliberate placement: stop chasing the bag window and
@@ -164,19 +147,9 @@ local function BuildPanel()
         PinBottom()
     end)
 
-    local title = titleBar:CreateFontString(nil, "OVERLAY")
-    title:SetFont(R_FONT, 13, "")
-    title:SetPoint("LEFT", 12, 0)
-    title:SetText(S().title)
-    title:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
-
-    local close = CreateFrame("Button", nil, titleBar, "UIPanelCloseButton")
-    close:SetPoint("RIGHT", -2, 0)
-    close:SetScript("OnClick", function() panel:Hide() end)
-
     local hint = panel:CreateFontString(nil, "OVERLAY")
-    hint:SetFont(R_FONT, 11, "")
-    hint:SetTextColor(R.textDim[1], R.textDim[2], R.textDim[3])
+    hint:SetFont(FONT, 11, "")
+    hint:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
     hint:SetPoint("TOPLEFT", 10, -(TITLE_H + 6))
     hint:SetPoint("TOPRIGHT", -10, -(TITLE_H + 6))
     hint:SetJustifyH("LEFT")
@@ -184,11 +157,13 @@ local function BuildPanel()
     hint:SetText(S().hint)
 
     overflowText = panel:CreateFontString(nil, "OVERLAY")
-    overflowText:SetFont(R_FONT, 11, "")
-    overflowText:SetTextColor(R.textFaint[1], R.textFaint[2], R.textFaint[3])
+    overflowText:SetFont(FONT, 11, "")
+    overflowText:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
     overflowText:SetJustifyH("LEFT")
 
-    deleteButton = CreateFrame("Button", "LGB_MassDeleteButton", panel, "UIPanelButtonTemplate")
+    -- Named, so a macro can /click it.
+    deleteButton = CreateFrame("Button", "LGB_MassDeleteButton", panel, "BackdropTemplate")
+    LuckyUI.StyleButton(deleteButton, "", "danger")
     deleteButton:SetSize(PANEL_WIDTH - 24, 24)
     deleteButton:SetPoint("BOTTOM", 0, 10)
     deleteButton:SetScript("OnClick", function() LuckyGrabbag.MassDelete:DeleteNext() end)
