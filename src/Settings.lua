@@ -5,6 +5,9 @@ LuckyGrabbag.Settings = {}
 function LuckyGrabbag.Settings:Init(db, charDB)
     local S = LuckyGrabbag.Strings
     local SS = S.settings
+    local SH = S.stockistHandover
+    -- Built before Warband Stockist loads, so this asks whether it is enabled.
+    local stockistBank = LuckyGrabbag.AutoDepositUtils.StockistOwnsBank()
 
     local panel = LuckySettings:NewRichPanel(S.addon.title, {
         addonFolder    = "Luckys_Grab_Bag",
@@ -297,13 +300,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
 
         g:Section(SS.sections.altsWarband)
 
-        g:Toggle({
-            label    = SS.treatise.label,
-            desc     = SS.treatise.desc,
-            checked  = db.showTreatise,
-            image    = "crafting/treatise",
-            onToggle = function(checked) db.showTreatise = checked end,
-        })
+        if stockistBank then
+            g:Notice({ text = SH.treatiseNotice })
+        else
+            g:Toggle({
+                label    = SS.treatise.label,
+                desc     = SS.treatise.desc,
+                checked  = db.showTreatise,
+                image    = "crafting/treatise",
+                onToggle = function(checked) db.showTreatise = checked end,
+            })
+        end
 
         g:Toggle({
             label    = SS.autoTipAlt.label,
@@ -330,94 +337,106 @@ function LuckyGrabbag.Settings:Init(db, charDB)
 
         g:Section("Reagents")
 
-        g:Toggle({
-            label    = SS.reagentMains.label,
-            desc     = SS.reagentMains.desc,
-            checked  = db.reagentMainsEnabled,
-            image    = "crafting/reagent-mains",
-            since    = "1.5.0",
-            onToggle = function(checked) db.reagentMainsEnabled = checked end,
-        })
+        if stockistBank then
+            g:Notice({ text = SH.reagentsNotice })
+        else
+            g:Toggle({
+                label    = SS.reagentMains.label,
+                desc     = SS.reagentMains.desc,
+                checked  = db.reagentMainsEnabled,
+                image    = "crafting/reagent-mains",
+                since    = "1.5.0",
+                onToggle = function(checked) db.reagentMainsEnabled = checked end,
+            })
 
-        g:Toggle({
-            label    = SS.reagentMainsCurrentExpOnly.label,
-            desc     = SS.reagentMainsCurrentExpOnly.desc,
-            checked  = db.reagentMainsCurrentExpOnly,
-            parent   = SS.reagentMains.label,
-            onToggle = function(checked) db.reagentMainsCurrentExpOnly = checked end,
-        })
+            g:Toggle({
+                label    = SS.reagentMainsCurrentExpOnly.label,
+                desc     = SS.reagentMainsCurrentExpOnly.desc,
+                checked  = db.reagentMainsCurrentExpOnly,
+                parent   = SS.reagentMains.label,
+                onToggle = function(checked) db.reagentMainsCurrentExpOnly = checked end,
+            })
 
-        g:Button({
-            label    = SS.configureMains.label,
-            desc     = SS.configureMains.desc,
-            parent   = SS.reagentMains.label,
-            onClick  = function() LuckyGrabbag.ReagentMains:OpenPopup() end,
-        })
+            g:Button({
+                label    = SS.configureMains.label,
+                desc     = SS.configureMains.desc,
+                parent   = SS.reagentMains.label,
+                onClick  = function() LuckyGrabbag.ReagentMains:OpenPopup() end,
+            })
 
-        g:Toggle({
-            label    = SS.warboundDepositLumber.label,
-            desc     = SS.warboundDepositLumber.desc,
-            checked  = db.warboundDepositLumber,
-            since    = "1.11.0",
-            onToggle = function(checked) db.warboundDepositLumber = checked end,
-        })
+            g:Toggle({
+                label    = SS.warboundDepositLumber.label,
+                desc     = SS.warboundDepositLumber.desc,
+                checked  = db.warboundDepositLumber,
+                since    = "1.11.0",
+                onToggle = function(checked) db.warboundDepositLumber = checked end,
+            })
+        end
 
         g:Section("Gear")
 
-        g:Toggle({
-            label    = SS.warboundAutoDeposit.label,
-            desc     = SS.warboundAutoDeposit.desc,
-            checked  = db.warboundAutoDepositEnabled,
-            image    = "crafting/reagent-mains",
-            since    = "1.11.0",
-            onToggle = function(checked) db.warboundAutoDepositEnabled = checked end,
-        })
+        if stockistBank then
+            g:Notice({ text = SH.gearNotice })
+        else
+            g:Toggle({
+                label    = SS.warboundAutoDeposit.label,
+                desc     = SS.warboundAutoDeposit.desc,
+                checked  = db.warboundAutoDepositEnabled,
+                image    = "crafting/reagent-mains",
+                since    = "1.11.0",
+                onToggle = function(checked) db.warboundAutoDepositEnabled = checked end,
+            })
 
-        g:Toggle({
-            label    = SS.warboundDepositArmor.label,
-            desc     = SS.warboundDepositArmor.desc,
-            checked  = db.warboundDepositArmor,
-            parent   = SS.warboundAutoDeposit.label,
-            onToggle = function(checked) db.warboundDepositArmor = checked end,
-        })
+            g:Toggle({
+                label    = SS.warboundDepositArmor.label,
+                desc     = SS.warboundDepositArmor.desc,
+                checked  = db.warboundDepositArmor,
+                parent   = SS.warboundAutoDeposit.label,
+                onToggle = function(checked) db.warboundDepositArmor = checked end,
+            })
 
-        g:Toggle({
-            label    = SS.warboundDepositWeapons.label,
-            desc     = SS.warboundDepositWeapons.desc,
-            checked  = db.warboundDepositWeapons,
-            parent   = SS.warboundAutoDeposit.label,
-            onToggle = function(checked) db.warboundDepositWeapons = checked end,
-        })
+            g:Toggle({
+                label    = SS.warboundDepositWeapons.label,
+                desc     = SS.warboundDepositWeapons.desc,
+                checked  = db.warboundDepositWeapons,
+                parent   = SS.warboundAutoDeposit.label,
+                onToggle = function(checked) db.warboundDepositWeapons = checked end,
+            })
 
-        g:Toggle({
-            label    = SS.warboundDepositTokens.label,
-            desc     = SS.warboundDepositTokens.desc,
-            checked  = db.warboundDepositTokens,
-            parent   = SS.warboundAutoDeposit.label,
-            onToggle = function(checked) db.warboundDepositTokens = checked end,
-        })
+            g:Toggle({
+                label    = SS.warboundDepositTokens.label,
+                desc     = SS.warboundDepositTokens.desc,
+                checked  = db.warboundDepositTokens,
+                parent   = SS.warboundAutoDeposit.label,
+                onToggle = function(checked) db.warboundDepositTokens = checked end,
+            })
+        end
 
         g:Section("Whitelist")
 
-        g:Toggle({
-            label    = SS.warboundItemWhitelist.label,
-            desc     = SS.warboundItemWhitelist.desc,
-            checked  = db.warboundItemWhitelist and true or false,
-            parent   = SS.warboundAutoDeposit.label,
-            since    = "1.11.0",
-            onToggle = function(checked)
-                if checked and not db.warboundItemWhitelist then
-                    db.warboundItemWhitelist = {}
-                end
-            end,
-        })
+        if stockistBank then
+            g:Notice({ text = SH.whitelistNotice })
+        else
+            g:Toggle({
+                label    = SS.warboundItemWhitelist.label,
+                desc     = SS.warboundItemWhitelist.desc,
+                checked  = db.warboundItemWhitelist and true or false,
+                parent   = SS.warboundAutoDeposit.label,
+                since    = "1.11.0",
+                onToggle = function(checked)
+                    if checked and not db.warboundItemWhitelist then
+                        db.warboundItemWhitelist = {}
+                    end
+                end,
+            })
 
-        g:Button({
-            label    = SS.configureWhitelist.label,
-            desc     = SS.configureWhitelist.desc,
-            parent   = SS.warboundAutoDeposit.label,
-            onClick  = function() LuckyGrabbag.WarboundAutoDeposit:OpenPopup() end,
-        })
+            g:Button({
+                label    = SS.configureWhitelist.label,
+                desc     = SS.configureWhitelist.desc,
+                parent   = SS.warboundAutoDeposit.label,
+                onClick  = function() LuckyGrabbag.WarboundAutoDeposit:OpenPopup() end,
+            })
+        end
 
         g:Section(SS.sections.bankQueue)
         -- Stockist owns the mode once it is a version that has the setting. It

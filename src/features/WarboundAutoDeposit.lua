@@ -62,6 +62,7 @@ local function IsInstanceWarbound(bag, slot, info)
 end
 
 local function PlanDeposits()
+    if Utils.StockistOwnsBank() then return {} end
     -- Lumber is a standalone reagent toggle that runs independently of the
     -- warbound gear/whitelist feature, so either can trigger this pass.
     local warbound = db.warboundAutoDepositEnabled
