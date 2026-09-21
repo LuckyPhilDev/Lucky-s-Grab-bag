@@ -88,19 +88,14 @@ local copyPopup, copyEdit
 local function BuildCopyPopup()
     local p = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
     p:SetSize(280, 28)
-    p:SetBackdrop({
-        bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile     = true, tileSize = 16, edgeSize = 12,
-        insets   = { left = 2, right = 2, top = 2, bottom = 2 },
-    })
+    p:SetBackdrop(LuckyUI.Backdrop)
+    p:SetBackdropColor(unpack(LuckyUI.C.bgDark))
+    p:SetBackdropBorderColor(unpack(LuckyUI.C.goldAccent))
     p:SetFrameStrata("DIALOG")
     p:Hide()
 
-    local e = CreateFrame("EditBox", nil, p, "InputBoxTemplate")
-    e:SetSize(260, 18)
+    local e = LuckyUI.CreateInput(p, { width = 268, height = 20 })
     e:SetPoint("CENTER")
-    e:SetAutoFocus(false)
     e:SetScript("OnEscapePressed",  function() p:Hide() end)
     e:SetScript("OnEditFocusLost",  function() p:Hide() end)
 
@@ -186,14 +181,9 @@ local function BuildFrame()
     f:SetScript("OnDragStart", f.StartMoving)
     f:SetScript("OnDragStop", f.StopMovingOrSizing)
 
-    f:SetBackdrop({
-        bgFile   = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        tile     = true, tileSize = 8, edgeSize = 8,
-        insets   = { left = 2, right = 2, top = 2, bottom = 2 },
-    })
-    f:SetBackdropColor(0, 0, 0, 0.85)
-    f:SetBackdropBorderColor(0.5, 0.5, 0.5, 1)
+    f:SetBackdrop(LuckyUI.Backdrop)
+    f:SetBackdropColor(unpack(LuckyUI.C.bgDark))
+    f:SetBackdropBorderColor(unpack(LuckyUI.C.goldAccent))
 
     local text = f:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     text:SetPoint("TOPLEFT",  f, "TOPLEFT",  6, -6)
@@ -202,10 +192,8 @@ local function BuildFrame()
     text:SetJustifyV("TOP")
     f.text = text
 
-    local btn = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
-    btn:SetSize(60, 18)
+    local btn = LuckyUI.CreateButton(f, "Copy", 60, 18)
     btn:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 4, 4)
-    btn:SetText("Copy")
     btn:SetScript("OnClick", function(self)
         ShowCopyPopup(f.plainText or "", self)
     end)

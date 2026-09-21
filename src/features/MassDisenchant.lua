@@ -6,14 +6,13 @@ LuckyGrabbag.MassDisenchant = {}
 local DISENCHANT_SPELL_ID = 13262
 local LAST_BAG = 5
 local PANEL_WIDTH = 310
-local TITLE_HEIGHT = 40
+local TITLE_HEIGHT = LuckyUI.HEADER_HEIGHT + 1
 local ROW_HEIGHT = 26
 local LIST_HEIGHT = 364
 local FOOTER_HEIGHT = 36
 
-local Rich = LuckySettings.Rich
-local R = Rich.Theme
-local R_FONT = Rich.Font
+local C = LuckyUI.C
+local FONT = LuckyUI.BODY_FONT
 
 local panel, scroll, content, emptyText, destroyButton
 local buttons = {}
@@ -69,7 +68,7 @@ local function BuildButton(index)
     button.icon:SetPoint("LEFT")
 
     button.text = button:CreateFontString(nil, "OVERLAY")
-    button.text:SetFont(R_FONT, 11, "")
+    button.text:SetFont(FONT, 11, "")
     button.text:SetPoint("LEFT", button.icon, "RIGHT", 6, 0)
     button.text:SetPoint("RIGHT")
     button.text:SetJustifyH("LEFT")
@@ -114,30 +113,14 @@ end
 local function BuildPanel()
     if panel then return end
 
-    panel = CreateFrame("Frame", "LGB_MassDisenchantPanel", UIParent)
-    panel:SetSize(PANEL_WIDTH, TITLE_HEIGHT + LIST_HEIGHT + FOOTER_HEIGHT + 12)
+    local titleBar
+    panel, titleBar = LuckyUI.CreateWindow("LGB_MassDisenchantPanel", PANEL_WIDTH,
+        TITLE_HEIGHT + LIST_HEIGHT + FOOTER_HEIGHT + 12, S().title)
     local position = db.massDisenchantPosition
     if position then
+        panel:ClearAllPoints()
         panel:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", position.x, position.y)
-    else
-        panel:SetPoint("CENTER")
     end
-    panel:SetFrameStrata("DIALOG")
-    panel:SetClampedToScreen(true)
-    panel:SetMovable(true)
-    panel:EnableMouse(true)
-    Rich.FillBg(panel, R.bg)
-    table.insert(UISpecialFrames, "LGB_MassDisenchantPanel")
-
-    local titleBar = CreateFrame("Frame", nil, panel)
-    titleBar:SetHeight(TITLE_HEIGHT)
-    titleBar:SetPoint("TOPLEFT")
-    titleBar:SetPoint("TOPRIGHT")
-    Rich.FillBg(titleBar, R.bg2)
-    Rich.EdgeRule(titleBar, "BOTTOM", R.border)
-    titleBar:EnableMouse(true)
-    titleBar:RegisterForDrag("LeftButton")
-    titleBar:SetScript("OnDragStart", function() panel:StartMoving() end)
     titleBar:SetScript("OnDragStop", function()
         panel:StopMovingOrSizing()
         db.massDisenchantPosition = {
@@ -146,24 +129,14 @@ local function BuildPanel()
         }
     end)
 
-    local title = titleBar:CreateFontString(nil, "OVERLAY")
-    title:SetFont(R_FONT, 16, "")
-    title:SetPoint("LEFT", 12, 0)
-    title:SetText(S().title)
-    title:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
-
-    local close = CreateFrame("Button", nil, titleBar, "UIPanelCloseButton")
-    close:SetPoint("RIGHT", -2, 0)
-    close:SetScript("OnClick", function() panel:Hide() end)
-
     local hint = panel:CreateFontString(nil, "OVERLAY")
-    hint:SetFont(R_FONT, 11, "")
+    hint:SetFont(FONT, 11, "")
     hint:SetPoint("TOPLEFT", 12, -(TITLE_HEIGHT + 8))
     hint:SetPoint("TOPRIGHT", -12, -(TITLE_HEIGHT + 8))
     hint:SetJustifyH("LEFT")
     hint:SetWordWrap(true)
     hint:SetText(S().hint)
-    hint:SetTextColor(R.textDim[1], R.textDim[2], R.textDim[3])
+    hint:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
 
     scroll = CreateFrame("ScrollFrame", nil, panel, "UIPanelScrollFrameTemplate")
     scroll:SetPoint("TOPLEFT", 12, -(TITLE_HEIGHT + 36))
@@ -174,15 +147,20 @@ local function BuildPanel()
     scroll:SetScrollChild(content)
 
     emptyText = content:CreateFontString(nil, "OVERLAY")
-    emptyText:SetFont(R_FONT, 11, "")
+    emptyText:SetFont(FONT, 11, "")
     emptyText:SetPoint("TOPLEFT")
     emptyText:SetPoint("TOPRIGHT")
     emptyText:SetJustifyH("LEFT")
     emptyText:SetWordWrap(true)
     emptyText:SetText(S().empty)
-    emptyText:SetTextColor(R.textDim[1], R.textDim[2], R.textDim[3])
+    emptyText:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
 
-    destroyButton = CreateFrame("Button", "LGB_MassDisenchantDestroyButton", panel, "UIPanelButtonTemplate,SecureActionButtonTemplate")
+    destroyButton = CreateFrame("Button", "LGB_MassDisenchantDestroyButton", panel,
+        "BackdropTemplate,SecureActionButtonTemplate")
+    LuckyUI.StyleButton(destroyButton, "", "primary")
+    -- Gives LockHighlight something to light up for the ready glow.
+    destroyButton:SetHighlightTexture("Interface\\Buttons\\WHITE8x8", "ADD")
+    destroyButton:GetHighlightTexture():SetVertexColor(1, 1, 1, 0.2)
     destroyButton:SetSize(PANEL_WIDTH - 24, 24)
     destroyButton:SetPoint("BOTTOM", 0, 10)
     destroyButton:RegisterForClicks(LuckyGrabbag.MassDisenchant:DestroyClickTrigger())

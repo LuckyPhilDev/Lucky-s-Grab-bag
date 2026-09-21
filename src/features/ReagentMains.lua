@@ -85,65 +85,20 @@ end
 -- ---------------------------------------------------------------------------
 
 local Rich = LuckySettings.Rich
-local R = Rich.Theme
-local R_FONT = Rich.Font
+local C = LuckyUI.C
+local FONT = LuckyUI.BODY_FONT
 
 local function BuildPopup()
     if popup then return popup end
 
-    local f = CreateFrame("Frame", "LuckyGrabbagReagentMainsPopup", UIParent)
-    f:SetSize(540, 480)
-    f:SetFrameStrata("DIALOG")
-    f:SetClampedToScreen(true)
-    f:EnableMouse(true)
-    f:Hide()
-    Rich.FillBg(f, R.bg)
-    -- Escape closes
-    table.insert(UISpecialFrames, "LuckyGrabbagReagentMainsPopup")
+    local f, titleBar = LuckyUI.CreateWindow("LuckyGrabbagReagentMainsPopup", 540, 480,
+        LuckyGrabbag.Strings.reagentMains.title, { db = db, key = "reagentMainsPopupPos" })
 
-    -- Title bar (drag handle)
-    local titleBar = CreateFrame("Frame", nil, f)
-    titleBar:SetHeight(40)
-    titleBar:SetPoint("TOPLEFT")
-    titleBar:SetPoint("TOPRIGHT")
-    Rich.FillBg(titleBar, R.bg2)
-    Rich.EdgeRule(titleBar, "BOTTOM", R.border)
-    titleBar:EnableMouse(true)
-    titleBar:RegisterForDrag("LeftButton")
-    titleBar:SetScript("OnDragStart", function() f:StartMoving() end)
-    titleBar:SetScript("OnDragStop", function()
-        f:StopMovingOrSizing()
-        local point, _, relPoint, x, y = f:GetPoint()
-        db.reagentMainsPopupPos = { point = point, relPoint = relPoint, x = x, y = y }
-    end)
-    f:SetMovable(true)
-    f:SetClampedToScreen(true)
-
-    local titleL = titleBar:CreateFontString(nil, "OVERLAY")
-    titleL:SetFont(R_FONT, 16, "")
-    titleL:SetPoint("LEFT", 14, 0)
-    titleL:SetText(LuckyGrabbag.Strings.reagentMains.title)
-    titleL:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
-
-    local titleR = titleBar:CreateFontString(nil, "OVERLAY")
-    titleR:SetFont(R_FONT, 11, "")
-    titleR:SetPoint("RIGHT", -40, 0)
-    titleR:SetText(LuckyGrabbag.Strings.reagentMains.subtitle)
-    titleR:SetTextColor(R.textFaint[1], R.textFaint[2], R.textFaint[3])
-
-    -- Close button
-    local close = CreateFrame("Button", nil, titleBar, "UIPanelCloseButton")
-    close:SetPoint("RIGHT", -4, 0)
-    close:SetScript("OnClick", function() f:Hide() end)
-
-    -- Restore saved position
-    local saved = db.reagentMainsPopupPos
-    f:ClearAllPoints()
-    if saved and saved.point then
-        f:SetPoint(saved.point, UIParent, saved.relPoint or saved.point, saved.x or 0, saved.y or 0)
-    else
-        f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-    end
+    local subtitle = titleBar:CreateFontString(nil, "OVERLAY")
+    subtitle:SetFont(FONT, 11, "")
+    subtitle:SetPoint("RIGHT", -36, 0)
+    subtitle:SetText(LuckyGrabbag.Strings.reagentMains.subtitle)
+    subtitle:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
 
     -- Content body inset
     local body = CreateFrame("Frame", nil, f)
@@ -152,8 +107,8 @@ local function BuildPopup()
 
     -- Description
     local desc = body:CreateFontString(nil, "OVERLAY")
-    desc:SetFont(R_FONT, 12, "")
-    desc:SetTextColor(R.text[1], R.text[2], R.text[3])
+    desc:SetFont(FONT, 12, "")
+    desc:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
     desc:SetSpacing(3)
     desc:SetPoint("TOPLEFT", 14, -14)
     desc:SetPoint("TOPRIGHT", -14, -14)
@@ -163,10 +118,8 @@ local function BuildPopup()
     desc:SetHeight(34)
 
     -- Detect button
-    local detectBtn = CreateFrame("Button", nil, body, "UIPanelButtonTemplate")
-    detectBtn:SetSize(150, 22)
+    local detectBtn = LuckyUI.CreateButton(body, LuckyGrabbag.Strings.reagentMains.detectButton, 150, 22)
     detectBtn:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", 0, -10)
-    detectBtn:SetText(LuckyGrabbag.Strings.reagentMains.detectButton)
     detectBtn:SetScript("OnClick", function()
         LuckyRoster:Refresh()
         Feature:RefreshPopup()
@@ -187,8 +140,8 @@ local function BuildPopup()
     excludedRow:SetPoint("RIGHT", -14, 0)
 
     local excludedLbl = excludedRow:CreateFontString(nil, "OVERLAY")
-    excludedLbl:SetFont(R_FONT, 12, "")
-    excludedLbl:SetTextColor(R.text[1], R.text[2], R.text[3])
+    excludedLbl:SetFont(FONT, 12, "")
+    excludedLbl:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
     excludedLbl:SetPoint("LEFT", 10, 0)
     excludedLbl:SetText(SR.excludedLabel)
 
@@ -208,13 +161,13 @@ local function BuildPopup()
     headerRow:SetHeight(22)
     headerRow:SetPoint("TOPLEFT", excludedRow, "BOTTOMLEFT", 0, -10)
     headerRow:SetPoint("RIGHT", -14, 0)
-    Rich.FillBg(headerRow, R.bg3)
-    Rich.EdgeRule(headerRow, "BOTTOM", R.border)
+    Rich.FillBg(headerRow, C.bgInput)
+    Rich.EdgeRule(headerRow, "BOTTOM", C.borderDark)
 
     local function makeHeaderText(parent, text, x)
         local t = parent:CreateFontString(nil, "OVERLAY")
-        t:SetFont(R_FONT, 10, "")
-        t:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
+        t:SetFont(FONT, 10, "")
+        t:SetTextColor(C.goldPrimary[1], C.goldPrimary[2], C.goldPrimary[3])
         t:SetPoint("LEFT", parent, "LEFT", x, 0)
         t:SetText(string.upper(text))
         return t
@@ -247,20 +200,20 @@ local function BuildRow(parent, catKey, catDef, yOffset, alt)
     if alt then
         local bg = row:CreateTexture(nil, "BACKGROUND")
         bg:SetAllPoints()
-        bg:SetColorTexture(R.bg2[1], R.bg2[2], R.bg2[3], 0.5)
+        bg:SetColorTexture(C.bgPanel[1], C.bgPanel[2], C.bgPanel[3], 0.5)
     end
 
     local catLabel = row:CreateFontString(nil, "OVERLAY")
-    catLabel:SetFont(R_FONT, 12, "")
-    catLabel:SetTextColor(R.text[1], R.text[2], R.text[3])
+    catLabel:SetFont(FONT, 12, "")
+    catLabel:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
     catLabel:SetPoint("LEFT", row, "LEFT", 10, 0)
     catLabel:SetWidth(120)
     catLabel:SetJustifyH("LEFT")
     catLabel:SetText(LuckyGrabbag.Strings.reagentCategories[catKey] or catKey)
 
     local hintText = row:CreateFontString(nil, "OVERLAY")
-    hintText:SetFont(R_FONT, 11, "")
-    hintText:SetTextColor(R.textDim[1], R.textDim[2], R.textDim[3])
+    hintText:SetFont(FONT, 11, "")
+    hintText:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
     hintText:SetPoint("LEFT", row, "LEFT", 310, 0)
     hintText:SetWidth(160)
     hintText:SetJustifyH("LEFT")

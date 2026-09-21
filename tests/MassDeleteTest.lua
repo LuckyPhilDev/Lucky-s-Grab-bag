@@ -1,4 +1,4 @@
--- luacheck: globals CreateFrame UIParent UISpecialFrames GameTooltip wipe print
+-- luacheck: globals CreateFrame UIParent UISpecialFrames GameTooltip wipe print LuckyUI
 -- luacheck: globals hooksecurefunc C_Container GetCursorInfo ClearCursor
 -- luacheck: globals DeleteCursorItem StaticPopup1 StaticPopup_Hide LuckySettings
 -- luacheck: globals EnumerateFrames issecretvalue
@@ -128,6 +128,20 @@ LuckySettings = {
         Font     = "font",
         Theme    = setmetatable({}, { __index = function() return { 1, 1, 1, 1 } end }),
     },
+}
+
+-- LuckyUI builds real frames in game; here every helper hands back a stub frame.
+LuckyUI = {
+    HEADER_HEIGHT = 32,
+    BODY_FONT     = "font",
+    Backdrop      = {},
+    C             = setmetatable({}, { __index = function() return { 1, 1, 1, 1 } end }),
+    CreateWindow  = function(name) return CreateFrame("Frame", name), CreateFrame("Frame") end,
+    CreateHeader  = function() return CreateFrame("Frame") end,
+    CreateButton  = function() return CreateFrame("Button") end,
+    StyleButton   = function(button) return button end,
+    CreateInput   = function() return CreateFrame("EditBox") end,
+    CreateIconButton = function() return CreateFrame("Button") end,
 }
 
 -- ─── Stubbed bags and cursor ─────────────────────────────────────────────────

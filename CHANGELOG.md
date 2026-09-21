@@ -4,6 +4,10 @@
 
 - **Mass Disenchant** Your bag gear sits in one window, ready to disenchant without digging through your bags. An option can open it automatically after you disenchant in a rested area.
 
+### Improved
+
+- **New window style** The Mass Delete, Reagent Mains, Whitelist and Decor Shopping List windows, and the Name This Code pane, now match the look of the other Lucky addons.
+
 ## [1.29.1] - 2026-09-19
 
 ### Added

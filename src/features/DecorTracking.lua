@@ -16,8 +16,8 @@ local BUYBACK_ITEM_COUNT = 12 -- the buyback tab reuses the merchant item button
 local ROW_HEIGHT = 26
 
 local Rich = LuckySettings.Rich
-local R = Rich.Theme
-local R_FONT = Rich.Font
+local C = LuckyUI.C
+local FONT = LuckyUI.BODY_FONT
 
 local db
 local trackButton
@@ -236,62 +236,22 @@ end
 local function BuildWindow()
     if window then return window end
 
-    local f = CreateFrame("Frame", "LuckyGrabbagDecorListWindow", UIParent)
-    f:SetSize(460, 440)
-    f:SetFrameStrata("DIALOG")
-    f:SetClampedToScreen(true)
-    f:SetMovable(true)
-    f:EnableMouse(true)
-    f:Hide()
-    Rich.FillBg(f, R.bg)
-    table.insert(UISpecialFrames, "LuckyGrabbagDecorListWindow")
-
-    local titleBar = CreateFrame("Frame", nil, f)
-    titleBar:SetHeight(40)
-    titleBar:SetPoint("TOPLEFT")
-    titleBar:SetPoint("TOPRIGHT")
-    Rich.FillBg(titleBar, R.bg2)
-    Rich.EdgeRule(titleBar, "BOTTOM", R.border)
-    titleBar:EnableMouse(true)
-    titleBar:RegisterForDrag("LeftButton")
-    titleBar:SetScript("OnDragStart", function() f:StartMoving() end)
-    titleBar:SetScript("OnDragStop", function()
-        f:StopMovingOrSizing()
-        local point, _, relPoint, x, y = f:GetPoint()
-        db.decorListPos = { point = point, relPoint = relPoint, x = x, y = y }
-    end)
-
-    local title = titleBar:CreateFontString(nil, "OVERLAY")
-    title:SetFont(R_FONT, 16, "")
-    title:SetPoint("LEFT", 14, 0)
-    title:SetText(S().listTitle)
-    title:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
+    local f, titleBar = LuckyUI.CreateWindow("LuckyGrabbagDecorListWindow", 460, 440, S().listTitle,
+        { db = db, key = "decorListPos" })
 
     local subtitle = titleBar:CreateFontString(nil, "OVERLAY")
-    subtitle:SetFont(R_FONT, 11, "")
-    subtitle:SetPoint("RIGHT", -40, 0)
+    subtitle:SetFont(FONT, 11, "")
+    subtitle:SetPoint("RIGHT", -36, 0)
     subtitle:SetText(S().listSubtitle)
-    subtitle:SetTextColor(R.textFaint[1], R.textFaint[2], R.textFaint[3])
-
-    local close = CreateFrame("Button", nil, titleBar, "UIPanelCloseButton")
-    close:SetPoint("RIGHT", -4, 0)
-    close:SetScript("OnClick", function() f:Hide() end)
-
-    local saved = db.decorListPos
-    f:ClearAllPoints()
-    if saved and saved.point then
-        f:SetPoint(saved.point, UIParent, saved.relPoint or saved.point, saved.x or 0, saved.y or 0)
-    else
-        f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-    end
+    subtitle:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
 
     local body = CreateFrame("Frame", nil, f)
     body:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 0, 0)
     body:SetPoint("BOTTOMRIGHT", 0, 0)
 
     local desc = body:CreateFontString(nil, "OVERLAY")
-    desc:SetFont(R_FONT, 12, "")
-    desc:SetTextColor(R.text[1], R.text[2], R.text[3])
+    desc:SetFont(FONT, 12, "")
+    desc:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
     desc:SetSpacing(3)
     desc:SetPoint("TOPLEFT", 14, -14)
     desc:SetPoint("TOPRIGHT", -14, -14)
@@ -304,13 +264,13 @@ local function BuildWindow()
     headerRow:SetHeight(22)
     headerRow:SetPoint("TOPLEFT", desc, "BOTTOMLEFT", 0, -10)
     headerRow:SetPoint("RIGHT", -14, 0)
-    Rich.FillBg(headerRow, R.bg3)
-    Rich.EdgeRule(headerRow, "BOTTOM", R.border)
+    Rich.FillBg(headerRow, C.bgInput)
+    Rich.EdgeRule(headerRow, "BOTTOM", C.borderDark)
 
     local function HeaderText(text, x, justify)
         local t = headerRow:CreateFontString(nil, "OVERLAY")
-        t:SetFont(R_FONT, 10, "")
-        t:SetTextColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
+        t:SetFont(FONT, 10, "")
+        t:SetTextColor(C.goldPrimary[1], C.goldPrimary[2], C.goldPrimary[3])
         t:SetPoint("LEFT", headerRow, "LEFT", x, 0)
         t:SetJustifyH(justify or "LEFT")
         t:SetText(string.upper(text))
@@ -328,27 +288,23 @@ local function BuildWindow()
     scroll:SetScrollChild(rowParent)
 
     local emptyText = body:CreateFontString(nil, "OVERLAY")
-    emptyText:SetFont(R_FONT, 12, "")
-    emptyText:SetTextColor(R.textDim[1], R.textDim[2], R.textDim[3])
+    emptyText:SetFont(FONT, 12, "")
+    emptyText:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
     emptyText:SetPoint("TOPLEFT", scroll, "TOPLEFT", 10, -14)
     emptyText:SetPoint("TOPRIGHT", scroll, "TOPRIGHT", -10, -14)
     emptyText:SetJustifyH("LEFT")
     emptyText:SetWordWrap(true)
     emptyText:SetText(S().listEmpty)
 
-    local clearAll = CreateFrame("Button", nil, body, "UIPanelButtonTemplate")
-    clearAll:SetSize(90, 22)
+    local clearAll = LuckyUI.CreateButton(body, S().clearAll, 90, 22, "danger")
     clearAll:SetPoint("BOTTOMRIGHT", -14, 12)
-    clearAll:SetText(S().clearAll)
     clearAll:SetScript("OnClick", function()
         wipe(db.decorList)
         Feature:Refresh()
     end)
 
-    local clearCollected = CreateFrame("Button", nil, body, "UIPanelButtonTemplate")
-    clearCollected:SetSize(130, 22)
+    local clearCollected = LuckyUI.CreateButton(body, S().clearCollected, 130, 22)
     clearCollected:SetPoint("RIGHT", clearAll, "LEFT", -6, 0)
-    clearCollected:SetText(S().clearCollected)
     clearCollected:SetScript("OnClick", function()
         for recordID, required in pairs(db.decorList) do
             if StillNeeded(recordID, required) == 0 then
@@ -375,16 +331,16 @@ local function BuildRow(parent, index)
 
     row.stripe = row:CreateTexture(nil, "BACKGROUND")
     row.stripe:SetAllPoints()
-    row.stripe:SetColorTexture(R.bg2[1], R.bg2[2], R.bg2[3], 0.5)
+    row.stripe:SetColorTexture(C.bgPanel[1], C.bgPanel[2], C.bgPanel[3], 0.5)
 
     row.name = row:CreateFontString(nil, "OVERLAY")
-    row.name:SetFont(R_FONT, 12, "")
+    row.name:SetFont(FONT, 12, "")
     row.name:SetPoint("LEFT", row, "LEFT", 10, 0)
     row.name:SetWidth(240)
     row.name:SetJustifyH("LEFT")
 
     row.available = row:CreateFontString(nil, "OVERLAY")
-    row.available:SetFont(R_FONT, 12, "")
+    row.available:SetFont(FONT, 12, "")
     row.available:SetPoint("LEFT", row, "LEFT", 260, 0)
     row.available:SetWidth(60)
     row.available:SetJustifyH("LEFT")
@@ -415,9 +371,9 @@ local function BuildRow(parent, index)
     end)
     row.pin:SetScript("OnLeave", GameTooltip_Hide)
 
-    row.remove = CreateFrame("Button", nil, row, "UIPanelCloseButton")
-    row.remove:SetSize(24, 24)
-    row.remove:SetPoint("RIGHT", row, "RIGHT", -4, 0)
+    local d = C.danger
+    row.remove = LuckyUI.CreateIconButton(row, { icon = "x", size = 16, color = { d[1], d[2], d[3], 0.75 } })
+    row.remove:SetPoint("RIGHT", row, "RIGHT", -8, 0)
     row.remove:SetScript("OnClick", function(self)
         db.decorList[self.recordID] = nil
         Feature:Refresh()
@@ -449,8 +405,8 @@ local function RefreshWindow()
         row.name:SetText(info and info.name or S().unknownDecor)
         row.available:SetText(string.format("%d/%d", math.min(available, required), required))
 
-        local nameColor = needed > 0 and R.text or R.textDim
-        local availableColor = needed > 0 and R.accentLight or R.textDim
+        local nameColor = needed > 0 and C.textLight or C.textMuted
+        local availableColor = needed > 0 and C.goldPrimary or C.textMuted
         row.name:SetTextColor(nameColor[1], nameColor[2], nameColor[3])
         row.available:SetTextColor(availableColor[1], availableColor[2], availableColor[3])
 

@@ -1,4 +1,4 @@
--- luacheck: globals C_Container C_Item C_Spell C_SpellBook C_Timer CreateFrame GameTooltip GetCVarBool InCombatLockdown IsResting LuckySettings UIParent UISpecialFrames
+-- luacheck: globals C_Container C_Item C_Spell C_SpellBook C_Timer CreateFrame GameTooltip GetCVarBool InCombatLockdown IsResting LuckySettings UIParent UISpecialFrames LuckyUI
 
 local bags = {
     [0] = {
@@ -43,6 +43,7 @@ local Frame = {}
 Frame.__index = Frame
 function Frame:CreateTexture() return setmetatable({}, Frame) end
 function Frame:CreateFontString() return setmetatable({}, Frame) end
+function Frame:GetHighlightTexture() return setmetatable({}, Frame) end
 function Frame:Hide() self.shown = false end
 function Frame:IsShown() return self.shown end
 function Frame:LockHighlight()
@@ -74,6 +75,20 @@ LuckySettings = { Rich = {
     FillBg = function() end,
     EdgeRule = function() end,
 } }
+-- LuckyUI builds real frames in game; here every helper hands back a stub frame.
+LuckyUI = {
+    HEADER_HEIGHT = 32,
+    BODY_FONT     = "font",
+    Backdrop      = {},
+    C             = setmetatable({}, { __index = function() return { 1, 1, 1, 1 } end }),
+    CreateWindow  = function(name) return CreateFrame("Frame", name), CreateFrame("Frame") end,
+    CreateHeader  = function() return CreateFrame("Frame") end,
+    CreateButton  = function() return CreateFrame("Button") end,
+    StyleButton   = function(button) return button end,
+    CreateInput   = function() return CreateFrame("EditBox") end,
+    CreateIconButton = function() return CreateFrame("Button") end,
+}
+
 dofile("src/features/MassDisenchant.lua")
 
 local items = LuckyGrabbag.MassDisenchant:Scan()
