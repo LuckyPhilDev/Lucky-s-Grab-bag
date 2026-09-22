@@ -69,14 +69,14 @@ local function ScanBags()
                 if not itemName then
                     -- itemName can be nil if item data isn't cached yet
                     itemName = C_Item.GetItemNameByID(info.itemID)
-                    DevLog("  Bag " .. bag .. " slot " .. slot .. ": itemID=" .. info.itemID .. " itemName was nil, C_Item fallback=" .. tostring(itemName))
+                    DevLog("  Bag %d slot %d: itemID=%d itemName was nil, C_Item fallback=%s", bag, slot, info.itemID, tostring(itemName))
                 end
                 if itemName and IsMatchingItem(itemName, info.itemID) then
                     -- Skip treatises the character can't use (wrong profession) or already used this week
                     if string.find(itemName, TREATISE_PATTERN, 1, true) and not LuckyGrabbag.Treatise:CanCharacterUse(info.itemID) then
-                        DevLog("  SKIP (no matching profession): " .. itemName .. " (itemID=" .. info.itemID .. ")")
+                        DevLog("  SKIP (no matching profession): %s (itemID=%d)", itemName, info.itemID)
                     elseif string.find(itemName, TREATISE_PATTERN, 1, true) and LuckyGrabbag.Treatise:IsUsedThisWeek(info.itemID) then
-                        DevLog("  SKIP (used this week): " .. itemName .. " (itemID=" .. info.itemID .. ")")
+                        DevLog("  SKIP (used this week): %s (itemID=%d)", itemName, info.itemID)
                     elseif not found[info.itemID] then
                         found[info.itemID] = {
                             itemID = info.itemID,
@@ -92,7 +92,7 @@ local function ScanBags()
             end
         end
     end
-    DevLog("Scanned " .. totalSlots .. " slots, " .. totalItems .. " items occupied")
+    DevLog("Scanned %d slots, %d items occupied", totalSlots, totalItems)
     local items = {}
     for _, item in pairs(found) do
         -- A combine consumes a full set, so a smaller pile has nothing to offer yet.
@@ -216,7 +216,7 @@ local function UpdateCooldowns()
 end
 
 local function UpdateButtons()
-    DevLog("UpdateButtons called — inCombat=" .. tostring(inCombat) .. " showUseItems=" .. tostring(db.showUseItems))
+    DevLog("UpdateButtons called, inCombat=%s showUseItems=%s", tostring(inCombat), tostring(db.showUseItems))
     if inCombat then
         DevLog("Skipping update (in combat)")
         return

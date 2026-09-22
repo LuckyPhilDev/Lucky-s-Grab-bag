@@ -111,15 +111,18 @@ local function Refresh()
     end
 
     local inDelve, tier = GetDelveInfo()
+    if not inDelve then
+        button:Hide()
+        return
+    end
     local minLevel = db.delveMapMinLevel or 8
     local meetsLevel = (tier == 0) or (tier >= minLevel)
     local hasMap, itemName, iconFileID = HasBountyMap()
 
-    DevLog("Refresh: inDelve=" .. tostring(inDelve) .. " tier=" .. tier
-        .. " minLevel=" .. minLevel .. " meetsLevel=" .. tostring(meetsLevel)
-        .. " hasMap=" .. tostring(hasMap))
+    DevLog("Refresh: tier=%d minLevel=%d meetsLevel=%s hasMap=%s",
+        tier, minLevel, tostring(meetsLevel), tostring(hasMap))
 
-    if inDelve and meetsLevel and hasMap then
+    if meetsLevel and hasMap then
         button:SetAttribute("item", itemName)
         if iconFileID then
             button:SetNormalTexture(iconFileID)
@@ -146,7 +149,7 @@ function LuckyGrabbag.DelveMap:Init(database)
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     eventFrame:RegisterEvent("ACTIVE_DELVE_DATA_UPDATE")
-    eventFrame:RegisterEvent("BAG_UPDATE")
+    eventFrame:RegisterEvent("BAG_UPDATE_DELAYED")
     eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     eventFrame:SetScript("OnEvent", function(_, event)
         if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then

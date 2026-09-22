@@ -3,24 +3,29 @@ LuckyGrabbag = LuckyGrabbag or {}
 
 LuckyGrabbag.PREFIX = LuckyGrabbag.Strings.addon.prefix
 
---- Dev logging via LuckyLog. Reads db.devMode from the shared namespace.
-local _devLog = LuckyLog:New(LuckyGrabbag.PREFIX, function()
+local function IsDevMode()
     local db = LuckyGrabbag.db
     return db and db.devMode
-end)
+end
 
+local _devLog = LuckyLog:New(LuckyGrabbag.PREFIX, IsDevMode)
+
+--- Extra arguments are passed to msg:format() only when dev mode is on, so hot
+--- paths can log without building strings for nobody.
 ---@param tag string
 ---@param msg string
-function LuckyGrabbag.DevLog(tag, msg)
+function LuckyGrabbag.DevLog(tag, msg, ...)
+    if not IsDevMode() then return end
+    if select("#", ...) > 0 then msg = msg:format(...) end
     _devLog("|cffaaaaaa[" .. tag .. "]|r " .. msg)
 end
 
 --- Returns a DevLog bound to one feature's tag, for the one-liner at the top
 --- of each feature file: local DevLog = LuckyGrabbag.Logger("FeatureName")
 ---@param tag string
----@return fun(msg: string)
+---@return fun(msg: string, ...: any)
 function LuckyGrabbag.Logger(tag)
-    return function(msg) LuckyGrabbag.DevLog(tag, msg) end
+    return function(msg, ...) LuckyGrabbag.DevLog(tag, msg, ...) end
 end
 
 local GROUP_INSTANCE_TYPES = { party = true, raid = true, scenario = true }

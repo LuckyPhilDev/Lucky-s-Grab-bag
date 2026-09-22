@@ -40,6 +40,7 @@ local mockCandidates  -- dev tool: fake roster from /pipicker mock
 local dismissed = false  -- X button; resets on new boss or new M+ key
 local expanded = false  -- show columns past the first (raids); set in Init
 local Refresh
+local UpdateVisibility
 
 local C = LuckyUI.C
 
@@ -54,6 +55,17 @@ local pumpScheduled = false
 local INSPECT_INTERVAL = 1.5
 
 local DevLog = LuckyGrabbag.Logger("PowerInfusion")
+
+-- A raid fires roster and inspect events in bursts, so they share one rebuild on the next frame.
+local updatePending = false
+local function ScheduleUpdate()
+    if updatePending then return end
+    updatePending = true
+    C_Timer.After(0, function()
+        updatePending = false
+        UpdateVisibility()
+    end)
+end
 
 local function KnowsPowerInfusion()
     return IsPlayerSpell(POWER_INFUSION_SPELL_ID)
@@ -177,12 +189,12 @@ local function HandleInspectReady(guid)
         inspectGuid = nil
         ClearInspectPlayer()
         if pickerFrame and pickerFrame:IsShown() then
-            Refresh()
+            ScheduleUpdate()
             C_Timer.After(1, PumpInspect)
         end
     elseif unit and pickerFrame and pickerFrame:IsShown() then
         -- Another addon's inspect; take the free data.
-        Refresh()
+        ScheduleUpdate()
     end
 end
 
@@ -479,7 +491,7 @@ function Refresh()
     pickerFrame:SetSize(width, PAD + headerHeight + rowsPerCol * ROW_HEIGHT + PAD)
 end
 
-local function UpdateVisibility()
+function UpdateVisibility()
     if not pickerFrame then return end
     if not db.showPIPicker then
         pickerFrame:Hide()
@@ -721,6 +733,8 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
         end
         if event == "PLAYER_REGEN_DISABLED" then
             inCombat = true
+            UpdateVisibility()
+            return
         elseif event == "PLAYER_REGEN_ENABLED" then
             inCombat = false
         elseif event == "ENCOUNTER_START" then
@@ -734,7 +748,7 @@ function LuckyGrabbag.PowerInfusion:Init(database, characterDB)
                 if guid then specCache[guid] = nil end
             end
         end
-        UpdateVisibility()
+        ScheduleUpdate()
     end)
 
     C_Timer.After(1, function()

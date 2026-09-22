@@ -370,7 +370,7 @@ function LuckyGrabbag.CombatPrep:Init(database)
     eventFrame:RegisterEvent("CHALLENGE_MODE_START")
     eventFrame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
     eventFrame:SetScript("OnEvent", function(_, event)
-        DevLog("Event: " .. event)
+        DevLog("Event: %s", event)
         if event == "PLAYER_REGEN_DISABLED" then
             inCombat = true
         elseif event == "PLAYER_REGEN_ENABLED" then

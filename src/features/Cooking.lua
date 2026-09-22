@@ -150,7 +150,8 @@ function LuckyGrabbag.Cooking:Init(database)
         if event == "TRADE_SKILL_DATA_SOURCE_CHANGED" then
             local info = C_TradeSkillUI.GetBaseProfessionInfo()
             local professionID = info and info.professionID
-            DevLog("TRADE_SKILL_DATA_SOURCE_CHANGED professionID=" .. tostring(professionID) .. " (want " .. COOKING_SKILL_LINE_ID .. ") showCookingButtons=" .. tostring(db.showCookingButtons))
+            DevLog("TRADE_SKILL_DATA_SOURCE_CHANGED professionID=%s (want %d) showCookingButtons=%s",
+                tostring(professionID), COOKING_SKILL_LINE_ID, tostring(db.showCookingButtons))
             if professionID == COOKING_SKILL_LINE_ID and db.showCookingButtons then
                 CreateButtons()
                 ShowButtons()
