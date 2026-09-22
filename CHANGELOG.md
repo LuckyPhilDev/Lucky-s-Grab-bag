@@ -1,3 +1,9 @@
+## [1.30.1] - 2026-09-22
+
+### Improved
+
+- **Smoother raids** Grab-bag does far less work when your group changes, other addons inspect players, or you loot, so it no longer adds to stutter in raids.
+
 ## [1.30.0] - 2026-09-21
 
 ### Added
