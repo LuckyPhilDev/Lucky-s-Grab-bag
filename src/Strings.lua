@@ -99,6 +99,8 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         pullTimerFmt = "Pull %ds",
         breakTimerFmt = "Break %dm",
         cancelLabel  = "X",
+        pingTargetFmt = "Ping: %s",
+        pingTargets  = { [0] = "All", [1] = "World", [2] = "Units" },
     },
 
     kickMacro = {
@@ -440,6 +442,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         combatPrepReadyCheck = {
             label = "Ready Check Button",
             desc  = "Show the ready check button on the combat prep window.",
+        },
+        combatPrepPingTarget = {
+            label = "Ping Target Button",
+            desc  = "Show a button on the combat prep window that cycles what your pings hit: everything, only the world, or only units.",
         },
         pullTimerMythic = {
             label  = "Pull Timer (Mythic+)",

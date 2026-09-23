@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Improved
+
+- **Ping target button** The Combat Prep window has a button that cycles what your pings hit: everything, only the world, or only units.
+
 ### Fixed
 
 - Auto Accept profession quests now accepts the first profession quest you are offered after logging in, not just later ones.

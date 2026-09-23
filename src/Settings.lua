@@ -565,6 +565,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
+        g:Toggle({
+            label    = SS.combatPrepPingTarget.label,
+            desc     = SS.combatPrepPingTarget.desc,
+            checked  = db.combatPrepPingTarget,
+            parent   = SS.combatPrep.label,
+            onToggle = function(checked)
+                db.combatPrepPingTarget = checked
+                LuckyGrabbag.CombatPrep:ApplySetting()
+            end,
+        })
+
         g:Slider({
             label    = SS.pullTimerMythic.label,
             key      = "CombatPrepTimerMythic",

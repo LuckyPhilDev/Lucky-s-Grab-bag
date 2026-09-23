@@ -51,6 +51,13 @@ local function RouteBreakTimer(minutes)
     return "Blizzard"
 end
 
+local PING_TARGET_CVAR = "pingTarget"
+local PING_TARGET_COUNT = 3
+
+local function GetPingTarget()
+    return tonumber(C_CVar.GetCVar(PING_TARGET_CVAR)) or Enum.PingTargetOption.All
+end
+
 local function SavePosition()
     if not prepFrame then return end
     local point, _, relPoint, x, y = prepFrame:GetPoint()
@@ -76,6 +83,9 @@ local function UpdateButtonTexts()
     if prepFrame.breakBtn then
         local mins = db.combatPrepBreakTimer or 5
         prepFrame.breakBtn:SetText(string.format(S.breakTimerFmt, mins))
+    end
+    if prepFrame.pingTargetBtn then
+        prepFrame.pingTargetBtn:SetText(string.format(S.pingTargetFmt, S.pingTargets[GetPingTarget()] or ""))
     end
 end
 
@@ -104,10 +114,11 @@ end
 local function UpdateLayout()
     if not prepFrame then return end
     local showRC = db.combatPrepReadyCheck
+    local showPing = db.combatPrepPingTarget
     prepFrame.readyCheckBtn:SetShown(showRC)
+    prepFrame.pingTargetBtn:SetShown(showPing)
     UpdateButtonTexts()
 
-    -- Anchor chain: ready check (optional) → pull timer + cancel → break + cancel
     prepFrame.pullTimerBtn:ClearAllPoints()
     prepFrame.cancelPullBtn:ClearAllPoints()
     if showRC then
@@ -120,9 +131,10 @@ local function UpdateLayout()
     prepFrame.breakBtn:SetPoint("TOPLEFT", prepFrame.pullTimerBtn, "BOTTOMLEFT", 0, -4)
     prepFrame.cancelBreakBtn:ClearAllPoints()
     prepFrame.cancelBreakBtn:SetPoint("LEFT", prepFrame.breakBtn, "RIGHT", 4, 0)
+    prepFrame.pingTargetBtn:ClearAllPoints()
+    prepFrame.pingTargetBtn:SetPoint("TOPLEFT", prepFrame.breakBtn, "BOTTOMLEFT", 0, -4)
 
-    -- Resize frame to fit visible buttons
-    local btnCount = showRC and 3 or 2
+    local btnCount = 2 + (showRC and 1 or 0) + (showPing and 1 or 0)
     local height = 10 + (btnCount * 28) + ((btnCount - 1) * 4) + 10
     prepFrame:SetSize(120, height)
 end
@@ -318,6 +330,14 @@ local function CreatePrepFrame()
     end)
     f.cancelBreakBtn = cancelBreakBtn
 
+    local pingBtn = CreateStyledButton(f, { width = 100, height = 28, variant = "secondary" })
+    pingBtn:SetScript("OnClick", function()
+        local nextTarget = (GetPingTarget() + 1) % PING_TARGET_COUNT
+        C_CVar.SetCVar(PING_TARGET_CVAR, nextTarget)
+        DevLog("Ping target set to " .. nextTarget)
+    end)
+    f.pingTargetBtn = pingBtn
+
     prepFrame = f
     DevLog("Frame created")
 end
@@ -369,7 +389,12 @@ function LuckyGrabbag.CombatPrep:Init(database)
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
     eventFrame:RegisterEvent("CHALLENGE_MODE_START")
     eventFrame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
-    eventFrame:SetScript("OnEvent", function(_, event)
+    eventFrame:RegisterEvent("CVAR_UPDATE")
+    eventFrame:SetScript("OnEvent", function(_, event, cvarName)
+        if event == "CVAR_UPDATE" then
+            if cvarName == PING_TARGET_CVAR then UpdateButtonTexts() end
+            return
+        end
         DevLog("Event: %s", event)
         if event == "PLAYER_REGEN_DISABLED" then
             inCombat = true

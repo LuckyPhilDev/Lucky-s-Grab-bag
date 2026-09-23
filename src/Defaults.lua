@@ -49,6 +49,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     dungeonPortalsToys       = true,
     showCombatPrep           = false,
     combatPrepReadyCheck     = false,
+    combatPrepPingTarget     = true,
     combatPrepTimerMythic    = 10,
     combatPrepTimerRaid      = 12,
     combatPrepBreakTimer     = 5,
