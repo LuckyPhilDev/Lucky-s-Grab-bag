@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Fixed
+
+- Auto Accept profession quests now accepts the first profession quest you are offered after logging in, not just later ones.
+
 ## [1.30.1] - 2026-09-22
 
 ### Improved
