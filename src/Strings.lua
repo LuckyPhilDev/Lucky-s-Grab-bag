@@ -99,6 +99,8 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         pullTimerFmt = "Pull %ds",
         breakTimerFmt = "Break %dm",
         cancelLabel  = "X",
+        pingTargetFmt = "Ping: %s",
+        pingTargets  = { [0] = "All", [1] = "World", [2] = "Units" },
     },
 
     kickMacro = {
@@ -197,9 +199,6 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         moved           = "Reagent Mains, Lumber, Treatise and your Custom Item Whitelist now run from Warband Stockist. Your settings carried over as sets on its Sets page.",
         whitelistSet    = "Custom Item Whitelist",
         treatiseNotice  = "Treatise withdrawal now runs from Warband Stockist, as the Weekly Treatise set on its Sets page.",
-        reagentsNotice  = "Reagent Mains and Lumber now run from Warband Stockist, as standard sets on its Sets page. Untick a reagent set on its Characters page for each character who keeps those reagents.",
-        gearNotice      = "Warbound gear deposits run from Warband Stockist, under Warbound on its Bank page.",
-        whitelistNotice = "Your Custom Item Whitelist now runs from Warband Stockist, as a Deposit All set on its Sets page.",
     },
 
     warboundAutoDeposit = {
@@ -440,6 +439,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         combatPrepReadyCheck = {
             label = "Ready Check Button",
             desc  = "Show the ready check button on the combat prep window.",
+        },
+        combatPrepPingTarget = {
+            label = "Ping Target Button",
+            desc  = "Show a button on the combat prep window that cycles what your pings hit: everything, only the world, or only units.",
         },
         pullTimerMythic = {
             label  = "Pull Timer (Mythic+)",
