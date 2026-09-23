@@ -3,6 +3,7 @@
 ### Improved
 
 - **Ping target button** The Combat Prep window has a button that cycles what your pings hit: everything, only the world, or only units.
+- **Auto-Deposit settings** With Warband Stockist 2.0 or later, the Auto-Deposit category is gone from settings, since Stockist runs all of it. The Bank Queue settings now sit under Inventory.
 
 ### Fixed
 
