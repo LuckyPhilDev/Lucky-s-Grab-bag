@@ -315,11 +315,22 @@ end
 
 -- ─── Automating the quests themselves ────────────────────────────────────────
 
+local requested = {}
+
 -- The tag lookup works on any quest id, in the log or merely being offered, which
 -- is what keeps this to profession quests and nothing else on the same NPC.
+-- It returns nil until the client has the quest's data, which the first offer of a
+-- session usually does not, so the data is asked for and the window answered again
+-- once QUEST_DATA_LOAD_RESULT brings it. Once per quest, since untagged quests stay nil.
 local function IsProfessionQuest(questID)
-    local tag = questID and questID ~= 0 and C_QuestLog.GetQuestTagInfo(questID)
-    return tag and tag.tagID == PROFESSION_TAG_ID
+    if not questID or questID == 0 then return false end
+    local tag = C_QuestLog.GetQuestTagInfo(questID)
+    if not tag and not requested[questID] then
+        requested[questID] = true
+        DevLog("No tag yet for quest " .. questID .. ", requesting its data")
+        C_QuestLog.RequestLoadQuestByID(questID)
+    end
+    return tag ~= nil and tag.tagID == PROFESSION_TAG_ID
 end
 
 local function OfferedQuestIsProfession()
@@ -560,20 +571,39 @@ function LuckyGrabbag.QuestShopping:Init(database)
     -- between every selection, so clearing the picked list there would let a quest
     -- that refuses to be taken be selected on a loop.
     eventFrame:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE")
-    eventFrame:SetScript("OnEvent", function(_, event, ...)
+    eventFrame:RegisterEvent("QUEST_DATA_LOAD_RESULT")
+
+    local openDialog
+
+    local function AnswerDialog(event)
+        openDialog = event
         if event == "GOSSIP_SHOW" or event == "QUEST_GREETING" then
             if (db.professionQuestAutoAccept or db.professionQuestAutoTurnIn)
                 and not HeldOff() then
                 if event == "GOSSIP_SHOW" then OnGossipShow() else OnQuestGreeting() end
+            end
+        else
+            OnQuestDialog(event)
+        end
+    end
+
+    eventFrame:SetScript("OnEvent", function(_, event, ...)
+        if event == "QUEST_DATA_LOAD_RESULT" then
+            local questID, success = ...
+            if success and openDialog and requested[questID] then
+                DevLog("Data arrived for quest " .. questID .. ", answering " .. openDialog .. " again")
+                AnswerDialog(openDialog)
             end
         elseif event == "PLAYER_INTERACTION_MANAGER_FRAME_HIDE" then
             local interaction = ...
             if interaction == Enum.PlayerInteractionType.Gossip
                 or interaction == Enum.PlayerInteractionType.QuestGiver then
                 tried = {}
+                openDialog = nil
             end
-        elseif event:sub(1, 6) == "QUEST_" and event ~= "QUEST_LOG_UPDATE" then
-            OnQuestDialog(event)
+        elseif event == "GOSSIP_SHOW"
+            or (event:sub(1, 6) == "QUEST_" and event ~= "QUEST_LOG_UPDATE") then
+            AnswerDialog(event)
         elseif event == "AUCTION_HOUSE_SHOW" then
             -- A fresh visit is the one thing that puts a stood-down button back.
             -- Quickbuy's own handler runs first and would have left it hidden.

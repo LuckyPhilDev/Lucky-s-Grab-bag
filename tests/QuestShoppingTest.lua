@@ -34,9 +34,12 @@ C_QuestLog = {
         end
     end,
     GetQuestTagInfo = function(questID)
-        local tagID = quests[questID] and quests[questID].tagID
-        if tagID then return { tagID = tagID, tagName = "Professions" } end
+        local quest = quests[questID]
+        if quest and quest.tagID and not quest.uncached then
+            return { tagID = quest.tagID, tagName = "Professions" }
+        end
     end,
+    RequestLoadQuestByID = function(questID) quests[questID].uncached = nil end,
 }
 
 function GetQuestObjectiveInfo(questID, index)
@@ -675,5 +678,27 @@ gossip.available = { { questID = 1 } }
 LeaveNPC()
 Fire("GOSSIP_SHOW")
 assert(#gossip.selected == 0, "off, it should not touch the gossip window")
+
+-- The first offer of a session comes before the client has the quest's tag, so
+-- the dialog is answered again once the data it asked for arrives.
+db.professionQuestAutoAccept = true
+quests[3] = { title = "Uncached Weekly", tagID = PROFESSION, uncached = true }
+dialog.accepted = 0
+Offer("QUEST_DETAIL", 3)
+assert(dialog.accepted == 0, "an untagged offer should wait for its data")
+Fire("QUEST_DATA_LOAD_RESULT", 3, true)
+assert(dialog.accepted == 1, "the offer should be accepted once its data arrives")
+
+-- An ordinary quest stays untagged once loaded, and must not be asked about forever.
+Offer("QUEST_DETAIL", 2)
+Fire("QUEST_DATA_LOAD_RESULT", 2, true)
+assert(dialog.accepted == 1, "a loaded ordinary quest must still be left alone")
+
+-- Data landing after the NPC was left must not act on a closed window.
+quests[4] = { title = "Late Weekly", tagID = PROFESSION, uncached = true }
+Offer("QUEST_DETAIL", 4)
+LeaveNPC()
+Fire("QUEST_DATA_LOAD_RESULT", 4, true)
+assert(dialog.accepted == 1, "data for a closed window should be ignored")
 
 realPrint("QuestShopping: all checks passed")
