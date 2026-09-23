@@ -557,6 +557,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             desc     = SS.combatPrepPingTarget.desc,
             checked  = db.combatPrepPingTarget,
             parent   = SS.combatPrep.label,
+            since    = "1.30.2",
             onToggle = function(checked)
                 db.combatPrepPingTarget = checked
                 LuckyGrabbag.CombatPrep:ApplySetting()

@@ -126,7 +126,7 @@ Automatically sends warbound gear and tokens to the warband bank when you open i
 - Opens via a **Configure whitelist…** button in settings for managing custom items.
 - Off by default; can be toggled in the addon settings.
 
-If Lucky's Warband Stockist is installed, it takes over the warbound armor, weapon, and token deposits and these toggles stand down. From Stockist 2.0, Lumber and the custom whitelist move there too, as sets on its Sets page.
+If Lucky's Warband Stockist is installed, it takes over the warbound armor, weapon, and token deposits and these toggles stand down. From Stockist 2.0, Lumber and the custom whitelist move there too, as sets on its Sets page, and the Auto-Deposit settings are hidden.
 
 ### Bank Queue
 A window beside the bank lists the items your Reagent Mains, lumber, whitelist and treatise moves still have to make, with a count and a progress bar.
@@ -161,6 +161,7 @@ A small floating window that appears automatically when you're out of combat and
 - **Pull Timer** — starts a countdown for the configured duration. Separate durations for Mythic+ (default 10s) and raids (default 12s); the button shows whichever applies to the content you're in. A cancel button beside it lets you stop the countdown early.
 - **Ready Check** — initiates a ready check for the group. Can be hidden in settings.
 - **Break Timer** — starts a long countdown for bio breaks (1–15 minutes, default 5m).
+- **Ping Target**: switches what your pings hit between everything, only the world, and only units. Can be hidden in settings.
 - Appears automatically when you enter a dungeon or raid, or a scenario such as a delve with other players, and hides during combat.
 - Right-click drag to reposition; position is saved across reloads.
 - Use `/combatprep` to test the window outside of group content.
@@ -441,8 +442,9 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Rotation Glow* — Animates the suggested next-cast spell on the Essential Cooldown Viewer, using Blizzard's assisted combat data.
 
 **Combat Prep**
-- *Combat Prep Window* — Shows a floating window with pull timer, ready check, and break timer buttons while you are in a group in a dungeon, or leading or assisting a raid.
+- *Combat Prep Window* — Shows a floating window with pull timer, ready check, break timer and ping target buttons while you are in a group in a dungeon, or leading or assisting a raid.
   - *Ready Check Button* — Show or hide the ready check button.
+  - *Ping Target Button*: Show or hide the ping target button.
   - *Pull Timer (Mythic+)* — How long the pull countdown lasts in dungeons (3–30 seconds).
   - *Pull Timer (Raid)* — How long the pull countdown lasts in raids (3–30 seconds).
   - *Break Timer Duration* — How long the break countdown lasts (1–15 minutes).
