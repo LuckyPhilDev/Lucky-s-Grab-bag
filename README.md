@@ -64,6 +64,7 @@ Displays a floating bar of buttons when you have consumable profession items in 
 - One button per item type; shows stack count when you have multiples.
 - Optionally restrict to cities and inns only via the "Only in Cities" setting.
 - Optionally include finishing reagents that combine into a better one, such as 5 **Multicraft Matrix** into a **Multicraft Manifold**, via the "Show finishing reagents" setting. A button appears only once you hold 5. Off by default.
+- Decor in your bags shares a single button, however many pieces you carry. Each click uses one piece, and the next piece takes its place until none are left. The count shows how many pieces remain. Turn it off with the "Show decor" setting.
 - Draggable via right-click drag; position is saved account-wide and persists across reloads.
 - Auto-hides when no matching items remain in your bags.
 - Respects combat lockdown — buttons won't change mid-combat.
@@ -437,6 +438,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Use Items Popup* — Displays a floating bar of buttons for consumable profession items in your bags.
   - *Only while rested* — Restricts the popup to cities and inns.
   - *Show finishing reagents*: Adds a button for finishing reagents that combine into a better one, such as 5 Multicraft Matrix into a Multicraft Manifold. Off by default.
+  - *Show decor*: Adds one button for the decor in your bags, which moves on to the next piece each time you use one. On by default.
 
 **Rotation Glow**
 - *Rotation Glow* — Animates the suggested next-cast spell on the Essential Cooldown Viewer, using Blizzard's assisted combat data.

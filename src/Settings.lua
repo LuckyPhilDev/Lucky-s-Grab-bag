@@ -470,6 +470,18 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label     = SS.useItemsShowDecor.label,
+            desc      = SS.useItemsShowDecor.desc,
+            checked   = db.useItemsShowDecor,
+            parent    = SS.useItems.label,
+            since     = "1.30.3",
+            onToggle  = function(checked)
+                db.useItemsShowDecor = checked
+                LuckyGrabbag.UseItems:ApplySetting()
+            end,
+        })
+
+        g:Toggle({
             label     = SS.massDelete.label,
             desc      = SS.massDelete.desc,
             checked   = db.massDelete,

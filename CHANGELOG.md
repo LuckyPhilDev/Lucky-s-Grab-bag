@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Improved
+
+- **Use Items Popup** Decor in your bags gets a button in the popup. It takes one slot however many pieces you carry, and moves on to the next piece each time you use one.
+
 ## [1.30.2] - 2026-09-23
 
 ### Improved
