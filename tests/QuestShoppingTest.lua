@@ -169,17 +169,16 @@ LuckyStrings = { New = function(_, tbl) return tbl end }
 dofile("src/Strings.lua")
 
 LuckyGrabbag.Logger = function() return function() end end
-LuckyGrabbag.CreateIconButton = function(opts)
-    local btn = Widget()
-    btn.tooltip = opts.tooltip
-    return btn
-end
-
-local container = Widget()
-local lowestButton
+-- The shared column stacks the buttons; LuckyUI's own tests cover that.
+local column = {
+    AddButton = function(_, opts)
+        local btn = Widget()
+        btn.tooltip = opts.tooltip
+        return btn
+    end,
+}
 LuckyGrabbag.Quickbuy = {
-    GetContainer        = function() return container end,
-    GetLowestButton     = function() return lowestButton end,
+    GetColumn           = function() return column end,
     IsAuctionHouseOpen  = function() return true end,
 }
 
@@ -276,18 +275,6 @@ GameTooltip.lines = {}
 QS:GetButton().tooltip()
 assert(GameTooltip.lines[2] == "0/1 Dawn Crystal " .. ATLAS_QUEST,
     "the tooltip should carry the unstripped line, got " .. tostring(GameTooltip.lines[2]))
-
--- ─── Stacking under the other Auction House buttons ──────────────────────────
-
-QS:ApplySetting()
-assert(QS:GetButton().points[2] == container,
-    "with no other buttons shown it should sit at the top of the group")
-
-lowestButton = Widget()
-QS:ApplySetting()
-assert(QS:GetButton().points[2] == lowestButton,
-    "it should hang below whichever button is already showing")
-lowestButton = nil
 
 -- ─── Auctionator takes the whole list at once ────────────────────────────────
 

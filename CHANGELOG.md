@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Improved
+
+- **Auction House buttons** Grab-bag's buttons beside the Auction House now share one column with Warband Stockist's Restock button, so they stack instead of overlapping. Right-drag any of them to move the column; where you had it is kept.
+
 ## [1.30.2] - 2026-09-23
 
 ### Improved

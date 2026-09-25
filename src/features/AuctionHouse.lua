@@ -12,17 +12,23 @@ LuckyGrabbag.TestflightBuy = {
 local db
 local quickbuyButton
 local testflightButton
-local ahContainer
 local auctionHouseOpen = false
 
--- ─── Container ───────────────────────────────────────────────────────────────
+-- Shared with the other Lucky addons, so every Auction House button stacks in one column.
+local function Column()
+    return LuckyUI.SideColumn("AuctionHouse", AuctionHouseFrame) ---@diagnostic disable-line: undefined-global
+end
 
-local function CreateContainer()
-    if ahContainer then return end
-
-    ahContainer = CreateFrame("Frame", "LGB_AHButtonsParent", AuctionHouseFrame) ---@diagnostic disable-line: undefined-global
-    ahContainer:SetSize(1, 1)
-    LuckyGrabbag.EnableGroupDrag(ahContainer, AuctionHouseFrame, "ahButtonPos", 5, 0) ---@diagnostic disable-line: undefined-global
+local function AddPressedButton(order, texture, tooltip, onClick)
+    local button = Column():AddButton({
+        order   = order,
+        texture = texture,
+        tooltip = function(tip) tip:SetText(tooltip) end,
+    })
+    button:SetPushedTexture(texture)
+    button:GetPushedTexture():SetVertexColor(0.8, 0.8, 0.8, 1)
+    button:SetScript("OnClick", onClick)
+    return button
 end
 
 -- ─── Quickbuy ────────────────────────────────────────────────────────────────
@@ -35,23 +41,6 @@ local function OnQuickbuyClick()
         local S = LuckyGrabbag.Strings
         print(S.addon.errorPrefix .. " " .. S.auctionHouse.craftsimNotLoaded)
     end
-end
-
-local function CreateQuickbuyButton()
-    if quickbuyButton then return end
-    CreateContainer()
-
-    quickbuyButton = LuckyGrabbag.CreateIconButton({
-        parent  = ahContainer,
-        texture = "Interface\\Icons\\INV_Misc_Coin_01",
-        tooltip = function() GameTooltip:SetText(LuckyGrabbag.Strings.auctionHouse.quickbuyTooltip) end,
-    })
-    quickbuyButton:SetPoint("TOPLEFT", ahContainer, "TOPLEFT", 0, 0)
-    quickbuyButton:SetPushedTexture("Interface\\Icons\\INV_Misc_Coin_01")
-    quickbuyButton:GetPushedTexture():SetVertexColor(0.8, 0.8, 0.8, 1)
-    quickbuyButton:SetScript("OnClick", OnQuickbuyClick)
-
-    ahContainer:RegisterDraggable(quickbuyButton)
 end
 
 -- ─── TestFlight ──────────────────────────────────────────────────────────────
@@ -75,39 +64,14 @@ local function OnTestflightClick()
     end
 end
 
-local function CreateTestflightButton()
-    if testflightButton then return end
-    CreateContainer()
-
-    testflightButton = LuckyGrabbag.CreateIconButton({
-        parent  = ahContainer,
-        texture = "Interface\\Icons\\INV_Misc_Coin_18",
-        tooltip = function() GameTooltip:SetText(LuckyGrabbag.Strings.auctionHouse.testflightTooltip) end,
-    })
-    testflightButton:SetPushedTexture("Interface\\Icons\\INV_Misc_Coin_18")
-    testflightButton:GetPushedTexture():SetVertexColor(0.8, 0.8, 0.8, 1)
-    testflightButton:SetScript("OnClick", OnTestflightClick)
-
-    ahContainer:RegisterDraggable(testflightButton)
-end
-
-local function AnchorTestflightButton()
-    testflightButton:ClearAllPoints()
-    if quickbuyButton and quickbuyButton:IsShown() then
-        testflightButton:SetPoint("TOPLEFT", quickbuyButton, "BOTTOMLEFT", 0, -5)
-    else
-        testflightButton:SetPoint("TOPLEFT", ahContainer, "TOPLEFT", 0, 0)
-    end
-end
-
 -- ─── Public API ──────────────────────────────────────────────────────────────
 
 function LuckyGrabbag.TestflightBuy:ApplySetting()
     local req = LuckyGrabbag.TestflightBuy.requires
     local depOk = LuckyDeps:Check(req.addon, req.minVersion)
     if auctionHouseOpen and db.showTestflightBuy and depOk then
-        CreateTestflightButton()
-        AnchorTestflightButton()
+        testflightButton = testflightButton or AddPressedButton(20, "Interface\\Icons\\INV_Misc_Coin_18",
+            LuckyGrabbag.Strings.auctionHouse.testflightTooltip, OnTestflightClick)
         testflightButton:Show()
     elseif testflightButton then
         testflightButton:Hide()
@@ -119,7 +83,8 @@ function LuckyGrabbag.Quickbuy:ApplySetting()
     local req = LuckyGrabbag.Quickbuy.requires
     local depOk = LuckyDeps:Check(req.addon, req.minVersion)
     if auctionHouseOpen and db.showQuickbuy and depOk then
-        CreateQuickbuyButton()
+        quickbuyButton = quickbuyButton or AddPressedButton(10, "Interface\\Icons\\INV_Misc_Coin_01",
+            LuckyGrabbag.Strings.auctionHouse.quickbuyTooltip, OnQuickbuyClick)
         quickbuyButton:Show()
     elseif quickbuyButton then
         quickbuyButton:Hide()
@@ -135,16 +100,8 @@ function LuckyGrabbag.Quickbuy:GetButton()
     return quickbuyButton
 end
 
--- The bottom-most visible button in the stack, so a later feature can anchor
--- itself underneath whichever ones are switched on.
-function LuckyGrabbag.Quickbuy:GetLowestButton()
-    if testflightButton and testflightButton:IsShown() then return testflightButton end
-    if quickbuyButton and quickbuyButton:IsShown() then return quickbuyButton end
-end
-
-function LuckyGrabbag.Quickbuy:GetContainer()
-    CreateContainer()
-    return ahContainer
+function LuckyGrabbag.Quickbuy:GetColumn()
+    return Column()
 end
 
 -- ─── Init ────────────────────────────────────────────────────────────────────
@@ -152,13 +109,17 @@ end
 function LuckyGrabbag.Quickbuy:Init(database)
     db = database
 
+    if db.ahButtonPos then
+        LuckyUI.SeedSideColumnPosition("AuctionHouse", db.ahButtonPos)
+        db.ahButtonPos = nil
+    end
+
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
     eventFrame:RegisterEvent("AUCTION_HOUSE_CLOSED")
     eventFrame:SetScript("OnEvent", function(_, event)
         if event == "AUCTION_HOUSE_SHOW" then
             auctionHouseOpen = true
-            if ahContainer then ahContainer:RestorePosition() end
             LuckyGrabbag.Quickbuy:ApplySetting()
         elseif event == "AUCTION_HOUSE_CLOSED" then
             auctionHouseOpen = false
