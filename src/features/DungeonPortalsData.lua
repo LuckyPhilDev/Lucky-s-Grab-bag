@@ -175,6 +175,12 @@ LuckyGrabbag.CLASS_TELEPORTS.MAGE = {
     { teleport = 1259190, portal = 1259194, map = 2393, x = 0.5279, y = 0.6556 }, -- Silvermoon City
 }
 
+-- Teleport toys with a fixed landing point, badged there like a class teleport.
+-- Hearthstone toys and random-destination toys have no spot to badge.
+LuckyGrabbag.TOY_TELEPORTS = {
+    { toy = 243056, map = 2339, x = 0.4800, y = 0.4400 }, -- Delver's Mana-Bound Ethergate, Delver's Headquarters
+}
+
 -- The Abundance event in Quel'Thalas: the active site shows as one of these
 -- area POIs, and Dundun's Abundant Travel Method teleports straight to it.
 LuckyGrabbag.ABUNDANCE_POI_IDS = {

@@ -90,4 +90,10 @@ for class, entries in pairs(LuckyGrabbag.CLASS_TELEPORTS) do
     end
 end
 
+for i, entry in ipairs(LuckyGrabbag.TOY_TELEPORTS) do
+    local where = "toy entry " .. i
+    assert(type(entry.toy) == "number" and type(entry.map) == "number", where .. " has a toy and a map")
+    assert(entry.x > 0 and entry.x < 1 and entry.y > 0 and entry.y < 1, where .. " lands inside its map")
+end
+
 print("DungeonPortals: all checks passed")

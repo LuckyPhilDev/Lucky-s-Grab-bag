@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Improved
+
+- **Map Teleports** Delver's Mana-Bound Ethergate gets a button on the map at Delver's Headquarters in Dornogal, under Toy Teleports.
+
 ## [1.30.2] - 2026-09-23
 
 ### Improved
