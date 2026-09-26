@@ -178,7 +178,7 @@ LuckyGrabbag.CLASS_TELEPORTS.MAGE = {
 -- Teleport toys with a fixed landing point, badged there like a class teleport.
 -- Hearthstone toys and random-destination toys have no spot to badge.
 LuckyGrabbag.TOY_TELEPORTS = {
-    { toy = 243056, map = 2339, x = 0.4800, y = 0.4400 }, -- Delver's Mana-Bound Ethergate, Delver's Headquarters
+    { toy = 243056, map = 2339, x = 0.4775, y = 0.4447 }, -- Delver's Mana-Bound Ethergate, Delver's Headquarters
 }
 
 -- The Abundance event in Quel'Thalas: the active site shows as one of these
