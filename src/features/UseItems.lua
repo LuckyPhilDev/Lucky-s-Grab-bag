@@ -19,6 +19,8 @@ for _, id in ipairs(LuckyGrabbag.UseItemsData.itemIDs or {}) do
     ITEM_ID_SET[id] = true
 end
 
+local DECOR_ENTRY = Enum.HousingCatalogEntryType.Decor
+
 local BUTTON_SIZE = 42
 local BUTTON_SPACING = 4
 local MAX_BUTTONS = 12
@@ -29,6 +31,29 @@ local buttons = {}
 local inCombat = false
 
 local DevLog = LuckyGrabbag.Logger("UseItems")
+
+local decorByItemID = {}
+
+local function IsDecor(itemID)
+    if decorByItemID[itemID] == nil then
+        local entry = C_HousingCatalog.GetCatalogEntryInfoByItem(itemID)
+        decorByItemID[itemID] = entry ~= nil and entry.entryType == DECOR_ENTRY
+    end
+    return decorByItemID[itemID]
+end
+
+-- Every decor piece shares one button: it uses the first piece alphabetically, and the
+-- next takes its place once that one is gone, however many different pieces you hold.
+local function DecorSlot(decorByID)
+    local slot
+    local total = 0
+    for _, decor in pairs(decorByID) do
+        total = total + decor.count
+        if not slot or decor.itemName < slot.itemName then slot = decor end
+    end
+    if not slot then return nil end
+    return { itemID = slot.itemID, itemName = slot.itemName, icon = slot.icon, count = total }
+end
 
 local function IsMatchingItem(itemName, itemID)
     if itemID and ITEM_ID_SET[itemID] then return true end
@@ -50,11 +75,9 @@ local function IsMatchingItem(itemName, itemID)
     return false
 end
 
--- Scans all bags and returns a sorted array of { itemID, itemName, icon, count }
--- for items whose names match any of the target patterns.
--- Multiple stacks of the same item are consolidated into one entry.
 local function ScanBags()
     local found = {}
+    local decorByID = {}
     local totalSlots, totalItems = 0, 0
     -- Includes the reagent bag, where finishing reagents and other profession
     -- consumables file themselves automatically.
@@ -71,7 +94,14 @@ local function ScanBags()
                     itemName = C_Item.GetItemNameByID(info.itemID)
                     DevLog("  Bag %d slot %d: itemID=%d itemName was nil, C_Item fallback=%s", bag, slot, info.itemID, tostring(itemName))
                 end
-                if itemName and IsMatchingItem(itemName, info.itemID) then
+                if itemName and db.useItemsShowDecor and IsDecor(info.itemID) then
+                    local decor = decorByID[info.itemID]
+                    if decor then
+                        decor.count = decor.count + (info.stackCount or 1)
+                    else
+                        decorByID[info.itemID] = { itemID = info.itemID, itemName = itemName, icon = info.iconFileID, count = info.stackCount or 1 }
+                    end
+                elseif itemName and IsMatchingItem(itemName, info.itemID) then
                     -- Skip treatises the character can't use (wrong profession) or already used this week
                     if string.find(itemName, TREATISE_PATTERN, 1, true) and not LuckyGrabbag.Treatise:CanCharacterUse(info.itemID) then
                         DevLog("  SKIP (no matching profession): %s (itemID=%d)", itemName, info.itemID)
@@ -107,6 +137,8 @@ local function ScanBags()
         if a.combinable or b.combinable then return b.combinable ~= nil end
         return a.itemName < b.itemName
     end)
+    local decor = DecorSlot(decorByID)
+    if decor then table.insert(items, decor) end
     return items
 end
 

@@ -40,6 +40,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     showUseItems             = true,
     useItemsCityOnly         = false,
     useItemsShowCombinable   = false,
+    useItemsShowDecor        = true,
     showDelveMap             = true,
     delveMapMinLevel         = 8,
     showDundunFinder         = true,
