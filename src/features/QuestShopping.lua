@@ -493,24 +493,12 @@ end
 local function CreateButton()
     if button then return end
 
-    button = LuckyGrabbag.CreateIconButton({
-        parent  = LuckyGrabbag.Quickbuy:GetContainer(),
+    button = LuckyGrabbag.Quickbuy:GetColumn():AddButton({
+        order   = 30,
         texture = "Interface\\Icons\\INV_Scroll_11",
         tooltip = BuildTooltip,
     })
     button:SetScript("OnClick", OnClick)
-
-    LuckyGrabbag.Quickbuy:GetContainer():RegisterDraggable(button)
-end
-
-local function AnchorButton()
-    local above = LuckyGrabbag.Quickbuy:GetLowestButton()
-    button:ClearAllPoints()
-    if above then
-        button:SetPoint("TOPLEFT", above, "BOTTOMLEFT", 0, -5)
-    else
-        button:SetPoint("TOPLEFT", LuckyGrabbag.Quickbuy:GetContainer(), "TOPLEFT", 0, 0)
-    end
 end
 
 -- ─── Public API ──────────────────────────────────────────────────────────────
@@ -535,7 +523,6 @@ function LuckyGrabbag.QuestShopping:ApplySetting()
 
     if #wanted > 0 and not standDown then
         CreateButton()
-        AnchorButton()
         button:Show()
     elseif button then
         button:Hide()
