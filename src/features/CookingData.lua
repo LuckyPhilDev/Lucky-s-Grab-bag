@@ -5,4 +5,5 @@ LuckyGrabbag.CookingData = {
     chefsHatItemID     = 134020,
     chefsHatSpellID    = 67556,
     campfireSpellID    = 818,
+    pierreSpeciesID    = 1204,
 }

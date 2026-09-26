@@ -6,6 +6,7 @@ local COOKING_SKILL_LINE_ID = LuckyGrabbag.CookingData.cookingSkillLineID  -- de
 local CHEFS_HAT_ITEM_ID     = LuckyGrabbag.CookingData.chefsHatItemID
 local CHEFS_HAT_SPELL_ID    = LuckyGrabbag.CookingData.chefsHatSpellID
 local CAMPFIRE_SPELL_ID     = LuckyGrabbag.CookingData.campfireSpellID
+local PIERRE_SPECIES_ID     = LuckyGrabbag.CookingData.pierreSpeciesID
 
 local db
 local parentFrame
@@ -13,6 +14,8 @@ local campfireButton
 local campfireCooldown
 local chefsHatButton
 local chefsHatGlow
+local pierreButton
+local pierreGlow
 
 local DevLog = LuckyGrabbag.Logger("Cooking")
 
@@ -53,6 +56,20 @@ local function UpdateChefsHatButton()
     end
 end
 
+-- Looked up by the name the client gives the species, so it works in any language.
+local function PierreGUID()
+    local name = C_PetJournal.GetPetInfoBySpeciesID(PIERRE_SPECIES_ID)
+    return name and select(2, C_PetJournal.FindPetIDByName(name))
+end
+
+local function UpdatePierreButton()
+    if not pierreButton then return end
+    local guid = PierreGUID()
+    pierreButton.petGUID = guid
+    pierreButton:SetShown(guid ~= nil)
+    pierreGlow:SetShown(guid ~= nil and C_PetJournal.GetSummonedPetGUID() == guid)
+end
+
 local function ShowButtons()
     if parentFrame then
         parentFrame:RestorePosition()
@@ -60,6 +77,7 @@ local function ShowButtons()
         chefsHatButton:Show()
         UpdateChefsHatButton()
         UpdateCampfireCooldown()
+        UpdatePierreButton()
         DevLog("Buttons shown")
     end
 end
@@ -68,8 +86,18 @@ local function HideButtons()
     if campfireButton then
         campfireButton:Hide()
         chefsHatButton:Hide()
+        pierreButton:Hide()
         DevLog("Buttons hidden")
     end
+end
+
+local function CreateActiveGlow(button)
+    local glow = button:CreateTexture(nil, "OVERLAY")
+    glow:SetTexture("Interface\\Buttons\\CheckButtonHilight")
+    glow:SetBlendMode("ADD")
+    glow:SetAllPoints(button)
+    glow:Hide()
+    return glow
 end
 
 local function CreateButtons()
@@ -127,12 +155,26 @@ local function CreateButtons()
     end)
     parentFrame:RegisterDraggable(chefsHatButton)
 
-    -- Active-buff glow: a bright border overlay shown when the buff is up.
-    chefsHatGlow = chefsHatButton:CreateTexture(nil, "OVERLAY")
-    chefsHatGlow:SetTexture("Interface\\Buttons\\CheckButtonHilight")
-    chefsHatGlow:SetBlendMode("ADD")
-    chefsHatGlow:SetAllPoints(chefsHatButton)
-    chefsHatGlow:Hide()
+    chefsHatGlow = CreateActiveGlow(chefsHatButton)
+
+    -- Summoning a pet needs no secure button, only the click's hardware event.
+    local pierreName, pierreIcon, _, _, _, pierreDesc = C_PetJournal.GetPetInfoBySpeciesID(PIERRE_SPECIES_ID)
+    pierreButton = LuckyGrabbag.CreateIconButton({
+        name     = "LGB_PierreButton",
+        parent   = parentFrame,
+        texture  = pierreIcon,
+        tooltip  = function()
+            GameTooltip:AddLine(pierreName)
+            GameTooltip:AddLine(pierreDesc, 0.91, 0.86, 0.78, true)
+        end,
+    })
+    pierreButton:SetPoint("TOPLEFT", chefsHatButton, "BOTTOMLEFT", 0, -5)
+    pierreButton:SetScript("OnClick", function(self)
+        -- Summoning Pierre while he is out dismisses him.
+        if self.petGUID then C_PetJournal.SummonPetByGUID(self.petGUID) end
+    end)
+    parentFrame:RegisterDraggable(pierreButton)
+    pierreGlow = CreateActiveGlow(pierreButton)
 
     DevLog("Buttons created")
 end
@@ -146,6 +188,7 @@ function LuckyGrabbag.Cooking:Init(database)
     eventFrame:RegisterEvent("TRADE_SKILL_CLOSE")
     eventFrame:RegisterEvent("UNIT_AURA")
     eventFrame:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+    eventFrame:RegisterEvent("COMPANION_UPDATE")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "TRADE_SKILL_DATA_SOURCE_CHANGED" then
             local info = C_TradeSkillUI.GetBaseProfessionInfo()
@@ -168,6 +211,10 @@ function LuckyGrabbag.Cooking:Init(database)
         elseif event == "SPELL_UPDATE_COOLDOWN" then
             if campfireButton and campfireButton:IsShown() then
                 UpdateCampfireCooldown()
+            end
+        elseif event == "COMPANION_UPDATE" then
+            if campfireButton and campfireButton:IsShown() then
+                UpdatePierreButton()
             end
         end
     end)

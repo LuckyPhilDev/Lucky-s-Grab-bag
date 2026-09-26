@@ -370,7 +370,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         cookingButtons = {
             label = "Cooking Utility Buttons",
-            desc  = "Adds Campfire and Chef's Hat buttons next to the Cooking window.",
+            desc  = "Adds Campfire, Chef's Hat and Pierre buttons next to the Cooking window. Pierre shows only if you have him.",
         },
         reagentMains = {
             label = "Reagent Mains",
