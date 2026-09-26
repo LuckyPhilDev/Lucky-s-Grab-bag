@@ -242,6 +242,7 @@ Puts teleport buttons on the world map: on dungeon and raid entrances, on your c
 - Hover a button to see the teleport's tooltip, including its cooldown; click to cast and the map closes as the teleport begins.
 - Covers dungeon teleports from Wrath of the Lich King onward and the raid teleports from Shadowlands onward.
 - The active Abundance event icon carries a button for Dundun's Abundant Travel Method once you own the toy.
+- Delver's Mana-Bound Ethergate gets a button at its landing point, Delver's Headquarters in Dornogal.
 - Class teleports get a button where each spell lands: a mage's city Teleports cast the portal when you are in a group and the solo teleport when you are not, with Right-click casting the other.
 - A round button below the map's Map Pin button toggles the teleports on and off; right-click it to choose which kinds show.
 - Can be toggled in the addon settings, where dungeon and raid teleports, class teleports, and toy teleports can also be hidden individually.
@@ -289,11 +290,12 @@ Adds a Concentration bar above each profession's skill bar in the Profession Boo
 - Enabled by default; can be toggled in the addon settings under Professions.
 
 ### Cooking Utility Buttons
-Adds two buttons alongside the Cooking profession window for quick access to common cooking prep.
+Adds buttons alongside the Cooking profession window for quick access to common cooking prep.
 
 - **Campfire** — casts Basic Campfire right at your feet so you can cook anywhere, no ground placement needed.
 - **Chef's Hat** — uses the Chef's Hat toy to put it on. If the buff is already active, clicking the button cancels it instead (the button glows while active).
-- Both buttons are hidden when the Cooking window is closed.
+- **Pierre**: summons Pierre, your cooking fire pet, and dismisses him on a second click. Only shown if you have him.
+- The buttons are hidden when the Cooking window is closed.
 - Right-click drag any button to reposition the group; position is saved relative to the Cooking window.
 - Can be toggled in the addon settings.
 
@@ -305,7 +307,7 @@ Adds a coin icon button just outside the top-right corner of the Auction House w
 - Appears automatically when you open the Auction House.
 - Hidden when the Auction House is closed.
 - Enabled by default if CraftSim is installed; disabled by default if it isn't.
-- Right-click drag either button to reposition the group; position is saved relative to the Auction House window.
+- Shares one column beside the Auction House with the other Auction House buttons, including Warband Stockist's Restock button. Right-click drag any of them to move the column; its position is saved relative to the Auction House window.
 - Can be toggled on or off in the addon settings.
 
 ### TestFlight Buy Next Button
@@ -406,7 +408,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 
 **Professions**
 - *Withdraw Treatise from Warbank* — When you open the Warband Bank, automatically withdraws any Thalassian Treatises for your current professions that you haven't used this week.
-- *Show cooking utility buttons* — Displays a Campfire and Chef's Hat button alongside the Cooking profession window.
+- *Show cooking utility buttons* — Displays Campfire, Chef's Hat and Pierre buttons alongside the Cooking profession window. Pierre shows only if you have him.
 - *Spend to Next Perk* — When Shift-clicking a profession specialisation node, spends knowledge points up to the next 5-rank perk threshold.
 - *Concentration on Profession Book* — Shows a Concentration bar above each profession's skill bar in the Profession Book, with a hover tooltip for the refill time.
 - *Search Selected Expansion Only* — When searching recipes, only shows results from the expansion selected in the Filter dropdown. An All Expansions option in that dropdown searches everything at once.

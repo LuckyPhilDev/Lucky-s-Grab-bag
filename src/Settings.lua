@@ -474,7 +474,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             desc      = SS.useItemsShowDecor.desc,
             checked   = db.useItemsShowDecor,
             parent    = SS.useItems.label,
-            since     = "1.30.3",
+            since     = "1.31.0",
             onToggle  = function(checked)
                 db.useItemsShowDecor = checked
                 LuckyGrabbag.UseItems:ApplySetting()

@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.31.0] - 2026-09-26
 
 ### Improved
 
@@ -6,36 +6,3 @@
 - **Map Teleports** Delver's Mana-Bound Ethergate gets a button on the map at Delver's Headquarters in Dornogal, under Toy Teleports.
 - **Use Items Popup** Decor in your bags gets a button in the popup. It takes one slot however many pieces you carry, and moves on to the next piece each time you use one.
 - **Auction House buttons** Grab-bag's buttons beside the Auction House now share one column with Warband Stockist's Restock button, so they stack instead of overlapping. Right-drag any of them to move the column; where you had it is kept.
-
-## [1.30.2] - 2026-09-23
-
-### Improved
-
-- **Ping target button** The Combat Prep window has a button that cycles what your pings hit: everything, only the world, or only units.
-- **Auto-Deposit settings** With Warband Stockist 2.0 or later, the Auto-Deposit category is gone from settings, since Stockist runs all of it. The Bank Queue settings now sit under Inventory.
-
-### Fixed
-
-- Auto Accept profession quests now accepts the first profession quest you are offered after logging in, not just later ones.
-
-## [1.30.1] - 2026-09-22
-
-### Improved
-
-- **Smoother raids** Grab-bag does far less work when your group changes, other addons inspect players, or you loot, so it no longer adds to stutter in raids.
-
-## [1.30.0] - 2026-09-21
-
-### Added
-
-- **Mass Disenchant** Your bag gear sits in one window, ready to disenchant without digging through your bags. An option can open it automatically after you disenchant in a rested area.
-
-### Improved
-
-- **New window style** The Mass Delete, Reagent Mains, Whitelist and Decor Shopping List windows, and the Name This Code pane, now match the look of the other Lucky addons.
-- **Warband Stockist - Bank Features** With Warband Stockist 2.0 or later, Reagent Mains, Lumber, Treatise withdrawal and your Custom Item Whitelist run from its Sets page instead, carried over as sets, and these settings point you there. (Thanks for the suggestion Halliday)
-
-### Fixed
-
-- A Thalassian Treatise withdrawn for this week's profession quest is no longer deposited again by Warband Stockist. (Thanks for the suggestion Tuulani)
-- Reagents a Warband Stockist set keeps in your bags are no longer deposited by Reagent Mains or Lumber.
