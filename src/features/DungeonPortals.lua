@@ -239,15 +239,15 @@ local function UpdateEventPin(pin)
     return true
 end
 
-local CLASS_BADGE_SIZE = 24
+local LANDING_BADGE_SIZE = 24
 
 local classTeleports -- this class's LuckyGrabbag.CLASS_TELEPORTS list, nil for classes without one
-local classPins = {}
+local landingPins = {}
 
 -- Where the teleport lands on the open map, or nothing when it lands off it.
 -- Projecting through world coordinates lets one landing point serve the city
 -- map, its zone, the continent and the Azeroth map alike.
-local function ClassMapPosition(entry, mapID)
+local function LandingPosition(entry, mapID)
     local instance, world = C_Map.GetWorldPosFromMapPos(entry.map, CreateVector2D(entry.x, entry.y))
     if not instance then return end
     local pos = select(2, C_Map.GetMapPosFromWorldPos(instance, world, mapID))
@@ -259,17 +259,21 @@ end
 
 -- The holder rides the canvas so its spot follows pan and zoom; the badge on
 -- it is counter-scaled to stay the same size on screen.
-local function ClassPin(entry)
+local function LandingPin(entry)
     local holder = CreateFrame("Frame", nil, WorldMapFrame.ScrollContainer.Child)
     holder:SetSize(1, 1)
 
     local btn = CreateBadge({
         parent   = holder,
         template = "InsecureActionButtonTemplate",
-        size     = CLASS_BADGE_SIZE,
+        size     = LANDING_BADGE_SIZE,
         outline  = true,
         tooltip  = function(self)
-            GameTooltip:SetSpellByID(self.spellID)
+            if self.toyID then
+                GameTooltip:SetToyByItemID(self.toyID)
+            else
+                GameTooltip:SetSpellByID(self.spellID)
+            end
             if self.hint then
                 GameTooltip:AddLine(self.hint, 0.91, 0.86, 0.78)
             end
@@ -277,38 +281,54 @@ local function ClassPin(entry)
     })
     btn:SetPoint("CENTER", holder, "CENTER")
     btn:SetFrameStrata("HIGH")
-    btn:SetAttribute("type", "spell")
     btn:RegisterForClicks("AnyUp", "AnyDown")
+    if entry.toy then
+        btn.toyID = entry.toy
+        btn:SetAttribute("type", "toy")
+        btn:SetAttribute("toy", entry.toy)
+    else
+        btn:SetAttribute("type", "spell")
+    end
 
     local pin = { holder = holder, btn = btn }
-    classPins[entry] = pin
+    landingPins[entry] = pin
     return pin
 end
 
-local function ApplyClassScale()
+-- Badges the entry's landing point on the map, or hides it when mapID is nil
+-- or the point is off the open map.
+local function PlaceLandingPin(entry, mapID)
+    local x, y
+    if mapID then x, y = LandingPosition(entry, mapID) end
+
+    local pin = landingPins[entry]
+    if not x then
+        if pin then pin.holder:Hide() end
+        return nil
+    end
+
+    pin = pin or LandingPin(entry)
+    local canvas = WorldMapFrame.ScrollContainer.Child
+    pin.holder:SetPoint("CENTER", canvas, "TOPLEFT", x * canvas:GetWidth(), -y * canvas:GetHeight())
+    pin.holder:Show()
+    return pin
+end
+
+local function ApplyLandingScale()
     local scale = WorldMapFrame:GetCanvasScale()
     if not scale or scale <= 0 then return end
-    for _, pin in pairs(classPins) do
+    for _, pin in pairs(landingPins) do
         pin.btn:SetScale(1 / scale)
     end
 end
 
-local function UpdateClassPins()
+local function UpdateClassPins(mapID)
     if not classTeleports then return end
-    local mapID = WorldMapFrame:GetMapID()
-    local show = db.dungeonPortals and db.dungeonPortalsClass and mapID
+    local show = db.dungeonPortals and db.dungeonPortalsClass
     for _, entry in ipairs(classTeleports) do
-        local spellID, x, y
-        if show then
-            spellID = KnownSpell(entry.teleport)
-            if spellID then x, y = ClassMapPosition(entry, mapID) end
-        end
-
-        local pin = classPins[entry]
-        if x then
-            pin = pin or ClassPin(entry)
-            local canvas = WorldMapFrame.ScrollContainer.Child
-            pin.holder:SetPoint("CENTER", canvas, "TOPLEFT", x * canvas:GetWidth(), -y * canvas:GetHeight())
+        local spellID = show and KnownSpell(entry.teleport)
+        local pin = PlaceLandingPin(entry, spellID and mapID)
+        if pin then
             -- In a group the portal is what the click is nearly always for, so
             -- it takes the left click there and the solo teleport swaps to the right.
             local portalID = entry.portal and KnownSpell(entry.portal)
@@ -320,12 +340,22 @@ local function UpdateClassPins()
             pin.btn.hint = alternate and (grouped and S.teleportHint or S.portalHint)
             pin.btn:SetAttribute("spell1", pin.btn.spellID)
             pin.btn:SetAttribute("spell2", alternate)
-            pin.holder:Show()
-        elseif pin then
-            pin.holder:Hide()
         end
     end
-    ApplyClassScale()
+end
+
+local function UpdateToyPins(mapID)
+    local show = db.dungeonPortals and db.dungeonPortalsToys
+    for _, entry in ipairs(LuckyGrabbag.TOY_TELEPORTS) do
+        PlaceLandingPin(entry, show and PlayerHasToy(entry.toy) and mapID)
+    end
+end
+
+local function UpdateLandingPins()
+    local mapID = WorldMapFrame:GetMapID()
+    UpdateClassPins(mapID)
+    UpdateToyPins(mapID)
+    ApplyLandingScale()
 end
 
 local mapToggle
@@ -368,7 +398,7 @@ local function Refresh()
         end
     end)
 
-    UpdateClassPins()
+    UpdateLandingPins()
 end
 
 -- The same badge, sat in the map's top-right corner as the on/off switch.
@@ -483,9 +513,9 @@ function LuckyGrabbag.DungeonPortals:Init(database)
         end
     end)
 
-    if classTeleports then
-        hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ApplyClassScale)
+    hooksecurefunc(WorldMapFrame, "OnCanvasScaleChanged", ApplyLandingScale)
 
+    if classTeleports then
         -- Joining or leaving a group swaps which spell each badge casts, and
         -- the map is often already open when that happens.
         local roster = CreateFrame("Frame")
