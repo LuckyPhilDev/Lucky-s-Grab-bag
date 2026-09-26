@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Improved
+
+- **Pierre** The buttons beside the Cooking window include one that summons Pierre, your cooking fire pet, if you have him. Click it again to dismiss him.
+
 ## [1.30.2] - 2026-09-23
 
 ### Improved
