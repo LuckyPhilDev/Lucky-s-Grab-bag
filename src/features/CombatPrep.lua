@@ -89,8 +89,9 @@ local function UpdateButtonTexts()
     end
 end
 
+-- The Assign Tanks button is secure, which locks the whole window in combat.
 local function UpdateVisibility()
-    if not prepFrame then return end
+    if not prepFrame or InCombatLockdown() then return end
     UpdateButtonTexts()
     if not db.showCombatPrep then
         prepFrame:Hide()
@@ -112,11 +113,11 @@ local function UpdateVisibility()
 end
 
 local function UpdateLayout()
-    if not prepFrame then return end
+    if not prepFrame or InCombatLockdown() then return end
     local showRC = db.combatPrepReadyCheck
-    local showPing = db.combatPrepPingTarget
     prepFrame.readyCheckBtn:SetShown(showRC)
-    prepFrame.pingTargetBtn:SetShown(showPing)
+    prepFrame.pingTargetBtn:SetShown(db.combatPrepPingTarget)
+    prepFrame.assignTanksBtn:SetShown(db.combatPrepAssignTanks and IsInRaid())
     UpdateButtonTexts()
 
     prepFrame.pullTimerBtn:ClearAllPoints()
@@ -131,10 +132,17 @@ local function UpdateLayout()
     prepFrame.breakBtn:SetPoint("TOPLEFT", prepFrame.pullTimerBtn, "BOTTOMLEFT", 0, -4)
     prepFrame.cancelBreakBtn:ClearAllPoints()
     prepFrame.cancelBreakBtn:SetPoint("LEFT", prepFrame.breakBtn, "RIGHT", 4, 0)
-    prepFrame.pingTargetBtn:ClearAllPoints()
-    prepFrame.pingTargetBtn:SetPoint("TOPLEFT", prepFrame.breakBtn, "BOTTOMLEFT", 0, -4)
 
-    local btnCount = 2 + (showRC and 1 or 0) + (showPing and 1 or 0)
+    local btnCount = 2 + (showRC and 1 or 0)
+    local above = prepFrame.breakBtn
+    for _, btn in ipairs({ prepFrame.pingTargetBtn, prepFrame.assignTanksBtn }) do
+        btn:ClearAllPoints()
+        if btn:IsShown() then
+            btn:SetPoint("TOPLEFT", above, "BOTTOMLEFT", 0, -4)
+            above = btn
+            btnCount = btnCount + 1
+        end
+    end
     local height = 10 + (btnCount * 28) + ((btnCount - 1) * 4) + 10
     prepFrame:SetSize(120, height)
 end
@@ -144,7 +152,8 @@ local C = LuckyUI.C  -- shared style guide colors
 -- Creates a styled button matching the style guide.
 -- variant: "primary" (gold gradient) or "secondary" (dark input).
 local function CreateStyledButton(parent, opts)
-    local btn = CreateFrame("Button", nil, parent, "BackdropTemplate")
+    local templates = opts.template and ("BackdropTemplate," .. opts.template) or "BackdropTemplate"
+    local btn = CreateFrame("Button", nil, parent, templates)
     btn:SetSize(opts.width or 100, opts.height or 28)
 
     btn:SetBackdrop({
@@ -338,6 +347,22 @@ local function CreatePrepFrame()
     end)
     f.pingTargetBtn = pingBtn
 
+    local tanksBtn = CreateStyledButton(f, {
+        width = 100, height = 28, variant = "secondary", template = "SecureActionButtonTemplate",
+    })
+    tanksBtn:SetText(LuckyGrabbag.Strings.combatPrep.assignTanks)
+    tanksBtn:SetAttribute("type", "macro")
+    tanksBtn:SetAttribute("useOnKeyDown", false)
+    tanksBtn:RegisterForClicks("LeftButtonUp")
+    tanksBtn:SetScript("PreClick", function(self)
+        local names = LuckyGrabbag.AssignTanks.UnassignedTanks()
+        self:SetAttribute("macrotext", LuckyGrabbag.AssignTanks.Macro(names))
+        local S = LuckyGrabbag.Strings.assignTanks
+        local msg = #names > 0 and string.format(S.assigned, table.concat(names, ", ")) or S.none
+        print(LuckyGrabbag.PREFIX .. " " .. msg)
+    end)
+    f.assignTanksBtn = tanksBtn
+
     prepFrame = f
     DevLog("Frame created")
 end
@@ -373,6 +398,7 @@ function LuckyGrabbag.CombatPrep:Init(database)
 
     SLASH_LGBCOMBATPREP1 = "/combatprep"
     SlashCmdList["LGBCOMBATPREP"] = function()
+        if InCombatLockdown() then return end
         if not prepFrame then
             CreatePrepFrame()
             UpdateLayout()
@@ -401,6 +427,7 @@ function LuckyGrabbag.CombatPrep:Init(database)
         elseif event == "PLAYER_REGEN_ENABLED" then
             inCombat = false
         end
+        UpdateLayout()
         UpdateVisibility()
     end)
 

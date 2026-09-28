@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Added
+
+- **Assign Tanks** The Combat Prep window has an Assign Tanks button in raids. One click sets everyone in a tank role as a main tank, and a chat message names who was set. Found under Combat in settings.
+
 ## [1.31.0] - 2026-09-26
 
 ### Improved

@@ -101,6 +101,12 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         cancelLabel  = "X",
         pingTargetFmt = "Ping: %s",
         pingTargets  = { [0] = "All", [1] = "World", [2] = "Units" },
+        assignTanks  = "Assign Tanks",
+    },
+
+    assignTanks = {
+        assigned = "Main tank set for %s.",
+        none     = "No tanks left to set as main tank.",
     },
 
     kickMacro = {
@@ -447,6 +453,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         combatPrepPingTarget = {
             label = "Ping Target Button",
             desc  = "Show a button on the combat prep window that cycles what your pings hit: everything, only the world, or only units.",
+        },
+        combatPrepAssignTanks = {
+            label = "Assign Tanks Button",
+            desc  = "In a raid, show a button on the combat prep window that sets everyone in a tank role as a main tank. Blizzard only lets this happen from a click, so it cannot run on its own.",
         },
         pullTimerMythic = {
             label  = "Pull Timer (Mythic+)",
