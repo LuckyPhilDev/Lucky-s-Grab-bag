@@ -83,11 +83,29 @@ local STYLES = {
                 hoverEdge = R.warn, hoverTint = { 1, 0.55, 0.55 } },
 }
 
-local countdownEnds = {}
-local blizzardCountdown
+local pullEndsAt
 
-local function IsCounting(kind)
-    return (countdownEnds[kind] or 0) > GetTime()
+local function IsPullCounting()
+    return (pullEndsAt or 0) > GetTime()
+end
+
+-- Boss mods save a running break so they can resume it after a reload, and
+-- they track breaks other people start too. Epoch seconds, from time().
+local function BreakEndsAt()
+    if BigWigsLoader and SlashCmdList["break"] then
+        local saved = BigWigs3DB and BigWigs3DB.breakTime
+        return saved and saved[1] + saved[2]
+    end
+    if DBM and DBM.CreateBreakTimer then
+        local saved = DBM.Options and DBM.Options.RestoreSettingBreakTimer
+        local seconds, startedAt = (saved or ""):match("^([%d%.]+)/(%d+)")
+        return seconds and tonumber(startedAt) + tonumber(seconds)
+    end
+    return db.combatPrepBreakEndsAt
+end
+
+local function IsBreakCounting()
+    return (BreakEndsAt() or 0) > time()
 end
 
 local function IconPath(name)
@@ -128,32 +146,32 @@ local function ShowTooltip(tile)
     GameTooltip:Show()
 end
 
-local function RefreshTimerTile(tile, kind, caption)
-    local counting = IsCounting(kind)
+local function RefreshTimerTile(tile, counting, caption)
+    local changed = tile.counting ~= counting
+    tile.counting = counting
     tile.style = counting and STYLES.cancel or tile.baseStyle
     tile:SetIcon(counting and LuckyIcon("x") or tile.baseIcon)
     tile.caption:SetText(counting and LuckyGrabbag.Strings.combatPrep.cancelCaption or caption)
     PaintTile(tile)
+    return changed
 end
 
 local function RefreshTiles()
     if not prepFrame then return end
     local S = LuckyGrabbag.Strings.combatPrep
-    RefreshTimerTile(prepFrame.pullTimerBtn, "pull", string.format(S.pullTimerValue, GetActivePullTimer()))
-    RefreshTimerTile(prepFrame.breakBtn, "break", string.format(S.breakTimerValue, db.combatPrepBreakTimer or 5))
+    local changed = RefreshTimerTile(prepFrame.pullTimerBtn, IsPullCounting(),
+        string.format(S.pullTimerValue, GetActivePullTimer()))
+    changed = RefreshTimerTile(prepFrame.breakBtn, IsBreakCounting(),
+        string.format(S.breakTimerValue, db.combatPrepBreakTimer or 5)) or changed
 
     local pingTarget = GetPingTarget()
+    changed = changed or prepFrame.pingTargetBtn.pingTarget ~= pingTarget
+    prepFrame.pingTargetBtn.pingTarget = pingTarget
     prepFrame.pingTargetBtn.caption:SetText(S.pingTargets[pingTarget] or "")
     prepFrame.pingTargetBtn:SetIcon(IconPath(PING_TARGET_ICONS[pingTarget] or PING_TARGET_ICONS[0]))
 
     local owner = GameTooltip:GetOwner()
-    if owner and owner.hovered and owner:GetParent() == prepFrame then ShowTooltip(owner) end
-end
-
-local function SetCountdown(kind, seconds)
-    countdownEnds[kind] = seconds > 0 and GetTime() + seconds or nil
-    RefreshTiles()
-    if seconds > 0 then C_Timer.After(seconds + 0.1, RefreshTiles) end
+    if changed and owner and owner.hovered and owner:GetParent() == prepFrame then ShowTooltip(owner) end
 end
 
 -- The Assign Tanks button is secure, which locks the whole window in combat.
@@ -289,6 +307,9 @@ local function CreatePrepFrame()
     f:SetClampedToScreen(true)
     f:SetFrameStrata("LOW")
     f:Hide()
+    -- Boss mods change their break state without an event, and countdowns expire on their own.
+    f:SetScript("OnShow", function(self) self.ticker = C_Timer.NewTicker(1, RefreshTiles) end)
+    f:SetScript("OnHide", function(self) if self.ticker then self.ticker:Cancel() end end)
 
     f.divider = f:CreateTexture(nil, "ARTWORK")
     f.divider:SetSize(1, TILE - 8)
@@ -311,7 +332,7 @@ local function CreatePrepFrame()
         icon    = "timer",
         primary = true,
         tooltip = function(tooltip)
-            if IsCounting("pull") then
+            if IsPullCounting() then
                 AddTitle(tooltip, S.cancelPull)
                 AddBody(tooltip, S.cancelPullDesc)
             else
@@ -321,7 +342,7 @@ local function CreatePrepFrame()
         end,
     })
     f.pullTimerBtn:SetScript("OnClick", function()
-        local seconds = IsCounting("pull") and 0 or GetActivePullTimer()
+        local seconds = IsPullCounting() and 0 or GetActivePullTimer()
         C_PartyInfo.DoCountdown(seconds)
         DevLog("Pull timer set to " .. seconds .. "s")
     end)
@@ -329,7 +350,7 @@ local function CreatePrepFrame()
     f.breakBtn = CreateTile(f, {
         icon    = "coffee",
         tooltip = function(tooltip)
-            if IsCounting("break") then
+            if IsBreakCounting() then
                 AddTitle(tooltip, S.cancelBreak)
                 AddBody(tooltip, S.cancelBreakDesc)
             else
@@ -339,9 +360,8 @@ local function CreatePrepFrame()
         end,
     })
     f.breakBtn:SetScript("OnClick", function()
-        local mins = IsCounting("break") and 0 or (db.combatPrepBreakTimer or 5)
+        local mins = IsBreakCounting() and 0 or (db.combatPrepBreakTimer or 5)
         local source = RouteBreakTimer(mins)
-        SetCountdown("break", mins * 60)
         DevLog("Break timer set to " .. mins .. "m via " .. source)
     end)
 
@@ -388,17 +408,19 @@ local function CreatePrepFrame()
     DevLog("Frame created")
 end
 
+-- Blizzard runs one countdown at a time, so a new one replaces whichever was running.
 local function OnCountdownStarted(timeRemaining, totalTime)
     if IsSecret(timeRemaining) or IsSecret(totalTime) then return end
-    if blizzardCountdown then countdownEnds[blizzardCountdown] = nil end
-    blizzardCountdown = totalTime > PULL_MAX_SECONDS and "break" or "pull"
-    SetCountdown(blizzardCountdown, timeRemaining)
+    local isBreak = totalTime > PULL_MAX_SECONDS
+    pullEndsAt = not isBreak and GetTime() + timeRemaining or nil
+    db.combatPrepBreakEndsAt = isBreak and time() + timeRemaining or nil
+    RefreshTiles()
 end
 
 local function OnCountdownCancelled()
-    if not blizzardCountdown then return end
-    SetCountdown(blizzardCountdown, 0)
-    blizzardCountdown = nil
+    pullEndsAt = nil
+    db.combatPrepBreakEndsAt = nil
+    RefreshTiles()
 end
 
 function LuckyGrabbag.CombatPrep:ApplySetting()
