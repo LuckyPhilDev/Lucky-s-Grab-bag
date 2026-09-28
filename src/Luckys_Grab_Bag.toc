@@ -34,6 +34,7 @@ features/DundunFinder.lua
 features/DungeonPortalsData.lua
 features/DungeonPortals.lua
 features/KickMacro.lua
+features/AssignTanks.lua
 features/CombatPrep.lua
 features/RotationGlow.lua
 features/PowerInfusionData.lua

@@ -95,12 +95,32 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
     },
 
     combatPrep = {
-        readyCheck   = "Ready Check",
-        pullTimerFmt = "Pull %ds",
-        breakTimerFmt = "Break %dm",
-        cancelLabel  = "X",
-        pingTargetFmt = "Ping: %s",
-        pingTargets  = { [0] = "All", [1] = "World", [2] = "Units" },
+        readyCheck         = "Ready Check",
+        readyCheckDesc     = "Asks everyone in the group whether they are ready.",
+        readyCheckCaption  = "Ready",
+        pullTimer          = "Pull Timer",
+        pullTimerDesc      = "Starts a %d second countdown to the pull.",
+        pullTimerValue     = "%ds",
+        breakTimer         = "Break Timer",
+        breakTimerDesc     = "Starts a %d minute break for the group.",
+        breakTimerValue    = "%dm",
+        cancelCaption      = "Stop",
+        cancelPull         = "Cancel Pull Timer",
+        cancelPullDesc     = "Stops the pull countdown for everyone.",
+        cancelBreak        = "Cancel Break",
+        cancelBreakDesc    = "Ends the break for everyone.",
+        pingTargetFmt      = "Ping Target: %s",
+        pingTargetDesc     = "Click to switch what your pings hit: everything, only the world, or only units.",
+        pingTargets        = { [0] = "All", [1] = "World", [2] = "Units" },
+        assignTanks        = "Assign Tanks",
+        assignTanksDesc    = "Sets everyone in a tank role as a main tank.",
+        assignTanksCaption = "Tanks",
+        moveHint           = "Right-drag to move.",
+    },
+
+    assignTanks = {
+        assigned = "Main tank set for %s.",
+        none     = "No tanks left to set as main tank.",
     },
 
     kickMacro = {
@@ -447,6 +467,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         combatPrepPingTarget = {
             label = "Ping Target Button",
             desc  = "Show a button on the combat prep window that cycles what your pings hit: everything, only the world, or only units.",
+        },
+        combatPrepAssignTanks = {
+            label = "Assign Tanks Button",
+            desc  = "In a raid, show a button on the combat prep window that sets everyone in a tank role as a main tank. Blizzard only lets this happen from a click, so it cannot run on its own.",
         },
         pullTimerMythic = {
             label  = "Pull Timer (Mythic+)",

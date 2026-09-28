@@ -51,6 +51,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     showCombatPrep           = false,
     combatPrepReadyCheck     = false,
     combatPrepPingTarget     = true,
+    combatPrepAssignTanks    = true,
     combatPrepTimerMythic    = 10,
     combatPrepTimerRaid      = 12,
     combatPrepBreakTimer     = 5,
