@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Improved
+
+- **Combat Prep Window** Hovering the bar shows a lock tab above its corner. Click it to lock the bar in place so a stray right-drag can't move it.
+
 ## [1.32.0] - 2026-09-28
 
 ### Added

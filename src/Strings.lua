@@ -116,6 +116,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         assignTanksDesc    = "Sets everyone in a tank role as a main tank.",
         assignTanksCaption = "Tanks",
         moveHint           = "Right-drag to move.",
+        lock               = "Lock Position",
+        lockDesc           = "Stops right-drag from moving the bar.",
+        unlock             = "Unlock Position",
+        unlockDesc         = "Lets you right-drag the bar to move it again.",
     },
 
     assignTanks = {

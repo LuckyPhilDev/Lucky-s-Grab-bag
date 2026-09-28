@@ -68,6 +68,7 @@ local IsSecret = issecretvalue or function() return false end
 local Rich = LuckySettings.Rich
 local R = Rich.Theme
 local TILE, ICON, GAP, PAD = 36, 16, 4, 5
+local LOCK_TAB, LOCK_ICON = 18, 12
 
 local function Faded(color, alpha)
     return { color[1], color[2], color[3], alpha }
@@ -119,6 +120,15 @@ local function SavePosition()
     DevLog("Saved position: " .. point .. " " .. relPoint .. " " .. math.floor(x) .. "," .. math.floor(y))
 end
 
+local function StartMove()
+    if not db.combatPrepLocked then prepFrame:StartMoving() end
+end
+
+local function StopMove()
+    prepFrame:StopMovingOrSizing()
+    SavePosition()
+end
+
 local function RestorePosition(f)
     local pos = db.combatPrepPos
     if pos then
@@ -142,8 +152,21 @@ end
 local function ShowTooltip(tile)
     GameTooltip:SetOwner(tile, "ANCHOR_BOTTOM")
     tile.tooltip(GameTooltip)
-    GameTooltip:AddLine(LuckyGrabbag.Strings.combatPrep.moveHint, R.textDim[1], R.textDim[2], R.textDim[3])
+    if not db.combatPrepLocked then
+        GameTooltip:AddLine(LuckyGrabbag.Strings.combatPrep.moveHint, R.textDim[1], R.textDim[2], R.textDim[3])
+    end
     GameTooltip:Show()
+end
+
+local function UpdateLockTab()
+    local tab = prepFrame.lockTab
+    tab:SetShown(prepFrame:IsMouseOver() or tab:IsMouseOver())
+end
+
+local function PaintLockTab(tab)
+    local tint = tab.hovered and ICON_HOVER or (db.combatPrepLocked and R.accentLight or R.textDim)
+    tab.icon:SetTexture(IconPath(db.combatPrepLocked and "lock" or "lock-open"))
+    tab.icon:SetVertexColor(tint[1], tint[2], tint[3])
 end
 
 local function RefreshTimerTile(tile, counting, caption)
@@ -260,21 +283,20 @@ local function CreateTile(parent, opts)
         self.hovered = true
         PaintTile(self)
         ShowTooltip(self)
+        UpdateLockTab()
     end)
     tile:SetScript("OnLeave", function(self)
         self.hovered = false
         PaintTile(self)
         GameTooltip_Hide()
+        UpdateLockTab()
     end)
     tile:SetScript("OnMouseDown", function(self) self.icon:SetPoint("TOP", 0, -6) end)
     tile:SetScript("OnMouseUp", function(self) self.icon:SetPoint("TOP", 0, -5) end)
 
     tile:RegisterForDrag("RightButton")
-    tile:SetScript("OnDragStart", function() parent:StartMoving() end)
-    tile:SetScript("OnDragStop", function()
-        parent:StopMovingOrSizing()
-        SavePosition()
-    end)
+    tile:SetScript("OnDragStart", StartMove)
+    tile:SetScript("OnDragStop", StopMove)
     return tile
 end
 
@@ -299,17 +321,53 @@ local function CreatePrepFrame()
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("RightButton")
-    f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", function(self)
-        self:StopMovingOrSizing()
-        SavePosition()
-    end)
+    f:SetScript("OnDragStart", StartMove)
+    f:SetScript("OnDragStop", StopMove)
+    f:SetScript("OnEnter", UpdateLockTab)
+    f:SetScript("OnLeave", UpdateLockTab)
     f:SetClampedToScreen(true)
+    f:SetClampRectInsets(0, 0, LOCK_TAB, 0)
     f:SetFrameStrata("LOW")
     f:Hide()
     -- Boss mods change their break state without an event, and countdowns expire on their own.
     f:SetScript("OnShow", function(self) self.ticker = C_Timer.NewTicker(1, RefreshTiles) end)
-    f:SetScript("OnHide", function(self) if self.ticker then self.ticker:Cancel() end end)
+    f:SetScript("OnHide", function(self)
+        if self.ticker then self.ticker:Cancel() end
+        self.lockTab:Hide()
+    end)
+
+    local tab = CreateFrame("Button", nil, f)
+    tab:SetSize(LOCK_TAB, LOCK_TAB)
+    tab:SetPoint("BOTTOMRIGHT", f, "TOPRIGHT")
+    tab:Hide()
+    Rich.FillBg(tab, Faded(R.bg, 0.94))
+    for _, side in ipairs({ "TOP", "LEFT", "RIGHT" }) do
+        Rich.EdgeRule(tab, side, FRAME_EDGE)
+    end
+    tab.icon = tab:CreateTexture(nil, "ARTWORK")
+    tab.icon:SetSize(LOCK_ICON, LOCK_ICON)
+    tab.icon:SetPoint("CENTER")
+    PaintLockTab(tab)
+    tab:SetScript("OnEnter", function(self)
+        self.hovered = true
+        PaintLockTab(self)
+        GameTooltip:SetOwner(self, "ANCHOR_TOP")
+        AddTitle(GameTooltip, db.combatPrepLocked and S.unlock or S.lock)
+        AddBody(GameTooltip, db.combatPrepLocked and S.unlockDesc or S.lockDesc)
+        GameTooltip:Show()
+    end)
+    tab:SetScript("OnLeave", function(self)
+        self.hovered = false
+        PaintLockTab(self)
+        GameTooltip_Hide()
+        UpdateLockTab()
+    end)
+    tab:SetScript("OnClick", function(self)
+        db.combatPrepLocked = not db.combatPrepLocked
+        DevLog("Position " .. (db.combatPrepLocked and "locked" or "unlocked"))
+        self:GetScript("OnEnter")(self)
+    end)
+    f.lockTab = tab
 
     f.divider = f:CreateTexture(nil, "ARTWORK")
     f.divider:SetSize(1, TILE - 8)

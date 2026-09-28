@@ -55,6 +55,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     combatPrepTimerMythic    = 10,
     combatPrepTimerRaid      = 12,
     combatPrepBreakTimer     = 5,
+    combatPrepLocked         = false,
     showRotationGlow         = false,
     showPIPicker             = true,
     piFocusFirst             = false,
