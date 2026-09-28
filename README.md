@@ -157,11 +157,12 @@ Animates the suggested next-cast spell on Blizzard's Cooldown Manager, using the
 - Off by default; enable it in the addon settings.
 
 ### Combat Prep Window
-A small floating window that appears automatically when you're out of combat and in a group in a dungeon, or leading or assisting a raid, giving quick access to pull timers, ready checks, and break countdowns.
+A compact bar of icons that appears automatically when you're out of combat and in a group in a dungeon, or leading or assisting a raid, giving quick access to pull timers, ready checks, and break countdowns. Hover an icon to see what it does.
 
-- **Pull Timer** — starts a countdown for the configured duration. Separate durations for Mythic+ (default 10s) and raids (default 12s); the button shows whichever applies to the content you're in. A cancel button beside it lets you stop the countdown early.
-- **Ready Check** — initiates a ready check for the group. Can be hidden in settings.
-- **Break Timer** — starts a long countdown for bio breaks (1–15 minutes, default 5m).
+- **Pull Timer**: starts a countdown for the configured duration. Separate durations for Mythic+ (default 10s) and raids (default 12s); the button shows whichever applies to the content you're in. While the countdown runs, the button turns into a red cross that cancels it, whoever started it.
+- **Ready Check**: initiates a ready check for the group. Can be hidden in settings.
+- **Break Timer**: starts a long countdown for bio breaks (1 to 15 minutes, default 5m). While the break runs, the button turns into a red cross that ends it for everyone.
+- **Assign Tanks**: in a raid, sets everyone in a tank role as a main tank in one click. Can be hidden in settings.
 - **Ping Target**: switches what your pings hit between everything, only the world, and only units. Can be hidden in settings.
 - Appears automatically when you enter a dungeon or raid, or a scenario such as a delve with other players, and hides during combat.
 - Right-click drag to reposition; position is saved across reloads.
@@ -446,9 +447,10 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Rotation Glow* — Animates the suggested next-cast spell on the Essential Cooldown Viewer, using Blizzard's assisted combat data.
 
 **Combat Prep**
-- *Combat Prep Window* — Shows a floating window with pull timer, ready check, break timer and ping target buttons while you are in a group in a dungeon, or leading or assisting a raid.
+- *Combat Prep Window*: Shows a bar of pull timer, ready check, break timer, assign tanks and ping target buttons while you are in a group in a dungeon, or leading or assisting a raid.
   - *Ready Check Button* — Show or hide the ready check button.
   - *Ping Target Button*: Show or hide the ping target button.
+  - *Assign Tanks Button*: Show or hide the assign tanks button in raids.
   - *Pull Timer (Mythic+)* — How long the pull countdown lasts in dungeons (3–30 seconds).
   - *Pull Timer (Raid)* — How long the pull countdown lasts in raids (3–30 seconds).
   - *Break Timer Duration* — How long the break countdown lasts (1–15 minutes).
