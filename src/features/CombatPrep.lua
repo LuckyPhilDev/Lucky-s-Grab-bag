@@ -60,13 +60,35 @@ end
 
 local PING_TARGET_ICONS = { [0] = "radar", [1] = "map-pin", [2] = "crosshair" }
 
+-- Without a boss mod the break falls back to a Blizzard countdown, and no pull runs this long.
+local PULL_MAX_SECONDS = 60
+
+local IsSecret = issecretvalue or function() return false end
+
 local Rich = LuckySettings.Rich
 local R = Rich.Theme
 local TILE, ICON, GAP, PAD = 36, 16, 4, 5
-local FRAME_EDGE = { R.accent[1], R.accent[2], R.accent[3], 0.35 }
-local PRIMARY_BG = { R.accent[1], R.accent[2], R.accent[3], 0.22 }
-local PRIMARY_EDGE = { R.accent[1], R.accent[2], R.accent[3], 0.6 }
+
+local function Faded(color, alpha)
+    return { color[1], color[2], color[3], alpha }
+end
+
+local FRAME_EDGE = Faded(R.accent, 0.35)
 local ICON_HOVER = { 1, 0.85, 0.45 }
+local STYLES = {
+    normal  = { bg = R.bg3, edge = R.border2, tint = R.accentLight, hoverEdge = R.accentLight, hoverTint = ICON_HOVER },
+    primary = { bg = Faded(R.accent, 0.22), edge = Faded(R.accent, 0.6), tint = R.accentLight,
+                hoverEdge = R.accentLight, hoverTint = ICON_HOVER },
+    cancel  = { bg = Faded(R.warn, 0.2), edge = Faded(R.warn, 0.6), tint = R.warn,
+                hoverEdge = R.warn, hoverTint = { 1, 0.55, 0.55 } },
+}
+
+local countdownEnds = {}
+local blizzardCountdown
+
+local function IsCounting(kind)
+    return (countdownEnds[kind] or 0) > GetTime()
+end
 
 local function IconPath(name)
     return "Interface\\AddOns\\Luckys_Grab_Bag\\media\\icons\\" .. name .. ".tga"
@@ -88,20 +110,56 @@ local function RestorePosition(f)
     end
 end
 
-local function UpdateButtonTexts()
+local function PaintTile(tile)
+    local style = tile.style
+    local edge = tile.hovered and style.hoverEdge or style.edge
+    local tint = tile.hovered and style.hoverTint or style.tint
+    tile.bg:SetColorTexture(style.bg[1], style.bg[2], style.bg[3], style.bg[4] or 1)
+    for _, rule in ipairs(tile.edges) do
+        rule:SetColorTexture(edge[1], edge[2], edge[3], edge[4] or 1)
+    end
+    tile.icon:SetVertexColor(tint[1], tint[2], tint[3])
+end
+
+local function ShowTooltip(tile)
+    GameTooltip:SetOwner(tile, "ANCHOR_BOTTOM")
+    tile.tooltip(GameTooltip)
+    GameTooltip:AddLine(LuckyGrabbag.Strings.combatPrep.moveHint, R.textDim[1], R.textDim[2], R.textDim[3])
+    GameTooltip:Show()
+end
+
+local function RefreshTimerTile(tile, kind, caption)
+    local counting = IsCounting(kind)
+    tile.style = counting and STYLES.cancel or tile.baseStyle
+    tile:SetIcon(counting and LuckyIcon("x") or tile.baseIcon)
+    tile.caption:SetText(counting and LuckyGrabbag.Strings.combatPrep.cancelCaption or caption)
+    PaintTile(tile)
+end
+
+local function RefreshTiles()
     if not prepFrame then return end
     local S = LuckyGrabbag.Strings.combatPrep
+    RefreshTimerTile(prepFrame.pullTimerBtn, "pull", string.format(S.pullTimerValue, GetActivePullTimer()))
+    RefreshTimerTile(prepFrame.breakBtn, "break", string.format(S.breakTimerValue, db.combatPrepBreakTimer or 5))
+
     local pingTarget = GetPingTarget()
-    prepFrame.pullTimerBtn.caption:SetText(string.format(S.pullTimerValue, GetActivePullTimer()))
-    prepFrame.breakBtn.caption:SetText(string.format(S.breakTimerValue, db.combatPrepBreakTimer or 5))
     prepFrame.pingTargetBtn.caption:SetText(S.pingTargets[pingTarget] or "")
-    prepFrame.pingTargetBtn:SetIcon(PING_TARGET_ICONS[pingTarget] or PING_TARGET_ICONS[0])
+    prepFrame.pingTargetBtn:SetIcon(IconPath(PING_TARGET_ICONS[pingTarget] or PING_TARGET_ICONS[0]))
+
+    local owner = GameTooltip:GetOwner()
+    if owner and owner.hovered and owner:GetParent() == prepFrame then ShowTooltip(owner) end
+end
+
+local function SetCountdown(kind, seconds)
+    countdownEnds[kind] = seconds > 0 and GetTime() + seconds or nil
+    RefreshTiles()
+    if seconds > 0 then C_Timer.After(seconds + 0.1, RefreshTiles) end
 end
 
 -- The Assign Tanks button is secure, which locks the whole window in combat.
 local function UpdateVisibility()
     if not prepFrame or InCombatLockdown() then return end
-    UpdateButtonTexts()
+    RefreshTiles()
     if not db.showCombatPrep then
         prepFrame:Hide()
         DevLog("Hidden (feature disabled)")
@@ -126,7 +184,7 @@ local function UpdateLayout()
     prepFrame.readyCheckBtn:SetShown(db.combatPrepReadyCheck)
     prepFrame.pingTargetBtn:SetShown(db.combatPrepPingTarget)
     prepFrame.assignTanksBtn:SetShown(db.combatPrepAssignTanks and IsInRaid())
-    UpdateButtonTexts()
+    RefreshTiles()
 
     local divider = prepFrame.divider
     divider:Hide()
@@ -151,38 +209,26 @@ local function UpdateLayout()
     prepFrame:SetSize(x - GAP + PAD, TILE + PAD * 2)
 end
 
-local function SetEdges(tile, color)
-    for _, edge in ipairs(tile.edges) do
-        edge:SetColorTexture(color[1], color[2], color[3], color[4] or 1)
-    end
-end
-
-local function ShowTooltip(tile)
-    GameTooltip:SetOwner(tile, "ANCHOR_BOTTOM")
-    tile.tooltip(GameTooltip)
-    GameTooltip:AddLine(LuckyGrabbag.Strings.combatPrep.moveHint, R.textDim[1], R.textDim[2], R.textDim[3])
-    GameTooltip:Show()
-end
-
 -- opts: icon, caption, tooltip(GameTooltip), primary, template.
 local function CreateTile(parent, opts)
     local tile = CreateFrame("Button", nil, parent, opts.template)
     tile:SetSize(TILE, TILE)
     tile.tooltip = opts.tooltip
-    local restEdge = opts.primary and PRIMARY_EDGE or R.border2
+    tile.baseStyle = opts.primary and STYLES.primary or STYLES.normal
+    tile.baseIcon = IconPath(opts.icon)
+    tile.style = tile.baseStyle
 
-    Rich.FillBg(tile, opts.primary and PRIMARY_BG or R.bg3)
+    tile.bg = Rich.FillBg(tile, tile.style.bg)
     tile.edges = {}
     for _, side in ipairs({ "TOP", "BOTTOM", "LEFT", "RIGHT" }) do
-        tile.edges[#tile.edges + 1] = Rich.EdgeRule(tile, side, restEdge)
+        tile.edges[#tile.edges + 1] = Rich.EdgeRule(tile, side, tile.style.edge)
     end
 
-    local icon = tile:CreateTexture(nil, "ARTWORK")
-    icon:SetSize(ICON, ICON)
-    icon:SetPoint("TOP", 0, -5)
-    icon:SetVertexColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
-    function tile:SetIcon(name) icon:SetTexture(IconPath(name)) end
-    tile:SetIcon(opts.icon)
+    tile.icon = tile:CreateTexture(nil, "ARTWORK")
+    tile.icon:SetSize(ICON, ICON)
+    tile.icon:SetPoint("TOP", 0, -5)
+    function tile:SetIcon(path) self.icon:SetTexture(path) end
+    tile:SetIcon(tile.baseIcon)
 
     tile.caption = tile:CreateFontString(nil, "OVERLAY")
     tile.caption:SetFont(Rich.Font, 9, "")
@@ -190,19 +236,20 @@ local function CreateTile(parent, opts)
     tile.caption:SetPoint("BOTTOM", 0, 4)
     tile.caption:SetTextColor(R.text[1], R.text[2], R.text[3])
     tile.caption:SetText(opts.caption)
+    PaintTile(tile)
 
     tile:SetScript("OnEnter", function(self)
-        SetEdges(self, R.accentLight)
-        icon:SetVertexColor(ICON_HOVER[1], ICON_HOVER[2], ICON_HOVER[3])
+        self.hovered = true
+        PaintTile(self)
         ShowTooltip(self)
     end)
     tile:SetScript("OnLeave", function(self)
-        SetEdges(self, restEdge)
-        icon:SetVertexColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
+        self.hovered = false
+        PaintTile(self)
         GameTooltip_Hide()
     end)
-    tile:SetScript("OnMouseDown", function() icon:SetPoint("TOP", 0, -6) end)
-    tile:SetScript("OnMouseUp", function() icon:SetPoint("TOP", 0, -5) end)
+    tile:SetScript("OnMouseDown", function(self) self.icon:SetPoint("TOP", 0, -6) end)
+    tile:SetScript("OnMouseUp", function(self) self.icon:SetPoint("TOP", 0, -5) end)
 
     tile:RegisterForDrag("RightButton")
     tile:SetScript("OnDragStart", function() parent:StartMoving() end)
@@ -227,7 +274,7 @@ local function CreatePrepFrame()
 
     local f = CreateFrame("Frame", "LuckyGrabbagCombatPrepFrame", UIParent)
     RestorePosition(f)
-    Rich.FillBg(f, { R.bg[1], R.bg[2], R.bg[3], 0.94 })
+    Rich.FillBg(f, Faded(R.bg, 0.94))
     for _, side in ipairs({ "TOP", "BOTTOM", "LEFT", "RIGHT" }) do
         Rich.EdgeRule(f, side, FRAME_EDGE)
     end
@@ -264,13 +311,17 @@ local function CreatePrepFrame()
         icon    = "timer",
         primary = true,
         tooltip = function(tooltip)
-            AddTitle(tooltip, S.pullTimer)
-            AddBody(tooltip, string.format(S.pullTimerDesc, GetActivePullTimer()))
-            AddBody(tooltip, S.cancelHint)
+            if IsCounting("pull") then
+                AddTitle(tooltip, S.cancelPull)
+                AddBody(tooltip, S.cancelPullDesc)
+            else
+                AddTitle(tooltip, S.pullTimer)
+                AddBody(tooltip, string.format(S.pullTimerDesc, GetActivePullTimer()))
+            end
         end,
     })
     f.pullTimerBtn:SetScript("OnClick", function()
-        local seconds = IsShiftKeyDown() and 0 or GetActivePullTimer()
+        local seconds = IsCounting("pull") and 0 or GetActivePullTimer()
         C_PartyInfo.DoCountdown(seconds)
         DevLog("Pull timer set to " .. seconds .. "s")
     end)
@@ -278,14 +329,19 @@ local function CreatePrepFrame()
     f.breakBtn = CreateTile(f, {
         icon    = "coffee",
         tooltip = function(tooltip)
-            AddTitle(tooltip, S.breakTimer)
-            AddBody(tooltip, string.format(S.breakTimerDesc, db.combatPrepBreakTimer or 5))
-            AddBody(tooltip, S.cancelHint)
+            if IsCounting("break") then
+                AddTitle(tooltip, S.cancelBreak)
+                AddBody(tooltip, S.cancelBreakDesc)
+            else
+                AddTitle(tooltip, S.breakTimer)
+                AddBody(tooltip, string.format(S.breakTimerDesc, db.combatPrepBreakTimer or 5))
+            end
         end,
     })
     f.breakBtn:SetScript("OnClick", function()
-        local mins = IsShiftKeyDown() and 0 or (db.combatPrepBreakTimer or 5)
+        local mins = IsCounting("break") and 0 or (db.combatPrepBreakTimer or 5)
         local source = RouteBreakTimer(mins)
+        SetCountdown("break", mins * 60)
         DevLog("Break timer set to " .. mins .. "m via " .. source)
     end)
 
@@ -296,11 +352,10 @@ local function CreatePrepFrame()
             AddBody(tooltip, S.pingTargetDesc)
         end,
     })
-    f.pingTargetBtn:SetScript("OnClick", function(self)
+    f.pingTargetBtn:SetScript("OnClick", function()
         local nextTarget = (GetPingTarget() + 1) % PING_TARGET_COUNT
         C_CVar.SetCVar(PING_TARGET_CVAR, nextTarget)
-        UpdateButtonTexts()
-        ShowTooltip(self)
+        RefreshTiles()
         DevLog("Ping target set to " .. nextTarget)
     end)
 
@@ -331,6 +386,19 @@ local function CreatePrepFrame()
 
     prepFrame = f
     DevLog("Frame created")
+end
+
+local function OnCountdownStarted(timeRemaining, totalTime)
+    if IsSecret(timeRemaining) or IsSecret(totalTime) then return end
+    if blizzardCountdown then countdownEnds[blizzardCountdown] = nil end
+    blizzardCountdown = totalTime > PULL_MAX_SECONDS and "break" or "pull"
+    SetCountdown(blizzardCountdown, timeRemaining)
+end
+
+local function OnCountdownCancelled()
+    if not blizzardCountdown then return end
+    SetCountdown(blizzardCountdown, 0)
+    blizzardCountdown = nil
 end
 
 function LuckyGrabbag.CombatPrep:ApplySetting()
@@ -382,9 +450,18 @@ function LuckyGrabbag.CombatPrep:Init(database)
     eventFrame:RegisterEvent("CHALLENGE_MODE_START")
     eventFrame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
     eventFrame:RegisterEvent("CVAR_UPDATE")
-    eventFrame:SetScript("OnEvent", function(_, event, cvarName)
+    eventFrame:RegisterEvent("START_PLAYER_COUNTDOWN")
+    eventFrame:RegisterEvent("CANCEL_PLAYER_COUNTDOWN")
+    eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "CVAR_UPDATE" then
-            if cvarName == PING_TARGET_CVAR then UpdateButtonTexts() end
+            if ... == PING_TARGET_CVAR then RefreshTiles() end
+            return
+        elseif event == "START_PLAYER_COUNTDOWN" then
+            local _, timeRemaining, totalTime = ...
+            OnCountdownStarted(timeRemaining, totalTime)
+            return
+        elseif event == "CANCEL_PLAYER_COUNTDOWN" then
+            OnCountdownCancelled()
             return
         end
         DevLog("Event: %s", event)

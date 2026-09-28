@@ -6,7 +6,7 @@
 
 ### Improved
 
-- **Combat Prep Window** Redesigned as a compact bar of icons. Pull and Break show their length under the icon, and Ping shows what your pings hit. Shift-click Pull or Break to cancel it. Hover any icon for what it does.
+- **Combat Prep Window** Redesigned as a compact bar of icons. Pull and Break show their length under the icon, and Ping shows what your pings hit. While a pull or break is counting down, its button turns into a red cross that cancels it, including a pull started by someone else. Hover any icon for what it does.
 
 ## [1.31.0] - 2026-09-26
 
