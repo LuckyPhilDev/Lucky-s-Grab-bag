@@ -2,11 +2,11 @@
 
 ### Added
 
-- **Assign Tanks** The Combat Prep window has an Assign Tanks button in raids. One click sets everyone in a tank role as a main tank, and a chat message names who was set. Found under Combat in settings.
+- **Assign Tanks** A button on the Combat Prep window in raids sets everyone in a tank role as a main tank in one click.
 
 ### Improved
 
-- **Combat Prep Window** Redesigned as a compact bar of icons. Pull and Break show their length under the icon, and Ping shows what your pings hit. While a pull or break is counting down, its button turns into a red cross that cancels it, whoever started it. A break already running when you log in or reload is picked up too. Hover any icon for what it does.
+- **Combat Prep Window** Redesigned as a compact bar of icons. While a pull or break is counting down, its button turns into a red cross that cancels it, whoever started it.
 
 ## [1.31.0] - 2026-09-26
 
