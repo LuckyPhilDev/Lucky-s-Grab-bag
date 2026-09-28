@@ -58,6 +58,20 @@ local function GetPingTarget()
     return tonumber(C_CVar.GetCVar(PING_TARGET_CVAR)) or Enum.PingTargetOption.All
 end
 
+local PING_TARGET_ICONS = { [0] = "radar", [1] = "map-pin", [2] = "crosshair" }
+
+local Rich = LuckySettings.Rich
+local R = Rich.Theme
+local TILE, ICON, GAP, PAD = 36, 16, 4, 5
+local FRAME_EDGE = { R.accent[1], R.accent[2], R.accent[3], 0.35 }
+local PRIMARY_BG = { R.accent[1], R.accent[2], R.accent[3], 0.22 }
+local PRIMARY_EDGE = { R.accent[1], R.accent[2], R.accent[3], 0.6 }
+local ICON_HOVER = { 1, 0.85, 0.45 }
+
+local function IconPath(name)
+    return "Interface\\AddOns\\Luckys_Grab_Bag\\media\\icons\\" .. name .. ".tga"
+end
+
 local function SavePosition()
     if not prepFrame then return end
     local point, _, relPoint, x, y = prepFrame:GetPoint()
@@ -77,16 +91,11 @@ end
 local function UpdateButtonTexts()
     if not prepFrame then return end
     local S = LuckyGrabbag.Strings.combatPrep
-    if prepFrame.pullTimerBtn then
-        prepFrame.pullTimerBtn:SetText(string.format(S.pullTimerFmt, GetActivePullTimer()))
-    end
-    if prepFrame.breakBtn then
-        local mins = db.combatPrepBreakTimer or 5
-        prepFrame.breakBtn:SetText(string.format(S.breakTimerFmt, mins))
-    end
-    if prepFrame.pingTargetBtn then
-        prepFrame.pingTargetBtn:SetText(string.format(S.pingTargetFmt, S.pingTargets[GetPingTarget()] or ""))
-    end
+    local pingTarget = GetPingTarget()
+    prepFrame.pullTimerBtn.caption:SetText(string.format(S.pullTimerValue, GetActivePullTimer()))
+    prepFrame.breakBtn.caption:SetText(string.format(S.breakTimerValue, db.combatPrepBreakTimer or 5))
+    prepFrame.pingTargetBtn.caption:SetText(S.pingTargets[pingTarget] or "")
+    prepFrame.pingTargetBtn:SetIcon(PING_TARGET_ICONS[pingTarget] or PING_TARGET_ICONS[0])
 end
 
 -- The Assign Tanks button is secure, which locks the whole window in combat.
@@ -114,172 +123,114 @@ end
 
 local function UpdateLayout()
     if not prepFrame or InCombatLockdown() then return end
-    local showRC = db.combatPrepReadyCheck
-    prepFrame.readyCheckBtn:SetShown(showRC)
+    prepFrame.readyCheckBtn:SetShown(db.combatPrepReadyCheck)
     prepFrame.pingTargetBtn:SetShown(db.combatPrepPingTarget)
     prepFrame.assignTanksBtn:SetShown(db.combatPrepAssignTanks and IsInRaid())
     UpdateButtonTexts()
 
-    prepFrame.pullTimerBtn:ClearAllPoints()
-    prepFrame.cancelPullBtn:ClearAllPoints()
-    if showRC then
-        prepFrame.pullTimerBtn:SetPoint("TOPLEFT", prepFrame.readyCheckBtn, "BOTTOMLEFT", 0, -4)
-    else
-        prepFrame.pullTimerBtn:SetPoint("TOPLEFT", prepFrame, "TOPLEFT", 10, -10)
-    end
-    prepFrame.cancelPullBtn:SetPoint("LEFT", prepFrame.pullTimerBtn, "RIGHT", 4, 0)
-    prepFrame.breakBtn:ClearAllPoints()
-    prepFrame.breakBtn:SetPoint("TOPLEFT", prepFrame.pullTimerBtn, "BOTTOMLEFT", 0, -4)
-    prepFrame.cancelBreakBtn:ClearAllPoints()
-    prepFrame.cancelBreakBtn:SetPoint("LEFT", prepFrame.breakBtn, "RIGHT", 4, 0)
-
-    local btnCount = 2 + (showRC and 1 or 0)
-    local above = prepFrame.breakBtn
-    for _, btn in ipairs({ prepFrame.pingTargetBtn, prepFrame.assignTanksBtn }) do
-        btn:ClearAllPoints()
-        if btn:IsShown() then
-            btn:SetPoint("TOPLEFT", above, "BOTTOMLEFT", 0, -4)
-            above = btn
-            btnCount = btnCount + 1
+    local divider = prepFrame.divider
+    divider:Hide()
+    local x = PAD
+    for _, group in ipairs(prepFrame.tileGroups) do
+        local groupStarted = false
+        for _, tile in ipairs(group) do
+            if tile:IsShown() then
+                if not groupStarted and x > PAD then
+                    divider:ClearAllPoints()
+                    divider:SetPoint("LEFT", prepFrame, "LEFT", x, 0)
+                    divider:Show()
+                    x = x + 1 + GAP
+                end
+                groupStarted = true
+                tile:ClearAllPoints()
+                tile:SetPoint("LEFT", prepFrame, "LEFT", x, 0)
+                x = x + TILE + GAP
+            end
         end
     end
-    local height = 10 + (btnCount * 28) + ((btnCount - 1) * 4) + 10
-    prepFrame:SetSize(120, height)
+    prepFrame:SetSize(x - GAP + PAD, TILE + PAD * 2)
 end
 
-local C = LuckyUI.C  -- shared style guide colors
-
--- Creates a styled button matching the style guide.
--- variant: "primary" (gold gradient) or "secondary" (dark input).
-local function CreateStyledButton(parent, opts)
-    local templates = opts.template and ("BackdropTemplate," .. opts.template) or "BackdropTemplate"
-    local btn = CreateFrame("Button", nil, parent, templates)
-    btn:SetSize(opts.width or 100, opts.height or 28)
-
-    btn:SetBackdrop({
-        bgFile   = "Interface\\Buttons\\WHITE8X8",
-        edgeFile = "Interface\\Buttons\\WHITE8X8",
-        edgeSize = 1,
-    })
-
-    local isPrimary = (opts.variant ~= "secondary")
-
-    -- Normal state colors
-    local function SetNormalColors()
-        if isPrimary then
-            btn:SetBackdropColor(C.goldAccent[1], C.goldAccent[2], C.goldAccent[3], 1)
-            btn:SetBackdropBorderColor(C.goldPrimary[1], C.goldPrimary[2], C.goldPrimary[3], 1)
-        else
-            btn:SetBackdropColor(0.05, 0.04, 0.02, 1)  -- bg-input
-            btn:SetBackdropBorderColor(0.23, 0.18, 0.10, 1)  -- #3a2e1a
-        end
+local function SetEdges(tile, color)
+    for _, edge in ipairs(tile.edges) do
+        edge:SetColorTexture(color[1], color[2], color[3], color[4] or 1)
     end
-
-    SetNormalColors()
-
-    -- Label
-    local label = btn:CreateFontString(nil, "OVERLAY")
-    label:SetFont(LuckyUI.BODY_FONT, 12, "")
-    label:SetPoint("CENTER", 0, 0)
-    if isPrimary then
-        label:SetTextColor(C.bgDark[1], C.bgDark[2], C.bgDark[3])
-    else
-        label:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
-    end
-    btn.label = label
-
-    -- Hover highlight
-    btn:SetScript("OnEnter", function()
-        if isPrimary then
-            btn:SetBackdropColor(
-                math.min(C.goldAccent[1] + 0.1, 1),
-                math.min(C.goldAccent[2] + 0.1, 1),
-                math.min(C.goldAccent[3] + 0.1, 1),
-                1
-            )
-        else
-            btn:SetBackdropColor(0.10, 0.08, 0.05, 1)
-            btn:SetBackdropBorderColor(C.goldMuted[1], C.goldMuted[2], C.goldMuted[3], 1)
-        end
-    end)
-    btn:SetScript("OnLeave", function()
-        SetNormalColors()
-    end)
-
-    -- Press feedback
-    btn:SetScript("OnMouseDown", function()
-        if isPrimary then
-            btn:SetBackdropColor(C.goldMuted[1], C.goldMuted[2], C.goldMuted[3], 1)
-        else
-            btn:SetBackdropColor(0.03, 0.02, 0.01, 1)
-        end
-        label:SetPoint("CENTER", 0, -1)
-    end)
-    btn:SetScript("OnMouseUp", function()
-        SetNormalColors()
-        label:SetPoint("CENTER", 0, 0)
-    end)
-
-    -- Convenience wrapper to match UIPanelButtonTemplate API
-    function btn:SetText(text)
-        self.label:SetText(text)
-    end
-
-    return btn
 end
 
--- Small danger-styled "X" button that sits beside a timer button to cancel it.
-local function CreateCancelButton(parent)
-    local btn = CreateFrame("Button", nil, parent, "BackdropTemplate")
-    btn:SetSize(23, 28)
-    btn:SetBackdrop({
-        bgFile   = "Interface\\Buttons\\WHITE8X8",
-        edgeFile = "Interface\\Buttons\\WHITE8X8",
-        edgeSize = 1,
-    })
-    btn:SetBackdropColor(0.3, 0.1, 0.1, 1)
-    btn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 0.6)
+local function ShowTooltip(tile)
+    GameTooltip:SetOwner(tile, "ANCHOR_BOTTOM")
+    tile.tooltip(GameTooltip)
+    GameTooltip:AddLine(LuckyGrabbag.Strings.combatPrep.moveHint, R.textDim[1], R.textDim[2], R.textDim[3])
+    GameTooltip:Show()
+end
 
-    local label = btn:CreateFontString(nil, "OVERLAY")
-    label:SetFont(LuckyUI.BODY_FONT, 12, "")
-    label:SetPoint("CENTER", 0, 0)
-    label:SetText(LuckyGrabbag.Strings.combatPrep.cancelLabel)
-    label:SetTextColor(C.danger[1], C.danger[2], C.danger[3])
+-- opts: icon, caption, tooltip(GameTooltip), primary, template.
+local function CreateTile(parent, opts)
+    local tile = CreateFrame("Button", nil, parent, opts.template)
+    tile:SetSize(TILE, TILE)
+    tile.tooltip = opts.tooltip
+    local restEdge = opts.primary and PRIMARY_EDGE or R.border2
 
-    btn:SetScript("OnEnter", function()
-        btn:SetBackdropColor(C.danger[1], C.danger[2], C.danger[3], 0.4)
-        btn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 1)
-    end)
-    btn:SetScript("OnLeave", function()
-        btn:SetBackdropColor(0.3, 0.1, 0.1, 1)
-        btn:SetBackdropBorderColor(C.danger[1], C.danger[2], C.danger[3], 0.6)
-    end)
-    btn:SetScript("OnMouseDown", function()
-        btn:SetBackdropColor(0.2, 0.05, 0.05, 1)
-        label:SetPoint("CENTER", 0, -1)
-    end)
-    btn:SetScript("OnMouseUp", function()
-        btn:SetBackdropColor(0.3, 0.1, 0.1, 1)
-        label:SetPoint("CENTER", 0, 0)
-    end)
+    Rich.FillBg(tile, opts.primary and PRIMARY_BG or R.bg3)
+    tile.edges = {}
+    for _, side in ipairs({ "TOP", "BOTTOM", "LEFT", "RIGHT" }) do
+        tile.edges[#tile.edges + 1] = Rich.EdgeRule(tile, side, restEdge)
+    end
 
-    return btn
+    local icon = tile:CreateTexture(nil, "ARTWORK")
+    icon:SetSize(ICON, ICON)
+    icon:SetPoint("TOP", 0, -5)
+    icon:SetVertexColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
+    function tile:SetIcon(name) icon:SetTexture(IconPath(name)) end
+    tile:SetIcon(opts.icon)
+
+    tile.caption = tile:CreateFontString(nil, "OVERLAY")
+    tile.caption:SetFont(Rich.Font, 9, "")
+    tile.caption:SetShadowOffset(1, -1)
+    tile.caption:SetPoint("BOTTOM", 0, 4)
+    tile.caption:SetTextColor(R.text[1], R.text[2], R.text[3])
+    tile.caption:SetText(opts.caption)
+
+    tile:SetScript("OnEnter", function(self)
+        SetEdges(self, R.accentLight)
+        icon:SetVertexColor(ICON_HOVER[1], ICON_HOVER[2], ICON_HOVER[3])
+        ShowTooltip(self)
+    end)
+    tile:SetScript("OnLeave", function(self)
+        SetEdges(self, restEdge)
+        icon:SetVertexColor(R.accentLight[1], R.accentLight[2], R.accentLight[3])
+        GameTooltip_Hide()
+    end)
+    tile:SetScript("OnMouseDown", function() icon:SetPoint("TOP", 0, -6) end)
+    tile:SetScript("OnMouseUp", function() icon:SetPoint("TOP", 0, -5) end)
+
+    tile:RegisterForDrag("RightButton")
+    tile:SetScript("OnDragStart", function() parent:StartMoving() end)
+    tile:SetScript("OnDragStop", function()
+        parent:StopMovingOrSizing()
+        SavePosition()
+    end)
+    return tile
+end
+
+local function AddTitle(tooltip, text)
+    tooltip:SetText(text, R.accentLight[1], R.accentLight[2], R.accentLight[3])
+end
+
+local function AddBody(tooltip, text)
+    tooltip:AddLine(text, R.text[1], R.text[2], R.text[3], true)
 end
 
 local function CreatePrepFrame()
     if prepFrame then return end
+    local S = LuckyGrabbag.Strings.combatPrep
 
-    local f = CreateFrame("Frame", "LuckyGrabbagCombatPrepFrame", UIParent, "BackdropTemplate")
-    f:SetSize(120, 76)
+    local f = CreateFrame("Frame", "LuckyGrabbagCombatPrepFrame", UIParent)
     RestorePosition(f)
-    f:SetBackdrop({
-        bgFile   = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Buttons\\WHITE8X8",
-        edgeSize = 1,
-        insets   = { left = 1, right = 1, top = 1, bottom = 1 },
-    })
-    f:SetBackdropColor(C.bgDark[1], C.bgDark[2], C.bgDark[3], 0.92)
-    f:SetBackdropBorderColor(C.goldAccent[1], C.goldAccent[2], C.goldAccent[3], 1)
+    Rich.FillBg(f, { R.bg[1], R.bg[2], R.bg[3], 0.94 })
+    for _, side in ipairs({ "TOP", "BOTTOM", "LEFT", "RIGHT" }) do
+        Rich.EdgeRule(f, side, FRAME_EDGE)
+    end
     f:SetMovable(true)
     f:EnableMouse(true)
     f:RegisterForDrag("RightButton")
@@ -292,76 +243,91 @@ local function CreatePrepFrame()
     f:SetFrameStrata("LOW")
     f:Hide()
 
-    -- Ready Check button (secondary style)
-    local rcBtn = CreateStyledButton(f, { width = 100, height = 28, variant = "secondary" })
-    rcBtn:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -10)
-    rcBtn:SetText(LuckyGrabbag.Strings.combatPrep.readyCheck)
-    rcBtn:SetScript("OnClick", function()
+    f.divider = f:CreateTexture(nil, "ARTWORK")
+    f.divider:SetSize(1, TILE - 8)
+    f.divider:SetColorTexture(R.border2[1], R.border2[2], R.border2[3], R.border2[4])
+
+    f.readyCheckBtn = CreateTile(f, {
+        icon    = "circle-check",
+        caption = S.readyCheckCaption,
+        tooltip = function(tooltip)
+            AddTitle(tooltip, S.readyCheck)
+            AddBody(tooltip, S.readyCheckDesc)
+        end,
+    })
+    f.readyCheckBtn:SetScript("OnClick", function()
         DoReadyCheck()
         DevLog("Ready check initiated")
     end)
-    f.readyCheckBtn = rcBtn
 
-    -- Pull Timer button (primary gold style)
-    local ptBtn = CreateStyledButton(f, { width = 73, height = 28, variant = "primary" })
-    ptBtn:SetText(string.format(LuckyGrabbag.Strings.combatPrep.pullTimerFmt, GetActivePullTimer()))
-    ptBtn:SetScript("OnClick", function()
-        local seconds = GetActivePullTimer()
+    f.pullTimerBtn = CreateTile(f, {
+        icon    = "timer",
+        primary = true,
+        tooltip = function(tooltip)
+            AddTitle(tooltip, S.pullTimer)
+            AddBody(tooltip, string.format(S.pullTimerDesc, GetActivePullTimer()))
+            AddBody(tooltip, S.cancelHint)
+        end,
+    })
+    f.pullTimerBtn:SetScript("OnClick", function()
+        local seconds = IsShiftKeyDown() and 0 or GetActivePullTimer()
         C_PartyInfo.DoCountdown(seconds)
-        DevLog("Started pull timer for " .. seconds .. "s")
+        DevLog("Pull timer set to " .. seconds .. "s")
     end)
-    f.pullTimerBtn = ptBtn
 
-    -- Cancel Pull button (danger style)
-    local cancelBtn = CreateCancelButton(f)
-    cancelBtn:SetScript("OnClick", function()
-        C_PartyInfo.DoCountdown(0)
-        DevLog("Cancelled pull timer")
-    end)
-    f.cancelPullBtn = cancelBtn
-
-    -- Long Break button (secondary style)
-    local breakMins = db.combatPrepBreakTimer or 5
-    local brBtn = CreateStyledButton(f, { width = 73, height = 28, variant = "secondary" })
-    brBtn:SetText(string.format(LuckyGrabbag.Strings.combatPrep.breakTimerFmt, breakMins))
-    brBtn:SetScript("OnClick", function()
-        local mins = db.combatPrepBreakTimer or 5
+    f.breakBtn = CreateTile(f, {
+        icon    = "coffee",
+        tooltip = function(tooltip)
+            AddTitle(tooltip, S.breakTimer)
+            AddBody(tooltip, string.format(S.breakTimerDesc, db.combatPrepBreakTimer or 5))
+            AddBody(tooltip, S.cancelHint)
+        end,
+    })
+    f.breakBtn:SetScript("OnClick", function()
+        local mins = IsShiftKeyDown() and 0 or (db.combatPrepBreakTimer or 5)
         local source = RouteBreakTimer(mins)
-        DevLog("Started break timer for " .. mins .. "m via " .. source)
+        DevLog("Break timer set to " .. mins .. "m via " .. source)
     end)
-    f.breakBtn = brBtn
 
-    -- Cancel Break button (danger style)
-    local cancelBreakBtn = CreateCancelButton(f)
-    cancelBreakBtn:SetScript("OnClick", function()
-        local source = RouteBreakTimer(0)
-        DevLog("Cancelled break timer via " .. source)
-    end)
-    f.cancelBreakBtn = cancelBreakBtn
-
-    local pingBtn = CreateStyledButton(f, { width = 100, height = 28, variant = "secondary" })
-    pingBtn:SetScript("OnClick", function()
+    f.pingTargetBtn = CreateTile(f, {
+        icon    = PING_TARGET_ICONS[0],
+        tooltip = function(tooltip)
+            AddTitle(tooltip, string.format(S.pingTargetFmt, S.pingTargets[GetPingTarget()] or ""))
+            AddBody(tooltip, S.pingTargetDesc)
+        end,
+    })
+    f.pingTargetBtn:SetScript("OnClick", function(self)
         local nextTarget = (GetPingTarget() + 1) % PING_TARGET_COUNT
         C_CVar.SetCVar(PING_TARGET_CVAR, nextTarget)
+        UpdateButtonTexts()
+        ShowTooltip(self)
         DevLog("Ping target set to " .. nextTarget)
     end)
-    f.pingTargetBtn = pingBtn
 
-    local tanksBtn = CreateStyledButton(f, {
-        width = 100, height = 28, variant = "secondary", template = "SecureActionButtonTemplate",
+    f.assignTanksBtn = CreateTile(f, {
+        icon     = "shield-user",
+        caption  = S.assignTanksCaption,
+        template = "SecureActionButtonTemplate",
+        tooltip  = function(tooltip)
+            AddTitle(tooltip, S.assignTanks)
+            AddBody(tooltip, S.assignTanksDesc)
+        end,
     })
-    tanksBtn:SetText(LuckyGrabbag.Strings.combatPrep.assignTanks)
-    tanksBtn:SetAttribute("type", "macro")
-    tanksBtn:SetAttribute("useOnKeyDown", false)
-    tanksBtn:RegisterForClicks("LeftButtonUp")
-    tanksBtn:SetScript("PreClick", function(self)
+    f.assignTanksBtn:SetAttribute("type", "macro")
+    f.assignTanksBtn:SetAttribute("useOnKeyDown", false)
+    f.assignTanksBtn:RegisterForClicks("LeftButtonUp")
+    f.assignTanksBtn:SetScript("PreClick", function(self)
         local names = LuckyGrabbag.AssignTanks.UnassignedTanks()
         self:SetAttribute("macrotext", LuckyGrabbag.AssignTanks.Macro(names))
-        local S = LuckyGrabbag.Strings.assignTanks
-        local msg = #names > 0 and string.format(S.assigned, table.concat(names, ", ")) or S.none
+        local T = LuckyGrabbag.Strings.assignTanks
+        local msg = #names > 0 and string.format(T.assigned, table.concat(names, ", ")) or T.none
         print(LuckyGrabbag.PREFIX .. " " .. msg)
     end)
-    f.assignTanksBtn = tanksBtn
+
+    f.tileGroups = {
+        { f.readyCheckBtn, f.pullTimerBtn, f.breakBtn },
+        { f.pingTargetBtn, f.assignTanksBtn },
+    }
 
     prepFrame = f
     DevLog("Frame created")
