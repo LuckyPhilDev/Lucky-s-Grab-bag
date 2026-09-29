@@ -59,7 +59,7 @@ Remembers the last 10 blueprint share codes you enter at the import window, so a
 ### Use Items Popup
 Displays a floating bar of buttons when you have consumable profession items in your bags — click each one to use it.
 
-- Detects a wide range of profession knowledge consumables — **Artisan's Consortium Payouts**, **Glimmers** and **Flickers of Midnight Knowledge**, **Thalassian Treatises** (all professions), **Brimming Mana Shards**, **Swirling Arcane Essences**, **Caches of Void-Touched Armor**, **crest upgrade and downgrade satchels** (all Dawncrest tiers), plus the unique books, treasure pickups, gathering drops, weekly quest rewards, catch-up items, and treasure-hunt rewards from The War Within and Midnight.
+- Detects a wide range of profession knowledge consumables — **Artisan's Consortium Payouts**, **Glimmers** and **Flickers of Midnight Knowledge**, **Thalassian Treatises** (all professions), **Brimming Mana Shards**, **Swirling Arcane Essences**, **Caches of Void-Touched Armor**, **crest upgrade and downgrade satchels** (all Dawncrest tiers), **Chests of Gold** and **Rattling Bags of Gold**, plus the unique books, treasure pickups, gathering drops, weekly quest rewards, catch-up items, and treasure-hunt rewards from The War Within and Midnight.
 - Thalassian Treatises are automatically hidden if already used this week, if your character hasn't learned that profession for the current expansion, or if your Midnight skill is below 25.
 - One button per item type; shows stack count when you have multiples.
 - Optionally restrict to cities and inns only via the "Only in Cities" setting.
@@ -166,6 +166,7 @@ A compact bar of icons that appears automatically when you're out of combat and 
 - **Ping Target**: switches what your pings hit between everything, only the world, and only units. Can be hidden in settings.
 - Appears automatically when you enter a dungeon or raid, or a scenario such as a delve with other players, and hides during combat.
 - Right-click drag to reposition; position is saved across reloads.
+- Hover the bar for a lock tab above its corner; click it to lock the bar in place.
 - Use `/combatprep` to test the window outside of group content.
 - Can be toggled in the addon settings.
 
@@ -217,14 +218,21 @@ Shows a clickable button when you're inside a delve that meets the configured mi
 
 - Appears automatically on entering a qualifying delve; hides when you leave or use the map.
 - **Minimum delve level** is configurable in settings (default: level 8).
-- Right-click drag to reposition; position is saved across reloads.
-- Respects combat lockdown — the button won't change mid-combat.
+- Shares one row with the flute and Dundun buttons; right-click drag any of them to move the row, and its position is saved across reloads.
+- Respects combat lockdown, so the button won't change mid-combat.
+- Can be toggled in the addon settings.
+
+### Nemesis Flute Reminder
+Shows your Scalebound Herald's Flute once you reach a delve's respawn point, if you haven't looted a Trovehunter's Bounty this week, so you remember to summon the Nemesis.
+
+- Uses the same minimum delve level as the Trovehunter's Bounty button.
+- Sits in the same row as the other delve buttons.
 - Can be toggled in the addon settings.
 
 ### Dundun Finder
 Shows a button inside a bountiful delve once Delver's Journey rank 3 has unlocked the Shrine of Abundance. Clicking it targets Dundun, pings him and marks him with a star, so the shrine is easy to spot.
 
-- Right-click drag to reposition; position is saved across reloads.
+- Sits in the same row as the other delve buttons.
 - Can be toggled in the addon settings.
 
 ### Per-Spec Delve Companion Loadout
