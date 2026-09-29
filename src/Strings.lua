@@ -569,7 +569,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         delveFlute = {
             label = "Nemesis Flute Reminder",
-            desc  = "Shows your Scalebound Herald's Flute once you reach a delve's respawn point, if you haven't looted a Trovehunter's Bounty this week. Shares the Trovehunter's Bounty button's spot.",
+            desc  = "Shows your Scalebound Herald's Flute once you reach a delve's respawn point, if you haven't looted a Trovehunter's Bounty this week. Right-click and drag to reposition.",
         },
         blueprintTrackMissing = {
             label = "Track Missing Decor Button",

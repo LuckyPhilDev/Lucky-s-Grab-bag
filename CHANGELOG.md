@@ -6,6 +6,8 @@
 
 ### Improved
 
+- **Delve Buttons** The Trovehunter's Bounty, flute and Dundun buttons now sit together in one row and move as one.
+
 - **Combat Prep Window** Hovering the bar shows a lock tab above its corner. Click it to lock the bar in place so a stray right-drag can't move it.
 - **Use Items Popup** Chest of Gold and Rattling Bag of Gold now get a button.
 

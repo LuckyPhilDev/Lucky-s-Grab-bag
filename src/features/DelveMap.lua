@@ -18,8 +18,7 @@ local BUTTON_SIZE = 42
 local DELVE_WIDGET_IDS = { 6183, 6184, 6185 }
 
 local db
-local button
-local shownItemID = 274374
+local mapButton, fluteButton
 local reachedRespawnPoint = false
 
 local DevLog = LuckyGrabbag.Logger("DelveMap")
@@ -66,78 +65,59 @@ local function FindBagItem(itemIDs)
     end
 end
 
--- The map wins: it is usable anywhere, while the flute only matters until this week's map drops.
-local function PickItem()
-    local map = db.showDelveMap and FindBagItem(BOUNTY_MAP_ITEM_IDS)
-    if map then return map end
-    if db.showDelveFlute and reachedRespawnPoint
-        and not C_QuestLog.IsQuestFlaggedCompleted(BOUNTY_LOOTED_QUEST_ID) then
-        return FindBagItem(FLUTE_ITEM_IDS)
-    end
-end
-
-local function CreateButton()
-    local btn = LuckyGrabbag.CreateIconButton({
+local function CreateButton(name)
+    local btn
+    btn = LuckyGrabbag.CreateIconButton({
         parent   = UIParent,
-        name     = "LGB_DelveMapButton",
+        name     = name,
         template = "SecureActionButtonTemplate",
         size     = BUTTON_SIZE,
         tooltip  = function()
-            GameTooltip:SetItemByID(shownItemID)
+            GameTooltip:SetItemByID(btn.itemID)
         end,
     })
     btn:RegisterForClicks("AnyDown", "AnyUp")
     btn:SetAttribute("type", "item")
-    btn:SetFrameStrata("HIGH")
-    btn:SetClampedToScreen(true)
-    btn:SetMovable(true)
-    btn:RegisterForDrag("RightButton")
-    btn:SetScript("OnDragStart", btn.StartMoving)
-    btn:SetScript("OnDragStop", function(self)
-        self:StopMovingOrSizing()
-        local point, _, relPoint, x, y = self:GetPoint()
-        db.delveMapPos = { point = point, relPoint = relPoint, x = x, y = y }
-        DevLog("Saved position")
-    end)
-    btn:Hide()
+    LuckyGrabbag.DelveBar:Add(btn)
     return btn
 end
 
-local function RestorePosition()
-    local pos = db.delveMapPos
-    if pos then
-        button:SetPoint(pos.point, UIParent, pos.relPoint, pos.x, pos.y)
-    else
-        button:SetPoint("CENTER", UIParent, "CENTER", 0, 200)
+local function ShowItem(btn, item)
+    if not item then
+        btn:Hide()
+        return
     end
+    btn.itemID = item.itemID
+    btn:SetAttribute("item", item.itemName)
+    if item.iconFileID then
+        btn:SetNormalTexture(item.iconFileID)
+    end
+    btn:Show()
 end
 
 local function Refresh()
-    -- Show and Hide are protected on a secure button; PLAYER_REGEN_ENABLED re-runs this.
+    -- Show, Hide and anchoring are protected on secure buttons; PLAYER_REGEN_ENABLED re-runs this.
     if InCombatLockdown() then return end
 
     local inDelve, tier = GetDelveInfo()
     local minLevel = db.delveMapMinLevel or 8
-    local meetsLevel = (tier == 0) or (tier >= minLevel)
-    local item = inDelve and meetsLevel and PickItem()
+    local active = inDelve and ((tier == 0) or (tier >= minLevel))
+    local flutePending = reachedRespawnPoint
+        and not C_QuestLog.IsQuestFlaggedCompleted(BOUNTY_LOOTED_QUEST_ID)
 
-    DevLog("Refresh: inDelve=%s tier=%d minLevel=%d respawn=%s item=%s",
-        tostring(inDelve), tier, minLevel, tostring(reachedRespawnPoint), tostring(item and item.itemID))
+    local map = active and db.showDelveMap and FindBagItem(BOUNTY_MAP_ITEM_IDS)
+    local flute = active and db.showDelveFlute and flutePending and FindBagItem(FLUTE_ITEM_IDS)
 
-    if not item then
-        button:Hide()
-        return
-    end
-    shownItemID = item.itemID
-    button:SetAttribute("item", item.itemName)
-    if item.iconFileID then
-        button:SetNormalTexture(item.iconFileID)
-    end
-    button:Show()
+    DevLog("Refresh: active=%s tier=%d minLevel=%d respawn=%s map=%s flute=%s",
+        tostring(active), tier, minLevel, tostring(reachedRespawnPoint), tostring(map and true), tostring(flute and true))
+
+    ShowItem(mapButton, map)
+    ShowItem(fluteButton, flute)
+    LuckyGrabbag.DelveBar:Layout()
 end
 
 function LuckyGrabbag.DelveMap:ApplySetting()
-    if button then
+    if mapButton then
         Refresh()
     end
 end
@@ -145,8 +125,8 @@ end
 function LuckyGrabbag.DelveMap:Init(database)
     db = database
 
-    button = CreateButton()
-    RestorePosition()
+    mapButton = CreateButton("LGB_DelveMapButton")
+    fluteButton = CreateButton("LGB_DelveFluteButton")
 
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")

@@ -96,23 +96,7 @@ local function CreateButton()
     btn:SetAttribute("type", "macro")
     btn:SetAttribute("macrotext", MACRO)
     btn:HookScript("PostClick", OnPostClick)
-    btn:SetFrameStrata("HIGH")
-    btn:SetClampedToScreen(true)
-    btn:SetMovable(true)
-    btn:RegisterForDrag("RightButton")
-    btn:SetScript("OnDragStart", btn.StartMoving)
-    btn:SetScript("OnDragStop", function(self)
-        self:StopMovingOrSizing()
-        local point, _, relPoint, x, y = self:GetPoint()
-        db.dundunFinderPos = { point = point, relPoint = relPoint, x = x, y = y }
-    end)
-    local pos = db.dundunFinderPos
-    if pos then
-        btn:SetPoint(pos.point, UIParent, pos.relPoint, pos.x, pos.y)
-    else
-        btn:SetPoint("CENTER", UIParent, "CENTER", BUTTON_SIZE + 8, 200)
-    end
-    btn:Hide()
+    LuckyGrabbag.DelveBar:Add(btn)
     return btn
 end
 
@@ -122,6 +106,7 @@ local function Refresh()
     local show = db.showDundunFinder and HasUnlocked() and InBountifulDelve()
     DevLog("Refresh: show=" .. tostring(show))
     button:SetShown(show)
+    LuckyGrabbag.DelveBar:Layout()
 end
 
 function LuckyGrabbag.DundunFinder:ApplySetting()
