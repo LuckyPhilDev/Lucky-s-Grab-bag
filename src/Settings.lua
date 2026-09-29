@@ -785,6 +785,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label    = SS.delveFlute.label,
+            desc     = SS.delveFlute.desc,
+            checked  = db.showDelveFlute,
+            since    = "1.32.1",
+            onToggle = function(checked)
+                db.showDelveFlute = checked
+                LuckyGrabbag.DelveMap:ApplySetting()
+            end,
+        })
+
+        g:Toggle({
             label    = SS.dundunFinder.label,
             desc     = SS.dundunFinder.desc,
             checked  = db.showDundunFinder,

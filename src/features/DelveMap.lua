@@ -1,4 +1,3 @@
--- Lucky's Grab-bag: Trovehunter's Bounty button in delves
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.DelveMap = {}
 
@@ -7,6 +6,10 @@ local BOUNTY_MAP_ITEM_IDS = {
     [252415] = true, -- Trovehunter's Bounty Map (Midnight Season 1)
     [274374] = true, -- Trovehunter's Bounty (Midnight Season 2)
 }
+local FLUTE_ITEM_IDS = {
+    [275910] = true, -- Scalebound Herald's Flute (Midnight Season 2)
+}
+local BOUNTY_LOOTED_QUEST_ID = 86371
 local DELVE_DIFFICULTY_ID = 208
 local BUTTON_SIZE = 42
 
@@ -16,7 +19,8 @@ local DELVE_WIDGET_IDS = { 6183, 6184, 6185 }
 
 local db
 local button
-local foundMapID = 274374 -- the map last seen in bags, for the tooltip
+local shownItemID = 274374
+local reachedRespawnPoint = false
 
 local DevLog = LuckyGrabbag.Logger("DelveMap")
 
@@ -51,18 +55,25 @@ local function GetDelveInfo()
     return true, 0
 end
 
--- Scans bags for a Trovehunter's Bounty map from any season.
-local function HasBountyMap()
+local function FindBagItem(itemIDs)
     for bag = 0, NUM_BAG_SLOTS do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local info = C_Container.GetContainerItemInfo(bag, slot)
-            if info and BOUNTY_MAP_ITEM_IDS[info.itemID] then
-                foundMapID = info.itemID
-                return true, info.itemName, info.iconFileID
+            if info and itemIDs[info.itemID] then
+                return info
             end
         end
     end
-    return false
+end
+
+-- The map wins: it is usable anywhere, while the flute only matters until this week's map drops.
+local function PickItem()
+    local map = db.showDelveMap and FindBagItem(BOUNTY_MAP_ITEM_IDS)
+    if map then return map end
+    if db.showDelveFlute and reachedRespawnPoint
+        and not C_QuestLog.IsQuestFlaggedCompleted(BOUNTY_LOOTED_QUEST_ID) then
+        return FindBagItem(FLUTE_ITEM_IDS)
+    end
 end
 
 local function CreateButton()
@@ -72,7 +83,7 @@ local function CreateButton()
         template = "SecureActionButtonTemplate",
         size     = BUTTON_SIZE,
         tooltip  = function()
-            GameTooltip:SetItemByID(foundMapID)
+            GameTooltip:SetItemByID(shownItemID)
         end,
     })
     btn:RegisterForClicks("AnyDown", "AnyUp")
@@ -105,32 +116,24 @@ local function Refresh()
     -- Show and Hide are protected on a secure button; PLAYER_REGEN_ENABLED re-runs this.
     if InCombatLockdown() then return end
 
-    if not db.showDelveMap then
-        if button then button:Hide() end
-        return
-    end
-
     local inDelve, tier = GetDelveInfo()
-    if not inDelve then
-        button:Hide()
-        return
-    end
     local minLevel = db.delveMapMinLevel or 8
     local meetsLevel = (tier == 0) or (tier >= minLevel)
-    local hasMap, itemName, iconFileID = HasBountyMap()
+    local item = inDelve and meetsLevel and PickItem()
 
-    DevLog("Refresh: tier=%d minLevel=%d meetsLevel=%s hasMap=%s",
-        tier, minLevel, tostring(meetsLevel), tostring(hasMap))
+    DevLog("Refresh: inDelve=%s tier=%d minLevel=%d respawn=%s item=%s",
+        tostring(inDelve), tier, minLevel, tostring(reachedRespawnPoint), tostring(item and item.itemID))
 
-    if meetsLevel and hasMap then
-        button:SetAttribute("item", itemName)
-        if iconFileID then
-            button:SetNormalTexture(iconFileID)
-        end
-        button:Show()
-    else
+    if not item then
         button:Hide()
+        return
     end
+    shownItemID = item.itemID
+    button:SetAttribute("item", item.itemName)
+    if item.iconFileID then
+        button:SetNormalTexture(item.iconFileID)
+    end
+    button:Show()
 end
 
 function LuckyGrabbag.DelveMap:ApplySetting()
@@ -151,7 +154,17 @@ function LuckyGrabbag.DelveMap:Init(database)
     eventFrame:RegisterEvent("ACTIVE_DELVE_DATA_UPDATE")
     eventFrame:RegisterEvent("BAG_UPDATE_DELAYED")
     eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    eventFrame:RegisterEvent("DISPLAY_EVENT_TOAST_LINK")
     eventFrame:SetScript("OnEvent", function(_, event)
+        if event == "DISPLAY_EVENT_TOAST_LINK" then
+            -- ponytail: any toast inside a delve counts as the midway respawn point; match the link text if other toasts show up.
+            if GetDelveInfo() then reachedRespawnPoint = true end
+            Refresh()
+            return
+        end
+        if event == "PLAYER_ENTERING_WORLD" then
+            reachedRespawnPoint = false
+        end
         if event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then
             -- GetInstanceInfo() is often not ready yet when these fire during
             -- a loading screen. Refresh immediately (may catch it), then retry

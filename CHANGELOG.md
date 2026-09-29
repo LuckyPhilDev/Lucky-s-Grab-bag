@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- **Nemesis Flute Reminder** Reach a delve's respawn point without this week's Trovehunter's Bounty and your Scalebound Herald's Flute pops up, ready to summon the Nemesis. Uses the same minimum delve level as the map.
+
 ### Improved
 
 - **Combat Prep Window** Hovering the bar shows a lock tab above its corner. Click it to lock the bar in place so a stray right-drag can't move it.

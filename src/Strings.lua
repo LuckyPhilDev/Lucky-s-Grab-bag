@@ -565,7 +565,11 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         delveMapMinLevel = {
             label = "Minimum Delve Level",
-            desc  = "Only show the Trovehunter's Bounty button in delves at or above this tier.",
+            desc  = "Only show the Trovehunter's Bounty and flute buttons in delves at or above this tier.",
+        },
+        delveFlute = {
+            label = "Nemesis Flute Reminder",
+            desc  = "Shows your Scalebound Herald's Flute once you reach a delve's respawn point, if you haven't looted a Trovehunter's Bounty this week. Shares the Trovehunter's Bounty button's spot.",
         },
         blueprintTrackMissing = {
             label = "Track Missing Decor Button",
