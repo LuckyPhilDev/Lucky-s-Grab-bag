@@ -97,5 +97,9 @@ LuckyGrabbag.UseItemsData = {
         -- Gathering / disenchanting knowledge drops
         224264, 224265, 224583, 224584, 224780, 224781, 227659, 227661, 237496, 237506,
         238465, 238466, 238625, 238626, 267654, 267655,
+
+        -- Gold containers
+        263934, -- Chest of Gold
+        268297, -- Rattling Bag of Gold
     },
 }
