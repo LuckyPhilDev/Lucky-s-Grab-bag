@@ -931,6 +931,58 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     end
 
     ---------------------------------------------------------------------------
+    -- Reminders
+    ---------------------------------------------------------------------------
+    do
+        local g = panel:Group(SS.groups.reminders)
+
+        local function reminderToggle(key)
+            g:Toggle({
+                label    = SS[key].label,
+                desc     = SS[key].desc,
+                checked  = db[key],
+                parent   = key ~= "reminders" and SS.reminders.label or nil,
+                since    = "1.34.0",
+                onToggle = function(checked)
+                    db[key] = checked
+                    LuckyReminders:Refresh()
+                end,
+            })
+        end
+
+        reminderToggle("reminders")
+        LuckyReminders:AddSettings(g, "1.34.0")
+
+        g:Section(SS.sections.remindersGear)
+        reminderToggle("remindRepair")
+        reminderToggle("remindEnchants")
+        g:MultiSelect({
+            label     = SS.remindEnchantsIgnore.label,
+            desc      = SS.remindEnchantsIgnore.desc,
+            parent    = SS.remindEnchants.label,
+            since     = "1.34.0",
+            options   = LuckyGrabbag.Reminders.EnchantSlotOptions(),
+            isChecked = function(key) return db.remindEnchantsIgnore[key] == true end,
+            onToggle  = function(key, checked)
+                db.remindEnchantsIgnore[key] = checked or nil
+                LuckyReminders:Refresh()
+            end,
+        })
+        reminderToggle("remindSockets")
+
+        g:Section(SS.sections.remindersRewards)
+        reminderToggle("remindGreatVault")
+        reminderToggle("remindTradingPost")
+
+        g:Section(SS.sections.remindersHousing)
+        reminderToggle("remindHouseUpgrade")
+
+        g:Section(SS.sections.remindersInventory)
+        reminderToggle("remindBags")
+        reminderToggle("remindMail")
+    end
+
+    ---------------------------------------------------------------------------
     -- Interface
     ---------------------------------------------------------------------------
     do

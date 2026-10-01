@@ -319,6 +319,20 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         noSkill     = "Learn Enchanting's Disenchant spell first.",
     },
 
+    reminders = {
+        repair       = "Repair your gear",
+        repairDetail = "%d%%",
+        houseUpgrade = "Upgrade your house",
+        enchants     = "Missing enchants",
+        slotCount    = "%d slots",
+        sockets      = "Empty gem sockets",
+        greatVault   = "Open the Great Vault",
+        tradingPost  = "Collect your Trader's Tender",
+        bags         = "Bags nearly full",
+        bagsDetail   = "%d free",
+        mail         = "You have mail",
+    },
+
     settings = {
         groups = {
             general      = "General",
@@ -329,6 +343,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             combat       = "Combat",
             delves       = "Delves",
             housing      = "Housing",
+            reminders    = "Reminders",
             interface    = "Interface",
         },
         sections = {
@@ -345,6 +360,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             altsWarband    = "Alts & Warband",
             bankQueue      = "Bank Queue",
             itemIcons      = "Item Icon Enhancements",
+            remindersGear  = "Gear",
+            remindersHousing = "Housing",
+            remindersRewards = "Rewards",
+            remindersInventory = "Inventory",
         },
         devMode = {
             label = "Dev Mode",
@@ -353,6 +372,46 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         minimapButton = {
             label = "Minimap Button",
             desc  = "Shows the Grab-bag button on the minimap. Shift-drag to move.",
+        },
+        reminders = {
+            label = "Reminders",
+            desc  = "Opens the Reminders window when you log in or enter a city or inn, listing what needs doing. Turning this off silences every reminder on this page. Low stock from Lucky's Warband Stockist still shows, and is switched off per set there.",
+        },
+        remindRepair = {
+            label = "Repair Reminder",
+            desc  = "Adds a line to the Reminders window while a piece of your gear is below half durability.",
+        },
+        remindHouseUpgrade = {
+            label = "House Upgrade Reminder",
+            desc  = "Adds a line to the Reminders window once your house has earned enough House XP for its next level and you have not upgraded it yet.",
+        },
+        remindEnchants = {
+            label = "Missing Enchants Reminder",
+            desc  = "Adds a line to the Reminders window while a piece of your equipped gear that can take an enchant has none. Only at max level.",
+        },
+        remindEnchantsIgnore = {
+            label = "Ignore Slots",
+            desc  = "Slots the Missing Enchants Reminder leaves alone, for a slot you never enchant.",
+        },
+        remindSockets = {
+            label = "Empty Sockets Reminder",
+            desc  = "Adds a line to the Reminders window while your equipped gear has an empty gem socket. Only at max level.",
+        },
+        remindGreatVault = {
+            label = "Great Vault Reminder",
+            desc  = "Adds a line to the Reminders window while a reward is waiting for you in the Great Vault.",
+        },
+        remindTradingPost = {
+            label = "Trading Post Reminder",
+            desc  = "Adds a line to the Reminders window while Trader's Tender is waiting for you in the Collector's Cache at the Trading Post.",
+        },
+        remindBags = {
+            label = "Full Bags Reminder",
+            desc  = "Adds a line to the Reminders window while you have fewer than 5 free bag slots. Reagent and profession bags are not counted.",
+        },
+        remindMail = {
+            label = "Mail Reminder",
+            desc  = "Adds a line to the Reminders window while you have unread mail.",
         },
         autoRepair = {
             label = "Auto Repair",
