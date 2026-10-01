@@ -224,7 +224,7 @@ local function UpdateLayout()
     if not prepFrame or InCombatLockdown() then return end
     prepFrame.readyCheckBtn:SetShown(db.combatPrepReadyCheck)
     prepFrame.pingTargetBtn:SetShown(db.combatPrepPingTarget)
-    prepFrame.assignTanksBtn:SetShown(db.combatPrepAssignTanks and IsInRaid())
+    prepFrame.assignTanksBtn:SetShown(db.combatPrepAssignTanks and LuckyGrabbag.GroupInstanceType() == "raid")
     RefreshTiles()
 
     local divider = prepFrame.divider
