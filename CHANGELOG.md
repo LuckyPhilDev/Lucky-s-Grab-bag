@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Improved
+
+- **Use Items Popup** Venom-Soaked Satchel now gets a button.
+
 ## [1.33.0] - 2026-09-29
 
 ### Added
