@@ -62,6 +62,8 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         testflightTooltip    = "TestFlight Buy Next",
         craftsimNotLoaded    = "CraftSim is not loaded.",
         testflightNotLoaded  = "TestFlight is not loaded.",
+        clearFavouritesTooltip = "Clear all favourites",
+        clearFavouritesConfirm = "Remove every item from your Auction House favourites?",
     },
 
     questShopping = {
