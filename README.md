@@ -489,6 +489,7 @@ Settings are saved per account, except for Bonus Roll preferences, Omnium Folio 
 ## Notes
 
 - More features will be added over time — hence the name.
+- Enchant slot icons by Lorc, Irongamer and Delapouite from [game-icons.net](https://game-icons.net), used under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
 
 ---
 

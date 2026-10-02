@@ -33,4 +33,14 @@ assert(lead == "" and rest == "Enchant Helm" and width == 0)
 lead, rest, width = Lead({}, "Plain Cloth")
 assert(lead == "" and rest == "Plain Cloth" and width == 0)
 
+dofile("src/features/EnchantStatsData.lua")
+local Data = LuckyGrabbag.EnchantStatsData
+local SLOT = "Interface\\AddOns\\Luckys_Grab_Bag\\media\\icons\\enchant-slots\\"
+
+assert(Data:SlotIcon(nil, "Enchant Ring - Thalassian Haste |A:Professions-ChatIcon-Quality-Tier3:17:15::1|a") == SLOT .. "ring")
+assert(Data:SlotIcon(nil, "Sunfire Silk Spellthread") == SLOT .. "legs")
+assert(Data:SlotIcon(nil, "Forest Hunter's Armor Kit") == SLOT .. "legs")
+assert(Data:SlotIcon(nil, "Enchant Cloak - Anything") == nil)
+assert(Data:SlotIcon(nil, "Quick Peridot") == nil)
+
 print("EnchantStatsTest passed")

@@ -52,6 +52,42 @@ local function GetBagBadge(button)
     return fs
 end
 
+local SLOT_ICON_SIZE = 18
+
+local function GetSlotIcon(button)
+    if button.luckyEnchantSlot then return button.luckyEnchantSlot end
+    local icon = button:CreateTexture(nil, "OVERLAY", nil, 7)
+    icon:SetSize(SLOT_ICON_SIZE, SLOT_ICON_SIZE)
+    icon:SetPoint("TOPRIGHT", button, "TOPRIGHT", -1, -1)
+    button.luckyEnchantSlot = icon
+    return icon
+end
+
+local function HideBadges(button)
+    if button.luckyEnchantBadge then button.luckyEnchantBadge:Hide() end
+    if button.luckyEnchantSlot then button.luckyEnchantSlot:Hide() end
+end
+
+local function ShowBadges(button, itemID, name)
+    MaybeLogUnmapped(itemID, name)
+    HideBadges(button)
+
+    local short, _, color = Data:Resolve(itemID, name)
+    if short then
+        local fs = GetBagBadge(button)
+        fs:SetText(short)
+        fs:SetTextColor(color[1], color[2], color[3])
+        fs:Show()
+    end
+
+    local slotTexture = Data:SlotIcon(itemID, name)
+    if slotTexture then
+        local icon = GetSlotIcon(button)
+        icon:SetTexture(slotTexture)
+        icon:Show()
+    end
+end
+
 -- Combined-bags buttons carry their own bagID; separate per-bag buttons take it
 -- from their parent ContainerFrame's id. GetBagID() isn't reliable on every
 -- button, so derive it the way maintained bag addons do.
@@ -68,17 +104,7 @@ local function UpdateButton(button)
     local info = C_Container.GetContainerItemInfo(bag, slot)
     local itemID = info and info.itemID
     local name = info and info.hyperlink and info.hyperlink:match("%[(.-)%]")
-    MaybeLogUnmapped(itemID, name)
-
-    local short, _, color = Data:Resolve(itemID, name)
-    if short then
-        local fs = GetBagBadge(button)
-        fs:SetText(short)
-        fs:SetTextColor(color[1], color[2], color[3])
-        fs:Show()
-    elseif button.luckyEnchantBadge then
-        button.luckyEnchantBadge:Hide()
-    end
+    ShowBadges(button, itemID, name)
 end
 
 -- The combined-bags frame keeps its item buttons in an Items array, but the
@@ -114,9 +140,7 @@ local function UpdateAllBags()
     if db.showEnchantBadges then
         ForEachBagButton(UpdateButton)
     else
-        ForEachBagButton(function(button)
-            if button.luckyEnchantBadge then button.luckyEnchantBadge:Hide() end
-        end)
+        ForEachBagButton(HideBadges)
     end
 end
 
@@ -344,18 +368,10 @@ local function HookAuctionator()
     -- The Selling tab's bag buttons, and the big icon of the item being posted.
     if AuctionatorGroupsViewItemMixin and AuctionatorGroupsViewItemMixin.SetItemInfo then
         hooksecurefunc(AuctionatorGroupsViewItemMixin, "SetItemInfo", function(button, info)
-            local short, _, color
             if info and db.showEnchantBadges then
-                MaybeLogUnmapped(info.itemID, info.itemName)
-                short, _, color = Data:Resolve(info.itemID, info.itemName)
-            end
-            if short then
-                local fs = GetBagBadge(button)
-                fs:SetText(short)
-                fs:SetTextColor(color[1], color[2], color[3])
-                fs:Show()
-            elseif button.luckyEnchantBadge then
-                button.luckyEnchantBadge:Hide()
+                ShowBadges(button, info.itemID, info.itemName)
+            else
+                HideBadges(button)
             end
         end)
     end
@@ -395,6 +411,24 @@ local function RegisterBaganator()
             return text
         end,
         { corner = "bottom_left", priority = 1 }
+    )
+
+    Baganator.API.RegisterCornerWidget(
+        "Enchant slot icon", "luckygrabbag_enchant_slot",
+        function(widget, details)
+            if not db.showEnchantBadges then return false end
+            local name = details and details.itemLink and details.itemLink:match("%[(.-)%]")
+            local slotTexture = Data:SlotIcon(details and details.itemID, name)
+            if not slotTexture then return false end
+            widget:SetTexture(slotTexture)
+            return true
+        end,
+        function(itemButton)
+            local icon = itemButton:CreateTexture(nil, "OVERLAY")
+            icon:SetSize(SLOT_ICON_SIZE, SLOT_ICON_SIZE)
+            return icon
+        end,
+        { corner = "top_right", priority = 1 }
     )
 end
 
