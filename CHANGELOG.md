@@ -2,7 +2,7 @@
 
 ### Improved
 
-- **Use Items Popup** Venom-Soaked Satchel now gets a button.
+- **Use Items Popup** Midnight weekly caches, field pouches and satchels, and the Venom-Soaked Satchel now get a button.
 
 ## [1.33.0] - 2026-09-29
 
