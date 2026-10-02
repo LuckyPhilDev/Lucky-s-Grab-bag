@@ -336,6 +336,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             disenchanting  = "Disenchanting",
             altsWarband    = "Alts & Warband",
             bankQueue      = "Bank Queue",
+            itemIcons      = "Item Icon Enhancements",
         },
         devMode = {
             label = "Dev Mode",
@@ -658,8 +659,13 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             desc  = "Opens the Mass Disenchant window after you successfully disenchant an item in a rested area.",
         },
         enchantBadges = {
-            label = "Stat Badges",
+            label = "Stat Text",
             desc  = "Marks enchants, missives and gems with their stat so you can tell them apart at a glance: H haste, C crit, M mastery, V versatility, Sp speed, Le leech, Av avoidance. Two-stat items show both, like Crit and Haste as 'C&H'. On a gem the bigger stat is upper case and the smaller is lower case, like 'H&c'. A '+' means the pricier, higher-stat version of an enchant. Bag badges work with the default Blizzard bags and Baganator. Other bag addons may not show them.",
+        },
+        itemIconPreview = "Preview only",
+        enchantSlotIcons = {
+            label = "Slot icon on enchants",
+            desc  = "Puts an icon in the top right corner of an enchant for the slot it goes on: ring, helm, shoulders, chest, legs, boots or weapon. Handy when two enchants share a stat. Works with the default Blizzard bags, Baganator and Auctionator's Selling tab.",
         },
         enchantBadgesAH = {
             label = "Also tag the Auction House",

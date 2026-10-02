@@ -550,6 +550,21 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked) db.mailSendAll = checked end,
         })
 
+        g:Section(SS.sections.itemIcons)
+
+        LuckyGrabbag.EnchantStats:BuildPreview(g:Frame(LuckyGrabbag.EnchantStats:PreviewHeight()), SS.itemIconPreview)
+
+        g:Toggle({
+            label    = SS.enchantSlotIcons.label,
+            desc     = SS.enchantSlotIcons.desc,
+            checked  = db.showEnchantSlotIcons,
+            since    = "1.34.0",
+            onToggle = function(checked)
+                db.showEnchantSlotIcons = checked
+                LuckyGrabbag.EnchantStats:ApplySetting()
+            end,
+        })
+
         g:Toggle({
             label    = SS.enchantBadges.label,
             desc     = SS.enchantBadges.desc,

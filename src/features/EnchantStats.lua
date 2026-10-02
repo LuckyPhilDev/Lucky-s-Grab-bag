@@ -52,6 +52,45 @@ local function GetBagBadge(button)
     return fs
 end
 
+local SLOT_ICON_SIZE = 18
+
+local function GetSlotIcon(button)
+    if button.luckyEnchantSlot then return button.luckyEnchantSlot end
+    local icon = button:CreateTexture(nil, "OVERLAY", nil, 7)
+    icon:SetSize(SLOT_ICON_SIZE, SLOT_ICON_SIZE)
+    icon:SetPoint("TOPRIGHT", button, "TOPRIGHT", -1, -1)
+    button.luckyEnchantSlot = icon
+    return icon
+end
+
+local function HideBadges(button)
+    if button.luckyEnchantBadge then button.luckyEnchantBadge:Hide() end
+    if button.luckyEnchantSlot then button.luckyEnchantSlot:Hide() end
+end
+
+local function ShowBadges(button, itemID, name)
+    MaybeLogUnmapped(itemID, name)
+    HideBadges(button)
+
+    local short, _, color
+    if db.showEnchantBadges then
+        short, _, color = Data:Resolve(itemID, name)
+    end
+    if short then
+        local fs = GetBagBadge(button)
+        fs:SetText(short)
+        fs:SetTextColor(color[1], color[2], color[3])
+        fs:Show()
+    end
+
+    local slotTexture = db.showEnchantSlotIcons and Data:SlotIcon(itemID, name)
+    if slotTexture then
+        local icon = GetSlotIcon(button)
+        icon:SetTexture(slotTexture)
+        icon:Show()
+    end
+end
+
 -- Combined-bags buttons carry their own bagID; separate per-bag buttons take it
 -- from their parent ContainerFrame's id. GetBagID() isn't reliable on every
 -- button, so derive it the way maintained bag addons do.
@@ -68,17 +107,7 @@ local function UpdateButton(button)
     local info = C_Container.GetContainerItemInfo(bag, slot)
     local itemID = info and info.itemID
     local name = info and info.hyperlink and info.hyperlink:match("%[(.-)%]")
-    MaybeLogUnmapped(itemID, name)
-
-    local short, _, color = Data:Resolve(itemID, name)
-    if short then
-        local fs = GetBagBadge(button)
-        fs:SetText(short)
-        fs:SetTextColor(color[1], color[2], color[3])
-        fs:Show()
-    elseif button.luckyEnchantBadge then
-        button.luckyEnchantBadge:Hide()
-    end
+    ShowBadges(button, itemID, name)
 end
 
 -- The combined-bags frame keeps its item buttons in an Items array, but the
@@ -111,13 +140,7 @@ local function ForEachBagButton(fn)
 end
 
 local function UpdateAllBags()
-    if db.showEnchantBadges then
-        ForEachBagButton(UpdateButton)
-    else
-        ForEachBagButton(function(button)
-            if button.luckyEnchantBadge then button.luckyEnchantBadge:Hide() end
-        end)
-    end
+    ForEachBagButton(UpdateButton)
 end
 
 -- Bag frames copy ContainerFrameMixin's methods onto each instance when they're
@@ -126,9 +149,7 @@ end
 -- back to the global updater on clients that still expose it. This is what makes
 -- badges appear on bag-open; BAG_UPDATE_DELAYED only fires when contents change.
 local function OnContainerUpdate(frame)
-    if db.showEnchantBadges then
-        ForEachButtonIn(frame, UpdateButton)
-    end
+    ForEachButtonIn(frame, UpdateButton)
 end
 
 local function HookBagFrames()
@@ -344,18 +365,10 @@ local function HookAuctionator()
     -- The Selling tab's bag buttons, and the big icon of the item being posted.
     if AuctionatorGroupsViewItemMixin and AuctionatorGroupsViewItemMixin.SetItemInfo then
         hooksecurefunc(AuctionatorGroupsViewItemMixin, "SetItemInfo", function(button, info)
-            local short, _, color
-            if info and db.showEnchantBadges then
-                MaybeLogUnmapped(info.itemID, info.itemName)
-                short, _, color = Data:Resolve(info.itemID, info.itemName)
-            end
-            if short then
-                local fs = GetBagBadge(button)
-                fs:SetText(short)
-                fs:SetTextColor(color[1], color[2], color[3])
-                fs:Show()
-            elseif button.luckyEnchantBadge then
-                button.luckyEnchantBadge:Hide()
+            if info then
+                ShowBadges(button, info.itemID, info.itemName)
+            else
+                HideBadges(button)
             end
         end)
     end
@@ -396,6 +409,24 @@ local function RegisterBaganator()
         end,
         { corner = "bottom_left", priority = 1 }
     )
+
+    Baganator.API.RegisterCornerWidget(
+        "Enchant slot icon", "luckygrabbag_enchant_slot",
+        function(widget, details)
+            if not db.showEnchantSlotIcons then return false end
+            local name = details and details.itemLink and details.itemLink:match("%[(.-)%]")
+            local slotTexture = Data:SlotIcon(details and details.itemID, name)
+            if not slotTexture then return false end
+            widget:SetTexture(slotTexture)
+            return true
+        end,
+        function(itemButton)
+            local icon = itemButton:CreateTexture(nil, "OVERLAY")
+            icon:SetSize(SLOT_ICON_SIZE, SLOT_ICON_SIZE)
+            return icon
+        end,
+        { corner = "top_right", priority = 1 }
+    )
 end
 
 local function RefreshBaganator()
@@ -408,8 +439,47 @@ end
 -- Wiring
 -- ---------------------------------------------------------------------------
 
+local PREVIEW_ITEMS = {
+    { id = 244015, name = "Enchant Ring - Silvermoon's Alacrity",    count = 3 },
+    { id = 245786, name = "Thalassian Missive of the Fireflash",     count = 12 },
+    { id = 240857, name = "Deadly Peridot",                          count = 1 },
+}
+local PREVIEW_BUTTON_SIZE = 37
+local PREVIEW_BUTTON_GAP = 6
+local PREVIEW_INSET = 14
+
+local previewButtons = {}
+
+local function UpdatePreview()
+    for i, button in ipairs(previewButtons) do
+        ShowBadges(button, nil, PREVIEW_ITEMS[i].name)
+    end
+end
+
+function EnchantStats:PreviewHeight()
+    return PREVIEW_BUTTON_SIZE + 2 * PREVIEW_BUTTON_GAP
+end
+
+function EnchantStats:BuildPreview(parent, caption)
+    local step = PREVIEW_BUTTON_SIZE + PREVIEW_BUTTON_GAP
+    for i, item in ipairs(PREVIEW_ITEMS) do
+        -- A real item button draws the icon, rarity border and quality icon itself.
+        local button = CreateFrame("ItemButton", nil, parent)
+        button:SetPoint("TOPLEFT", PREVIEW_INSET + (i - 1) * step, -PREVIEW_BUTTON_GAP)
+        button:EnableMouse(false)
+        button:SetItem(item.id)
+        SetItemButtonCount(button, item.count)
+        previewButtons[i] = button
+    end
+    local label = parent:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    label:SetPoint("LEFT", previewButtons[#previewButtons], "RIGHT", 2 * PREVIEW_BUTTON_GAP, 0)
+    label:SetText(caption)
+    if db then UpdatePreview() end
+end
+
 function EnchantStats:ApplySetting()
     UpdateAllBags()
+    UpdatePreview()
     RefreshAH()
     RefreshBaganator()
 end
@@ -417,6 +487,7 @@ end
 function EnchantStats:Init(database)
     db = database
 
+    UpdatePreview()
     HookBagFrames()
 
     local bagEvents = CreateFrame("Frame")

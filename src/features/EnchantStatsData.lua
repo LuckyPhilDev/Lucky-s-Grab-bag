@@ -177,6 +177,21 @@ function D:KeyFor(name)
     return name:match("^Enchant .- %- (.+)$") or name
 end
 
+local SLOTS_WITH_ICON = {
+    Ring = true, Helm = true, Shoulders = true, Boots = true,
+    Weapon = true, Chest = true, Legs = true,
+}
+
+function D:SlotIcon(itemID, name)
+    name = name or (itemID and C_Item.GetItemNameByID(itemID))
+    if not name then return nil end
+    name = CleanName(name)
+    local slot = name:match("^Enchant (.-) %- ")
+        or ((name:find("Spellthread$") or name:find("Armor Kit$")) and "Legs")
+    if not SLOTS_WITH_ICON[slot] then return nil end
+    return "Interface\\AddOns\\Luckys_Grab_Bag\\media\\icons\\enchant-slots\\" .. slot:lower()
+end
+
 -- Lower index = higher priority. Equal-weight missive pairs are shown in this
 -- order so e.g. a Crit+Haste missive always reads "C&H", never "H&C".
 local MISSIVE_PRIORITY = { C = 1, H = 2, M = 3, V = 4 }

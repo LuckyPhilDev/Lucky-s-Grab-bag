@@ -81,6 +81,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     searchAllExpansions      = false,
     showConcentration        = true,
     showEnchantBadges        = true,
+    showEnchantSlotIcons     = true,
     enchantBadgesAH          = true,
     ahQualityIcons           = "left",
     omniumFolioPerSpec       = true,

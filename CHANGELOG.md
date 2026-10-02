@@ -7,6 +7,8 @@
 ### Improved
 
 - **Enchant Stat Badges** Stat badges now show on the items in Auctionator's Selling tab, so you can tell your enchants apart while posting them.
+- **Enchant Slot Icons** Enchants in your bags and in Auctionator's Selling tab show an icon in the top right corner for the slot they go on, so a ring enchant and a helm enchant with the same stat are easy to tell apart.
+- **Item Icon Enhancements** The slot icon and the stat text each have their own toggle in a new section of the Inventory settings, with a live preview of how your enchants will look.
 - **Quality Icon Column** Quality icons in the Auction House browse list line up in a column of their own, so you can see an item's rank when its name is too long to fit. A new setting puts the column on the left or right of the name, or turns it off.
 
 ## [1.33.0] - 2026-09-29
