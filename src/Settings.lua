@@ -151,6 +151,18 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label    = SS.vendorShoppingList.label,
+            desc     = SS.vendorShoppingList.desc,
+            checked  = db.vendorShoppingList,
+            requires = AUCTIONATOR,
+            since    = "1.34.0",
+            onToggle = function(checked)
+                db.vendorShoppingList = checked
+                LuckyGrabbag.VendorShoppingList:ApplySetting()
+            end,
+        })
+
+        g:Toggle({
             label    = SS.highlightTrackedDecor.label,
             desc     = SS.highlightTrackedDecor.desc,
             checked  = db.highlightTrackedDecor,
