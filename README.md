@@ -77,8 +77,9 @@ Marks enchants, missives, and gems in your bags with a small stat code so you ca
 - Two-stat items show both, like Crit and Haste as "C&H". On a gem the bigger stat is upper case and the smaller is lower case, like "H&c".
 - A '+' marks the pricier, higher-stat version of an enchant.
 - Works on the default Blizzard bags, Baganator and Auctionator's Selling tab. Other bag addons may not show them.
+- Enchants also show an icon in the top right corner for the slot they go on.
 - Optionally tags item names in the Auction House browse list as well.
-- Can be toggled in the addon settings under Inventory.
+- The stat text and the slot icon each have a toggle under Inventory, Item Icon Enhancements, with a live preview.
 
 ### Mass Delete
 Turns the one-at-a-time delete confirmation into a list, so a bagful of junk goes in a single pass.
