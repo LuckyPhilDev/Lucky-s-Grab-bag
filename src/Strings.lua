@@ -428,6 +428,13 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             label = "Lumber",
             desc  = "Auto-deposit lumber.",
         },
+        ahQualityIcons = {
+            label = "Quality icon column",
+            desc  = "Lines up the quality icons in the Auction House browse list in a column of their own, on either side of the item name, so an item's rank shows even when its name is too long to fit. Off leaves each icon at the end of its name.",
+            off   = "Off",
+            left  = "Icons on Left",
+            right = "Icons on Right",
+        },
         warboundItemWhitelist = {
             label = "Custom Item Whitelist",
             desc  = "Add specific items to always auto-deposit. Use with the button below.",

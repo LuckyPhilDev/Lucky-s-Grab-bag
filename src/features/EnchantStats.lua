@@ -170,6 +170,91 @@ local function StatMarkup(label, color)
         color[1] * 255, color[2] * 255, color[3] * 255, label)
 end
 
+function EnchantStats.WithoutQualityIcon(text, icon)
+    if not icon or icon == "" then return text, false end
+    local from, to = text:find(" " .. icon, 1, true)
+    if not from then return text, false end
+    return text:sub(1, from - 1) .. text:sub(to + 1), true
+end
+
+local QUALITY_LEAD_WIDTH = 20
+-- Reserves room at the start of the name; the icon itself is drawn over it, so
+-- every icon starts at the same place whatever the text beside it does.
+local QUALITY_LEAD = ("|TInterface\\Common\\spacer:14:%d|t"):format(QUALITY_LEAD_WIDTH)
+
+-- Anything else put at the start of a name belongs after the quality icon.
+-- Returns the lead to keep in front, the rest of the text, and the lead's width.
+function EnchantStats.QualityLead(cell, text)
+    if cell.luckyQualitySide == "left" and text:sub(1, #QUALITY_LEAD) == QUALITY_LEAD then
+        return QUALITY_LEAD, text:sub(#QUALITY_LEAD + 1), QUALITY_LEAD_WIDTH
+    end
+    return "", text, 0
+end
+
+local function LeftQualityIcon(cell)
+    if not cell.luckyQualityLeft then
+        cell.luckyQualityLeft = cell:CreateFontString(nil, "ARTWORK", "Number14FontWhite")
+        cell.luckyQualityLeft:SetPoint("LEFT", cell.Text, "LEFT")
+    end
+    return cell.luckyQualityLeft
+end
+
+-- ExtraInfo is Blizzard's slot at the cell's right edge for the quality icon,
+-- which it only shows once the name truncates.
+local function PlaceQualityIcon(cell)
+    if cell.luckyQualitySide == "right" then
+        cell.Text:SetPoint("RIGHT", cell.ExtraInfo, "LEFT")
+        cell.ExtraInfo:Show()
+    elseif cell.luckyQualitySide == "left" then
+        cell.Text:SetPoint("RIGHT", cell, "RIGHT", 1, 0)
+        cell.ExtraInfo:Hide()
+    end
+end
+
+local function ResetQualityIcon(cell)
+    if cell.luckyQualityLeft then cell.luckyQualityLeft:Hide() end
+    if not cell.luckyQualitySide then return end
+    cell.luckyQualitySide = nil
+    cell.Text:SetPoint("RIGHT", cell, "RIGHT", 1, 0)
+    cell:HandleItemNameTruncation()
+end
+
+local function BrowseList()
+    return AuctionHouseFrame
+        and AuctionHouseFrame.BrowseResultsFrame
+        and AuctionHouseFrame.BrowseResultsFrame.ItemList
+end
+
+-- Rebuilds the columns too, since the price column's width depends on the setting.
+local function RefreshAH()
+    local list = BrowseList()
+    if not (list and list.tableBuilder and list.tableBuilderLayoutFunction) then return end
+    list.tableBuilderLayoutDirty = true
+    if list:IsShown() then
+        list:UpdateTableBuilderLayout()
+        list:RefreshScrollFrame()
+    end
+end
+
+local PRICE_COLUMN_TRIM = 30
+
+local priceColumnHooked = false
+
+-- The table builder only exists once the browse list has been shown.
+local function HookPriceColumn()
+    if priceColumnHooked then return end
+    local list = BrowseList()
+    if not (list and list.tableBuilder) then return end
+    priceColumnHooked = true
+    hooksecurefunc(list.tableBuilder, "AddFixedWidthColumn", function(builder, _, padding, width, _, _, _, cellTemplate)
+        if cellTemplate ~= "AuctionHouseTableCellMinPriceTemplate" then return end
+        if db.ahQualityIcons == "off" then return end
+        local columns = builder:GetColumns()
+        columns[#columns]:SetFixedConstraints(width - PRICE_COLUMN_TRIM, padding)
+    end)
+    RefreshAH()
+end
+
 local function HookAHCells()
     if ahHooked then return end
     if not (AuctionHouseTableCellItemDisplayMixin
@@ -178,26 +263,41 @@ local function HookAHCells()
         return
     end
     ahHooked = true
+    hooksecurefunc(AuctionHouseTableCellItemDisplayMixin, "HandleItemNameTruncation", PlaceQualityIcon)
     hooksecurefunc(AuctionHouseTableCellItemDisplayMixin, "UpdateDisplay", function(cell, itemKey, itemKeyInfo)
-        if not (db.showEnchantBadges and db.enchantBadgesAH) then return end
-        local itemID = itemKey and itemKey.itemID
-        local name = itemKeyInfo and itemKeyInfo.itemName
-        MaybeLogUnmapped(itemID, name)
-        local _, long, color = Data:Resolve(itemID, name)
-        if not (long and cell.Text) then return end
-        cell.Text:SetText(StatMarkup(long, color) .. (cell.Text:GetText() or ""))
+        ResetQualityIcon(cell)
+        if not cell.Text then return end
+        local text = cell.Text:GetText() or ""
+
+        -- Owned-auction cells carry a Prefix and rewrite Text and ExtraInfo straight after this.
+        local side = db.ahQualityIcons
+        local icon, found = cell.ExtraInfo:GetText(), false
+        if side ~= "off" and not cell.Prefix then
+            text, found = EnchantStats.WithoutQualityIcon(text, icon)
+        end
+
+        if db.showEnchantBadges and db.enchantBadgesAH then
+            local itemID = itemKey and itemKey.itemID
+            local name = itemKeyInfo and itemKeyInfo.itemName
+            MaybeLogUnmapped(itemID, name)
+            local _, long, color = Data:Resolve(itemID, name)
+            if long then text = StatMarkup(long, color) .. text end
+        end
+
+        if found then
+            cell.luckyQualitySide = side
+            if side == "left" then
+                text = QUALITY_LEAD .. text
+                local left = LeftQualityIcon(cell)
+                left:SetText(icon)
+                left:Show()
+            end
+        end
+
+        cell.Text:SetText(text)
+        PlaceQualityIcon(cell)
     end)
     DevLog("AH cells hooked")
-end
-
--- Re-draw the open browse list so a settings change takes effect immediately.
-local function RefreshAH()
-    local list = AuctionHouseFrame
-        and AuctionHouseFrame.BrowseResultsFrame
-        and AuctionHouseFrame.BrowseResultsFrame.ItemList
-    if list and list:IsShown() and list.RefreshScrollFrame then
-        list:RefreshScrollFrame()
-    end
 end
 
 -- ---------------------------------------------------------------------------
@@ -322,6 +422,7 @@ function EnchantStats:Init(database)
     ahEvents:RegisterEvent("AUCTION_HOUSE_SHOW")
     ahEvents:SetScript("OnEvent", function()
         HookAHCells()
+        HookPriceColumn()
         HookAuctionator()
     end)
 end

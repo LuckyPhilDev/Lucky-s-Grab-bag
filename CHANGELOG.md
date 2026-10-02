@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Improved
+
+- **Quality Icon Column** Quality icons in the Auction House browse list line up in a column of their own, so you can see an item's rank when its name is too long to fit. A new setting puts the column on the left or right of the name, or turns it off.
+
 ## [1.33.0] - 2026-09-29
 
 ### Added

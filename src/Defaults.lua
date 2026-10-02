@@ -82,6 +82,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     showConcentration        = true,
     showEnchantBadges        = true,
     enchantBadgesAH          = true,
+    ahQualityIcons           = "left",
     omniumFolioPerSpec       = true,
     delveCompanionPerSpec    = true,
     blueprintTrackMissing    = true,

@@ -218,6 +218,37 @@ function LuckyGrabbag.Settings:Init(db, charDB)
                 LuckyGrabbag.TestflightBuy:ApplySetting()
             end,
         })
+
+        local qualityIconImages = {
+            off   = { "auction-house/quality-icons-off",   { 628, 233 } },
+            left  = { "auction-house/quality-icons-left",  { 621, 238 } },
+            right = { "auction-house/quality-icons-right", { 631, 227 } },
+        }
+
+        -- A row carries one image, so it is swapped to match the chosen option.
+        local function showQualityIconImage()
+            local setting = g.byLabel[SS.ahQualityIcons.label]
+            setting.image, setting.imageSize = unpack(qualityIconImages[db.ahQualityIcons])
+        end
+
+        g:Select({
+            label    = SS.ahQualityIcons.label,
+            desc     = SS.ahQualityIcons.desc,
+            since    = "1.34.0",
+            newLine  = true,
+            options  = {
+                { key = "off",   label = SS.ahQualityIcons.off },
+                { key = "left",  label = SS.ahQualityIcons.left },
+                { key = "right", label = SS.ahQualityIcons.right },
+            },
+            value    = function() return db.ahQualityIcons end,
+            onSelect = function(side)
+                db.ahQualityIcons = side
+                showQualityIconImage()
+                LuckyGrabbag.EnchantStats:ApplySetting()
+            end,
+        })
+        showQualityIconImage()
     end
 
     ---------------------------------------------------------------------------
