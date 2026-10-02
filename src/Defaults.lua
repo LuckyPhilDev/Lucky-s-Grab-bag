@@ -98,6 +98,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     massDisenchantAutoOpen   = false,
     questShopping            = true,
     questShoppingAutoBuy     = false,
+    vendorShoppingList       = true,
     professionQuestAutoAccept = false,
     professionQuestAutoTurnIn = false,
     rankPriceFlag            = true,

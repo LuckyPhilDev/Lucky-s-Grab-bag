@@ -84,6 +84,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.MassDisenchant:Init(db)
         LuckyGrabbag.QuestShopping:Init(db)
         LuckyGrabbag.RankPriceCheck:Init(db)
+        LuckyGrabbag.VendorShoppingList:Init(db)
 
         -- Minimap button
         LuckyGrabbag.minimapButton = LuckyMinimap:Create({

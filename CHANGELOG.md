@@ -3,6 +3,7 @@
 ### Added
 
 - **Auction House Rank Price Check** Items in the Auction House browse list are flagged when a higher rank of the same item is listed for the same price or less, and buying the lower rank asks you to confirm first. Covers every ranked item from the current expansion. (Thanks for the suggestion Ilkka)
+- **Auctionator - Vendor Shopping List** Anything on your Auctionator shopping lists that a vendor sells is listed in a panel to the right of the vendor window. Each item has a button to buy the amount the list asks for and a button to buy that amount rounded up to full stacks.
 - **Clear All Favourites** A bin button beside the Auction House search box appears while you are looking at your favourites. Click it and confirm to remove every favourite at once.
 
 ### Improved

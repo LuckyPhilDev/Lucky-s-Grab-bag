@@ -92,6 +92,12 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         tooltip = "Confirm Purchase",
     },
 
+    vendorShoppingList = {
+        tooltipNeeded = "Buy %d",
+        tooltipStack  = "Buy %d stack (%d)",
+        tooltipStacks = "Buy %d stacks (%d)",
+    },
+
     transmogSets = {
         trackedOne     = "Now tracking %d appearance from %s.",
         trackedMany    = "Now tracking %d appearances from %s.",
@@ -367,6 +373,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         confirmPurchaseOnSide = {
             label = "Button on Side",
             desc  = "Floats the tick button next to the vendor window instead of overlaying the clicked item. Right-click drag to move.",
+        },
+        vendorShoppingList = {
+            label = "Vendor Shopping List",
+            desc  = "Lists anything on your Auctionator shopping lists that the vendor sells in a panel to the right of the vendor window. Each item has a button to buy the amount the list asks for and a button to buy that amount rounded up to full stacks.",
         },
         quickbuy = {
             label = "CraftSim Quickbuy",
