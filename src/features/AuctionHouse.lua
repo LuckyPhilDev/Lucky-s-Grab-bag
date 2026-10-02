@@ -64,6 +64,42 @@ local function OnTestflightClick()
     end
 end
 
+local clearFavouritesButton
+
+-- ponytail: clears what the favourites list has loaded; a list too long for one page
+-- leaves the button up for a second click once the rest scrolls in.
+local function ClearFavourites()
+    for _, result in ipairs(C_AuctionHouse.GetBrowseResults()) do
+        C_AuctionHouse.SetFavoriteItem(result.itemKey, false)
+    end
+end
+
+StaticPopupDialogs["LUCKYGB_CLEAR_AH_FAVOURITES"] = {
+    text         = LuckyGrabbag.Strings.auctionHouse.clearFavouritesConfirm,
+    button1      = YES,
+    button2      = NO,
+    OnAccept     = ClearFavourites,
+    timeout      = 0,
+    whileDead    = true,
+    hideOnEscape = true,
+}
+
+local function UpdateClearFavouritesButton()
+    if not clearFavouritesButton then
+        local searchBar = AuctionHouseFrame.SearchBar
+        clearFavouritesButton = LuckyUI.CreateIconButton(searchBar, {
+            icon    = "trash",
+            size    = 18,
+            tooltip = LuckyGrabbag.Strings.auctionHouse.clearFavouritesTooltip,
+        })
+        clearFavouritesButton:SetPoint("LEFT", searchBar.SearchBox, "RIGHT", 8, 0)
+        clearFavouritesButton:SetScript("OnClick", function()
+            StaticPopup_Show("LUCKYGB_CLEAR_AH_FAVOURITES")
+        end)
+    end
+    clearFavouritesButton:SetShown(AuctionHouseFrame.isDisplayingFavorites and C_AuctionHouse.HasFavorites())
+end
+
 -- ─── Public API ──────────────────────────────────────────────────────────────
 
 function LuckyGrabbag.TestflightBuy:ApplySetting()
@@ -117,8 +153,12 @@ function LuckyGrabbag.Quickbuy:Init(database)
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
     eventFrame:RegisterEvent("AUCTION_HOUSE_CLOSED")
+    eventFrame:RegisterEvent("AUCTION_HOUSE_BROWSE_RESULTS_UPDATED")
+    eventFrame:RegisterEvent("AUCTION_HOUSE_FAVORITES_UPDATED")
     eventFrame:SetScript("OnEvent", function(_, event)
-        if event == "AUCTION_HOUSE_SHOW" then
+        if event == "AUCTION_HOUSE_BROWSE_RESULTS_UPDATED" or event == "AUCTION_HOUSE_FAVORITES_UPDATED" then
+            if auctionHouseOpen then UpdateClearFavouritesButton() end
+        elseif event == "AUCTION_HOUSE_SHOW" then
             auctionHouseOpen = true
             LuckyGrabbag.Quickbuy:ApplySetting()
         elseif event == "AUCTION_HOUSE_CLOSED" then
