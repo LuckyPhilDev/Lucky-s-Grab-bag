@@ -103,6 +103,16 @@ LuckyGrabbag.DB_DEFAULTS = {
     professionQuestAutoTurnIn = false,
     rankPriceFlag            = true,
     rankPriceConfirm         = true,
+    reminders                = true,
+    remindRepair             = true,
+    remindHouseUpgrade       = true,
+    remindEnchants           = true,
+    remindEnchantsIgnore     = {},
+    remindSockets            = true,
+    remindGreatVault         = true,
+    remindTradingPost        = true,
+    remindBags               = true,
+    remindMail               = true,
 }
 
 LuckyGrabbag.CHAR_DB_DEFAULTS = {

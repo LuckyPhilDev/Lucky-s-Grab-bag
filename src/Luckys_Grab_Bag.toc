@@ -65,4 +65,5 @@ features/MassDisenchant.lua
 features/QuestShopping.lua
 features/RankPriceCheck.lua
 features/VendorShoppingList.lua
+features/Reminders.lua
 Core.lua

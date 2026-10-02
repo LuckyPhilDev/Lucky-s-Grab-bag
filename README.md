@@ -214,6 +214,20 @@ Automatically passes on Blizzard's Bonus Roll popup that appears at the end of i
 - Settings are saved per character, so each alt can have its own preferences.
 - Off by default; enable it in settings under Interface.
 
+### Reminders Window
+A small window lists what needs doing when you log in or enter a city or inn. With Lucky's Warband Stockist installed, its low stock list shows in the same window.
+
+- **Repair Reminder** adds a line while a piece of your gear is below half durability, and clears once you repair.
+- **Missing Enchants** and **Empty Sockets** check your equipped gear at max level. Pick slots for Missing Enchants to ignore if there are ones you never enchant.
+- **Great Vault** and **Trading Post** remind you while a vault reward or Trader's Tender is waiting to be collected.
+- **House Upgrade Reminder** adds a line once your house has the House XP for its next level.
+- **Full Bags** shows with fewer than 5 free bag slots, and **Mail** while you have unread mail.
+- The window fades after a time you choose. Hovering it restarts the count, and a timer of 0 keeps it up until you close it.
+- **Dim Reminders After** dims the window to an opacity you choose once it has sat for a while, so it can stay up without being in the way. Hovering brings it back.
+- **Keep Reminders Open While Resting** holds it up for as long as you stay in the city or inn.
+- Drag the window to move it. It closes by itself once nothing is left on it.
+- On by default; switch the whole window or any one reminder off in settings under Reminders.
+
 ### Trovehunter's Bounty
 Shows a clickable button when you're inside a delve that meets the configured minimum level and you have a Trovehunter's Bounty, or last season's Trovehunter's Bounty Map, in your bags.
 
@@ -477,6 +491,13 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Auto Combat Logging*: Starts combat logging in selected raid difficulties and Mythic+ keys, stops when you leave; current season only by default.
 - *Create Kick Macro* — Generates a class-appropriate interrupt macro in a character macro slot.
 - *Per-Spec Omnium Folio Runes*: Remembers your Omnium Folio rune choices for each specialization and restores them when you switch specs.
+
+**Reminders**
+- *Reminders*: Switches every Grab-bag reminder on or off, and sets how long the Reminders window stays up (0 keeps it until you close it) and whether it stays open while resting.
+- *Gear*: Repair, Missing Enchants and Empty Sockets reminders.
+- *Rewards*: Great Vault and Trading Post reminders.
+- *Housing*: House Upgrade Reminder.
+- *Inventory*: Full Bags and Mail reminders.
 
 **Interface**
 - *Remember Trading Post Animations*: Keeps your Combat Animation and Mount Special checkbox choices between items and visits to the Trading Post.
