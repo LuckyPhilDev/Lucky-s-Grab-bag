@@ -340,6 +340,25 @@ local function HookAuctionator()
         cell.Text:SetText(StatMarkup(long, color) .. (cell.Text:GetText() or ""))
     end)
     DevLog("Auctionator cells hooked")
+
+    -- The Selling tab's bag buttons, and the big icon of the item being posted.
+    if AuctionatorGroupsViewItemMixin and AuctionatorGroupsViewItemMixin.SetItemInfo then
+        hooksecurefunc(AuctionatorGroupsViewItemMixin, "SetItemInfo", function(button, info)
+            local short, _, color
+            if info and db.showEnchantBadges then
+                MaybeLogUnmapped(info.itemID, info.itemName)
+                short, _, color = Data:Resolve(info.itemID, info.itemName)
+            end
+            if short then
+                local fs = GetBagBadge(button)
+                fs:SetText(short)
+                fs:SetTextColor(color[1], color[2], color[3])
+                fs:Show()
+            elseif button.luckyEnchantBadge then
+                button.luckyEnchantBadge:Hide()
+            end
+        end)
+    end
 end
 
 -- ---------------------------------------------------------------------------

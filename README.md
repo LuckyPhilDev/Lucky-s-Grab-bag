@@ -76,7 +76,7 @@ Marks enchants, missives, and gems in your bags with a small stat code so you ca
 - Short codes for each stat: H haste, C crit, M mastery, V versatility, Sp speed, Le leech, Av avoidance, plus primary-stat and weapon-proc codes.
 - Two-stat items show both, like Crit and Haste as "C&H". On a gem the bigger stat is upper case and the smaller is lower case, like "H&c".
 - A '+' marks the pricier, higher-stat version of an enchant.
-- Works on the default Blizzard bags and Baganator. Other bag addons may not show them.
+- Works on the default Blizzard bags, Baganator and Auctionator's Selling tab. Other bag addons may not show them.
 - Optionally tags item names in the Auction House browse list as well.
 - Can be toggled in the addon settings under Inventory.
 
