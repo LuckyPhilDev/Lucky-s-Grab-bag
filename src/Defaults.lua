@@ -82,6 +82,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     showConcentration        = true,
     showEnchantBadges        = true,
     enchantBadgesAH          = true,
+    ahQualityIcons           = "left",
     omniumFolioPerSpec       = true,
     delveCompanionPerSpec    = true,
     blueprintTrackMissing    = true,
@@ -98,6 +99,8 @@ LuckyGrabbag.DB_DEFAULTS = {
     questShoppingAutoBuy     = false,
     professionQuestAutoAccept = false,
     professionQuestAutoTurnIn = false,
+    rankPriceFlag            = true,
+    rankPriceConfirm         = true,
 }
 
 LuckyGrabbag.CHAR_DB_DEFAULTS = {

@@ -345,6 +345,16 @@ Professions hand out quests that ask for a quantity of a crafted reagent, often 
 - Stacks below the CraftSim Quickbuy and TestFlight buttons when those are visible.
 - Can be toggled on or off in the addon settings.
 
+### Rank Price Check
+A lower rank of an item is sometimes listed for as much as a higher rank of the same thing, or more. This catches it before you pay.
+
+- Flags an item in the Auction House browse list when a higher rank of it is listed for the same price or less. Hover the warning icon to see which rank to buy instead, and its price.
+- Asks you to confirm when you press Buy on a lower rank while a higher rank costs no more.
+- Covers every ranked item from the current expansion: enchants, reagents, gems, potions and the rest.
+- The flag also shows in Auctionator's shopping list. The confirmation covers the Buy button in Blizzard's own Auction House window.
+- Ranks are compared within the search results on screen, so search by name to bring every rank up together.
+- The flag and the confirmation each have their own toggle in the addon settings.
+
 ### Profession Quest Automation
 Profession quests arrive on a weekly cycle and the dialog is the same every time. Two settings take it off your hands.
 

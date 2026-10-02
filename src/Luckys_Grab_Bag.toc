@@ -63,4 +63,5 @@ features/MailSendAll.lua
 features/MassDelete.lua
 features/MassDisenchant.lua
 features/QuestShopping.lua
+features/RankPriceCheck.lua
 Core.lua
