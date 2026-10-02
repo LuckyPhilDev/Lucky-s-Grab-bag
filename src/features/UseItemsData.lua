@@ -101,5 +101,21 @@ LuckyGrabbag.UseItemsData = {
         -- Gold containers
         263934, -- Chest of Gold
         268297, -- Rattling Bag of Gold
+
+        -- Mixed reward containers
+        275899, -- Venom-Soaked Satchel
+        268488, -- Overflowing Abundant Satchel
+        254677, -- Apex Cache (Season 1)
+        260193, -- Fabled Veteran's Cache (Season 1)
+        279520, -- Fabled Veteran's Cache (Season 2)
+        264274, -- Fabled Adventurer's Cache
+        264914, -- Ranger's Cache
+        275911, -- Venom-Covered Chest
+        270244, -- Field Pouch
+        270247, -- Field Satchel
+        274714, -- Cache of Amani Treasures
+        282183, -- Fabled Coiled Isle Veteran's Cache
+        275726, -- Preyhunter's Champion Chest
+        275728, -- Preyhunter's Champion Sack
     },
 }
