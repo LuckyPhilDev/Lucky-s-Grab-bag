@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+### Added
+
+- **Auction House Rank Price Check** Items in the Auction House browse list are flagged when a higher rank of the same item is listed for the same price or less, and buying the lower rank asks you to confirm first. Covers every ranked item from the current expansion. (Thanks for the suggestion Ilkka)
+
 ### Improved
 
 - **Quality Icon Column** Quality icons in the Auction House browse list line up in a column of their own, so you can see an item's rank when its name is too long to fit. A new setting puts the column on the left or right of the name, or turns it off.

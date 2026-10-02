@@ -249,6 +249,25 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
         showQualityIconImage()
+
+        g:Toggle({
+            label    = SS.rankPriceFlag.label,
+            desc     = SS.rankPriceFlag.desc,
+            checked  = db.rankPriceFlag,
+            since    = "1.34.0",
+            onToggle = function(checked)
+                db.rankPriceFlag = checked
+                LuckyGrabbag.RankPriceCheck:ApplySetting()
+            end,
+        })
+
+        g:Toggle({
+            label    = SS.rankPriceConfirm.label,
+            desc     = SS.rankPriceConfirm.desc,
+            checked  = db.rankPriceConfirm,
+            since    = "1.34.0",
+            onToggle = function(checked) db.rankPriceConfirm = checked end,
+        })
     end
 
     ---------------------------------------------------------------------------

@@ -99,6 +99,8 @@ LuckyGrabbag.DB_DEFAULTS = {
     questShoppingAutoBuy     = false,
     professionQuestAutoAccept = false,
     professionQuestAutoTurnIn = false,
+    rankPriceFlag            = true,
+    rankPriceConfirm         = true,
 }
 
 LuckyGrabbag.CHAR_DB_DEFAULTS = {

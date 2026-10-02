@@ -81,6 +81,11 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         questRewardChoice  = "That profession quest offers a choice of rewards, so it is left for you to finish.",
     },
 
+    rankPriceCheck = {
+        tooltip = "A higher rank of this item is available for %s",
+        confirm = "A higher rank is listed for %s. You are about to buy a lower rank for %s.\n\nBuy the lower rank anyway?",
+    },
+
     confirmPurchase = {
         tooltip = "Confirm Purchase",
     },
@@ -434,6 +439,14 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             off   = "Off",
             left  = "Icons on Left",
             right = "Icons on Right",
+        },
+        rankPriceFlag = {
+            label = "Flag overpriced lower ranks",
+            desc  = "Marks an item in the Auction House browse list when a higher rank of it is listed for the same price or less. Covers every ranked item from the current expansion, and works in Auctionator's shopping list too.",
+        },
+        rankPriceConfirm = {
+            label = "Confirm buying an overpriced lower rank",
+            desc  = "Asks before you buy a ranked item from the current expansion while a higher rank of it is listed for the same price or less. Applies to the Buy button in Blizzard's Auction House window.",
         },
         warboundItemWhitelist = {
             label = "Custom Item Whitelist",
