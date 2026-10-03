@@ -431,7 +431,7 @@ local SUBCLASS_NAMES = {
 local function CountInBags(itemID)
     local total = 0
     local locations = {}
-    for _, bag in ipairs(Utils.GetAllPlayerBagIDs()) do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         local numSlots = C_Container.GetContainerNumSlots(bag) or 0
         for slot = 1, numSlots do
             local info = C_Container.GetContainerItemInfo(bag, slot)

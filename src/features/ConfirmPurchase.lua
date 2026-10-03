@@ -125,7 +125,7 @@ end
 
 local function FindBagSlotByLink(link)
     if not link or not C_Container or not C_Container.GetContainerNumSlots then return end ---@diagnostic disable-line: undefined-global
-    for bag = 0, 5 do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         local numSlots = C_Container.GetContainerNumSlots(bag) or 0 ---@diagnostic disable-line: undefined-global
         for slot = 1, numSlots do
             if C_Container.GetContainerItemLink(bag, slot) == link then ---@diagnostic disable-line: undefined-global

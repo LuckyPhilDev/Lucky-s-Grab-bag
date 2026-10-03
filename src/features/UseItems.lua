@@ -81,7 +81,7 @@ local function ScanBags()
     local totalSlots, totalItems = 0, 0
     -- Includes the reagent bag, where finishing reagents and other profession
     -- consumables file themselves automatically.
-    for _, bag in ipairs(LuckyGrabbag.AutoDepositUtils.GetAllPlayerBagIDs()) do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         local numSlots = C_Container.GetContainerNumSlots(bag)
         totalSlots = totalSlots + numSlots
         for slot = 1, numSlots do

@@ -89,7 +89,7 @@ local function FindEmptyBagSlot()
 end
 
 local function IsItemInBags(itemID)
-    for bag = 0, NUM_BAG_SLOTS do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         local numSlots = C_Container.GetContainerNumSlots(bag)
         for slot = 1, numSlots do
             local info = C_Container.GetContainerItemInfo(bag, slot)

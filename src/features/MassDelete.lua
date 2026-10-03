@@ -55,7 +55,7 @@ end
 
 local function FindByLink(link, lockedOnly)
     if not link then return end
-    for bag = 0, LAST_BAG do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         for slot = 1, C_Container.GetContainerNumSlots(bag) or 0 do
             local info = C_Container.GetContainerItemInfo(bag, slot)
             if info and info.hyperlink == link and (not lockedOnly or info.isLocked) then

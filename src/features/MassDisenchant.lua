@@ -4,7 +4,6 @@ LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.MassDisenchant = {}
 
 local DISENCHANT_SPELL_ID = 13262
-local LAST_BAG = 5
 local PANEL_WIDTH = 310
 local TITLE_HEIGHT = LuckyUI.HEADER_HEIGHT + 1
 local ROW_HEIGHT = 26
@@ -33,7 +32,7 @@ end
 
 function LuckyGrabbag.MassDisenchant:Scan()
     local items = {}
-    for bag = 0, LAST_BAG do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local info = C_Container.GetContainerItemInfo(bag, slot)
             if IsCandidate(info) and not omitted[info.hyperlink] then
