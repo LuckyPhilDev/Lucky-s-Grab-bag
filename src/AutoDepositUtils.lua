@@ -13,7 +13,6 @@ Utils.placeDelay   = 0.05
 Utils.depositDelay = 0.1
 Utils.perItemDelay = 0.25
 
-local REAGENT_BAG = (Enum and Enum.BagIndex and Enum.BagIndex.ReagentBag) or 5
 
 -- Warband Stockist 2.0 runs Reagent Mains, Lumber, the whitelist and the
 -- treatise as sets of its own, so those features stand down while it is on.
@@ -27,22 +26,10 @@ local function BankIsOpen()
     return C_Bank.CanViewBank(Enum.BankType.Account)
 end
 
-function Utils.GetAllPlayerBagIDs()
-    local ids = {}
-    for bag = 0, NUM_BAG_SLOTS do table.insert(ids, bag) end
-    local ok = pcall(function() return C_Container.GetContainerNumSlots(REAGENT_BAG) end)
-    if ok then
-        local slots = C_Container.GetContainerNumSlots(REAGENT_BAG)
-        if type(slots) == "number" and slots > 0 then
-            table.insert(ids, REAGENT_BAG)
-        end
-    end
-    return ids
-end
 
 function Utils.ScanInventory()
     local inventory = {}  -- itemID → total count in player bags
-    for _, bag in ipairs(Utils.GetAllPlayerBagIDs()) do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         local numSlots = C_Container.GetContainerNumSlots(bag)
         for slot = 1, numSlots do
             local info = C_Container.GetContainerItemInfo(bag, slot)
@@ -104,7 +91,7 @@ end
 function Utils.TryDepositItem(itemID, amountToDeposit, callback, slotFilter)
     local bagSlots = {}
 
-    for _, bag in ipairs(Utils.GetAllPlayerBagIDs()) do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local info = C_Container.GetContainerItemInfo(bag, slot)
             if info and info.itemID == itemID and IsDepositable(bag, slot, info, slotFilter) then
@@ -176,7 +163,7 @@ function Utils.DepositableOnly(queue)
     for _, entry in ipairs(queue) do entries[entry.itemID] = entry end
 
     local counts = {}
-    for _, bag in ipairs(Utils.GetAllPlayerBagIDs()) do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local info = C_Container.GetContainerItemInfo(bag, slot)
             local entry = info and entries[info.itemID]

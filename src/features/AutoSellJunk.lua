@@ -5,20 +5,8 @@ LuckyGrabbag.AutoSellJunk = {}
 local db
 
 local POOR_QUALITY = (Enum and Enum.ItemQuality and Enum.ItemQuality.Poor) or 0
-local REAGENT_BAG  = (Enum and Enum.BagIndex and Enum.BagIndex.ReagentBag) or 5
 
 local DevLog = LuckyGrabbag.Logger("AutoSellJunk")
-
--- Backpack + carried bags, plus the reagent bag when one is equipped.
-local function GetBagIDs()
-    local ids = {}
-    for bag = 0, NUM_BAG_SLOTS do table.insert(ids, bag) end
-    local slots = C_Container.GetContainerNumSlots(REAGENT_BAG)
-    if type(slots) == "number" and slots > 0 then
-        table.insert(ids, REAGENT_BAG)
-    end
-    return ids
-end
 
 local FormatCost = LuckyUtils.FormatMoney
 
@@ -28,7 +16,7 @@ local function SellJunk()
     local soldCount = 0
     local soldValue = 0
 
-    for _, bag in ipairs(GetBagIDs()) do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         local numSlots = C_Container.GetContainerNumSlots(bag)
         for slot = 1, numSlots do
             local info = C_Container.GetContainerItemInfo(bag, slot)

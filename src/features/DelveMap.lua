@@ -55,7 +55,7 @@ local function GetDelveInfo()
 end
 
 local function FindBagItem(itemIDs)
-    for bag = 0, NUM_BAG_SLOTS do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local info = C_Container.GetContainerItemInfo(bag, slot)
             if info and itemIDs[info.itemID] then

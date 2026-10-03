@@ -77,7 +77,7 @@ local function PlanDeposits()
     -- One pass: find which itemIDs to deposit.
     -- Use C_Bank.IsItemAllowedInBankType for accurate warbound detection (requires an
     -- ItemLocation, so we must scan per-slot rather than using the aggregated inventory).
-    for _, bag in ipairs(Utils.GetAllPlayerBagIDs()) do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         local numSlots = C_Container.GetContainerNumSlots(bag)
         for slot = 1, numSlots do
             local info = C_Container.GetContainerItemInfo(bag, slot)
@@ -363,7 +363,7 @@ local function DiagnoseItems(filter)
 
     local seen = {}
     local shown = 0
-    for _, bag in ipairs(Utils.GetAllPlayerBagIDs()) do
+    for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         local numSlots = C_Container.GetContainerNumSlots(bag)
         for slot = 1, numSlots do
             local info = C_Container.GetContainerItemInfo(bag, slot)

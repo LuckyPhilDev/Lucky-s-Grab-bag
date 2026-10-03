@@ -45,6 +45,18 @@ function LuckyGrabbag.GroupInstanceType()
     return GROUP_INSTANCE_TYPES[infoType] and infoType or nil
 end
 
+local REAGENT_BAG = Enum.BagIndex.ReagentBag
+
+-- Every bag an item you carry can be in, the reagent bag included when one is equipped.
+function LuckyGrabbag.GetPlayerBagIDs()
+    local ids = {}
+    for bag = 0, NUM_BAG_SLOTS do ids[#ids + 1] = bag end
+    if (C_Container.GetContainerNumSlots(REAGENT_BAG) or 0) > 0 then
+        ids[#ids + 1] = REAGENT_BAG
+    end
+    return ids
+end
+
 -- opts: parent, name, template, size, texture, and tooltip(button) filling GameTooltip.
 function LuckyGrabbag.CreateIconButton(opts)
     local tooltip = opts.tooltip
