@@ -257,7 +257,8 @@ local function RefreshAH()
     end
 end
 
-local PRICE_COLUMN_TRIM = 30
+-- Prices are right-aligned, so width taken from the left eats into the widest prices.
+local PRICE_LEFT_TRIM = 6
 
 local priceColumnHooked = false
 
@@ -267,12 +268,15 @@ local function HookPriceColumn()
     local list = BrowseList()
     if not (list and list.tableBuilder) then return end
     priceColumnHooked = true
-    hooksecurefunc(list.tableBuilder, "AddFixedWidthColumn", function(builder, _, padding, width, _, _, _, cellTemplate)
-        if cellTemplate ~= "AuctionHouseTableCellMinPriceTemplate" then return end
-        if db.ahQualityIcons == "off" then return end
-        local columns = builder:GetColumns()
-        columns[#columns]:SetFixedConstraints(width - PRICE_COLUMN_TRIM, padding)
-    end)
+    hooksecurefunc(list.tableBuilder, "AddFixedWidthColumn",
+        function(builder, _, padding, width, leftCellPadding, rightCellPadding, _, cellTemplate)
+            if cellTemplate ~= "AuctionHouseTableCellMinPriceTemplate" then return end
+            if db.ahQualityIcons == "off" then return end
+            local columns = builder:GetColumns()
+            local column = columns[#columns]
+            column:SetFixedConstraints(width - rightCellPadding - PRICE_LEFT_TRIM, padding)
+            column:SetCellPadding(leftCellPadding, 0)
+        end)
     RefreshAH()
 end
 
