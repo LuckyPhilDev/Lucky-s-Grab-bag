@@ -90,6 +90,7 @@ LuckyUI = {
 }
 
 dofile("src/features/MassDisenchant.lua")
+LuckyGrabbag.GetPlayerBagIDs = function() return { 0, 1, 2, 3, 4, 5 } end
 
 local items = LuckyGrabbag.MassDisenchant:Scan()
 assert(#items == 3, "uncommon and rare armor or weapons should be listed even when bound")

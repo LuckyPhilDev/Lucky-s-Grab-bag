@@ -29,6 +29,7 @@ C_Bank = {
 }
 
 dofile("src/AutoDepositUtils.lua")
+LuckyGrabbag.GetPlayerBagIDs = function() return { 0, 1, 2, 3, 4, 5 } end
 local Utils = LuckyGrabbag.AutoDepositUtils
 
 local passed = 0

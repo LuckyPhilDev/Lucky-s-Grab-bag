@@ -216,6 +216,7 @@ LuckyGrabbag.PREFIX = LuckyGrabbag.Strings.addon.prefix
 LuckyGrabbag.DevLog = function() end
 LuckyGrabbag.Logger = function() return function() end end
 dofile("src/features/MassDelete.lua")
+LuckyGrabbag.GetPlayerBagIDs = function() return { 0, 1, 2, 3, 4, 5 } end
 
 local db = { massDelete = true }
 LuckyGrabbag.MassDelete:Init(db)
