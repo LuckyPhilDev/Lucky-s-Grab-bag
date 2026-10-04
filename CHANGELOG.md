@@ -1,3 +1,9 @@
+## [1.34.1] - 2026-10-04
+
+### Fixed
+
+- **Quality Icon Column** Long prices in the Auction House browse list no longer get cut off on the left when the quality icon column is turned on. (Thanks for the report Zelion)
+
 ## [1.34.0] - 2026-10-02
 
 ### Added
