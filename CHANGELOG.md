@@ -1,3 +1,9 @@
+## [1.34.2] - 2026-10-05
+
+### Fixed
+
+- Fixed an error with the settings panel. (Thanks for the report Tuulani)
+
 ## [1.34.1] - 2026-10-04
 
 ### Fixed
