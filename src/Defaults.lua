@@ -111,6 +111,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     remindSockets            = true,
     remindGreatVault         = true,
     remindTradingPost        = true,
+    remindTradingPostFullTrack = true,
     remindBags               = true,
     remindMail               = true,
 }

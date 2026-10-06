@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Improved
+
+- **Trading Post Reminder** A new setting, on by default, holds the reminder until you finish the month's Traveler's Log, so you only head to the Trading Post once. (Thanks for the suggestion Tuulani)
+
 ## [1.34.3] - 2026-10-07
 
 ### Added

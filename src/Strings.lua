@@ -405,6 +405,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             label = "Trading Post Reminder",
             desc  = "Adds a line to the Reminders window while Trader's Tender is waiting for you in the Collector's Cache at the Trading Post.",
         },
+        remindTradingPostFullTrack = {
+            label = "Only When the Monthly Track Is Complete",
+            desc  = "Waits until you have finished this month's Traveler's Log before reminding you, so you collect your Trader's Tender in one trip.",
+        },
         remindBags = {
             label = "Full Bags Reminder",
             desc  = "Adds a line to the Reminders window while you have fewer than 5 free bag slots. Reagent and profession bags are not counted.",
