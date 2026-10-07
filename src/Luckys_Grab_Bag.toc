@@ -2,7 +2,7 @@
 ## Title: Lucky's Grab-bag
 ## IconTexture: Interface\AddOns\Luckys_Grab_Bag\media\icon
 ## Notes: A collection of small quality-of-life features.
-## Version: 1.34.2
+## Version: 1.34.3
 ## Author: Lucky Phil
 ## SavedVariables: LuckyGrabbagDB, LuckySettingsDB, LuckyRosterDB
 ## SavedVariablesPerCharacter: LuckyGrabbagCharDB
