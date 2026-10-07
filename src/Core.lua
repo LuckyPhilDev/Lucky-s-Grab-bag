@@ -91,7 +91,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.minimapButton = LuckyMinimap:Create({
             name    = "LuckyGrabbagMinimapButton",
             tocname = "Luckys_Grab_Bag",
-            icon    = LuckyMedia("promo-grab-bag.tga"),
+            icon    = "Interface\\AddOns\\Luckys_Grab_Bag\\media\\icon",
             dbKey   = "minimap",
             db      = db,
             onClick = function(_, mouseBtn)
