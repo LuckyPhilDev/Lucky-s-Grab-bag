@@ -114,9 +114,23 @@ local function GreatVaultRow()
     return { icon = ICONS.greatVault, text = Strings().greatVault }
 end
 
+local function MonthlyTrackComplete()
+    local info = C_PerksActivities.GetPerksActivitiesInfo()
+    if not info then return false end
+    local earned, needed = 0, 0
+    for _, activity in ipairs(info.activities) do
+        if activity.completed then earned = earned + activity.thresholdContributionAmount end
+    end
+    for _, threshold in ipairs(info.thresholds) do
+        needed = math.max(needed, threshold.requiredContributionAmount)
+    end
+    return needed > 0 and earned >= needed
+end
+
 local function TradingPostRow()
     local pending = C_PerksProgram.GetPendingChestRewards()
     if not pending or #pending == 0 then return end
+    if db.remindTradingPostFullTrack and not MonthlyTrackComplete() then return end
     return { icon = ICONS.tradingPost, text = Strings().tradingPost }
 end
 
@@ -193,7 +207,7 @@ local REMINDERS = {
     {
         setting = "remindTradingPost",
         row     = TradingPostRow,
-        events  = { "CHEST_REWARDS_UPDATED_FROM_SERVER" },
+        events  = { "CHEST_REWARDS_UPDATED_FROM_SERVER", "PERKS_ACTIVITIES_UPDATED" },
         onLogin = function() C_PerksProgram.RequestPendingChestRewards() end,
     },
     {

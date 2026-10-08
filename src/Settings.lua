@@ -973,6 +973,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         g:Section(SS.sections.remindersRewards)
         reminderToggle("remindGreatVault")
         reminderToggle("remindTradingPost")
+        g:Toggle({
+            label    = SS.remindTradingPostFullTrack.label,
+            desc     = SS.remindTradingPostFullTrack.desc,
+            checked  = db.remindTradingPostFullTrack,
+            parent   = SS.remindTradingPost.label,
+            since    = "1.34.3",
+            onToggle = function(checked)
+                db.remindTradingPostFullTrack = checked
+                LuckyReminders:Refresh()
+            end,
+        })
 
         g:Section(SS.sections.remindersHousing)
         reminderToggle("remindHouseUpgrade")

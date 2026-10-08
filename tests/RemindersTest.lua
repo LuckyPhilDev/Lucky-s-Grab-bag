@@ -1,6 +1,6 @@
 -- luacheck: globals CreateFrame GetInventoryItemDurability INVSLOT_FIRST_EQUIPPED INVSLOT_LAST_EQUIPPED
 -- luacheck: globals LuckyGrabbag LuckyReminders print
--- luacheck: globals C_Housing C_Container C_Item C_PerksProgram C_WeeklyRewards GetInventoryItemLink
+-- luacheck: globals C_Housing C_Container C_Item C_PerksActivities C_PerksProgram C_WeeklyRewards GetInventoryItemLink
 -- luacheck: globals GetMaxLevelForPlayerExpansion HasNewMail NUM_BAG_SLOTS UnitLevel
 -- luacheck: globals INVSLOT_HEAD INVSLOT_SHOULDER INVSLOT_CHEST INVSLOT_LEGS INVSLOT_FEET
 -- luacheck: globals INVSLOT_FINGER1 INVSLOT_FINGER2 INVSLOT_MAINHAND INVSLOT_OFFHAND
@@ -32,6 +32,11 @@ C_PerksProgram = {
     GetPendingChestRewards = function() return chestRewards end,
     RequestPendingChestRewards = function() chestRequests = chestRequests + 1 end,
 }
+local perksActivities = {
+    activities = { { completed = true, thresholdContributionAmount = 500 }, { completed = false, thresholdContributionAmount = 500 } },
+    thresholds = { { requiredContributionAmount = 250 }, { requiredContributionAmount = 1000 } },
+}
+C_PerksActivities = { GetPerksActivitiesInfo = function() return perksActivities end }
 function HasNewMail() return mail end
 
 local favorRequests, houseListRequests = {}, 0
@@ -165,6 +170,10 @@ chestRewards = { { rewardAmount = 500 } }
 check(rows()[1].text, "Collect your Trader's Tender", "tender waiting reminds")
 onEvent(nil, "PLAYER_ENTERING_WORLD")
 check(chestRequests, 1, "and login asks the server what is waiting")
+db.remindTradingPostFullTrack = true
+check(#rows(), 0, "an unfinished monthly track holds the reminder")
+perksActivities.activities[2].completed = true
+check(rows()[1].text, "Collect your Trader's Tender", "a finished track reminds")
 
 -- House upgrade ----------------------------------------------------------------
 only("remindHouseUpgrade")
