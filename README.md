@@ -219,7 +219,7 @@ A small window lists what needs doing when you log in or enter a city or inn. Wi
 
 - **Repair Reminder** adds a line while a piece of your gear is below half durability, and clears once you repair.
 - **Missing Enchants** and **Empty Sockets** check your equipped gear at max level. Pick slots for Missing Enchants to ignore if there are ones you never enchant.
-- **Great Vault** and **Trading Post** remind you while a vault reward or Trader's Tender is waiting to be collected.
+- **Great Vault** and **Trading Post** remind you while a vault reward or Trader's Tender is waiting to be collected. Turn on *Only When the Chest Is Full* to hold the Trading Post reminder until the Collector's Cache is full.
 - **House Upgrade Reminder** adds a line once your house has the House XP for its next level.
 - **Full Bags** shows with fewer than 5 free bag slots, and **Mail** while you have unread mail.
 - The window fades after a time you choose. Hovering it restarts the count, and a timer of 0 keeps it up until you close it.
@@ -495,7 +495,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 **Reminders**
 - *Reminders*: Switches every Grab-bag reminder on or off, and sets how long the Reminders window stays up (0 keeps it until you close it) and whether it stays open while resting.
 - *Gear*: Repair, Missing Enchants and Empty Sockets reminders.
-- *Rewards*: Great Vault and Trading Post reminders.
+- *Rewards*: Great Vault and Trading Post reminders, plus holding the Trading Post reminder until the Collector's Cache is full.
 - *Housing*: House Upgrade Reminder.
 - *Inventory*: Full Bags and Mail reminders.
 
