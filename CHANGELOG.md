@@ -1,3 +1,9 @@
+## [1.35.1] - 2026-10-13
+
+### Improved
+
+- **Power Infusion** Refreshed damage rankings with the latest simulation data.
+
 ## [1.35.0] - 2026-10-10
 
 ### Improved
