@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.35.3] - 2026-10-14
 
 ### Fixed
 - **Patch 12.1.5** Selling junk, Reagent Mains and Warbound Auto Deposit no longer throw an error since the patch.
