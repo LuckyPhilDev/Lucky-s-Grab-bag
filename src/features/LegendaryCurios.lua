@@ -63,8 +63,25 @@ local function RecolorBagItem(button, quality, itemIDOrLink)
     end
 end
 
+-- Baganator calls each button's own SetItemButtonQuality method, which the
+-- global hook never sees.
+local function HookBaganatorButton(details)
+    local button = details.region
+    if details.regionType == "ItemButton" and button.SetItemButtonQuality then
+        hooksecurefunc(button, "SetItemButtonQuality", RecolorBagItem)
+    end
+end
+
+local function HookBaganator()
+    for _, details in ipairs(Baganator.API.Skins.GetAllFrames()) do
+        HookBaganatorButton(details)
+    end
+    Baganator.API.Skins.RegisterListener(HookBaganatorButton)
+end
+
 function LegendaryCurios:Init(database)
     db = database
     hooksecurefunc("SetItemButtonQuality", RecolorBagItem)
     EventUtil.ContinueOnAddOnLoaded("Blizzard_DelvesCompanionConfiguration", HookCompanionUI)
+    EventUtil.ContinueOnAddOnLoaded("Baganator", HookBaganator)
 end
