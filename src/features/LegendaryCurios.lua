@@ -51,22 +51,18 @@ end
 
 -- Curios are item level 1, which keeps max-upgraded gear ("Hero 6/6") out of
 -- the rank match without depending on the client's language.
+-- Only a match is cached: bags first draw before item data has loaded, and a
+-- miss remembered then would stick until the next reload.
 local function IsTopCurio(link)
-    local cached = isTopCurioByLink[link]
-    if cached ~= nil then return cached end
-
-    if C_Item.GetDetailedItemLevelInfo(link) ~= CURIO_ITEM_LEVEL then
-        isTopCurioByLink[link] = false
-        return false
-    end
+    if isTopCurioByLink[link] then return true end
+    if C_Item.GetDetailedItemLevelInfo(link) ~= CURIO_ITEM_LEVEL then return false end
 
     local tooltip = C_TooltipInfo.GetHyperlink(link)
-    if not tooltip then return false end
+    local rank = tooltip and TooltipRank(tooltip)
+    if not rank or rank < TOP_CURIO_RANK then return false end
 
-    local rank = TooltipRank(tooltip)
-    local isTop = rank ~= nil and rank >= TOP_CURIO_RANK
-    isTopCurioByLink[link] = isTop
-    return isTop
+    isTopCurioByLink[link] = true
+    return true
 end
 
 local function RecolorBagItem(button, quality, itemIDOrLink)
