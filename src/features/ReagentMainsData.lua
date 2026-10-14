@@ -64,7 +64,7 @@ local _currentExpID = GetExpansionLevel and GetExpansionLevel() or nil
 function Data:Classify(itemID)
     if _classifyCache[itemID] ~= nil then return _classifyCache[itemID] end
 
-    local classID, subclassID = select(12, GetItemInfo(itemID))
+    local classID, subclassID = select(12, C_Item.GetItemInfo(itemID))
     if classID == nil then return nil end  -- not in cache; caller must skip
 
     if classID ~= TRADEGOODS_CLASS then
@@ -96,7 +96,7 @@ function Data:IsCurrentExpansion(itemID)
     if not _currentExpID then return true end
     if _expansionCache[itemID] ~= nil then return _expansionCache[itemID] end
 
-    local expID = select(15, GetItemInfo(itemID))
+    local expID = select(15, C_Item.GetItemInfo(itemID))
     if expID == nil then return nil end  -- not in cache; caller must skip
 
     local result = (expID == _currentExpID)
