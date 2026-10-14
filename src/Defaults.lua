@@ -86,6 +86,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     ahQualityIcons           = "left",
     omniumFolioPerSpec       = true,
     delveCompanionPerSpec    = true,
+    legendaryCurios          = true,
     blueprintTrackMissing    = true,
     blueprintImportHistory   = true,
     blueprintImportCodes     = {},

@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Added
+- **Legendary Rank 5 Curios** Rank 5 curios now show orange, like legendary items, in your delve companion's curio list and your bags, instead of the same purple as rank 4.
+
 ## [1.35.3] - 2026-10-14
 
 ### Fixed

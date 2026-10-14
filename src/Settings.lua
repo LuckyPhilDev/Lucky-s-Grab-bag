@@ -893,6 +893,16 @@ function LuckyGrabbag.Settings:Init(db, charDB)
                 LuckyGrabbag.DelveCompanion:ApplySetting()
             end,
         })
+
+        g:Toggle({
+            label    = SS.legendaryCurios.label,
+            desc     = SS.legendaryCurios.desc,
+            checked  = db.legendaryCurios,
+            since    = "1.36.0",
+            onToggle = function(checked)
+                db.legendaryCurios = checked
+            end,
+        })
     end
 
     ---------------------------------------------------------------------------
