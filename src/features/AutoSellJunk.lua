@@ -22,7 +22,7 @@ local function SellJunk()
             local info = C_Container.GetContainerItemInfo(bag, slot)
             if info and info.quality == POOR_QUALITY and not info.hasNoValue and not info.isLocked then
                 local stack = info.stackCount or 1
-                local sellPrice = select(11, GetItemInfo(info.itemID)) or 0
+                local sellPrice = select(11, C_Item.GetItemInfo(info.itemID)) or 0
                 soldCount = soldCount + 1
                 soldValue = soldValue + (sellPrice * stack)
                 C_Container.UseContainerItem(bag, slot)

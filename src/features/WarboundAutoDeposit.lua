@@ -97,7 +97,7 @@ local function PlanDeposits()
                     -- Unbound BoE gear also passes it, so the gear/token rules further
                     -- require the instance to be explicitly warbound.
                     local isWarbound = IsInstanceWarbound(bag, slot, info)
-                    local name, _, quality, _, _, _, _, _, _, _, _, classID, subclassID = GetItemInfo(itemID)
+                    local name, _, quality, _, _, _, _, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(itemID)
                     if quality and quality > Enum.ItemQuality.Poor
                         and C_Bank.IsItemAllowedInBankType(Enum.BankType.Account, loc) then
                         if anyTypeEnabled and isWarbound and db.warboundDepositArmor and classID == 4 then
@@ -263,7 +263,7 @@ local function BuildItemRow(parent, itemID, yOffset)
     row:SetSize(480, 26)
     row:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, yOffset)
 
-    local name, link, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
+    local name, link, _, _, _, _, _, _, _, icon = C_Item.GetItemInfo(itemID)
     local itemText = link or (name or ("Item " .. itemID))
 
     -- Icon
@@ -327,7 +327,7 @@ function Feature:RefreshPopup()
             row:Show()
             row:ClearAllPoints()
             row:SetPoint("TOPLEFT", popup.itemParent, "TOPLEFT", 0, y)
-            local name, link, _, _, _, _, _, _, _, icon = GetItemInfo(itemID)
+            local name, link, _, _, _, _, _, _, _, icon = C_Item.GetItemInfo(itemID)
             if row.icon then row.icon:SetTexture(icon or "") end
             if row.label then row.label:SetText(link or name or ("Item " .. itemID)) end
         end
@@ -368,7 +368,7 @@ local function DiagnoseItems(filter)
         for slot = 1, numSlots do
             local info = C_Container.GetContainerItemInfo(bag, slot)
             if info and info.itemID and not seen[info.itemID] then
-                local name, link, _, _, _, itemType, itemSubType, _, _, _, _, classID, subclassID = GetItemInfo(info.itemID)
+                local name, link, _, _, _, itemType, itemSubType, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(info.itemID)
                 if name and (not filter or name:lower():find(filter, 1, true)) then
                     seen[info.itemID] = true
                     shown = shown + 1

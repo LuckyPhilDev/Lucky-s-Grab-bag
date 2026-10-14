@@ -454,7 +454,7 @@ local function Diagnose(itemIDStr)
     end
 
     local prefix = LuckyGrabbag.PREFIX .. " |cffffd100Reagent diagnostic|r"
-    local name, link, _, _, _, itemType, itemSubType, _, _, _, _, classID, subclassID = GetItemInfo(itemID)
+    local name, link, _, _, _, itemType, itemSubType, _, _, _, _, classID, subclassID = C_Item.GetItemInfo(itemID)
 
     if classID == nil then
         print(prefix .. ": item " .. itemID .. " not in client cache. Hover the item in your bags then re-run.")
@@ -462,7 +462,7 @@ local function Diagnose(itemIDStr)
     end
 
     print(prefix .. " for " .. (link or name or ("item:" .. itemID)))
-    local expID = select(15, GetItemInfo(itemID))
+    local expID = select(15, C_Item.GetItemInfo(itemID))
     print(("  Type: %s / %s  (classID=%s, subclassID=%s%s)"):format(
         tostring(itemType), tostring(itemSubType), tostring(classID), tostring(subclassID),
         SUBCLASS_NAMES[subclassID] and (" → " .. SUBCLASS_NAMES[subclassID]) or ""
