@@ -44,7 +44,7 @@ end
 
 local function TooltipRank(tooltip)
     for i = 2, math.min(#tooltip.lines, RANK_LINE_SEARCH_DEPTH) do
-        local rank = tooltip.lines[i].leftText and tonumber(tooltip.lines[i].leftText:match("^%D*(%d+)/%d+$"))
+        local rank = tooltip.lines[i].leftText and tonumber(tooltip.lines[i].leftText:match("(%d+)/%d+"))
         if rank then return rank end
     end
 end
