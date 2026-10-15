@@ -607,6 +607,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             label = "Per-Spec Companion Loadout",
             desc  = "Remembers your delve companion's role and curios for each specialization. Refills any slot a delve hands back empty, and swaps the whole loadout when you switch specs. A slot you set yourself is left alone. A chat message shows what was restored.",
         },
+        legendaryCurios = {
+            label = "Legendary Rank 5 Curios",
+            desc  = "Colours rank 5 curios orange, like legendary items, in your delve companion's curio list, your bags (Baganator included) and their tooltips. The game shows them purple, the same as rank 4.",
+        },
         piPicker = {
             label = "Power Infusion Picker",
             desc  = "For priests: shows a window in dungeons, raids, and grouped scenarios such as delves to pick who receives your Power Infusion. Clicking a name updates a 'PI' macro that casts Power Infusion on that player, falling back to your focus and then yourself when they are unavailable. Drag the macro to your action bar once, then pick new targets any time. Right-click drag to move the window.",

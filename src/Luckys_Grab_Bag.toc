@@ -32,6 +32,7 @@ features/UseItems.lua
 features/DelveBar.lua
 features/DelveMap.lua
 features/DelveCompanion.lua
+features/LegendaryCurios.lua
 features/DundunFinder.lua
 features/DungeonPortalsData.lua
 features/DungeonPortals.lua
