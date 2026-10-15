@@ -16,6 +16,15 @@ Whenever the game pops a confirmation at a vendor or when using a still-refundab
 - Appears only while the popup is visible; hides automatically when the popup closes.
 - Can be toggled in the addon settings.
 
+### Bulk Buy
+Shift-click an item at a vendor to buy any amount of it, instead of the one stack the default splitter allows. This is [BuyEmAll](https://www.curseforge.com/wow/addons/buyemall), the vendor favourite since 2006, built into Grab-bag with its original window and updated for Midnight. All credit to its authors.
+
+- Type an amount, use the arrows, or press **Stack** and **Max**. Right-click **Stack** to step back down a stack.
+- **Max** stops at whatever runs out first: your gold or currency, your bag space, or the vendor's stock. Hover it to see each limit.
+- Purchases bigger than a stack go through one stack at a time, so the vendor never reports the item busy.
+- Asks before buying more than one stack at once, unless you turn *Confirm Large Purchases* off.
+- Stands down while the standalone BuyEmAll addon is installed.
+
 ### Auto Repair
 Automatically repairs all damaged gear whenever you open a vendor that offers repairs — no button clicks required.
 
@@ -452,6 +461,8 @@ The panel opens on a **What's New** list of the settings added in recent release
   - *Configure mains…* — Opens the assignment window where each reagent category can be linked to one or more characters, "All" (everyone keeps), or "None".
 
 **Vendors**
+- *Bulk Buy*: Shift-clicking a vendor item opens a window to buy any amount, with Stack and Max buttons.
+  - *Confirm Large Purchases*: Asks before buying more than one stack at once.
 - *Confirm Purchase Button* — Shows a large tick button on vendor currency, sell, "no longer refundable", and "bind on equip" popups; clicking it confirms.
   - *Overlay on Clicked Item* — Places the button directly over the vendor item you clicked instead of next to the window.
 - *Flag Shopping List Decor at Vendors* — Puts a green glow and the number you still need on any vendor item that grants a decor piece from your shopping list.
@@ -511,6 +522,7 @@ Settings are saved per account, except for Bonus Roll preferences, Omnium Folio 
 ## Notes
 
 - More features will be added over time — hence the name.
+- Bulk Buy is adapted from [BuyEmAll](https://www.curseforge.com/wow/addons/buyemall) by Cogwheel, Shinisuryu, Jordy141 and contributors, used under the MIT licence (see `Licenses/BuyEmAll.txt`).
 - Enchant slot icons by Lorc, Irongamer and Delapouite from [game-icons.net](https://game-icons.net), used under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
 
 ---

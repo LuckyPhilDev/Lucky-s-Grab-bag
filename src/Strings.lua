@@ -92,6 +92,19 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         tooltip = "Confirm Purchase",
     },
 
+    bulkBuy = {
+        max            = "Max",
+        stack          = "Stack",
+        confirm        = "Buy %d x %s?",
+        stackPurchase  = "Stack purchase",
+        stackSize      = "Stack size",
+        partialStack   = "Partial stack",
+        maxPurchase    = "Maximum purchase",
+        canFit         = "You can fit",
+        canAfford      = "You can afford",
+        vendorHas      = "Vendor has",
+    },
+
     vendorShoppingList = {
         tooltipNeeded = "Buy %d",
         tooltipStack  = "Buy %d stack (%d)",
@@ -442,6 +455,14 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         confirmPurchaseOnSide = {
             label = "Button on Side",
             desc  = "Floats the tick button next to the vendor window instead of overlaying the clicked item. Right-click drag to move.",
+        },
+        bulkBuy = {
+            label = "Bulk Buy",
+            desc  = "BuyEmAll's shift-click buying, built in. Shift-clicking an item at a vendor opens BuyEmAll's window to buy any amount, with Stack and Max buttons, instead of the default stack splitter. Stands down while BuyEmAll itself is installed.",
+        },
+        bulkBuyConfirm = {
+            label = "Confirm Large Purchases",
+            desc  = "Asks before buying more than one stack at once.",
         },
         vendorShoppingList = {
             label = "Vendor Shopping List",
