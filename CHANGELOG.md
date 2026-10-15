@@ -1,6 +1,7 @@
 ## [Unreleased]
 
 ### Added
+- **Bulk Buy** Shift-click an item at a vendor to buy any amount, with Stack and Max buttons and a check before anything over one stack. Adapted from BuyEmAll.
 - **Legendary Rank 5 Curios** Rank 5 curios now show orange, like legendary items, in your delve companion's curio list, your bags (Baganator included) and their tooltips, instead of the same purple as rank 4.
 
 ### Fixed

@@ -158,6 +158,23 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label    = SS.bulkBuy.label,
+            desc     = SS.bulkBuy.desc,
+            checked  = db.bulkBuy,
+            since    = "1.36.0",
+            onToggle = function(checked) db.bulkBuy = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.bulkBuyConfirm.label,
+            desc     = SS.bulkBuyConfirm.desc,
+            checked  = db.bulkBuyConfirm,
+            parent   = SS.bulkBuy.label,
+            since    = "1.36.0",
+            onToggle = function(checked) db.bulkBuyConfirm = checked end,
+        })
+
+        g:Toggle({
             label    = SS.vendorShoppingList.label,
             desc     = SS.vendorShoppingList.desc,
             checked  = db.vendorShoppingList,
