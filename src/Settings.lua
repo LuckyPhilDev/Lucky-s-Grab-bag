@@ -899,6 +899,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             desc     = SS.legendaryCurios.desc,
             checked  = db.legendaryCurios,
             since    = "1.36.0",
+            requiresReload = true,
             onToggle = function(checked)
                 db.legendaryCurios = checked
             end,
