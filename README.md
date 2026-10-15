@@ -269,6 +269,14 @@ Your delve companion's role and curios sometimes come back empty on entering a d
 - Leaves the loadout alone while you have unsaved changes open at the Delver's Supplies.
 - Remembered per character, so each alt keeps its own choices.
 
+### Legendary Rank 5 Curios
+Rank 5 curios sit a tier above Epic, but the game colours them purple like rank 4. This colours them orange, like legendary items.
+
+- Applies to the curio lists on the delve companion panel.
+- Covers the border and the new item glow in your bags, Baganator included.
+- Colours the curio's name in its tooltip.
+- Changing the setting offers a reload, which it needs to take effect.
+
 ### Map Teleports
 Puts teleport buttons on the world map: on dungeon and raid entrances, on your class teleports' destinations, and on the active Abundance event.
 
@@ -479,6 +487,7 @@ The panel opens on a **What's New** list of the settings added in recent release
   - *Minimum Delve Level* — The minimum delve level required for the button to appear (1–11).
 - *Dundun Finder*: Shows a button in bountiful delves that targets, pings and marks Dundun.
 - *Per-Spec Companion Loadout*: Remembers your delve companion's role and curios for each specialization and puts them back when a delve hands them to you empty or you switch specs.
+- *Legendary Rank 5 Curios*: Colours rank 5 curios orange, like legendary items, in the companion panel, your bags and tooltips.
 
 **Inventory**
 - *Bank Queue*: Choose Auto or Manual for your bank moves, or hide the queue window.
