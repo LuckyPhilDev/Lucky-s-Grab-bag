@@ -33,12 +33,19 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     self.category = panel.category
 
     SLASH_LUCKYGB1 = "/grabbag"
+    SLASH_LUCKYGB2 = "/gb"
     SlashCmdList["LUCKYGB"] = function(msg)
         local command = strtrim(msg or ""):lower()
         if command == "decor" then
             LuckyGrabbag.DecorTracking:OpenList()
         elseif command == "disenchant" then
             LuckyGrabbag.MassDisenchant:Open()
+        elseif command == "items" then
+            local anywhere = LuckyGrabbag.UseItems:ToggleOutsideRestAreas()
+            print(LuckyGrabbag.PREFIX .. " " .. (anywhere and S.useItems.shownAnywhere or S.useItems.restedOnly))
+            if InCombatLockdown() then
+                print(LuckyGrabbag.PREFIX .. " " .. S.useItems.inCombat)
+            end
         else
             panel:Open()
         end
