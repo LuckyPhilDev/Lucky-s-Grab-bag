@@ -609,7 +609,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         legendaryCurios = {
             label = "Legendary Rank 5 Curios",
-            desc  = "Colours rank 5 curios orange, like legendary items, in your delve companion's curio list and your bags, Baganator included. The game shows them purple, the same as rank 4.",
+            desc  = "Colours rank 5 curios orange, like legendary items, in your delve companion's curio list, your bags (Baganator included) and their tooltips. The game shows them purple, the same as rank 4.",
         },
         piPicker = {
             label = "Power Infusion Picker",

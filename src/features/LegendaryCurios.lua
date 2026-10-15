@@ -126,9 +126,18 @@ local function HookBaganator()
     Baganator.API.Skins.RegisterListener(HookBaganatorButton)
 end
 
+local function RecolorTooltipName(tooltip)
+    if not db.legendaryCurios then return end
+    local tooltipName = tooltip:GetName()
+    local _, link = tooltip:GetItem()
+    if not tooltipName or not link or not IsTopCurio(link) then return end
+    _G[tooltipName .. "TextLeft1"]:SetTextColor(LegendaryRGB())
+end
+
 function LegendaryCurios:Init(database)
     db = database
     HookContainerFrames()
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, RecolorTooltipName)
     EventUtil.ContinueOnAddOnLoaded("Blizzard_DelvesCompanionConfiguration", HookCompanionUI)
     EventUtil.ContinueOnAddOnLoaded("Baganator", HookBaganator)
 end
