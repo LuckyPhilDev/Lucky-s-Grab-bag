@@ -27,9 +27,8 @@ local function CurioRarity(configID, entryID)
 end
 
 local function RecolorCurioOption(_, button)
-    local data = button.data
-    if not db.legendaryCurios or not data or not data.entryID then return end
-    if CurioRarity(data.configID, data.entryID) == Enum.CurioRarity.EpicTier2 then
+    if not db.legendaryCurios then return end
+    if CurioRarity(button.data.configID, button.data.entryID) == Enum.CurioRarity.EpicTier2 then
         button.Border:SetVertexColor(LegendaryRGB())
     end
 end
@@ -99,19 +98,20 @@ local function HookButton(button)
     HookTexture(button.IconOverlay)
 end
 
+-- Bag buttons come from a pool on every rebuild of the bag's slots, so each
+-- one is hooked as it is handed out.
 local function HookContainerFrame(frame)
-    for _, button in ipairs(frame.Items or {}) do HookButton(button) end
     hooksecurefunc(frame, "AcquireNewItemButton", function(self)
         HookButton(self.Items[#self.Items])
     end)
 end
 
--- Every frame, not just the enumerator's: it lists only the combined or the
+-- Every frame, not Blizzard's enumerator: it lists only the combined or the
 -- separate bags, whichever the setting picked at the time.
 local function HookContainerFrames()
     HookContainerFrame(ContainerFrameCombinedBags)
     for _, frame in ipairs(ContainerFrameContainer.ContainerFrames) do
-        if frame ~= ContainerFrameCombinedBags then HookContainerFrame(frame) end
+        HookContainerFrame(frame)
     end
 end
 
