@@ -6,7 +6,6 @@ LuckyGrabbag.LegendaryCurios = {}
 local LegendaryCurios = LuckyGrabbag.LegendaryCurios
 
 local TOP_CURIO_RANK = 5
-local CURIO_ITEM_LEVEL = 1
 local RANK_LINE_SEARCH_DEPTH = 4
 
 local db
@@ -49,13 +48,11 @@ local function TooltipRank(tooltip)
     end
 end
 
--- Curios are item level 1, which keeps max-upgraded gear ("Hero 6/6") out of
--- the rank match without depending on the client's language.
 -- Only a match is cached: bags first draw before item data has loaded, and a
 -- miss remembered then would stick until the next reload.
 local function IsTopCurio(link)
     if isTopCurioByLink[link] then return true end
-    if C_Item.GetDetailedItemLevelInfo(link) ~= CURIO_ITEM_LEVEL then return false end
+    if not C_Item.IsCurioItem(link) or C_Item.GetItemQualityByID(link) ~= Enum.ItemQuality.Epic then return false end
 
     local tooltip = C_TooltipInfo.GetHyperlink(link)
     local rank = tooltip and TooltipRank(tooltip)
@@ -74,33 +71,38 @@ end
 
 local recoloring = false
 
--- Recolours the quality ring the moment it is coloured, rather than after
--- SetItemButtonQuality returns: skins such as EllesmereUI copy the ring's colour
--- onto their own border from a hook that runs before any of ours could.
-local function RecolorRing(ring, _, _, _, alpha)
+-- Recolours the moment Blizzard colours, rather than after SetItemButtonQuality
+-- returns: skins such as EllesmereUI copy the colour onto their own border from
+-- a hook that runs before any of ours could.
+local function RecolorQualityTexture(texture)
     if recoloring or not db.legendaryCurios then return end
-    local link = ButtonItemLink(ring:GetParent())
-    if not link or C_Item.GetItemQualityByID(link) ~= Enum.ItemQuality.Epic or not IsTopCurio(link) then return end
+    local link = ButtonItemLink(texture:GetParent())
+    if not link or not IsTopCurio(link) then return end
 
     recoloring = true
-    local r, g, b = LegendaryRGB()
-    ring:SetVertexColor(r, g, b, alpha)
+    texture:SetVertexColor(LegendaryRGB())
     recoloring = false
 end
 
-local hookedRings = {}
+local hookedTextures = {}
 
-local function HookRing(button)
-    local ring = button.IconBorder
-    if not ring or hookedRings[ring] then return end
-    hookedRings[ring] = true
-    hooksecurefunc(ring, "SetVertexColor", RecolorRing)
+local function HookTexture(texture)
+    if not texture or hookedTextures[texture] then return end
+    hookedTextures[texture] = true
+    hooksecurefunc(texture, "SetVertexColor", RecolorQualityTexture)
+end
+
+-- A curio's quality shows twice: the ring every item has, and the curio frame
+-- Blizzard lays over it.
+local function HookButton(button)
+    HookTexture(button.IconBorder)
+    HookTexture(button.IconOverlay)
 end
 
 local function HookContainerFrame(frame)
-    for _, button in ipairs(frame.Items or {}) do HookRing(button) end
+    for _, button in ipairs(frame.Items or {}) do HookButton(button) end
     hooksecurefunc(frame, "AcquireNewItemButton", function(self)
-        HookRing(self.Items[#self.Items])
+        HookButton(self.Items[#self.Items])
     end)
 end
 
@@ -114,7 +116,7 @@ local function HookContainerFrames()
 end
 
 local function HookBaganatorButton(details)
-    if details.regionType == "ItemButton" then HookRing(details.region) end
+    if details.regionType == "ItemButton" then HookButton(details.region) end
 end
 
 local function HookBaganator()
