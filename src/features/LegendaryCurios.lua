@@ -62,8 +62,9 @@ local function IsTopCurio(link)
 end
 
 local function ButtonItemLink(button)
-    if button.GetBagID then
-        return C_Container.GetContainerItemLink(button:GetBagID(), button:GetID())
+    local bagID = button.GetBagID and button:GetBagID()
+    if bagID then
+        return C_Container.GetContainerItemLink(bagID, button:GetID())
     end
     return button.BGR and button.BGR.itemLink
 end
