@@ -127,12 +127,19 @@ local function HookBaganator()
     Baganator.API.Skins.RegisterListener(HookBaganatorButton)
 end
 
-local function RecolorTooltipName(tooltip)
-    if not db.legendaryCurios then return end
-    local tooltipName = tooltip:GetName()
-    local _, link = tooltip:GetItem()
-    if not tooltipName or not link or not IsTopCurio(link) then return end
-    _G[tooltipName .. "TextLeft1"]:SetTextColor(LegendaryRGB())
+-- Reads the link the way TooltipUtil.GetDisplayedItem does: comparison
+-- tooltips have no GetItem method.
+local function TooltipItemLink(data)
+    if data.guid then return C_Item.GetItemLinkByGUID(data.guid) end
+    return data.hyperlink
+end
+
+local function RecolorTooltipName(tooltip, data)
+    if not db.legendaryCurios or not tooltip.TextLeft1 then return end
+    local link = TooltipItemLink(data)
+    if link and IsTopCurio(link) then
+        tooltip.TextLeft1:SetTextColor(LegendaryRGB())
+    end
 end
 
 function LegendaryCurios:Init(database)
