@@ -65,20 +65,56 @@ local function IsTopCurio(link)
     return true
 end
 
-local function RecolorBagItem(button, quality, itemIDOrLink)
-    if not db.legendaryCurios or quality ~= Enum.ItemQuality.Epic or type(itemIDOrLink) ~= "string" then return end
-    if IsTopCurio(itemIDOrLink) then
-        SetItemButtonBorderVertexColor(button, LegendaryRGB())
+local function ButtonItemLink(button)
+    if button.GetBagID then
+        return C_Container.GetContainerItemLink(button:GetBagID(), button:GetID())
+    end
+    return button.BGR and button.BGR.itemLink
+end
+
+local recoloring = false
+
+-- Recolours the quality ring the moment it is coloured, rather than after
+-- SetItemButtonQuality returns: skins such as EllesmereUI copy the ring's colour
+-- onto their own border from a hook that runs before any of ours could.
+local function RecolorRing(ring, _, _, _, alpha)
+    if recoloring or not db.legendaryCurios then return end
+    local link = ButtonItemLink(ring:GetParent())
+    if not link or C_Item.GetItemQualityByID(link) ~= Enum.ItemQuality.Epic or not IsTopCurio(link) then return end
+
+    recoloring = true
+    local r, g, b = LegendaryRGB()
+    ring:SetVertexColor(r, g, b, alpha)
+    recoloring = false
+end
+
+local hookedRings = {}
+
+local function HookRing(button)
+    local ring = button.IconBorder
+    if not ring or hookedRings[ring] then return end
+    hookedRings[ring] = true
+    hooksecurefunc(ring, "SetVertexColor", RecolorRing)
+end
+
+local function HookContainerFrame(frame)
+    for _, button in ipairs(frame.Items or {}) do HookRing(button) end
+    hooksecurefunc(frame, "AcquireNewItemButton", function(self)
+        HookRing(self.Items[#self.Items])
+    end)
+end
+
+-- Every frame, not just the enumerator's: it lists only the combined or the
+-- separate bags, whichever the setting picked at the time.
+local function HookContainerFrames()
+    HookContainerFrame(ContainerFrameCombinedBags)
+    for _, frame in ipairs(ContainerFrameContainer.ContainerFrames) do
+        if frame ~= ContainerFrameCombinedBags then HookContainerFrame(frame) end
     end
 end
 
--- Baganator calls each button's own SetItemButtonQuality method, which the
--- global hook never sees.
 local function HookBaganatorButton(details)
-    local button = details.region
-    if details.regionType == "ItemButton" and button.SetItemButtonQuality then
-        hooksecurefunc(button, "SetItemButtonQuality", RecolorBagItem)
-    end
+    if details.regionType == "ItemButton" then HookRing(details.region) end
 end
 
 local function HookBaganator()
@@ -90,7 +126,7 @@ end
 
 function LegendaryCurios:Init(database)
     db = database
-    hooksecurefunc("SetItemButtonQuality", RecolorBagItem)
+    HookContainerFrames()
     EventUtil.ContinueOnAddOnLoaded("Blizzard_DelvesCompanionConfiguration", HookCompanionUI)
     EventUtil.ContinueOnAddOnLoaded("Baganator", HookBaganator)
 end
