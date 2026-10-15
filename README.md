@@ -62,7 +62,7 @@ Displays a floating bar of buttons when you have consumable profession items in 
 - Detects a wide range of profession knowledge consumables — **Artisan's Consortium Payouts**, **Glimmers** and **Flickers of Midnight Knowledge**, **Thalassian Treatises** (all professions), **Brimming Mana Shards**, **Swirling Arcane Essences**, **Caches of Void-Touched Armor**, **crest upgrade and downgrade satchels** (all Dawncrest tiers), **Chests of Gold** and **Rattling Bags of Gold**, plus the unique books, treasure pickups, gathering drops, weekly quest rewards, catch-up items, and treasure-hunt rewards from The War Within and Midnight.
 - Thalassian Treatises are automatically hidden if already used this week, if your character hasn't learned that profession for the current expansion, or if your Midnight skill is below 25.
 - One button per item type; shows stack count when you have multiples.
-- Optionally restrict to cities and inns only via the "Only in Cities" setting.
+- Optionally restrict to cities and inns only via the "Only while rested" setting. Type `/grabbag items` to show it anywhere until you type it again or reload.
 - Optionally include finishing reagents that combine into a better one, such as 5 **Multicraft Matrix** into a **Multicraft Manifold**, via the "Show finishing reagents" setting. A button appears only once you hold 5. Off by default.
 - Decor in your bags shares a single button, however many pieces you carry. Each click uses one piece, and the next piece takes its place until none are left. The count shows how many pieces remain. Turn it off with the "Show decor" setting.
 - Draggable via right-click drag; position is saved account-wide and persists across reloads.
@@ -414,6 +414,7 @@ The addon also lists itself in panel addons such as Titan Panel, Bazooka and Cho
 | `/grabbag` | Open the addon settings panel |
 | `/grabbag decor` | Open the Decor Shopping List |
 | `/grabbag disenchant` | Open Mass Disenchant |
+| `/grabbag items` | Show the Use Items Popup outside rest areas, or put it back |
 | `/grabbag-reagent <itemID>` | Diagnose why a reagent is or isn't being auto-deposited |
 | `/combatprep` | Force-show the Combat Prep window (for testing outside group content) |
 | `/pipicker` | Force-show the Power Infusion Picker window (also `/pitarget`) |

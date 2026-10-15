@@ -28,6 +28,7 @@ local MAX_BUTTONS = 12
 local db
 local containerFrame
 local buttons = {}
+local showOutsideRestAreas = false
 local inCombat = false
 
 local DevLog = LuckyGrabbag.Logger("UseItems")
@@ -258,7 +259,7 @@ local function UpdateButtons()
         if containerFrame then containerFrame:Hide() end
         return
     end
-    if db.useItemsCityOnly and not IsResting() then
+    if db.useItemsCityOnly and not IsResting() and not showOutsideRestAreas then
         DevLog("City-only mode active and not in a rest area, hiding")
         if containerFrame then containerFrame:Hide() end
         return
@@ -305,6 +306,12 @@ end
 
 function LuckyGrabbag.UseItems:ApplySetting()
     UpdateButtons()
+end
+
+function LuckyGrabbag.UseItems:ToggleOutsideRestAreas()
+    showOutsideRestAreas = not showOutsideRestAreas
+    UpdateButtons()
+    return showOutsideRestAreas
 end
 
 function LuckyGrabbag.UseItems:Init(database)

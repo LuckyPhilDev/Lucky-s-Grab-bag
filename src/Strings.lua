@@ -319,6 +319,12 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         noSkill     = "Learn Enchanting's Disenchant spell first.",
     },
 
+    useItems = {
+        shownAnywhere = "Use Items Popup shown everywhere until you type /grabbag items again or reload.",
+        restedOnly    = "Use Items Popup back to rest areas only.",
+        inCombat      = "The popup updates once you leave combat.",
+    },
+
     reminders = {
         repair       = "Repair your gear",
         repairDetail = "%d%%",

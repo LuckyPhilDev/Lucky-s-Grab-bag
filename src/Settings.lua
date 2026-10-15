@@ -39,6 +39,12 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             LuckyGrabbag.DecorTracking:OpenList()
         elseif command == "disenchant" then
             LuckyGrabbag.MassDisenchant:Open()
+        elseif command == "items" then
+            local anywhere = LuckyGrabbag.UseItems:ToggleOutsideRestAreas()
+            print(LuckyGrabbag.PREFIX .. " " .. (anywhere and S.useItems.shownAnywhere or S.useItems.restedOnly))
+            if InCombatLockdown() then
+                print(LuckyGrabbag.PREFIX .. " " .. S.useItems.inCombat)
+            end
         else
             panel:Open()
         end
