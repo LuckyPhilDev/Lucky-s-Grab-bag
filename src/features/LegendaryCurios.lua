@@ -69,34 +69,43 @@ local function ButtonItemLink(button)
     return button.BGR and button.BGR.itemLink
 end
 
-local recoloring = false
+local overriding = false
 
--- Recolours the moment Blizzard colours, rather than after SetItemButtonQuality
--- returns: skins such as EllesmereUI copy the colour onto their own border from
--- a hook that runs before any of ours could.
-local function RecolorQualityTexture(texture)
-    if recoloring or not db.legendaryCurios then return end
+-- Overrides the moment Blizzard sets a texture, rather than after
+-- SetItemButtonQuality returns: skins such as EllesmereUI copy the colour onto
+-- their own border from a hook that runs before any of ours could.
+local function OverrideOnTopCurio(texture, apply)
+    if overriding or not db.legendaryCurios then return end
     local link = ButtonItemLink(texture:GetParent())
     if not link or not IsTopCurio(link) then return end
 
-    recoloring = true
+    overriding = true
+    apply(texture)
+    overriding = false
+end
+
+local function PaintLegendary(texture)
     texture:SetVertexColor(LegendaryRGB())
-    recoloring = false
+end
+
+local function GlowLegendary(texture)
+    texture:SetAtlas(ColorManager.GetAtlasDataForNewItemQuality(Enum.ItemQuality.Legendary))
 end
 
 local hookedTextures = {}
 
-local function HookTexture(texture)
+local function HookTexture(texture, method, apply)
     if not texture or hookedTextures[texture] then return end
     hookedTextures[texture] = true
-    hooksecurefunc(texture, "SetVertexColor", RecolorQualityTexture)
+    hooksecurefunc(texture, method, function(self) OverrideOnTopCurio(self, apply) end)
 end
 
--- A curio's quality shows twice: the ring every item has, and the curio frame
--- Blizzard lays over it.
+-- A curio's quality shows three times: the ring every item has, the curio frame
+-- Blizzard lays over it, and the glow while it is still new.
 local function HookButton(button)
-    HookTexture(button.IconBorder)
-    HookTexture(button.IconOverlay)
+    HookTexture(button.IconBorder, "SetVertexColor", PaintLegendary)
+    HookTexture(button.IconOverlay, "SetVertexColor", PaintLegendary)
+    HookTexture(button.NewItemTexture, "SetAtlas", GlowLegendary)
 end
 
 -- Bag buttons come from a pool on every rebuild of the bag's slots, so each
