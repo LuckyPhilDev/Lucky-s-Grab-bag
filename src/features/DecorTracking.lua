@@ -479,17 +479,7 @@ local function SetGlow(button, needed)
     end
 end
 
-local BUY_THROTTLE = 0.5 -- seconds between purchases, below this the server reports the item busy
 local BUY_ALL_CONFIRM_COST = 500 * 10000 -- 500 gold, over this Buy All asks first
-local buyQueue = {}
-local buyTicker
-
-local function StopBuying()
-    if buyTicker then
-        buyTicker:Cancel()
-        buyTicker = nil
-    end
-end
 
 --- How many items to buy in total: what you still need, rounded up to whole
 --- stacks, capped by the vendor's remaining stock and what you can pay.
@@ -518,34 +508,6 @@ local function StackSizeAt(index)
     return math.max(GetMerchantItemMaxStack(index) or 1, 1)
 end
 
---- BuyMerchantItem only buys one stack per call, and calls sent back to back
---- fail with "Item is busy", so orders go out as a spaced run of stack-sized
---- purchases. Spacing and approach follow BuyEmAll.
-local function ProcessBuyQueue()
-    local job = buyQueue[1]
-    if not job or not MerchantFrame:IsShown() then
-        wipe(buyQueue)
-        StopBuying()
-        return
-    end
-
-    local amount = math.min(job.remaining, job.perCall)
-    BuyMerchantItem(job.index, amount)
-    job.remaining = job.remaining - amount
-    if job.remaining < 1 then table.remove(buyQueue, 1) end
-    if #buyQueue == 0 then StopBuying() end
-end
-
-local function QueuePurchase(index, quantity, perCall)
-    buyQueue[#buyQueue + 1] = { index = index, remaining = quantity, perCall = perCall }
-    if buyTicker then return end
-
-    ProcessBuyQueue() -- the first purchase goes out now, the rest are spaced
-    if #buyQueue > 0 then
-        buyTicker = C_Timer.NewTicker(BUY_THROTTLE, ProcessBuyQueue)
-    end
-end
-
 local function TryAutoBuy(button)
     local index = button:GetID()
     local needed = NeededAtMerchantIndex(index)
@@ -571,7 +533,7 @@ local function TryAutoBuy(button)
         -- handler and keep the confirmations that buying by hand would raise.
         button.SplitStack(button, quantity)
     else
-        QueuePurchase(index, quantity, perCall)
+        LuckyGrabbag.QueueMerchantPurchase(index, quantity, perCall)
     end
 end
 
@@ -607,7 +569,7 @@ end
 
 local function RunPurchases(purchases)
     for _, purchase in ipairs(purchases) do
-        QueuePurchase(purchase.index, purchase.quantity, purchase.perCall)
+        LuckyGrabbag.QueueMerchantPurchase(purchase.index, purchase.quantity, purchase.perCall)
     end
 end
 

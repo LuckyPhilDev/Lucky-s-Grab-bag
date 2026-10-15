@@ -15,6 +15,7 @@ Strings.lua
 Defaults.lua
 UIHelpers.lua
 Settings.lua
+MerchantBuyQueue.lua
 features/AutoRepair.lua
 features/AutoSellJunk.lua
 features/AuctionHouse.lua
