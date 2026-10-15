@@ -3,9 +3,6 @@
 ### Added
 - **Legendary Rank 5 Curios** Rank 5 curios now show orange, like legendary items, in your delve companion's curio list, your bags (Baganator included) and their tooltips, instead of the same purple as rank 4.
 
-### Improved
-- **Use Items Popup** Type `/grabbag items` to show the popup outside rest areas when Only while rested is on. Type it again to hide it there.
-
 ### Fixed
 - The Use Items Popup now shows a button for the Satchel of Corrosive Coins.
 
