@@ -101,6 +101,7 @@ LuckyGrabbag.UseItemsData = {
         -- Gold containers
         263934, -- Chest of Gold
         268297, -- Rattling Bag of Gold
+        281223, -- Satchel of Corrosive Coins
 
         -- Mixed reward containers
         275899, -- Venom-Soaked Satchel

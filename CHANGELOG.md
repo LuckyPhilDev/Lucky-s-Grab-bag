@@ -3,6 +3,9 @@
 ### Added
 - **Legendary Rank 5 Curios** Rank 5 curios now show orange, like legendary items, in your delve companion's curio list, your bags (Baganator included) and their tooltips, instead of the same purple as rank 4.
 
+### Fixed
+- The Use Items Popup now shows a button for the Satchel of Corrosive Coins.
+
 ## [1.35.3] - 2026-10-14
 
 ### Fixed
