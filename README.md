@@ -17,7 +17,7 @@ Whenever the game pops a confirmation at a vendor or when using a still-refundab
 - Can be toggled in the addon settings.
 
 ### Bulk Buy
-Shift-click an item at a vendor to buy any amount of it, instead of the one stack the default splitter allows.
+Shift-click an item at a vendor to buy any amount of it, instead of the one stack the default splitter allows. This is [BuyEmAll](https://www.curseforge.com/wow/addons/buyemall), the vendor favourite since 2006, built into Grab-bag with its original window and updated for Midnight. All credit to its authors.
 
 - Type an amount, use the arrows, or press **Stack** and **Max**. Right-click **Stack** to step back down a stack.
 - **Max** stops at whatever runs out first: your gold or currency, your bag space, or the vendor's stock. Hover it to see each limit.

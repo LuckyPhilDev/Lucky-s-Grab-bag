@@ -1,4 +1,31 @@
--- Lucky's Grab-bag: Shift-click a vendor item to buy any amount. Adapted from BuyEmAll (MIT), see Licenses/BuyEmAll.txt.
+-- Lucky's Grab-bag: Bulk Buy, a port of BuyEmAll into Grab-bag, keeping its original window.
+--
+-- BuyEmAll has made bulk buying painless since 2006, by Cogwheel, Shinisuryu,
+-- Jordy141 and contributors: https://www.curseforge.com/wow/addons/buyemall
+-- Ported on 2026-10-15 from the community fork's v5.0.0
+-- (https://github.com/EricaPomme/BuyEmAll), under the MIT License as it stood then:
+--
+-- MIT License
+--
+-- Copyright (c) 2006-2026 BuyEmAll contributors (Cogwheel, Shinisuryu, Jordy141, and contributors)
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
+--
+-- The above copyright notice and this permission notice shall be included in all
+-- copies or substantial portions of the Software.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+-- SOFTWARE.
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.BulkBuy = {}
 

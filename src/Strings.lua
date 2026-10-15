@@ -458,7 +458,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         bulkBuy = {
             label = "Bulk Buy",
-            desc  = "Shift-clicking an item at a vendor opens a window to buy any amount, with Stack and Max buttons, instead of the default stack splitter. Stands down while BuyEmAll is installed.",
+            desc  = "BuyEmAll's shift-click buying, built in. Shift-clicking an item at a vendor opens BuyEmAll's window to buy any amount, with Stack and Max buttons, instead of the default stack splitter. Stands down while BuyEmAll itself is installed.",
         },
         bulkBuyConfirm = {
             label = "Confirm Large Purchases",
