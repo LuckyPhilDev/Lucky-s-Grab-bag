@@ -33,6 +33,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     self.category = panel.category
 
     SLASH_LUCKYGB1 = "/grabbag"
+    SLASH_LUCKYGB2 = "/gb"
     SlashCmdList["LUCKYGB"] = function(msg)
         local command = strtrim(msg or ""):lower()
         if command == "decor" then
