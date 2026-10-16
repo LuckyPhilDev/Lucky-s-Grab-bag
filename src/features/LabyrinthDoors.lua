@@ -5,6 +5,7 @@ LuckyGrabbag.LabyrinthDoors = {}
 -- Doors with a known ID teach that button in the client's own language.
 local KNOWN_DOOR_CHOICES = { [1065] = true, [1072] = true }
 local ENGLISH_DOOR_BUTTON = "Enter Chamber\nContinue your run to gather more rewards."
+local SPEAKERS_CHAMBER_CHOICE = 1073
 
 local db
 local DevLog = LuckyGrabbag.Logger("LabyrinthDoors")
@@ -13,6 +14,7 @@ local function DoorButton(info)
     local option = #info.options == 1 and info.options[1]
     local button = option and #option.buttons == 1 and option.buttons[1]
     if not button then return nil end
+    if info.choiceID == SPEAKERS_CHAMBER_CHOICE then return button end
     local signature = button.text .. "\n" .. (button.tooltip or "")
     if KNOWN_DOOR_CHOICES[info.choiceID] then db.labyrinthDoorButton = signature end
     if signature == (db.labyrinthDoorButton or ENGLISH_DOOR_BUTTON) then return button end
