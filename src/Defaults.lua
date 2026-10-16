@@ -89,6 +89,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     legendaryCurios          = true,
     codexLoadouts            = true,
     codexLoadoutSets         = {},
+    autoEnterLabyrinth       = false,
     blueprintTrackMissing    = true,
     blueprintImportHistory   = true,
     blueprintImportCodes     = {},

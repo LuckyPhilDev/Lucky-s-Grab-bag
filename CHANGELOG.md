@@ -2,6 +2,7 @@
 
 ### Added
 - **Corrosive Codex Loadouts** A panel docked to the Corrosive Codex, in its own style, saves the powers you have picked as a named loadout. Click a saved loadout to swap your powers over to it, or right-click to delete it. Loadouts are shared across your account.
+- **Auto-enter Labyrinth Chambers** Opening a door to the next chamber of a Labyrinth takes you straight through, without the confirmation. Off by default.
 
 ## [1.36.0] - 2026-10-15
 

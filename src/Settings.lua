@@ -932,6 +932,14 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label    = SS.autoEnterLabyrinth.label,
+            desc     = SS.autoEnterLabyrinth.desc,
+            checked  = db.autoEnterLabyrinth,
+            since    = "1.37.0",
+            onToggle = function(checked) db.autoEnterLabyrinth = checked end,
+        })
+
+        g:Toggle({
             label    = SS.legendaryCurios.label,
             desc     = SS.legendaryCurios.desc,
             checked  = db.legendaryCurios,

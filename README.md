@@ -279,6 +279,11 @@ Swapping Corrosive Codex powers means clicking them off and on one at a time. Th
 - Loadouts are shared by every character on your account.
 - On by default; turn it off in settings under Delves.
 
+### Auto-enter Labyrinth Chambers
+Every door in a Labyrinth asks whether you want to continue into the next chamber. This answers yes for you, so opening a door takes you straight through.
+
+- Off by default, since it answers the prompt for you; turn it on in settings under Delves.
+
 ### Legendary Rank 5 Curios
 Rank 5 curios sit a tier above Epic, but the game colours them purple like rank 4. This colours them orange, like legendary items.
 
@@ -498,6 +503,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Dundun Finder*: Shows a button in bountiful delves that targets, pings and marks Dundun.
 - *Per-Spec Companion Loadout*: Remembers your delve companion's role and curios for each specialization and puts them back when a delve hands them to you empty or you switch specs.
 - *Corrosive Codex Loadouts*: Adds a window beside the Corrosive Codex to save your picked powers as named loadouts and swap between them with one click.
+- *Auto-enter Labyrinth Chambers*: Skips the confirmation when you open a door to the next chamber of a Labyrinth.
 - *Legendary Rank 5 Curios*: Colours rank 5 curios orange, like legendary items, in the companion panel, your bags and tooltips.
 
 **Inventory**

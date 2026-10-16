@@ -653,6 +653,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             label = "Corrosive Codex Loadouts",
             desc  = "Adds a window beside the Corrosive Codex where you save the powers you have picked as a named loadout, then swap to any saved loadout with one click. Loadouts are shared by every character on your account.",
         },
+        autoEnterLabyrinth = {
+            label = "Auto-enter Labyrinth Chambers",
+            desc  = "Skips the confirmation when you open a door to the next chamber of a Labyrinth, so you walk straight through.",
+        },
         legendaryCurios = {
             label = "Legendary Rank 5 Curios",
             desc  = "Colours rank 5 curios orange, like legendary items, in your delve companion's curio list, your bags (Baganator included) and their tooltips. The game shows them purple, the same as rank 4.",

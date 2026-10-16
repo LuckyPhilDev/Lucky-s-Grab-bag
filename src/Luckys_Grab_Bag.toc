@@ -35,6 +35,7 @@ features/DelveMap.lua
 features/DelveCompanion.lua
 features/LegendaryCurios.lua
 features/CodexLoadouts.lua
+features/LabyrinthDoors.lua
 features/DundunFinder.lua
 features/DungeonPortalsData.lua
 features/DungeonPortals.lua
