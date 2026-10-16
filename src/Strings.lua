@@ -194,6 +194,21 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         unknownRune   = "Unknown rune",
     },
 
+    codexLoadouts = {
+        title         = "Loadouts",
+        save          = "Save",
+        namePlaceholder = "Name this loadout",
+        deleteHint    = "Right-click to delete",
+        addedBy       = "Added by Lucky's Grab-bag",
+        addedByTooltip = "Click to open this panel's setting",
+        confirmDelete = "Delete the %s loadout?",
+        empty         = "Pick your powers in the Codex, type a name above and click Save.",
+        nothingActive = "Pick at least one power in the Corrosive Codex before saving a loadout.",
+        loaded        = "Loaded your %s Codex loadout.",
+        stuck         = "Could not finish loading your Codex loadout. Still to change: %s",
+        interrupted   = "The Corrosive Codex closed before your loadout finished loading.",
+    },
+
     decorTracking = {
         trackMissing        = "Track Missing",
         trackMissingTooltip = "Adds every decor piece this blueprint is missing to your decor shopping list, however many that is.",
@@ -633,6 +648,14 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         delveCompanion = {
             label = "Per-Spec Companion Loadout",
             desc  = "Remembers your delve companion's role and curios for each specialization. Refills any slot a delve hands back empty, and swaps the whole loadout when you switch specs. A slot you set yourself is left alone. A chat message shows what was restored.",
+        },
+        codexLoadouts = {
+            label = "Corrosive Codex Loadouts",
+            desc  = "Adds a window beside the Corrosive Codex where you save the powers you have picked as a named loadout, then swap to any saved loadout with one click. Loadouts are shared by every character on your account.",
+        },
+        autoEnterLabyrinth = {
+            label = "Auto-enter Labyrinth Chambers",
+            desc  = "Skips the confirmation when you open a door to the next chamber of a Labyrinth, so you walk straight through.",
         },
         legendaryCurios = {
             label = "Legendary Rank 5 Curios",
