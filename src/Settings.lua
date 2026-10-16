@@ -31,6 +31,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         },
     })
     self.category = panel.category
+    self.panel = panel
 
     SLASH_LUCKYGB1 = "/grabbag"
     SLASH_LUCKYGB2 = "/gb"
@@ -859,6 +860,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     ---------------------------------------------------------------------------
     do
         local g = panel:Group(SS.groups.delves)
+        self.delvesGroup = g
 
         g:Toggle({
             label    = SS.delveMap.label,
@@ -915,6 +917,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked)
                 db.delveCompanionPerSpec = checked
                 LuckyGrabbag.DelveCompanion:ApplySetting()
+            end,
+        })
+
+        g:Toggle({
+            label    = SS.codexLoadouts.label,
+            desc     = SS.codexLoadouts.desc,
+            checked  = db.codexLoadouts,
+            since    = "1.37.0",
+            onToggle = function(checked)
+                db.codexLoadouts = checked
+                LuckyGrabbag.CodexLoadouts:ApplySetting()
             end,
         })
 
@@ -1165,4 +1178,11 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     if target then
         LuckyPromo:AddToRichGroup(target, "Luckys_Grab_Bag")
     end
+end
+
+-- Opens the panel on a group with one of its settings described in the About column.
+function LuckyGrabbag.Settings:OpenTo(group, label)
+    self.panel:SetActiveGroup(group)
+    self.panel:Open()
+    self.panel:UpdateAbout(group.byLabel[label])
 end

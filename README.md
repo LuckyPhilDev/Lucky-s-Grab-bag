@@ -269,6 +269,16 @@ Your delve companion's role and curios sometimes come back empty on entering a d
 - Leaves the loadout alone while you have unsaved changes open at the Delver's Supplies.
 - Remembered per character, so each alt keeps its own choices.
 
+### Corrosive Codex Loadouts
+Swapping Corrosive Codex powers means clicking them off and on one at a time. This docks a Loadouts panel to the side of the Codex, in the Codex's own style, that remembers the combinations you use.
+
+- Type a name and click Save to store the powers you have picked. Leave the name blank to name it after its powers.
+- Click a loadout to swap your powers over to it. A chat message confirms it, or lists any power it could not change.
+- The loadout you have on right now carries a checkmark, like the powers in the Codex.
+- Right-click a loadout to delete it.
+- Loadouts are shared by every character on your account.
+- On by default; turn it off in settings under Delves.
+
 ### Legendary Rank 5 Curios
 Rank 5 curios sit a tier above Epic, but the game colours them purple like rank 4. This colours them orange, like legendary items.
 
@@ -487,6 +497,7 @@ The panel opens on a **What's New** list of the settings added in recent release
   - *Minimum Delve Level* — The minimum delve level required for the button to appear (1–11).
 - *Dundun Finder*: Shows a button in bountiful delves that targets, pings and marks Dundun.
 - *Per-Spec Companion Loadout*: Remembers your delve companion's role and curios for each specialization and puts them back when a delve hands them to you empty or you switch specs.
+- *Corrosive Codex Loadouts*: Adds a window beside the Corrosive Codex to save your picked powers as named loadouts and swap between them with one click.
 - *Legendary Rank 5 Curios*: Colours rank 5 curios orange, like legendary items, in the companion panel, your bags and tooltips.
 
 **Inventory**
@@ -524,7 +535,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Map Teleports* — Shows a teleport button on the world map's dungeon and raid entrances you have earned the teleport for, your class teleports where each spell lands, and Dundun's Abundant Travel Method on the active Abundance event. Each kind of teleport has its own toggle.
 - *Auto-dismiss Bonus Roll* — Passes on the Bonus Roll popup at the end of instanced content, with per-character toggles for Mythic+ (with a minimum key level), Raids (with individual difficulty selection), Delves, Dungeons, and Hunts. Managed in Lucky's Loot Wishlist when that is installed.
 
-Settings are saved per account, except for Bonus Roll preferences, Omnium Folio rune memory, and delve companion loadout memory, which are saved per character.
+Settings are saved per account, except for Bonus Roll preferences, Omnium Folio rune memory, and delve companion loadout memory, which are saved per character. Corrosive Codex loadouts are shared across your account.
 
 ---
 
