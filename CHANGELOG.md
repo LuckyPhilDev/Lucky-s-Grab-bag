@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Improved
+- **Auto-enter Labyrinth Chambers** The door to the Speaker's Chamber, the final challenge, now takes you straight through as well.
+
 ## [1.37.0] - 2026-10-16
 
 ### Added
