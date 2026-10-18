@@ -19,6 +19,11 @@ for _, id in ipairs(LuckyGrabbag.UseItemsData.itemIDs or {}) do
     ITEM_ID_SET[id] = true
 end
 
+local GARRISON_ITEM_SET = {}
+for _, id in ipairs(LuckyGrabbag.UseItemsData.garrisonItemIDs) do
+    GARRISON_ITEM_SET[id] = true
+end
+
 local DECOR_ENTRY = Enum.HousingCatalogEntryType.Decor
 
 local BUTTON_SIZE = 42
@@ -58,6 +63,10 @@ end
 
 local function IsMatchingItem(itemName, itemID)
     if itemID and (ITEM_ID_SET[itemID] or db.useItemsCustom[itemID]) then return true end
+    if itemID and GARRISON_ITEM_SET[itemID] then
+        -- ponytail: one hard-coded zone; make it a per-item zone table when a second zone-locked item appears
+        return C_Garrison.IsPlayerInGarrison(Enum.GarrisonType.Type_6_0_Garrison)
+    end
     if itemID and COMBINABLE_ORDER[itemID] then return db.useItemsShowCombinable end
     if not itemName then return false end
     for _, pattern in ipairs(ITEM_NAME_PATTERNS) do
@@ -531,6 +540,7 @@ function LuckyGrabbag.UseItems:Init(database)
     eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
     eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     eventFrame:RegisterEvent("PLAYER_UPDATE_RESTING")
+    eventFrame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     eventFrame:SetScript("OnEvent", function(_, event)
         if event == "PLAYER_REGEN_DISABLED" then
             inCombat = true
