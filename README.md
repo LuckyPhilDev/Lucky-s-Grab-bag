@@ -73,6 +73,7 @@ Displays a floating bar of buttons when you have consumable profession items in 
 - One button per item type; shows stack count when you have multiples.
 - Optionally restrict to cities and inns only via the "Only while rested" setting.
 - Optionally include finishing reagents that combine into a better one, such as 5 **Multicraft Matrix** into a **Multicraft Manifold**, via the "Show finishing reagents" setting. A button appears only once you hold 5. Off by default.
+- Add any item of your own from **Your items…** in settings, by typing its ID or dragging it in from your bags, or with `/grabbag items add` followed by an item link or ID. Put a number after it for items you use in batches, such as `/grabbag items add 12345 5`, and the button waits until you hold that many. `/grabbag items list` shows what you have added and `/grabbag items remove` takes one off.
 - Decor in your bags shares a single button, however many pieces you carry. Each click uses one piece, and the next piece takes its place until none are left. The count shows how many pieces remain. Turn it off with the "Show decor" setting.
 - Draggable via right-click drag; position is saved account-wide and persists across reloads.
 - Auto-hides when no matching items remain in your bags.
@@ -446,6 +447,9 @@ The addon also lists itself in panel addons such as Titan Panel, Bazooka and Cho
 | `/grabbag` | Open the addon settings panel |
 | `/grabbag decor` | Open the Decor Shopping List |
 | `/grabbag disenchant` | Open Mass Disenchant |
+| `/grabbag items add <link or ID> [count]` | Add an item to the Use Items Popup, shown once you hold `count` (default 1) |
+| `/grabbag items remove <link or ID>` | Remove an item you added to the Use Items Popup |
+| `/grabbag items list` | List the items you added to the Use Items Popup |
 | `/grabbag-reagent <itemID>` | Diagnose why a reagent is or isn't being auto-deposited |
 | `/combatprep` | Force-show the Combat Prep window (for testing outside group content) |
 | `/pipicker` | Force-show the Power Infusion Picker window (also `/pitarget`) |
@@ -512,6 +516,7 @@ The panel opens on a **What's New** list of the settings added in recent release
   - *Only while rested* — Restricts the popup to cities and inns.
   - *Show finishing reagents*: Adds a button for finishing reagents that combine into a better one, such as 5 Multicraft Matrix into a Multicraft Manifold. Off by default.
   - *Show decor*: Adds one button for the decor in your bags, which moves on to the next piece each time you use one. On by default.
+  - *Your items…*: Opens a list where you add your own items by ID or by dragging them in, with how many you need before each button shows.
 
 **Rotation Glow**
 - *Rotation Glow* — Animates the suggested next-cast spell on the Essential Cooldown Viewer, using Blizzard's assisted combat data.

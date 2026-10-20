@@ -351,6 +351,20 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         shownAnywhere = "Use Items Popup shown everywhere until you type /grabbag items again or reload.",
         restedOnly    = "Use Items Popup back to rest areas only.",
         inCombat      = "The popup updates once you leave combat.",
+        customAdded     = "Added %s to the Use Items Popup. Its button shows once you hold %d.",
+        customRemoved   = "Removed %s from the Use Items Popup.",
+        customNotListed = "%s is not one of your added items.",
+        customEmpty     = "You have not added any items. Type /grabbag items add followed by an item link or ID, and optionally how many you need before it shows.",
+        customHeader    = "Your added items:",
+        customEntry     = "  %s (%d), shows at %d",
+        customUsage     = "Type /grabbag items add or remove, followed by an item link or ID. Add takes an optional count, such as /grabbag items add 12345 5.",
+        customTitle       = "Your Use Items",
+        customHint        = "Type an item ID, or drag an item here from your bags. Count is how many you need before its button shows, for items used in batches. Right-click an item to remove it.",
+        customItemLabel   = "Item ID:",
+        customCountLabel  = "Count:",
+        customAddButton   = "Add",
+        customRowCount    = "Shows at %d",
+        customWindowEmpty = "No items added yet.",
     },
 
     reminders = {
@@ -577,6 +591,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         useItems = {
             label = "Use Items Popup",
             desc  = "Floating buttons for Payouts, Glimmers/Flickers, and Treatises in your bags. Draggable; hides when empty.",
+        },
+        useItemsCustom = {
+            label = "Your items…",
+            desc  = "Add your own items to the popup by ID or by dragging them in, with how many you need before each button shows. Also /grabbag items add, remove or list.",
         },
         useItemsCityOnly = {
             label = "Only while rested",

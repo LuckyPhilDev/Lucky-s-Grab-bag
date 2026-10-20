@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Added
+- **Use Items Popup** Add any item you like from **Your items…** in settings, by typing its ID or dragging it in from your bags. Give it a count for items used in batches, and the button waits until you hold that many. `/grabbag items add`, `remove` and `list` do the same from chat.
+
 ## [1.37.1] - 2026-10-16
 
 ### Improved
