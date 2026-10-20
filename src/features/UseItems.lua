@@ -57,7 +57,7 @@ local function DecorSlot(decorByID)
 end
 
 local function IsMatchingItem(itemName, itemID)
-    if itemID and ITEM_ID_SET[itemID] then return true end
+    if itemID and (ITEM_ID_SET[itemID] or db.useItemsCustom[itemID]) then return true end
     if itemID and COMBINABLE_ORDER[itemID] then return db.useItemsShowCombinable end
     if not itemName then return false end
     for _, pattern in ipairs(ITEM_NAME_PATTERNS) do
@@ -115,6 +115,8 @@ local function ScanBags()
                             icon = info.iconFileID,
                             count = info.stackCount or 1,
                             combinable = COMBINABLE_ORDER[info.itemID],
+                            minCount = db.useItemsCustom[info.itemID]
+                                or (COMBINABLE_ORDER[info.itemID] and COMBINE_COUNT),
                         }
                     else
                         found[info.itemID].count = found[info.itemID].count + (info.stackCount or 1)
@@ -127,8 +129,8 @@ local function ScanBags()
     local items = {}
     for _, item in pairs(found) do
         -- A combine consumes a full set, so a smaller pile has nothing to offer yet.
-        if item.combinable and item.count < COMBINE_COUNT then
-            DevLog("  SKIP (only " .. item.count .. " of " .. COMBINE_COUNT .. "): " .. item.itemName)
+        if item.minCount and item.count < item.minCount then
+            DevLog("  SKIP (only " .. item.count .. " of " .. item.minCount .. "): " .. item.itemName)
         else
             table.insert(items, item)
         end
@@ -312,6 +314,211 @@ function LuckyGrabbag.UseItems:ToggleOutsideRestAreas()
     showOutsideRestAreas = not showOutsideRestAreas
     UpdateButtons()
     return showOutsideRestAreas
+end
+
+local function ItemLabel(itemID)
+    return C_Item.GetItemNameByID(itemID) or ("item:" .. itemID)
+end
+
+-- Accepts an item link or ID, then an optional count: "add 12345 5" or "add [Link] 5".
+-- The link is cut out first so digits in an item's name are never read as the count.
+local function ParseItemArgs(args)
+    local linkID = tonumber(args:match("item:(%d+)"))
+    local numbers = {}
+    for n in args:gsub("|c.-|r", ""):gmatch("%d+") do numbers[#numbers + 1] = tonumber(n) end
+    if linkID then return linkID, numbers[1] end
+    return numbers[1], numbers[2]
+end
+
+local customWindow
+local RefreshCustomWindow
+
+local function SetCustom(itemID, minCount)
+    db.useItemsCustom[itemID] = minCount and math.max(minCount, 1) or nil
+    RefreshCustomWindow()
+    UpdateButtons()
+end
+
+local function PrintCustomList(S)
+    if not next(db.useItemsCustom) then
+        print(LuckyGrabbag.PREFIX .. " " .. S.customEmpty)
+        return
+    end
+    print(LuckyGrabbag.PREFIX .. " " .. S.customHeader)
+    for itemID, minCount in pairs(db.useItemsCustom) do
+        print(S.customEntry:format(ItemLabel(itemID), itemID, minCount))
+    end
+end
+
+-- Returns false when the subcommand is not one of add, remove or list.
+function LuckyGrabbag.UseItems:HandleCustomCommand(subcommand, args)
+    local S = LuckyGrabbag.Strings.useItems
+    if subcommand == "list" then
+        PrintCustomList(S)
+        return true
+    end
+    if subcommand ~= "add" and subcommand ~= "remove" then return false end
+
+    local itemID, minCount = ParseItemArgs(args)
+    if not itemID then
+        print(LuckyGrabbag.PREFIX .. " " .. S.customUsage)
+    elseif subcommand == "add" then
+        SetCustom(itemID, minCount or 1)
+        print(LuckyGrabbag.PREFIX .. " " .. S.customAdded:format(ItemLabel(itemID), db.useItemsCustom[itemID]))
+    elseif db.useItemsCustom[itemID] then
+        SetCustom(itemID, nil)
+        print(LuckyGrabbag.PREFIX .. " " .. S.customRemoved:format(ItemLabel(itemID)))
+    else
+        print(LuckyGrabbag.PREFIX .. " " .. S.customNotListed:format(ItemLabel(itemID)))
+    end
+    return true
+end
+
+local C = LuckyUI.C
+local FONT = LuckyUI.BODY_FONT
+local ROW_HEIGHT = 28
+
+local function CountBoxValue()
+    return tonumber(customWindow.countEdit:GetText()) or 1
+end
+
+local function AddFromCursor()
+    local infoType, itemID = GetCursorInfo()
+    if infoType ~= "item" or not itemID then return end
+    ClearCursor()
+    SetCustom(itemID, CountBoxValue())
+end
+
+local function AcceptDrops(frame)
+    frame:EnableMouse(true)
+    frame:SetScript("OnReceiveDrag", AddFromCursor)
+    frame:SetScript("OnMouseDown", AddFromCursor)
+end
+
+local function CreateLabel(parent, text)
+    local fs = parent:CreateFontString(nil, "OVERLAY")
+    fs:SetFont(FONT, 12, "")
+    fs:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
+    fs:SetText(text)
+    return fs
+end
+
+local function BuildCustomRow(parent)
+    local row = CreateFrame("Frame", nil, parent)
+    row:SetSize(400, ROW_HEIGHT - 2)
+    row.icon = row:CreateTexture(nil, "OVERLAY")
+    row.icon:SetSize(24, 24)
+    row.icon:SetPoint("LEFT", 10, 0)
+    row.label = CreateLabel(row, "")
+    row.label:SetPoint("LEFT", row.icon, "RIGHT", 8, 0)
+    row.label:SetWidth(280)
+    row.label:SetJustifyH("LEFT")
+    row.count = CreateLabel(row, "")
+    row.count:SetPoint("RIGHT", -10, 0)
+    row:EnableMouse(true)
+    row:SetScript("OnReceiveDrag", AddFromCursor)
+    row:SetScript("OnMouseDown", function(self, button)
+        if button == "RightButton" then
+            SetCustom(self.itemID, nil)
+        else
+            AddFromCursor()
+        end
+    end)
+    return row
+end
+
+RefreshCustomWindow = function()
+    if not customWindow or not customWindow:IsShown() then return end
+    local S = LuckyGrabbag.Strings.useItems
+
+    local ids = {}
+    for itemID in pairs(db.useItemsCustom) do ids[#ids + 1] = itemID end
+    table.sort(ids, function(a, b) return ItemLabel(a) < ItemLabel(b) end)
+
+    local rows = customWindow.rows
+    for i, itemID in ipairs(ids) do
+        rows[i] = rows[i] or BuildCustomRow(customWindow.itemParent)
+        local row = rows[i]
+        local _, link = C_Item.GetItemInfo(itemID)
+        row.itemID = itemID
+        row.icon:SetTexture(C_Item.GetItemIconByID(itemID))
+        row.label:SetText(link or ItemLabel(itemID))
+        row.count:SetText(S.customRowCount:format(db.useItemsCustom[itemID]))
+        row:SetPoint("TOPLEFT", 0, -(i - 1) * ROW_HEIGHT)
+        row:Show()
+    end
+    for i = #ids + 1, #rows do rows[i]:Hide() end
+    customWindow.empty:SetShown(#ids == 0)
+    customWindow.itemParent:SetHeight(math.max(#ids * ROW_HEIGHT, 1))
+end
+
+local function BuildCustomWindow()
+    local S = LuckyGrabbag.Strings.useItems
+    local f, titleBar = LuckyUI.CreateWindow("LuckyGrabbagUseItemsCustomWindow", 460, 420, S.customTitle,
+        { db = db, key = "useItemsCustomWindowPos" })
+
+    local body = CreateFrame("Frame", nil, f)
+    body:SetPoint("TOPLEFT", titleBar, "BOTTOMLEFT", 0, 0)
+    body:SetPoint("BOTTOMRIGHT", 0, 0)
+    AcceptDrops(body)
+
+    local hint = CreateLabel(body, S.customHint)
+    hint:SetPoint("TOPLEFT", 14, -14)
+    hint:SetPoint("TOPRIGHT", -14, -14)
+    hint:SetJustifyH("LEFT")
+    hint:SetSpacing(3)
+    hint:SetWordWrap(true)
+    hint:SetHeight(48)
+
+    local itemLabel = CreateLabel(body, S.customItemLabel)
+    itemLabel:SetPoint("TOPLEFT", hint, "BOTTOMLEFT", 0, -16)
+
+    local itemEdit = LuckyUI.CreateInput(body, { width = 150, height = 22 })
+    itemEdit:SetPoint("LEFT", itemLabel, "RIGHT", 8, 0)
+
+    local countLabel = CreateLabel(body, S.customCountLabel)
+    countLabel:SetPoint("LEFT", itemEdit, "RIGHT", 12, 0)
+
+    local countEdit = LuckyUI.CreateInput(body, { width = 44, height = 22, maxLetters = 4 })
+    countEdit:SetPoint("LEFT", countLabel, "RIGHT", 8, 0)
+    countEdit:SetNumeric(true)
+    countEdit:SetText("1")
+    f.countEdit = countEdit
+
+    local function AddTyped()
+        local itemID = ParseItemArgs(itemEdit:GetText())
+        if not itemID then return end
+        SetCustom(itemID, CountBoxValue())
+        itemEdit:SetText("")
+        itemEdit:ClearFocus()
+    end
+    local addBtn = LuckyUI.CreateButton(body, S.customAddButton, 70, 22, "primary")
+    addBtn:SetPoint("LEFT", countEdit, "RIGHT", 8, 0)
+    addBtn:SetScript("OnClick", AddTyped)
+    itemEdit:SetScript("OnEnterPressed", AddTyped)
+
+    local scroll = CreateFrame("ScrollFrame", nil, body, "UIPanelScrollFrameTemplate")
+    scroll:SetPoint("TOPLEFT", itemLabel, "BOTTOMLEFT", -14, -16)
+    scroll:SetPoint("BOTTOMRIGHT", -32, 12)
+    AcceptDrops(scroll)
+
+    local itemParent = CreateFrame("Frame", nil, scroll)
+    itemParent:SetSize(400, 1)
+    scroll:SetScrollChild(itemParent)
+    AcceptDrops(itemParent)
+    f.itemParent = itemParent
+    f.rows = {}
+
+    f.empty = CreateLabel(scroll, S.customWindowEmpty)
+    f.empty:SetPoint("TOP", 0, -20)
+
+    f:HookScript("OnShow", RefreshCustomWindow)
+    return f
+end
+
+function LuckyGrabbag.UseItems:OpenCustomWindow()
+    customWindow = customWindow or BuildCustomWindow()
+    customWindow:Show()
 end
 
 function LuckyGrabbag.UseItems:Init(database)

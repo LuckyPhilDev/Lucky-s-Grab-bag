@@ -36,8 +36,12 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     SLASH_LUCKYGB1 = "/grabbag"
     SLASH_LUCKYGB2 = "/gb"
     SlashCmdList["LUCKYGB"] = function(msg)
-        local command = strtrim(msg or ""):lower()
-        if command == "decor" then
+        local command, args = strtrim(msg or ""):match("^(%S*)%s*(.-)$")
+        command = command:lower()
+        local itemsSubcommand, itemsArgs = args:match("^(%S*)%s*(.-)$")
+        if command == "items" and LuckyGrabbag.UseItems:HandleCustomCommand(itemsSubcommand:lower(), itemsArgs) then
+            return
+        elseif command == "decor" then
             LuckyGrabbag.DecorTracking:OpenList()
         elseif command == "disenchant" then
             LuckyGrabbag.MassDisenchant:Open()
@@ -566,6 +570,13 @@ function LuckyGrabbag.Settings:Init(db, charDB)
                 db.useItemsShowDecor = checked
                 LuckyGrabbag.UseItems:ApplySetting()
             end,
+        })
+
+        g:Button({
+            label    = SS.useItemsCustom.label,
+            desc     = SS.useItemsCustom.desc,
+            parent   = SS.useItems.label,
+            onClick  = function() LuckyGrabbag.UseItems:OpenCustomWindow() end,
         })
 
         g:Toggle({
