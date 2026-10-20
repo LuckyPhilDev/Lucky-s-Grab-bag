@@ -119,4 +119,10 @@ LuckyGrabbag.UseItemsData = {
         275726, -- Preyhunter's Champion Chest
         275728, -- Preyhunter's Champion Sack
     },
+
+    -- Only openable at the Salvage Yard, so their buttons show only inside the garrison.
+    garrisonItemIDs = {
+        139593, -- Sack of Salvaged Goods
+        140590, -- Large Crate of Salvage
+    },
 }
