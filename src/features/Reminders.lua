@@ -3,8 +3,6 @@ LuckyGrabbag.Reminders = {}
 
 local db
 
-local DevLog = LuckyGrabbag.Logger("Reminders")
-
 local REPAIR_BELOW = 0.5
 local BAG_SLOTS_FREE_BELOW = 5
 local MAX_SLOTS_NAMED = 3
@@ -187,7 +185,6 @@ local function HouseUpgradeRow()
     for houseGUID, progress in pairs(houseProgress) do
         local nextLevel = progress.houseLevel + 1
         local needed = nextLevel <= maxLevel and C_Housing.GetHouseLevelFavorForLevel(nextLevel)
-        DevLog("House level " .. progress.houseLevel .. " xp=" .. progress.houseFavor .. " next=" .. tostring(needed))
         if needed and progress.houseFavor >= needed then
             return { icon = ICONS.house, text = Strings().houseUpgrade, detail = neighborhoodNames[houseGUID] }
         end
