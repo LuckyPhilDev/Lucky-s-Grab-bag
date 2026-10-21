@@ -5,6 +5,7 @@
 
 ### Improved
 - **Use Items Popup** Garrison Salvage Yard bags, the Sack of Salvaged Goods and Large Crate of Salvage, now get a button while you are in your garrison.
+- **Use Items Popup** Mistcrest bags, from the Bundle of Adventurer Mistcrests up to the Glorious Cluster of Myth Mistcrests, now get a button.
 
 ## [1.37.1] - 2026-10-16
 

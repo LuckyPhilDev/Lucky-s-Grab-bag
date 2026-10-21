@@ -10,10 +10,10 @@ LuckyGrabbag.UseItemsData = {
         "Thalassian Treatise on",
         "Brimming Mana Shard",
         "Swirling Arcane Essence",
-        -- Crest exchange satchels from Vaskarn (upgrade/downgrade bags). Every tier's
-        -- bag ends in the plural "Dawncrests"; the crests themselves are currencies, not
-        -- bag items, so this fragment only matches the exchange bags.
+        -- Crest bags all end in the plural; the crests themselves are currencies, not
+        -- bag items, so these fragments only match the bags.
         "Dawncrests",
+        "Mistcrests",
     },
 
     -- Weekly profession quest rewards use "Thalassian <profession> <suffix>" naming.
