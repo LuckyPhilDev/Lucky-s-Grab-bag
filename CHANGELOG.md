@@ -2,6 +2,7 @@
 
 ### Added
 - **Use Items Popup** Add any item you like from **Your items…** in settings, by typing its ID or dragging it in from your bags. Give it a count for items used in batches, and the button waits until you hold that many. `/grabbag items add`, `remove` and `list` do the same from chat.
+- **Wago Addons** Lucky's Grab-bag is now published on Wago Addons too, so you can install and update it with the Wago app.
 
 ### Improved
 - **Use Items Popup** Garrison Salvage Yard bags, the Sack of Salvaged Goods and Large Crate of Salvage, now get a button while you are in your garrison.
