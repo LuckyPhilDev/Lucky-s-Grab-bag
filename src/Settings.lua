@@ -572,6 +572,57 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
+        g:Select({
+            label    = SS.useItemsGrow.label,
+            desc     = SS.useItemsGrow.desc,
+            parent   = SS.useItems.label,
+            since    = "1.38.1",
+            width    = 100,
+            options  = {
+                { key = "right", label = SS.useItemsGrow.right },
+                { key = "left",  label = SS.useItemsGrow.left },
+                { key = "down",  label = SS.useItemsGrow.down },
+                { key = "up",    label = SS.useItemsGrow.up },
+            },
+            value    = function() return db.useItemsGrow end,
+            onSelect = function(direction)
+                db.useItemsGrow = direction
+                LuckyGrabbag.UseItems:ApplySetting()
+            end,
+        })
+
+        g:Slider({
+            label     = SS.useItemsScale.label,
+            key       = "UseItemsScale",
+            desc      = SS.useItemsScale.desc,
+            min       = 50,
+            max       = 200,
+            step      = 5,
+            value     = db.useItemsScale,
+            suffix    = SS.useItemsScale.suffix,
+            parent    = SS.useItems.label,
+            since     = "1.38.1",
+            onChanged = function(val)
+                db.useItemsScale = val
+                LuckyGrabbag.UseItems:ApplySetting()
+            end,
+        })
+
+        g:Slider({
+            label     = SS.useItemsMaxButtons.label,
+            key       = "UseItemsMaxButtons",
+            desc      = SS.useItemsMaxButtons.desc,
+            min       = 1,
+            max       = 24,
+            value     = db.useItemsMaxButtons,
+            parent    = SS.useItems.label,
+            since     = "1.38.1",
+            onChanged = function(val)
+                db.useItemsMaxButtons = val
+                LuckyGrabbag.UseItems:ApplySetting()
+            end,
+        })
+
         g:Button({
             label    = SS.useItemsCustom.label,
             desc     = SS.useItemsCustom.desc,
