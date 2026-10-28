@@ -183,6 +183,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         unknownChoice = "Unknown choice",
     },
 
+    delveBoons = {
+        title = "Boons",
+    },
+
     dundunFinder = {
         tooltipTitle = "Find Dundun",
         tooltipBody  = "Targets Dundun, pings him and marks him with a star. Right-click and drag to move.",
@@ -662,6 +666,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         dundunFinder = {
             label = "Dundun Finder",
             desc  = "Floating button inside a bountiful delve, once Delver's Journey rank 3 has unlocked the Shrine of Abundance. Clicking it targets Dundun, pings him and marks him with a star. Right-click and drag to reposition.",
+        },
+        delveBoons = {
+            label = "Boons Panel",
+            desc  = "Shows the stats your Boons buff grants in a small panel while you are in a delve, so you don't have to find the buff and hover it. The game hides aura details in combat, so the panel dims and keeps its last reading until combat ends. Right-click and drag to move.",
         },
         delveCompanion = {
             label = "Per-Spec Companion Loadout",

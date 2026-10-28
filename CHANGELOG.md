@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Added
+- **Boons Panel** Shows the stats your delve Boons buff grants in a small panel, so you no longer have to find the buff and hover it. The game hides aura details in combat, so the panel dims and keeps its last reading until combat ends. Off by default; turn it on in settings under Delves.
+
 ## [1.38.0] - 2026-10-26
 
 ### Added

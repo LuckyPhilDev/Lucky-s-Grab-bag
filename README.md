@@ -260,6 +260,14 @@ Shows a button inside a bountiful delve once Delver's Journey rank 3 has unlocke
 - Sits in the same row as the other delve buttons.
 - Can be toggled in the addon settings.
 
+### Boons Panel
+Shows the stats your delve Boons buff grants, such as Maximum Health, Strength and Haste, in a small panel while you are in a delve, so you don't have to find the buff and hover it.
+
+- Updates as you pick up boons.
+- The game hides aura details in combat, so the panel dims and keeps its last reading until combat ends.
+- Right-click and drag to move it.
+- Off by default; turn it on in settings under Delves.
+
 ### Per-Spec Delve Companion Loadout
 Your delve companion's role and curios sometimes come back empty on entering a delve, and they carry over unchanged when you switch specialization. This remembers the loadout you run in each spec and puts it back.
 
@@ -505,6 +513,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Trovehunter's Bounty* — Shows a clickable button for your Trovehunter's Bounty when in a qualifying delve.
   - *Minimum Delve Level* — The minimum delve level required for the button to appear (1–11).
 - *Dundun Finder*: Shows a button in bountiful delves that targets, pings and marks Dundun.
+- *Boons Panel*: Shows the stats your Boons buff grants in a small panel while you are in a delve.
 - *Per-Spec Companion Loadout*: Remembers your delve companion's role and curios for each specialization and puts them back when a delve hands them to you empty or you switch specs.
 - *Corrosive Codex Loadouts*: Adds a window beside the Corrosive Codex to save your picked powers as named loadouts and swap between them with one click.
 - *Auto-enter Labyrinth Chambers*: Skips the confirmation when you open a door to the next chamber of a Labyrinth.
