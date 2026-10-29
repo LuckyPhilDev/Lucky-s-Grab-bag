@@ -923,7 +923,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         g:Toggle({
             label    = SS.delveBoons.label,
             desc     = SS.delveBoons.desc,
-            checked  = db.showDelveBoons,
+            checked  = function() return db.showDelveBoons end,
             since    = "1.38.1",
             onToggle = function(checked)
                 db.showDelveBoons = checked

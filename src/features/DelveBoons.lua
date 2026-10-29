@@ -6,6 +6,7 @@ local DELVE_DIFFICULTY_ID = 208
 local PAD = 8
 local WIDTH = 190
 local STALE_ALPHA = 0.5
+local SETTINGS_LINK = "addon:LuckyGrabbag:delveBoons"
 
 local C = LuckyUI.C
 
@@ -13,6 +14,10 @@ local db
 local panel, body
 
 local DevLog = LuckyGrabbag.Logger("DelveBoons")
+
+local function S()
+    return LuckyGrabbag.Strings.delveBoons
+end
 
 local function InDelve()
     local _, _, difficultyID = GetInstanceInfo()
@@ -27,8 +32,10 @@ local function ReadBoons()
     local lines = {}
     for i = 2, #data.lines do
         local text = data.lines[i].leftText
-        if text and text ~= "" then
-            lines[#lines + 1] = text:gsub("%.$", "")
+        text = text and text:gsub("%.$", "")
+        local amount = text and tonumber(text:match(":%s*([%d%.]+)%%$"))
+        if text and text ~= "" and amount ~= 0 then
+            lines[#lines + 1] = text
         end
     end
     return table.concat(lines, "\n")
@@ -37,6 +44,39 @@ end
 local function SavePosition()
     local point, _, relPoint, x, y = panel:GetPoint()
     db.delveBoonsPos = { point = point, relPoint = relPoint, x = x, y = y }
+end
+
+local function OpenSettings()
+    LuckyGrabbag.Settings:OpenTo(LuckyGrabbag.Settings.delvesGroup, LuckyGrabbag.Strings.settings.delveBoons.label)
+end
+
+local function TurnOff()
+    db.showDelveBoons = false
+    panel:Hide()
+    local link = "|cff71d5ff|H" .. SETTINGS_LINK .. "|h[" .. S().settingsLink .. "]|h|r"
+    print(LuckyGrabbag.PREFIX .. " " .. string.format(S().turnedOff, link))
+end
+
+local function CreateCloseButton(f)
+    local btn = CreateFrame("Button", nil, f)
+    btn:SetSize(16, 16)
+    btn:SetPoint("TOPRIGHT", -4, -4)
+    local hl = btn:CreateTexture(nil, "HIGHLIGHT")
+    hl:SetAllPoints()
+    hl:SetColorTexture(C.highlight[1], C.highlight[2], C.highlight[3], C.highlight[4])
+    local label = btn:CreateFontString(nil, "OVERLAY")
+    label:SetFont(LuckyUI.BODY_FONT, 13, "")
+    label:SetAllPoints()
+    label:SetJustifyH("CENTER")
+    label:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
+    label:SetText("x")
+    btn:SetScript("OnClick", TurnOff)
+    btn:SetScript("OnEnter", function()
+        label:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
+    end)
+    btn:SetScript("OnLeave", function()
+        label:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
+    end)
 end
 
 local function CreatePanel()
@@ -72,7 +112,9 @@ local function CreatePanel()
     title:SetFont(LuckyUI.TITLE_FONT, 11, "")
     title:SetPoint("TOPLEFT", PAD, -PAD)
     title:SetTextColor(C.goldPrimary[1], C.goldPrimary[2], C.goldPrimary[3])
-    title:SetText(LuckyGrabbag.Strings.delveBoons.title)
+    title:SetText(S().title)
+
+    CreateCloseButton(f)
 
     body = f:CreateFontString(nil, "OVERLAY")
     body:SetFont(LuckyUI.BODY_FONT, 11, "")
@@ -114,6 +156,9 @@ end
 function LuckyGrabbag.DelveBoons:Init(database)
     db = database
     CreatePanel()
+    EventRegistry:RegisterCallback("SetItemRef", function(_, link)
+        if link == SETTINGS_LINK then OpenSettings() end
+    end, LuckyGrabbag.DelveBoons)
 
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
