@@ -264,6 +264,8 @@ Shows a button inside a bountiful delve once Delver's Journey rank 3 has unlocke
 Shows the stats your delve Boons buff grants, such as Maximum Health, Strength and Haste, in a small panel while you are in a delve, so you don't have to find the buff and hover it.
 
 - Updates as you pick up boons, and leaves out stats you have not collected yet.
+- A stat shimmers when it goes up.
+- Lists your Loa-Spirit conduit buffs in the Labyrinth of Kindo'jan with the time they have left.
 - The game hides aura details in combat, so the panel dims and keeps its last reading until combat ends.
 - Right-click and drag to move it.
 - Click the X to turn it off; turn it back on in settings under Delves.

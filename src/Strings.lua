@@ -671,7 +671,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         },
         delveBoons = {
             label = "Boons Panel",
-            desc  = "Shows the stats your Boons buff grants in a small panel while you are in a delve, so you don't have to find the buff and hover it. Stats you have not collected yet are left out. The game hides aura details in combat, so the panel dims and keeps its last reading until combat ends. Right-click and drag to move, or click the X to turn it off.",
+            desc  = "Shows the stats your Boons buff grants in a small panel while you are in a delve, so you don't have to find the buff and hover it. Stats you have not collected yet are left out, and a stat shimmers when it goes up. Loa-Spirit conduit buffs in the Labyrinth of Kindo'jan are listed too, with the time they have left. The game hides aura details in combat, so the panel dims and keeps its last reading until combat ends. Right-click and drag to move, or click the X to turn it off.",
         },
         delveCompanion = {
             label = "Per-Spec Companion Loadout",

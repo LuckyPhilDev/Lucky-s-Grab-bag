@@ -1,7 +1,7 @@
 ## [Unreleased]
 
 ### Added
-- **Boons Panel** Shows the stats your delve Boons buff grants in a small panel, so you no longer have to find the buff and hover it. Only stats you have collected are listed. The game hides aura details in combat, so the panel dims and keeps its last reading until combat ends. Click the X to turn it off; turn it back on in settings under Delves.
+- **Boons Panel** Shows the stats your delve Boons buff grants in a small panel, so you no longer have to find the buff and hover it. Only stats you have collected are listed, and a stat shimmers when it goes up. Loa-Spirit conduit buffs in the Labyrinth of Kindo'jan are listed too, with a countdown of their two minutes. The game hides aura details in combat, so the panel dims and keeps its last reading until combat ends. Click the X to turn it off; turn it back on in settings under Delves.
 
 ## [1.38.0] - 2026-10-26
 
