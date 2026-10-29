@@ -614,6 +614,23 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             label = "Show finishing reagents",
             desc  = "Adds a button for finishing reagents that combine into a better one, such as 5 Multicraft Matrix into a Multicraft Manifold. Appears once you hold 5.",
         },
+        useItemsGrow = {
+            label = "Grow direction",
+            desc  = "Which way the popup grows as buttons are added. The edge it grows from stays where you put it.",
+            right = "Right",
+            left  = "Left",
+            down  = "Down",
+            up    = "Up",
+        },
+        useItemsScale = {
+            label  = "Scale",
+            desc   = "Size of the popup and its buttons.",
+            suffix = "%",
+        },
+        useItemsMaxButtons = {
+            label = "Buttons shown",
+            desc  = "Most buttons the popup shows at once. Extra items wait until one is used up.",
+        },
         useItemsShowDecor = {
             label = "Show decor",
             desc  = "Adds one button for the decor in your bags. It uses one piece per click, and the next piece takes its place until your bags are clear.",

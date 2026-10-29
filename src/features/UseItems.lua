@@ -28,7 +28,15 @@ local DECOR_ENTRY = Enum.HousingCatalogEntryType.Decor
 
 local BUTTON_SIZE = 42
 local BUTTON_SPACING = 4
-local MAX_BUTTONS = 12
+local PADDING = 8
+
+-- corner: the edge that stays put while the bar grows away from it.
+local GROW = {
+    right = { corner = "TOPLEFT" },
+    left  = { corner = "TOPRIGHT" },
+    down  = { corner = "TOPLEFT", vertical = true },
+    up    = { corner = "BOTTOMLEFT", vertical = true },
+}
 
 local db
 local containerFrame
@@ -158,7 +166,49 @@ local function SavePosition()
     if not containerFrame then return end
     local point, _, relPoint, x, y = containerFrame:GetPoint()
     db.useItemsPos = { point = point, relPoint = relPoint, x = x, y = y }
-    DevLog("Saved position: " .. point .. " " .. relPoint .. " " .. math.floor(x) .. "," .. math.floor(y))
+end
+
+local function CornerOnScreen(f, corner)
+    local left, bottom, width, height = f:GetRect()
+    if not left then return nil end
+    local scale = f:GetEffectiveScale()
+    local x = corner:find("RIGHT") and left + width or left
+    local y = corner:find("TOP") and bottom + height or bottom
+    return x * scale, y * scale
+end
+
+-- Pins the grow corner where it sits on screen, so resizing or rescaling extends the
+-- bar in the chosen direction instead of around whatever point it was dragged by.
+local function ApplyLayout(shown)
+    local grow = GROW[db.useItemsGrow] or GROW.right
+    local screenX, screenY = CornerOnScreen(containerFrame, grow.corner)
+
+    containerFrame:SetScale(db.useItemsScale / 100)
+    local length = PADDING * 2 + shown * BUTTON_SIZE + (shown - 1) * BUTTON_SPACING
+    local thickness = BUTTON_SIZE + PADDING * 2
+    if grow.vertical then
+        containerFrame:SetSize(thickness, length)
+    else
+        containerFrame:SetSize(length, thickness)
+    end
+
+    if screenX then
+        local scale = containerFrame:GetEffectiveScale()
+        containerFrame:ClearAllPoints()
+        containerFrame:SetPoint(grow.corner, UIParent, "BOTTOMLEFT", screenX / scale, screenY / scale)
+        SavePosition()
+    end
+
+    local signX = grow.corner:find("RIGHT") and -1 or 1
+    local signY = grow.corner:find("TOP") and -1 or 1
+    for i = 1, shown do
+        local along = PADDING + (i - 1) * (BUTTON_SIZE + BUTTON_SPACING)
+        local btn = buttons[i]
+        btn:ClearAllPoints()
+        btn:SetPoint(grow.corner, containerFrame, grow.corner,
+            signX * (grow.vertical and PADDING or along),
+            signY * (grow.vertical and along or PADDING))
+    end
 end
 
 local function RestorePosition(f)
@@ -289,7 +339,7 @@ local function UpdateButtons()
         return
     end
 
-    local shown = math.min(#items, MAX_BUTTONS)
+    local shown = math.min(#items, db.useItemsMaxButtons)
     for i = 1, shown do
         local btn = GetOrCreateButton(i)
         local item = items[i]
@@ -299,7 +349,6 @@ local function UpdateButtons()
         btn:SetAttribute("type", "item")
         -- Item name is ambiguous: several knowledge items share one name.
         btn:SetAttribute("item", "item:" .. item.itemID)
-        btn:SetPoint("LEFT", containerFrame, "LEFT", 8 + (i - 1) * (BUTTON_SIZE + BUTTON_SPACING), 0)
         btn:Show()
         DevLog("  " .. item.itemName .. " x" .. item.count)
     end
@@ -308,8 +357,7 @@ local function UpdateButtons()
         buttons[i]:Hide()
     end
 
-    local totalWidth = 8 + shown * BUTTON_SIZE + (shown - 1) * BUTTON_SPACING + 8
-    containerFrame:SetSize(totalWidth, BUTTON_SIZE + 16)
+    ApplyLayout(shown)
     containerFrame:Show()
 
     UpdateCooldowns()
