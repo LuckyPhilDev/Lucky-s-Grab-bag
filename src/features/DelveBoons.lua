@@ -31,11 +31,12 @@ local function ReadBoons()
     if not data then return end
     local lines = {}
     for i = 2, #data.lines do
-        local text = data.lines[i].leftText
-        text = text and text:gsub("%.$", "")
-        local amount = text and tonumber(text:match(":%s*([%d%.]+)%%$"))
-        if text and text ~= "" and amount ~= 0 then
-            lines[#lines + 1] = text
+        -- The stats arrive as one tooltip line joined by newlines.
+        for line in (data.lines[i].leftText or ""):gmatch("[^\r\n]+") do
+            local text = line:gsub("%.?%s*$", "")
+            if tonumber(text:match(":%s*([%d%.]+)%%$")) ~= 0 then
+                lines[#lines + 1] = text
+            end
         end
     end
     return table.concat(lines, "\n")
