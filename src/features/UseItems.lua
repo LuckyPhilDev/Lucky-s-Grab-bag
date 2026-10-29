@@ -224,6 +224,8 @@ end
 local function CreateContainer()
     local f = CreateFrame("Frame", "LuckyGrabbagUseItemsFrame", UIParent, "BackdropTemplate")
     f:SetSize(100, BUTTON_SIZE + 16)
+    -- The saved offsets are in the frame's scaled coordinates, so scale must be set before restoring.
+    f:SetScale(db.useItemsScale / 100)
     RestorePosition(f)
     f:SetBackdrop({
         bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",

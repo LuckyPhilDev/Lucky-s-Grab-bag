@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Fixed
+- **Use Items Popup** The popup no longer moves when you log in on another character with its scale set below or above 100%. (Thanks for the report Halliday)
+
 ## [1.39.0] - 2026-10-29
 
 ### Added
