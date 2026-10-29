@@ -576,7 +576,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.useItemsGrow.label,
             desc     = SS.useItemsGrow.desc,
             parent   = SS.useItems.label,
-            since    = "1.38.1",
+            since    = "1.39.0",
             width    = 100,
             options  = {
                 { key = "right", label = SS.useItemsGrow.right },
@@ -601,7 +601,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             value     = db.useItemsScale,
             suffix    = SS.useItemsScale.suffix,
             parent    = SS.useItems.label,
-            since     = "1.38.1",
+            since     = "1.39.0",
             onChanged = function(val)
                 db.useItemsScale = val
                 LuckyGrabbag.UseItems:ApplySetting()
@@ -616,7 +616,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             max       = 24,
             value     = db.useItemsMaxButtons,
             parent    = SS.useItems.label,
-            since     = "1.38.1",
+            since     = "1.39.0",
             onChanged = function(val)
                 db.useItemsMaxButtons = val
                 LuckyGrabbag.UseItems:ApplySetting()
@@ -975,7 +975,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.delveBoons.label,
             desc     = SS.delveBoons.desc,
             checked  = function() return db.showDelveBoons end,
-            since    = "1.38.1",
+            since    = "1.39.0",
             onToggle = function(checked)
                 db.showDelveBoons = checked
                 LuckyGrabbag.DelveBoons:ApplySetting()

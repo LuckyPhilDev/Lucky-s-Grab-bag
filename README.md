@@ -75,6 +75,7 @@ Displays a floating bar of buttons when you have consumable profession items in 
 - Optionally include finishing reagents that combine into a better one, such as 5 **Multicraft Matrix** into a **Multicraft Manifold**, via the "Show finishing reagents" setting. A button appears only once you hold 5. Off by default.
 - Add any item of your own from **Your items…** in settings, by typing its ID or dragging it in from your bags, or with `/grabbag items add` followed by an item link or ID. Put a number after it for items you use in batches, such as `/grabbag items add 12345 5`, and the button waits until you hold that many. `/grabbag items list` shows what you have added and `/grabbag items remove` takes one off.
 - Decor in your bags shares a single button, however many pieces you carry. Each click uses one piece, and the next piece takes its place until none are left. The count shows how many pieces remain. Turn it off with the "Show decor" setting.
+- Choose which way the bar grows (right, left, down or up), its scale, and how many buttons it shows at once, up to 24. The edge it grows from stays where you put it.
 - Draggable via right-click drag; position is saved account-wide and persists across reloads.
 - Auto-hides when no matching items remain in your bags.
 - Respects combat lockdown — buttons won't change mid-combat.
@@ -527,6 +528,9 @@ The panel opens on a **What's New** list of the settings added in recent release
   - *Only while rested* — Restricts the popup to cities and inns.
   - *Show finishing reagents*: Adds a button for finishing reagents that combine into a better one, such as 5 Multicraft Matrix into a Multicraft Manifold. Off by default.
   - *Show decor*: Adds one button for the decor in your bags, which moves on to the next piece each time you use one. On by default.
+  - *Grow direction*: Which way the bar grows as buttons are added.
+  - *Scale*: Size of the bar, 50% to 200%.
+  - *Buttons shown*: Most buttons the bar shows at once, 1 to 24. Default 12.
   - *Your items…*: Opens a list where you add your own items by ID or by dragging them in, with how many you need before each button shows.
 
 **Rotation Glow**
