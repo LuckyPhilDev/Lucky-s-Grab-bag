@@ -9,6 +9,26 @@ local CONDUIT_SPELL_IDS = {
     1314350, -- Spiritual Fire Conduit
     1314353, -- Spiritual Mist Conduit
 }
+-- Positions of the stats in the Boons tooltip, which always lists all eight in this order.
+local STAT_COUNT = 8
+local STAT_INDEX = { health = 1, speed = 2, primary = 3, damageReduction = 8 }
+-- Boons are items consumed on pickup. Their loot message stays readable in combat when the aura doesn't.
+-- The random and highest/lowest secondary boons are left for the reading after combat.
+local BOON_GAINS = {
+    [260879] = { primary = 2 },
+    [267237] = { primary = 4 },
+    [267243] = { health = 1 },
+    [260910] = { health = 3 },
+    [267235] = { health = 6 },
+    [267242] = { speed = 1 },
+    [264668] = { speed = 5 },
+    [267236] = { speed = 10 },
+    [260911] = { damageReduction = 2 },
+    [267240] = { damageReduction = 4 },
+    [267647] = { health = 2, speed = 2 },
+    [267649] = { health = 3, speed = 5 },
+    [267648] = { health = 6, speed = 10 },
+}
 local DELVE_DIFFICULTY_ID = 208
 local PAD = 8
 local WIDTH = 190
@@ -55,10 +75,7 @@ local function ReadBoons()
         for line in (data.lines[i].leftText or ""):gmatch("[^\r\n]+") do
             local text = line:gsub("%.?%s*$", "")
             local label, amount = text:match("^(.-):%s*([%d%.]+)%%$")
-            amount = tonumber(amount)
-            if amount ~= 0 then
-                result[#result + 1] = { text = text, label = label, amount = amount }
-            end
+            result[#result + 1] = { text = text, label = label, amount = tonumber(amount) }
         end
     end
     return result
@@ -189,9 +206,11 @@ local function Layout()
 
     local count = 0
     for _, stat in ipairs(stats) do
-        count = count + 1
-        local row = SetRow(count, stat.text, C.textLight)
-        if stat.upgraded then row.shimmer:Restart() end
+        if stat.amount ~= 0 then
+            count = count + 1
+            local row = SetRow(count, stat.text, C.textLight)
+            if stat.upgraded then row.shimmer:Restart() end
+        end
         stat.upgraded = nil
     end
     for _, conduit in ipairs(conduits) do
@@ -290,6 +309,36 @@ local function Refresh()
     Layout()
 end
 
+-- Before the first boon there is no aura to read labels from, so these stand in until combat ends.
+local function PlaceholderStats()
+    local result = {}
+    for i, label in ipairs(S().stats) do
+        result[i] = { label = label, amount = 0 }
+    end
+    return result
+end
+
+local function AddGain(stat, gain)
+    stat.amount = stat.amount + gain
+    stat.text = string.format("%s: %g%%", stat.label, stat.amount)
+    stat.upgraded = true
+    if lastAmounts then lastAmounts[stat.label] = stat.amount end
+end
+
+-- Out of combat UNIT_AURA brings the real reading, so only combat pickups are estimated.
+local function OnLoot(text)
+    if not db.showDelveBoons or not InCombatLockdown() or issecretvalue(text) or not InDelve() then return end
+    local gains = BOON_GAINS[tonumber(text:match("|Hitem:(%d+)"))]
+    if not gains then return end
+    if #stats == 0 then stats = PlaceholderStats() end
+    if #stats ~= STAT_COUNT then return end
+    for kind, gain in pairs(gains) do
+        AddGain(stats[STAT_INDEX[kind]], gain)
+    end
+    DevLog("Estimated a boon picked up in combat")
+    Layout()
+end
+
 function LuckyGrabbag.DelveBoons:ApplySetting()
     if panel then Refresh() end
 end
@@ -314,4 +363,8 @@ function LuckyGrabbag.DelveBoons:Init(database)
             C_Timer.After(1, Refresh)
         end
     end)
+
+    local lootFrame = CreateFrame("Frame")
+    lootFrame:RegisterEvent("CHAT_MSG_LOOT")
+    lootFrame:SetScript("OnEvent", function(_, _, text) OnLoot(text) end)
 end
