@@ -921,6 +921,17 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
 
         g:Toggle({
+            label    = SS.delveBoons.label,
+            desc     = SS.delveBoons.desc,
+            checked  = function() return db.showDelveBoons end,
+            since    = "1.38.1",
+            onToggle = function(checked)
+                db.showDelveBoons = checked
+                LuckyGrabbag.DelveBoons:ApplySetting()
+            end,
+        })
+
+        g:Toggle({
             label    = SS.delveCompanion.label,
             desc     = SS.delveCompanion.desc,
             checked  = db.delveCompanionPerSpec,
