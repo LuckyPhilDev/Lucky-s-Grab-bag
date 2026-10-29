@@ -2,16 +2,60 @@ LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.DelveBoons = {}
 
 local BOONS_SPELL_ID = 1280098
+-- Two-minute buffs from the Loa-Spirit conduits in the Labyrinth of Kindo'jan.
+local CONDUIT_SPELL_IDS = {
+    1314332, -- Spiritual Wind Conduit
+    1314346, -- Spiritual Earth Conduit
+    1314350, -- Spiritual Fire Conduit
+    1314353, -- Spiritual Mist Conduit
+}
+-- Positions of the stats in the Boons tooltip, which always lists all eight in this order.
+local STAT_COUNT = 8
+local STAT_INDEX = { health = 1, speed = 2, primary = 3, damageReduction = 8 }
+-- Boons are items consumed on pickup. Their loot message stays readable in combat when the aura doesn't.
+-- The random and highest/lowest secondary boons are left for the reading after combat.
+local BOON_GAINS = {
+    [260879] = { primary = 2 },
+    [267237] = { primary = 4 },
+    [267243] = { health = 1 },
+    [260910] = { health = 3 },
+    [267235] = { health = 6 },
+    [267242] = { speed = 1 },
+    [264668] = { speed = 5 },
+    [267236] = { speed = 10 },
+    [260911] = { damageReduction = 2 },
+    [267240] = { damageReduction = 4 },
+    [267647] = { health = 2, speed = 2 },
+    [267649] = { health = 3, speed = 5 },
+    [267648] = { health = 6, speed = 10 },
+}
 local DELVE_DIFFICULTY_ID = 208
 local PAD = 8
 local WIDTH = 190
 local STALE_ALPHA = 0.5
+local TITLE_HEIGHT = 15
+local ROW_HEIGHT = 15
+local ROW_WIDTH = WIDTH - PAD * 2
+local SHIMMER_WIDTH = 48
+local SHIMMER_SECONDS = 0.7
+local SHIMMER_PEAK = CreateColor(1, 0.85, 0.4, 0.55)
+local SHIMMER_CLEAR = CreateColor(1, 0.85, 0.4, 0)
+local TIMER_INTERVAL = 0.25
 local SETTINGS_LINK = "addon:LuckyGrabbag:delveBoons"
 
 local C = LuckyUI.C
 
 local db
-local panel, body
+local panel
+local rows = {}
+local stats = {}
+local conduits = {}
+-- Nil until the first reading in a delve, so entering one or reloading doesn't shimmer every stat.
+local lastAmounts
+-- Stats raised by the latest pickup stay highlighted. Everything gained in one fight counts as one
+-- pickup, since the reading after combat can raise more stats than the loot messages could.
+local recentLabels = {}
+local batchOpen = false
 
 local DevLog = LuckyGrabbag.Logger("DelveBoons")
 
@@ -25,21 +69,31 @@ local function InDelve()
 end
 
 local function ReadBoons()
+    local result = {}
     local aura = C_UnitAuras.GetPlayerAuraBySpellID(BOONS_SPELL_ID)
-    if not aura then return end
+    if not aura then return result end
     local data = C_TooltipInfo.GetUnitBuffByAuraInstanceID("player", aura.auraInstanceID)
-    if not data then return end
-    local lines = {}
+    if not data then return result end
     for i = 2, #data.lines do
         -- The stats arrive as one tooltip line joined by newlines.
         for line in (data.lines[i].leftText or ""):gmatch("[^\r\n]+") do
             local text = line:gsub("%.?%s*$", "")
-            if tonumber(text:match(":%s*([%d%.]+)%%$")) ~= 0 then
-                lines[#lines + 1] = text
-            end
+            local label, amount = text:match("^(.-):%s*([%d%.]+)%%$")
+            result[#result + 1] = { text = text, label = label, amount = tonumber(amount) }
         end
     end
-    return table.concat(lines, "\n")
+    return result
+end
+
+local function ReadConduits()
+    local result = {}
+    for _, spellID in ipairs(CONDUIT_SPELL_IDS) do
+        local aura = C_UnitAuras.GetPlayerAuraBySpellID(spellID)
+        if aura and aura.expirationTime > 0 then
+            result[#result + 1] = { name = aura.name, expires = aura.expirationTime }
+        end
+    end
+    return result
 end
 
 local function SavePosition()
@@ -80,6 +134,138 @@ local function CreateCloseButton(f)
     end)
 end
 
+local function CreateShimmerHalf(shimmer, point, fromColor, toColor)
+    local half = shimmer:CreateTexture(nil, "ARTWORK")
+    half:SetTexture("Interface\\Buttons\\WHITE8X8")
+    half:SetBlendMode("ADD")
+    half:SetGradient("HORIZONTAL", fromColor, toColor)
+    half:SetPoint("TOP" .. point)
+    half:SetPoint("BOTTOM" .. point)
+    half:SetWidth(SHIMMER_WIDTH / 2)
+end
+
+-- A band of light that sweeps left to right; the row clips it, so it rests unseen off the left edge.
+local function CreateShimmer(row)
+    local shimmer = CreateFrame("Frame", nil, row)
+    shimmer:SetSize(SHIMMER_WIDTH, ROW_HEIGHT)
+    shimmer:SetPoint("RIGHT", row, "LEFT")
+    CreateShimmerHalf(shimmer, "LEFT", SHIMMER_CLEAR, SHIMMER_PEAK)
+    CreateShimmerHalf(shimmer, "RIGHT", SHIMMER_PEAK, SHIMMER_CLEAR)
+
+    local sweep = shimmer:CreateAnimationGroup()
+    local move = sweep:CreateAnimation("Translation")
+    move:SetOffset(ROW_WIDTH + SHIMMER_WIDTH, 0)
+    move:SetDuration(SHIMMER_SECONDS)
+    move:SetSmoothing("IN_OUT")
+    return sweep
+end
+
+local function CreateRowText(row, justify)
+    local text = row:CreateFontString(nil, "OVERLAY")
+    text:SetFont(LuckyUI.BODY_FONT, 11, "")
+    text:SetPoint(justify)
+    text:SetJustifyH(justify)
+    return text
+end
+
+local function GetRow(i)
+    if rows[i] then return rows[i] end
+    local row = CreateFrame("Frame", nil, panel)
+    row:SetSize(ROW_WIDTH, ROW_HEIGHT)
+    row:SetPoint("TOPLEFT", PAD, -(PAD + TITLE_HEIGHT + (i - 1) * ROW_HEIGHT))
+    row:SetClipsChildren(true)
+    row.highlight = row:CreateTexture(nil, "BACKGROUND")
+    row.highlight:SetAllPoints()
+    row.highlight:SetColorTexture(C.goldAccent[1], C.goldAccent[2], C.goldAccent[3], 0.18)
+    row.text = CreateRowText(row, "LEFT")
+    row.value = CreateRowText(row, "RIGHT")
+    row.value:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
+    row.shimmer = CreateShimmer(row)
+    rows[i] = row
+    return row
+end
+
+local function SetRow(i, text, color)
+    local row = GetRow(i)
+    row.text:SetText(text)
+    row.text:SetTextColor(color[1], color[2], color[3])
+    row.value:SetText("")
+    row.highlight:Hide()
+    row:Show()
+    return row
+end
+
+local function FormatRemaining(seconds)
+    return string.format("%d:%02d", math.floor(seconds / 60), math.floor(seconds % 60))
+end
+
+local function UpdateTimers()
+    local now = GetTime()
+    for i, conduit in ipairs(conduits) do
+        rows[#stats + i].value:SetText(FormatRemaining(math.max(0, conduit.expires - now)))
+    end
+end
+
+local function Layout()
+    local now = GetTime()
+    for i = #conduits, 1, -1 do
+        if conduits[i].expires <= now then table.remove(conduits, i) end
+    end
+
+    local count = 0
+    for _, stat in ipairs(stats) do
+        if stat.amount ~= 0 then
+            count = count + 1
+            local row = SetRow(count, stat.text, C.textLight)
+            row.highlight:SetShown(recentLabels[stat.label] == true)
+            if stat.upgraded then row.shimmer:Restart() end
+        end
+        stat.upgraded = nil
+    end
+    for _, conduit in ipairs(conduits) do
+        count = count + 1
+        SetRow(count, conduit.name, C.goldPrimary)
+    end
+    for i = count + 1, #rows do
+        rows[i]:Hide()
+    end
+
+    UpdateTimers()
+    panel:SetHeight(PAD * 2 + TITLE_HEIGHT + count * ROW_HEIGHT)
+    panel:SetShown(count > 0)
+end
+
+local function RecordRecent(label)
+    if not batchOpen then
+        wipe(recentLabels)
+        batchOpen = true
+    end
+    recentLabels[label] = true
+end
+
+local function MarkUpgrades()
+    local amounts = {}
+    for _, stat in ipairs(stats) do
+        if stat.label then
+            amounts[stat.label] = stat.amount
+            stat.upgraded = lastAmounts and stat.amount > (lastAmounts[stat.label] or 0)
+            if stat.upgraded then RecordRecent(stat.label) end
+        end
+    end
+    lastAmounts = amounts
+end
+
+local function OnTimerTick(self, elapsed)
+    self.sinceTick = (self.sinceTick or 0) + elapsed
+    if self.sinceTick < TIMER_INTERVAL then return end
+    self.sinceTick = 0
+    local now = GetTime()
+    for _, conduit in ipairs(conduits) do
+        if conduit.expires <= now then return Layout() end
+    end
+    UpdateTimers()
+end
+
 local function CreatePanel()
     local f = CreateFrame("Frame", "LuckyGrabbagDelveBoonsFrame", UIParent, "BackdropTemplate")
     f:SetWidth(WIDTH)
@@ -105,6 +291,7 @@ local function CreatePanel()
         self:StopMovingOrSizing()
         SavePosition()
     end)
+    f:SetScript("OnUpdate", OnTimerTick)
     f:SetClampedToScreen(true)
     f:SetFrameStrata("LOW")
     f:Hide()
@@ -117,20 +304,16 @@ local function CreatePanel()
 
     CreateCloseButton(f)
 
-    body = f:CreateFontString(nil, "OVERLAY")
-    body:SetFont(LuckyUI.BODY_FONT, 11, "")
-    body:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 0, -4)
-    body:SetWidth(WIDTH - PAD * 2)
-    body:SetJustifyH("LEFT")
-    body:SetSpacing(2)
-    body:SetTextColor(C.textLight[1], C.textLight[2], C.textLight[3])
-
     panel = f
 end
 
 -- Aura data is secret in combat, so the panel keeps the last reading, dimmed, until combat ends.
+-- Conduit timers keep counting down from the expiry read before the fight.
 local function Refresh()
     if not db.showDelveBoons or not InDelve() then
+        lastAmounts = nil
+        wipe(recentLabels)
+        batchOpen = false
         panel:Hide()
         return
     end
@@ -138,16 +321,44 @@ local function Refresh()
         panel:SetAlpha(STALE_ALPHA)
         return
     end
-    local text = ReadBoons()
-    DevLog("Refresh: %s", tostring(text and true))
+    stats = ReadBoons()
+    conduits = ReadConduits()
+    DevLog("Refresh: %d stats, %d conduits", #stats, #conduits)
+    MarkUpgrades()
+    batchOpen = false
     panel:SetAlpha(1)
-    if not text or text == "" then
-        panel:Hide()
-        return
+    Layout()
+end
+
+-- Before the first boon there is no aura to read labels from, so these stand in until combat ends.
+local function PlaceholderStats()
+    local result = {}
+    for i, label in ipairs(S().stats) do
+        result[i] = { label = label, amount = 0 }
     end
-    body:SetText(text)
-    panel:SetHeight(PAD * 2 + 15 + body:GetStringHeight())
-    panel:Show()
+    return result
+end
+
+local function AddGain(stat, gain)
+    stat.amount = stat.amount + gain
+    stat.text = string.format("%s: %g%%", stat.label, stat.amount)
+    stat.upgraded = true
+    RecordRecent(stat.label)
+    if lastAmounts then lastAmounts[stat.label] = stat.amount end
+end
+
+-- Out of combat UNIT_AURA brings the real reading, so only combat pickups are estimated.
+local function OnLoot(text)
+    if not db.showDelveBoons or not InCombatLockdown() or issecretvalue(text) or not InDelve() then return end
+    local gains = BOON_GAINS[tonumber(text:match("|Hitem:(%d+)"))]
+    if not gains then return end
+    if #stats == 0 then stats = PlaceholderStats() end
+    if #stats ~= STAT_COUNT then return end
+    for kind, gain in pairs(gains) do
+        AddGain(stats[STAT_INDEX[kind]], gain)
+    end
+    DevLog("Estimated a boon picked up in combat")
+    Layout()
 end
 
 function LuckyGrabbag.DelveBoons:ApplySetting()
@@ -174,4 +385,8 @@ function LuckyGrabbag.DelveBoons:Init(database)
             C_Timer.After(1, Refresh)
         end
     end)
+
+    local lootFrame = CreateFrame("Frame")
+    lootFrame:RegisterEvent("CHAT_MSG_LOOT")
+    lootFrame:SetScript("OnEvent", function(_, _, text) OnLoot(text) end)
 end
