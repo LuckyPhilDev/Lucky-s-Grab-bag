@@ -52,6 +52,10 @@ local stats = {}
 local conduits = {}
 -- Nil until the first reading in a delve, so entering one or reloading doesn't shimmer every stat.
 local lastAmounts
+-- Stats raised by the latest pickup stay highlighted. Everything gained in one fight counts as one
+-- pickup, since the reading after combat can raise more stats than the loot messages could.
+local recentLabels = {}
+local batchOpen = false
 
 local DevLog = LuckyGrabbag.Logger("DelveBoons")
 
@@ -170,6 +174,9 @@ local function GetRow(i)
     row:SetSize(ROW_WIDTH, ROW_HEIGHT)
     row:SetPoint("TOPLEFT", PAD, -(PAD + TITLE_HEIGHT + (i - 1) * ROW_HEIGHT))
     row:SetClipsChildren(true)
+    row.highlight = row:CreateTexture(nil, "BACKGROUND")
+    row.highlight:SetAllPoints()
+    row.highlight:SetColorTexture(C.goldAccent[1], C.goldAccent[2], C.goldAccent[3], 0.18)
     row.text = CreateRowText(row, "LEFT")
     row.value = CreateRowText(row, "RIGHT")
     row.value:SetTextColor(C.textMuted[1], C.textMuted[2], C.textMuted[3])
@@ -183,6 +190,7 @@ local function SetRow(i, text, color)
     row.text:SetText(text)
     row.text:SetTextColor(color[1], color[2], color[3])
     row.value:SetText("")
+    row.highlight:Hide()
     row:Show()
     return row
 end
@@ -209,6 +217,7 @@ local function Layout()
         if stat.amount ~= 0 then
             count = count + 1
             local row = SetRow(count, stat.text, C.textLight)
+            row.highlight:SetShown(recentLabels[stat.label] == true)
             if stat.upgraded then row.shimmer:Restart() end
         end
         stat.upgraded = nil
@@ -226,12 +235,21 @@ local function Layout()
     panel:SetShown(count > 0)
 end
 
+local function RecordRecent(label)
+    if not batchOpen then
+        wipe(recentLabels)
+        batchOpen = true
+    end
+    recentLabels[label] = true
+end
+
 local function MarkUpgrades()
     local amounts = {}
     for _, stat in ipairs(stats) do
         if stat.label then
             amounts[stat.label] = stat.amount
             stat.upgraded = lastAmounts and stat.amount > (lastAmounts[stat.label] or 0)
+            if stat.upgraded then RecordRecent(stat.label) end
         end
     end
     lastAmounts = amounts
@@ -294,6 +312,8 @@ end
 local function Refresh()
     if not db.showDelveBoons or not InDelve() then
         lastAmounts = nil
+        wipe(recentLabels)
+        batchOpen = false
         panel:Hide()
         return
     end
@@ -305,6 +325,7 @@ local function Refresh()
     conduits = ReadConduits()
     DevLog("Refresh: %d stats, %d conduits", #stats, #conduits)
     MarkUpgrades()
+    batchOpen = false
     panel:SetAlpha(1)
     Layout()
 end
@@ -322,6 +343,7 @@ local function AddGain(stat, gain)
     stat.amount = stat.amount + gain
     stat.text = string.format("%s: %g%%", stat.label, stat.amount)
     stat.upgraded = true
+    RecordRecent(stat.label)
     if lastAmounts then lastAmounts[stat.label] = stat.amount end
 end
 
