@@ -98,7 +98,7 @@ local function Row(itemID, purchaseQuantity)
 end
 
 local function Widget()
-    local w = { shown = false, points = {}, scripts = {} }
+    local w = { shown = false, points = {}, scripts = {}, events = {} }
     function w:Show() self.shown = true end
     function w:Hide() self.shown = false end
     function w:IsShown() return self.shown end
@@ -109,7 +109,8 @@ local function Widget()
     function w:SetNormalTexture() end
     function w:SetHighlightTexture() end
     function w:GetHighlightTexture() return { SetBlendMode = function() end } end
-    function w:RegisterEvent() end
+    function w:RegisterEvent(event) self.events[event] = true end
+    function w:UnregisterEvent(event) self.events[event] = nil end
     function w:RegisterDraggable() end
     return w
 end
@@ -482,6 +483,14 @@ assert(not QS:GetButton().shown, "a quest log tick should not revive the button"
 
 Fire("AUCTION_HOUSE_SHOW")
 assert(QS:GetButton().shown, "reopening the Auction House should bring the button back")
+
+-- The quest log ticks all the time, so it is only listened to while the Auction House is open.
+assert(eventFrame.events.QUEST_LOG_UPDATE, "opening the Auction House should listen to the quest log")
+Fire("AUCTION_HOUSE_CLOSED")
+assert(not eventFrame.events.QUEST_LOG_UPDATE, "closing the Auction House should stop listening to the quest log")
+assert(eventFrame.events.GOSSIP_SHOW and eventFrame.events.COMMODITY_PURCHASE_SUCCEEDED,
+    "the quest dialog and purchase events should stay registered")
+Fire("AUCTION_HOUSE_SHOW")
 
 -- A purchase that fails leaves its item available to try again.
 QS:ApplySetting()
