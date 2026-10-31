@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Fixed
+- Selecting an item in the Trading Post no longer shows an error, and your Combat Animation and Mount Special checkbox choices are remembered.
+
 ## [1.39.1] - 2026-10-29
 
 ### Fixed
