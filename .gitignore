@@ -5,3 +5,4 @@ AGENTS.md
 .claude/
 
 src/Libs/
+.codex/worktrees/
