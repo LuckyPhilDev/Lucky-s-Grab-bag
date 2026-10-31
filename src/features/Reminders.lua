@@ -88,10 +88,13 @@ local function EnchantsRow()
     return { icon = ICONS.enchants, text = Strings().enchants, detail = detail }
 end
 
+-- Gem IDs come from the link: C_Item.GetItemGem is nil until the gem's item
+-- data is cached, so after a reload every socket looked empty.
 local function EmptySockets(link)
+    local gems = { link:match("item:%d+:%d*:(%d*):(%d*):(%d*):(%d*)") }
     local empty = 0
     for index = 1, C_Item.GetItemNumSockets(link) or 0 do
-        if not C_Item.GetItemGem(link, index) then empty = empty + 1 end
+        if (gems[index] or "") == "" then empty = empty + 1 end
     end
     return empty
 end
