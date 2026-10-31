@@ -1,8 +1,8 @@
-## [Unreleased]
+## [1.39.2] - 2026-10-31
 
 ### Fixed
 - Selecting an item in the Trading Post no longer shows an error, and your Combat Animation and Mount Special checkbox choices are remembered.
-- **Reminders** The empty gem sockets reminder no longer counts filled sockets as empty after a reload.
+- **Reminders** The empty gem sockets reminder no longer counts filled sockets as empty after a reload. (Thanks for the report Halliday)
 
 ## [1.39.1] - 2026-10-29
 
