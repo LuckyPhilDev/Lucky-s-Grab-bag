@@ -16,13 +16,12 @@ HEADSLOT, SHOULDERSLOT, CHESTSLOT, LEGSSLOT, FEETSLOT = "Head", "Shoulders", "Ch
 FINGER0SLOT_UNIQUE, FINGER1SLOT_UNIQUE, MAINHANDSLOT, SECONDARYHANDSLOT = "Finger 1", "Finger 2", "Main Hand", "Off Hand"
 NUM_BAG_SLOTS = 4
 
-local level, links, sockets, gems, equipLocs = 90, {}, {}, {}, {}
+local level, links, sockets, equipLocs = 90, {}, {}, {}
 function UnitLevel() return level end
 function GetMaxLevelForPlayerExpansion() return 90 end
 function GetInventoryItemLink(_, slot) return links[slot] end
 C_Item = {
     GetItemNumSockets = function(link) return sockets[link] end,
-    GetItemGem = function(link, index) return gems[link] and gems[link][index] end,
     GetItemInfoInstant = function(link) return 1, "", "", equipLocs[link] end,
 }
 
@@ -152,11 +151,12 @@ level = 90
 -- Sockets ----------------------------------------------------------------------
 only("remindSockets")
 check(#rows(), 0, "no sockets, no reminder")
-sockets["item:100:7:::"], sockets["item:103::::"] = 2, 1
-gems["item:100:7:::"] = { "Gem" }
+links = { [1] = "item:100:7:5001:::::", [2] = "item:103:::::::" }
+sockets[links[1]], sockets[links[2]] = 2, 1
 check(rows()[1].detail, "2", "empty sockets are counted across every slot")
-gems["item:100:7:::"], gems["item:103::::"] = { "Gem", "Gem" }, { "Gem" }
-check(#rows(), 0, "and the reminder clears once they are filled")
+links = { [1] = "item:100:7:5001:5002::::", [2] = "item:103::5003:::::" }
+sockets[links[1]], sockets[links[2]] = 2, 1
+check(#rows(), 0, "and the reminder clears once they are filled, read from the link")
 
 -- Great Vault and Trading Post -------------------------------------------------
 only("remindGreatVault")
