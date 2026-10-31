@@ -481,7 +481,26 @@ local function OnCountdownCancelled()
     RefreshTiles()
 end
 
+local EVENTS = {
+    "PLAYER_REGEN_DISABLED", "PLAYER_REGEN_ENABLED", "GROUP_ROSTER_UPDATE", "PARTY_LEADER_CHANGED",
+    "PLAYER_ENTERING_WORLD", "CHALLENGE_MODE_START", "CHALLENGE_MODE_COMPLETED", "CVAR_UPDATE",
+    "START_PLAYER_COUNTDOWN", "CANCEL_PLAYER_COUNTDOWN",
+}
+local eventFrame
+
+local function SetEventsRegistered(enabled)
+    if enabled then inCombat = InCombatLockdown() end
+    for _, event in ipairs(EVENTS) do
+        if enabled then
+            eventFrame:RegisterEvent(event)
+        else
+            eventFrame:UnregisterEvent(event)
+        end
+    end
+end
+
 function LuckyGrabbag.CombatPrep:ApplySetting()
+    SetEventsRegistered(db.showCombatPrep)
     if not prepFrame then
         if db.showCombatPrep then
             CreatePrepFrame()
@@ -521,17 +540,7 @@ function LuckyGrabbag.CombatPrep:Init(database)
         DevLog("Force-shown via /combatprep")
     end
 
-    local eventFrame = CreateFrame("Frame")
-    eventFrame:RegisterEvent("PLAYER_REGEN_DISABLED")
-    eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
-    eventFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
-    eventFrame:RegisterEvent("PARTY_LEADER_CHANGED")
-    eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
-    eventFrame:RegisterEvent("CHALLENGE_MODE_START")
-    eventFrame:RegisterEvent("CHALLENGE_MODE_COMPLETED")
-    eventFrame:RegisterEvent("CVAR_UPDATE")
-    eventFrame:RegisterEvent("START_PLAYER_COUNTDOWN")
-    eventFrame:RegisterEvent("CANCEL_PLAYER_COUNTDOWN")
+    eventFrame = CreateFrame("Frame")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "CVAR_UPDATE" then
             if ... == PING_TARGET_CVAR then RefreshTiles() end
@@ -550,9 +559,10 @@ function LuckyGrabbag.CombatPrep:Init(database)
         elseif event == "PLAYER_REGEN_ENABLED" then
             inCombat = false
         end
-        UpdateLayout()
+        if event ~= "PLAYER_REGEN_DISABLED" then UpdateLayout() end
         UpdateVisibility()
     end)
+    SetEventsRegistered(db.showCombatPrep)
 
     C_Timer.After(1, UpdateVisibility)
 end
