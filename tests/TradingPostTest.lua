@@ -58,7 +58,7 @@ for _, alreadyLoaded in ipairs({ false, true }) do
 
     function frame:GetAttackAnimationSetting() return self.attackAnimationPlaying end
     function frame:GetMountSpecialPreviewSetting() return self.mountSpecialAnimPlaying end
-    function frame:PlayerSetAttackAnimationOnClick(value)
+    function frame:ToggleAttackAnimationOnClick(value)
         local old = self.attackAnimationPlaying
         self.attackAnimationPlaying = value
         if old ~= value then
@@ -69,7 +69,7 @@ for _, alreadyLoaded in ipairs({ false, true }) do
         end
         self.actorAttacking = self.attackAnimationPlaying
     end
-    function frame:SetMountSpecialPreviewOnClick(value)
+    function frame:ToggleMountSpecialPreviewOnClick(value)
         self.mountSpecialAnimPlaying = value
         model.mountSpecialAnimPlaying = value
         model:UpdateMountSpecialAnimPlaying()
@@ -79,10 +79,10 @@ for _, alreadyLoaded in ipairs({ false, true }) do
         if newProduct then self.ToggleAttackAnimation.shown = visible end
         if visible then
             if newProduct then
-                frame:PlayerSetAttackAnimationOnClick(true)
+                frame:ToggleAttackAnimationOnClick(true)
                 self.ToggleAttackAnimation:SetChecked(true)
             else
-                frame:PlayerSetAttackAnimationOnClick(frame:GetAttackAnimationSetting())
+                frame:ToggleAttackAnimationOnClick(frame:GetAttackAnimationSetting())
             end
         end
     end
@@ -90,7 +90,7 @@ for _, alreadyLoaded in ipairs({ false, true }) do
         if not newProduct then return end
         local visible = kind == "mount" and mountEnabled
         self.ToggleMountSpecial.shown = visible
-        frame:SetMountSpecialPreviewOnClick(visible)
+        frame:ToggleMountSpecialPreviewOnClick(visible)
         self.ToggleMountSpecial:SetChecked(visible)
     end
     local function Select(kind)
@@ -129,11 +129,11 @@ for _, alreadyLoaded in ipairs({ false, true }) do
     end
 
     local attack, mount = footer.ToggleAttackAnimation, footer.ToggleMountSpecial
-    Click(attack, "PlayerSetAttackAnimationOnClick", false)
+    Click(attack, "ToggleAttackAnimationOnClick", false)
     Select("transmog")
     assert(frame.actorAttacking == false and attack:GetChecked() == false)
     assert(db.tradingPostCombatAnimation == false, "automatic resets must not overwrite saved choice")
-    Click(attack, "PlayerSetAttackAnimationOnClick", true)
+    Click(attack, "ToggleAttackAnimationOnClick", true)
     Select("transmog")
     assert(frame.actorAttacking == true and db.tradingPostCombatAnimation == true)
     hasAnimation = false
@@ -144,15 +144,15 @@ for _, alreadyLoaded in ipairs({ false, true }) do
     assert(not attack:IsShown(), "server-disabled control must stay hidden")
     attackEnabled = true
     Select("transmog")
-    Click(attack, "PlayerSetAttackAnimationOnClick", false)
+    Click(attack, "ToggleAttackAnimationOnClick", false)
 
     Select("mount")
-    Click(mount, "SetMountSpecialPreviewOnClick", false)
+    Click(mount, "ToggleMountSpecialPreviewOnClick", false)
     assert(frame.actorMountSpecial == false, "unchecking Mount Special must stop the running animation kit")
     assert(not model.timerActive, "unchecking must cancel the repeat timer")
     Select("mount")
     assert(frame.actorMountSpecial == false and mount:GetChecked() == false)
-    Click(mount, "SetMountSpecialPreviewOnClick", true)
+    Click(mount, "ToggleMountSpecialPreviewOnClick", true)
     mountEnabled = false
     Select("mount")
     assert(frame.actorMountSpecial == false and not mount:IsShown())
@@ -160,7 +160,7 @@ for _, alreadyLoaded in ipairs({ false, true }) do
     mountEnabled = true
     Select("mount")
     assert(frame.actorMountSpecial == true and mount:GetChecked() == true)
-    Click(mount, "SetMountSpecialPreviewOnClick", false)
+    Click(mount, "ToggleMountSpecialPreviewOnClick", false)
     Select("pet")
     Select("transmog")
     assert(frame.actorAttacking == false and not mount:IsShown())
@@ -176,10 +176,10 @@ for _, alreadyLoaded in ipairs({ false, true }) do
     db.rememberTradingPostAnimations = false
     Select("transmog")
     assert(frame.actorAttacking == true, "disabled feature must leave Blizzard behavior alone")
-    Click(attack, "PlayerSetAttackAnimationOnClick", true)
+    Click(attack, "ToggleAttackAnimationOnClick", true)
     Select("mount")
     assert(frame.actorMountSpecial == true)
-    Click(mount, "SetMountSpecialPreviewOnClick", true)
+    Click(mount, "ToggleMountSpecialPreviewOnClick", true)
     assert(db.tradingPostCombatAnimation == false and db.tradingPostMountSpecial == false)
     db.rememberTradingPostAnimations = true
     Select("mount")

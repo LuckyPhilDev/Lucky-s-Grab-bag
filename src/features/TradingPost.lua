@@ -36,7 +36,7 @@ local function InstallHooks()
         if frame:GetAttackAnimationSetting() ~= saved then
             -- Restoring rebuilds the model, and a set's item list refresh re-enters here after Blizzard turns the animation back on.
             restoringCombatAnimation = true
-            frame:PlayerSetAttackAnimationOnClick(saved)
+            frame:ToggleAttackAnimationOnClick(saved)
             restoringCombatAnimation = false
         end
         self.ToggleAttackAnimation:SetChecked(frame:GetAttackAnimationSetting())
@@ -47,7 +47,7 @@ local function InstallHooks()
         if not self.ToggleMountSpecial:IsShown() then return end
 
         if frame:GetMountSpecialPreviewSetting() ~= saved then
-            frame:SetMountSpecialPreviewOnClick(saved)
+            frame:ToggleMountSpecialPreviewOnClick(saved)
         end
         self.ToggleMountSpecial:SetChecked(saved)
     end)
