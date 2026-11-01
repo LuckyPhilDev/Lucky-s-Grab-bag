@@ -62,13 +62,14 @@ end
 -- Flipbook overlay
 -- ---------------------------------------------------------------------------
 
+local function SizeOverlay(icon, overlay)
+    local w, h = icon:GetSize()
+    overlay.tex:SetSize(w * FLIPBOOK.scale, h * FLIPBOOK.scale)
+end
+
 local function GetOrCreateOverlay(icon)
     local overlay = icon.luckyRotationGlow
-    if overlay then
-        local w, h = icon:GetSize()
-        overlay.tex:SetSize(w * FLIPBOOK.scale, h * FLIPBOOK.scale)
-        return overlay
-    end
+    if overlay then return overlay end
 
     overlay = CreateFrame("Frame", nil, icon)
     overlay:SetFrameLevel(icon:GetFrameLevel() + 10)
@@ -78,9 +79,8 @@ local function GetOrCreateOverlay(icon)
     tex:SetAtlas(FLIPBOOK.atlas)
     tex:SetBlendMode("ADD")
     tex:SetPoint("CENTER", icon, "CENTER", 0, 0)
-    local w, h = icon:GetSize()
-    tex:SetSize(w * FLIPBOOK.scale, h * FLIPBOOK.scale)
     overlay.tex = tex
+    SizeOverlay(icon, overlay)
 
     local group = overlay:CreateAnimationGroup()
     group:SetLooping("REPEAT")
@@ -154,23 +154,38 @@ local function UpdateIcon(icon)
     end
 end
 
+local function ResizeOverlay(icon)
+    local overlay = icon.luckyRotationGlow
+    if overlay then SizeOverlay(icon, overlay) end
+end
+
+-- Varargs from GetChildren() avoid a throwaway table per call on the GCD hot path.
+local function ForEachIcon(action, ...)
+    for i = 1, select("#", ...) do
+        local child = select(i, ...)
+        if child.Icon then action(child) end
+    end
+end
+
 local function UpdateAll()
     suggestedSpell = C_AssistedCombat.GetNextCastSpell()
 
     local viewer = _G.EssentialCooldownViewer
     if not viewer then return end
 
-    for _, child in ipairs({ viewer:GetChildren() }) do
-        if child.Icon then UpdateIcon(child) end
-    end
+    ForEachIcon(UpdateIcon, viewer:GetChildren())
+end
+
+local function ResizeAllOverlays()
+    local viewer = _G.EssentialCooldownViewer
+    if not viewer then return end
+    ForEachIcon(ResizeOverlay, viewer:GetChildren())
 end
 
 local function HideAllOverlays()
     local viewer = _G.EssentialCooldownViewer
     if not viewer then return end
-    for _, child in ipairs({ viewer:GetChildren() }) do
-        if child.Icon then HideOverlay(child) end
-    end
+    ForEachIcon(HideOverlay, viewer:GetChildren())
 end
 
 -- ---------------------------------------------------------------------------
@@ -192,6 +207,7 @@ frame:SetScript("OnEvent", function(_, event)
     then
         rotationValid = false
         RebuildRotationSet()
+        ResizeAllOverlays()
         UpdateAll()
     end
 end)
@@ -204,6 +220,7 @@ local function InstallHooks()
     if viewer and viewer.RefreshLayout then
         hooksecurefunc(viewer, "RefreshLayout", function()
             if not enabled then return end
+            ResizeAllOverlays()
             UpdateAll()
         end)
     end
