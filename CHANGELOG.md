@@ -4,6 +4,7 @@
 - **Cooking buttons** The Campfire, Chef's Hat and Pierre buttons stop watching your auras, cooldowns and pets while the Professions window is closed, so they cost nothing in raids and dungeons.
 - **Rotation Glow** Following the suggested spell uses far less memory in combat, so long fights stay smoother.
 - **Mass Disenchant** The panel refreshes once per bag change instead of once for every bag touched, and not at all while it is closed.
+- **Combat Prep Window** While the window is turned off it no longer reacts to group, combat and pull timer changes, so it costs nothing in raids.
 
 ### Fixed
 - Decor previews at vendors now appear when using Krowi's Extended Vendor UI.
