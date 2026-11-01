@@ -28,6 +28,14 @@ function LuckyGrabbag.Logger(tag)
     return function(msg, ...) LuckyGrabbag.DevLog(tag, msg, ...) end
 end
 
+function LuckyGrabbag.IsMerchantItemButton(frame)
+    local name = frame and frame.GetName and frame:GetName()
+    return name and (
+        name:match("^MerchantItem%d+ItemButton$") -- Blizzard
+        or name:match("^KrowiEVU_MerchantItem%d+ItemButton$") -- Krowi's Extended Vendor UI
+    ) ~= nil
+end
+
 local GROUP_INSTANCE_TYPES = { party = true, raid = true, scenario = true }
 
 --- Instance type for windows that only make sense in group content, or nil

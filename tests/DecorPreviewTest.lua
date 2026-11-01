@@ -82,6 +82,12 @@ LuckyStrings = { New = function(_, tbl) return tbl end }
 dofile("src/Strings.lua")
 LuckyGrabbag.Logger = function() return noop end
 
+LuckyGrabbag.Strings = LuckyGrabbag.Strings or { addon = { prefix = "test" } }
+LuckyLog = { New = function() return noop end }
+Enum.BagIndex = { ReagentBag = 5 }
+dofile("src/UIHelpers.lua")
+LuckyGrabbag.Logger = function() return noop end
+
 dofile("src/features/DecorPreview.lua")
 
 local db = { decorVendorPreview = true }

@@ -103,17 +103,10 @@ local function ShowDecor(info)
     panel:Show()
 end
 
---- Vendor UI replacements rewrite the merchant buttons and their item indices,
---- so the tooltip is the one place the hovered item can be read reliably.
-local function IsMerchantSlot(frame)
-    local name = frame and frame.GetName and frame:GetName()
-    return name and (name:match("^MerchantItem%d+ItemButton$") or name:match("^KrowiEVU_MerchantItem%d+ItemButton$")) ~= nil
-end
-
 local function OnItemTooltip(tooltip, data)
     if not db.decorVendorPreview then return end
     if tooltip ~= GameTooltip or not MerchantFrame:IsShown() then return end
-    if not IsMerchantSlot(tooltip:GetOwner()) then return end
+    if not LuckyGrabbag.IsMerchantItemButton(tooltip:GetOwner()) then return end
 
     local info = data.id and C_HousingCatalog.GetCatalogEntryInfoByItem(data.id)
     if info and info.asset then
