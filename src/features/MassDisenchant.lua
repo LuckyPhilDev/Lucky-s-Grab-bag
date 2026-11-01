@@ -13,7 +13,7 @@ local FOOTER_HEIGHT = 36
 local C = LuckyUI.C
 local FONT = LuckyUI.BODY_FONT
 
-local panel, scroll, content, emptyText, destroyButton
+local panel, scroll, content, emptyText, destroyButton, eventFrame
 local buttons = {}
 local omitted = {}
 local selected
@@ -171,6 +171,15 @@ local function BuildPanel()
         UpdateReadyGlow()
         RefreshAfterDestroy()
     end)
+
+    panel:HookScript("OnShow", function()
+        eventFrame:RegisterEvent("BAG_UPDATE_DELAYED")
+        eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    end)
+    panel:HookScript("OnHide", function()
+        eventFrame:UnregisterEvent("BAG_UPDATE_DELAYED")
+        eventFrame:UnregisterEvent("PLAYER_REGEN_ENABLED")
+    end)
 end
 
 local function CurrentSelected(items)
@@ -228,9 +237,7 @@ end
 
 function LuckyGrabbag.MassDisenchant:Init(database)
     db = database
-    local eventFrame = CreateFrame("Frame")
-    eventFrame:RegisterEvent("BAG_UPDATE")
-    eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+    eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
     eventFrame:SetScript("OnEvent", function(_, event, unit, _, spellID)
         if event == "UNIT_SPELLCAST_SUCCEEDED" then
