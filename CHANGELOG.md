@@ -2,6 +2,7 @@
 
 ### Fixed
 - Decor previews at vendors now appear when using Krowi's Extended Vendor UI.
+- Purchase confirmation ticks now appear on vendor items when using Krowi's Extended Vendor UI.
 
 ## [1.39.2] - 2026-10-31
 

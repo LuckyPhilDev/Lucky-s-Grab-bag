@@ -294,6 +294,20 @@ function LuckyGrabbag.ConfirmPurchase:Init(database)
             end
         end
 
+        if merchantOpen and not popupIsBagUse then
+            for _, focus in ipairs(GetMouseFoci()) do
+                local frame = focus
+                while frame do
+                    if LuckyGrabbag.IsMerchantItemButton(frame) then
+                        lastClickedMerchantButton = frame
+                        lastClickSource = "merchant"
+                        break
+                    end
+                    frame = frame.GetParent and frame:GetParent()
+                end
+            end
+        end
+
         local active = merchantOpen or popupIsBagUse
         if active and type(data) == "table" then
             local btn = data.button or data.itemButton
