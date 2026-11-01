@@ -9,6 +9,7 @@ local CAMPFIRE_SPELL_ID     = LuckyGrabbag.CookingData.campfireSpellID
 local PIERRE_SPECIES_ID     = LuckyGrabbag.CookingData.pierreSpeciesID
 
 local db
+local eventFrame
 local parentFrame
 local campfireButton
 local campfireCooldown
@@ -78,11 +79,17 @@ local function ShowButtons()
         UpdateChefsHatButton()
         UpdateCampfireCooldown()
         UpdatePierreButton()
+        eventFrame:RegisterUnitEvent("UNIT_AURA", "player")
+        eventFrame:RegisterEvent("SPELL_UPDATE_COOLDOWN")
+        eventFrame:RegisterEvent("COMPANION_UPDATE")
         DevLog("Buttons shown")
     end
 end
 
 local function HideButtons()
+    eventFrame:UnregisterEvent("UNIT_AURA")
+    eventFrame:UnregisterEvent("SPELL_UPDATE_COOLDOWN")
+    eventFrame:UnregisterEvent("COMPANION_UPDATE")
     if campfireButton then
         campfireButton:Hide()
         chefsHatButton:Hide()
@@ -183,12 +190,9 @@ function LuckyGrabbag.Cooking:Init(database)
     db = database
     DevLog("Init called")
 
-    local eventFrame = CreateFrame("Frame")
+    eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("TRADE_SKILL_DATA_SOURCE_CHANGED")
     eventFrame:RegisterEvent("TRADE_SKILL_CLOSE")
-    eventFrame:RegisterEvent("UNIT_AURA")
-    eventFrame:RegisterEvent("SPELL_UPDATE_COOLDOWN")
-    eventFrame:RegisterEvent("COMPANION_UPDATE")
     eventFrame:SetScript("OnEvent", function(_, event, ...)
         if event == "TRADE_SKILL_DATA_SOURCE_CHANGED" then
             local info = C_TradeSkillUI.GetBaseProfessionInfo()
@@ -204,18 +208,11 @@ function LuckyGrabbag.Cooking:Init(database)
         elseif event == "TRADE_SKILL_CLOSE" then
             HideButtons()
         elseif event == "UNIT_AURA" then
-            local unit = ...
-            if unit == "player" and campfireButton and campfireButton:IsShown() then
-                UpdateChefsHatButton()
-            end
+            UpdateChefsHatButton()
         elseif event == "SPELL_UPDATE_COOLDOWN" then
-            if campfireButton and campfireButton:IsShown() then
-                UpdateCampfireCooldown()
-            end
+            UpdateCampfireCooldown()
         elseif event == "COMPANION_UPDATE" then
-            if campfireButton and campfireButton:IsShown() then
-                UpdatePierreButton()
-            end
+            UpdatePierreButton()
         end
     end)
 end

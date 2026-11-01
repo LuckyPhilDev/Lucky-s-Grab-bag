@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+### Improved
+- **Cooking buttons** The Campfire, Chef's Hat and Pierre buttons stop watching your auras, cooldowns and pets while the Professions window is closed, so they cost nothing in raids and dungeons.
+
 ### Fixed
 - Decor previews at vendors now appear when using Krowi's Extended Vendor UI.
 - Purchase confirmation ticks now appear on vendor items when using Krowi's Extended Vendor UI.
