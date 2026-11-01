@@ -147,6 +147,12 @@ Hover(1)
 assert(not panel:IsShown(), "away from a vendor nothing should preview")
 MerchantFrame:Show()
 
+owner.name = "KrowiEVU_MerchantItem8ItemButton"
+Hover(1)
+assert(panel:IsShown(), "Krowi's vendor decor should show the preview")
+Hover(2)
+assert(not panel:IsShown(), "Krowi's non-decor item should hide the preview")
+
 db.decorVendorPreview = false
 Hover(1)
 LuckyGrabbag.DecorPreview:ApplySetting()

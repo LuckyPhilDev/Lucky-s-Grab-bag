@@ -107,7 +107,7 @@ end
 --- so the tooltip is the one place the hovered item can be read reliably.
 local function IsMerchantSlot(frame)
     local name = frame and frame.GetName and frame:GetName()
-    return name and name:match("^MerchantItem%d+ItemButton$") ~= nil
+    return name and (name:match("^MerchantItem%d+ItemButton$") or name:match("^KrowiEVU_MerchantItem%d+ItemButton$")) ~= nil
 end
 
 local function OnItemTooltip(tooltip, data)
