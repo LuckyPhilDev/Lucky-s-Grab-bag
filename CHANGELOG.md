@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Fixed
+- Decor previews at vendors now appear when using Krowi's Extended Vendor UI.
+
 ## [1.39.2] - 2026-10-31
 
 ### Fixed
