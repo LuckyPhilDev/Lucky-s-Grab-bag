@@ -5,6 +5,7 @@
 - **Rotation Glow** Following the suggested spell uses far less memory in combat, so long fights stay smoother.
 - **Mass Disenchant** The panel refreshes once per bag change instead of once for every bag touched, and not at all while it is closed.
 - **Combat Prep Window** While the window is turned off it no longer reacts to group, combat and pull timer changes, so it costs nothing in raids.
+- **Profession Quest Items** The button beside the Auction House only follows your quest log while the Auction House is open, so questing elsewhere costs nothing.
 
 ### Fixed
 - Decor previews at vendors now appear when using Krowi's Extended Vendor UI.

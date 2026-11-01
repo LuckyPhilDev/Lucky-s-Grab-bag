@@ -544,7 +544,7 @@ function LuckyGrabbag.QuestShopping:Init(database)
 
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
-    eventFrame:RegisterEvent("QUEST_LOG_UPDATE")
+    eventFrame:RegisterEvent("AUCTION_HOUSE_CLOSED")
     eventFrame:RegisterEvent("COMMODITY_PRICE_UPDATED")
     eventFrame:RegisterEvent("COMMODITY_PRICE_UNAVAILABLE")
     eventFrame:RegisterEvent("COMMODITY_PURCHASE_SUCCEEDED")
@@ -596,11 +596,12 @@ function LuckyGrabbag.QuestShopping:Init(database)
             -- Quickbuy's own handler runs first and would have left it hidden.
             standDown = false
             bought = {}
+            eventFrame:RegisterEvent("QUEST_LOG_UPDATE")
             LuckyGrabbag.QuestShopping:ApplySetting()
+        elseif event == "AUCTION_HOUSE_CLOSED" then
+            eventFrame:UnregisterEvent("QUEST_LOG_UPDATE")
         elseif event == "QUEST_LOG_UPDATE" then
-            if LuckyGrabbag.Quickbuy:IsAuctionHouseOpen() then
-                LuckyGrabbag.QuestShopping:ApplySetting()
-            end
+            LuckyGrabbag.QuestShopping:ApplySetting()
         else
             OnCommodityEvent(event, ...)
         end
