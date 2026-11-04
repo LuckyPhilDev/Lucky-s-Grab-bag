@@ -176,7 +176,6 @@ A compact bar of icons that appears automatically when you're out of combat and 
 - **Break Timer**: starts a long countdown for bio breaks (1 to 15 minutes, default 5m). While the break runs, the button turns into a red cross that ends it for everyone.
 - **Assign Tanks**: in a raid, sets everyone in a tank role as a main tank in one click. Can be hidden in settings.
 - **Ping Target**: switches what your pings hit between everything, only the world, and only units. Can be hidden in settings.
-- Appears automatically when you enter a dungeon or raid, or a scenario such as a delve with other players, and hides during combat.
 - Right-click drag to reposition; position is saved across reloads.
 - Hover the bar for a lock tab above its corner; click it to lock the bar in place.
 - Use `/combatprep` to test the window outside of group content.

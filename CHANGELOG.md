@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.39.4] - 2026-11-04
 
 ### Fixed
 - The Combat Prep Window picture in settings now shows the current window instead of the old one.
