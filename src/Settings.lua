@@ -710,7 +710,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             desc      = SS.combatPrep.desc,
             checked   = db.showCombatPrep,
             image     = "combat/combat-prep-window",
-            imageSize = { 178, 167 },
+            imageSize = { 292, 63 },
             onToggle  = function(checked)
                 db.showCombatPrep = checked
                 LuckyGrabbag.CombatPrep:ApplySetting()
