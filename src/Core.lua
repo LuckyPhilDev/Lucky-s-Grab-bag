@@ -80,8 +80,11 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.OmniumFolio:Init(db, charDB)
         LuckyGrabbag.CodexLoadouts:Init(db)
         LuckyGrabbag.LabyrinthDoors:Init(db)
-        LuckyGrabbag.DecorTracking:Init(db)
-        LuckyGrabbag.DecorPreview:Init(db)
+        -- WoW Forever ships the housing APIs, but calling them crashes the client.
+        if LuckyUtils.IsMainline() then
+            LuckyGrabbag.DecorTracking:Init(db)
+            LuckyGrabbag.DecorPreview:Init(db)
+        end
         LuckyGrabbag.BlueprintImportHistory:Init(db)
         LuckyGrabbag.MailSendAll:Init(db)
         LuckyGrabbag.MassDelete:Init(db)

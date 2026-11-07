@@ -49,6 +49,7 @@ local DevLog = LuckyGrabbag.Logger("UseItems")
 local decorByItemID = {}
 
 local function IsDecor(itemID)
+    if not LuckyUtils.IsMainline() then return false end
     if decorByItemID[itemID] == nil then
         local entry = C_HousingCatalog.GetCatalogEntryInfoByItem(itemID)
         decorByItemID[itemID] = entry ~= nil and entry.entryType == DECOR_ENTRY

@@ -212,6 +212,7 @@ local REMINDERS = {
     },
     {
         setting = "remindHouseUpgrade",
+        mainlineOnly = true,
         row     = HouseUpgradeRow,
         events  = { "PLAYER_HOUSE_LIST_UPDATED", "HOUSE_LEVEL_FAVOR_UPDATED", "HOUSE_LEVEL_CHANGED" },
         onLogin = function() C_Housing.GetPlayerOwnedHouses() end,
@@ -241,6 +242,9 @@ end
 
 function LuckyGrabbag.Reminders:Init(database)
     db = database
+    for i = #REMINDERS, 1, -1 do
+        if REMINDERS[i].mainlineOnly and not LuckyUtils.IsMainline() then table.remove(REMINDERS, i) end
+    end
     LuckyReminders:Register("grabbag", { order = 10, rows = Rows })
 
     local eventFrame = CreateFrame("Frame")
