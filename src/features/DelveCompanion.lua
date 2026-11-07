@@ -36,8 +36,8 @@ end
 -- whose IDs mean nothing to it.
 local function Context()
     local treeID = C_DelvesUI.GetTraitTreeForCompanion()
-    local specIndex = GetSpecialization()
-    local specID = specIndex and GetSpecializationInfo(specIndex)
+    local specIndex = C_SpecializationInfo.GetSpecialization()
+    local specID = specIndex and C_SpecializationInfo.GetSpecializationInfo(specIndex)
     if not treeID or treeID == 0 or not specID then return end
 
     local configID = C_Traits.GetConfigIDByTreeID(treeID)
