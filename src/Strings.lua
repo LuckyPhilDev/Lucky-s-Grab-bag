@@ -403,6 +403,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             housing      = "Housing",
             reminders    = "Reminders",
             interface    = "Interface",
+            notOnForever = "Not on WoW Forever",
         },
         sections = {
             automation     = "Automation",

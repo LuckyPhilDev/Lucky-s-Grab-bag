@@ -1,5 +1,5 @@
 -- luacheck: globals CreateFrame GetInventoryItemDurability INVSLOT_FIRST_EQUIPPED INVSLOT_LAST_EQUIPPED
--- luacheck: globals LuckyGrabbag LuckyReminders print
+-- luacheck: globals LuckyGrabbag LuckyReminders LuckyUtils print
 -- luacheck: globals C_Housing C_Container C_Item C_PerksActivities C_PerksProgram C_WeeklyRewards GetInventoryItemLink
 -- luacheck: globals GetMaxLevelForPlayerExpansion HasNewMail NUM_BAG_SLOTS UnitLevel
 -- luacheck: globals INVSLOT_HEAD INVSLOT_SHOULDER INVSLOT_CHEST INVSLOT_LEGS INVSLOT_FEET
@@ -57,6 +57,9 @@ function GetInventoryItemDurability(slot)
     local d = durability[slot]
     if d then return d[1], d[2] end
 end
+
+local mainline = true
+LuckyUtils = { IsMainline = function() return mainline end }
 
 local registered, refreshes, events, onEvent = nil, 0, {}, nil
 LuckyReminders = {
@@ -218,5 +221,19 @@ check(#rows(), 0, "the master toggle silences every reminder")
 db.remindHouseUpgrade = true
 onEvent(nil, "PLAYER_ENTERING_WORLD")
 check(houseListRequests, 2, "and asks the server for nothing")
+
+-- WoW Forever -------------------------------------------------------------------
+-- Its housing APIs crash the client, so the house and Trading Post reminders never load.
+mainline, events = false, {}
+C_Housing, C_PerksProgram = nil, nil
+dofile("src/features/Reminders.lua")
+db = { reminders = true, remindHouseUpgrade = true, remindTradingPost = true, remindBags = true, remindEnchantsIgnore = {} }
+LuckyGrabbag.Reminders:Init(db)
+rows = registered.source.rows
+check(events.PLAYER_HOUSE_LIST_UPDATED, nil, "Forever never watches the house list")
+check(events.CHEST_REWARDS_UPDATED_FROM_SERVER, nil, "or the Trading Post")
+onEvent(nil, "PLAYER_ENTERING_WORLD")
+freeSlots = { [0] = { 1, 0 } }
+check(#rows(), 1, "while the other reminders still work")
 
 print(passed .. " Reminders tests passed")

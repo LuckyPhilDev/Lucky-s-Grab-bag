@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Added
+- **WoW Forever support** Grab-bag loads on WoW Forever. Features built on systems Forever lacks, such as delves, housing and the Trading Post, are switched off and listed last in settings under Not on WoW Forever.
+
 ## [1.39.4] - 2026-11-04
 
 ### Fixed

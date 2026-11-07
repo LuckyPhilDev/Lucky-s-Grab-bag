@@ -206,6 +206,7 @@ local REMINDERS = {
     { setting = "remindGreatVault", row = GreatVaultRow, events = { "WEEKLY_REWARDS_UPDATE" } },
     {
         setting = "remindTradingPost",
+        mainlineOnly = true,
         row     = TradingPostRow,
         events  = { "CHEST_REWARDS_UPDATED_FROM_SERVER", "PERKS_ACTIVITIES_UPDATED" },
         onLogin = function() C_PerksProgram.RequestPendingChestRewards() end,
