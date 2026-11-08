@@ -3,6 +3,7 @@
 ### Added
 - **WoW Forever support** Grab-bag loads on WoW Forever. Features built on systems Forever lacks, such as delves, housing and the Trading Post, are switched off and listed last in settings under Not on WoW Forever.
 - **Graphics** On WoW Forever, a settings page for engine options the game's Graphics menu leaves out, including far view distance, fog, grass density, shadow cascades and HDR brightness. Your choices go back on at every login, and Restore Previous Values puts the old ones back.
+- **Alt Right-Click Spells** Hold Alt and right-click an item in your bags to disenchant it, or as a Mage to comprehend an untranslated scroll. The item's tooltip names the spell. Controller players can bind a button to it under Key Bindings, Lucky's Grab-bag.
 
 ## [1.39.4] - 2026-11-04
 
