@@ -103,6 +103,9 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.VendorShoppingList:Init(db)
         LuckyGrabbag.BulkBuy:Init(db)
         LuckyGrabbag.Reminders:Init(db)
+        if LuckyUtils.IsForever() then
+            LuckyGrabbag.ForeverGraphics:Init(db)
+        end
 
         -- Minimap button
         LuckyGrabbag.minimapButton = LuckyMinimap:Create({

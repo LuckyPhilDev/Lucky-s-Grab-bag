@@ -1306,6 +1306,78 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
     end
 
+    ---------------------------------------------------------------------------
+    -- Graphics (WoW Forever only)
+    ---------------------------------------------------------------------------
+    if forever then
+        local FG = LuckyGrabbag.ForeverGraphics
+        local SG = SS.foreverGraphics
+        local g = panel:Group(SS.groups.graphics)
+
+        g:Notice({ text = SG.notice })
+
+        local function addRow(row)
+            local cvar = row.cvar
+            local parent = row.parent and SG.cvars[row.parent].label
+            local function current() return FG.Get(cvar) end
+            if row.kind == "Toggle" then
+                g:Toggle({
+                    SG.cvars[cvar],
+                    parent   = parent,
+                    checked  = function() return current() == 1 end,
+                    onToggle = function(checked) FG.Set(cvar, checked and 1 or 0) end,
+                })
+            elseif row.kind == "Slider" then
+                g:Slider({
+                    SG.cvars[cvar],
+                    parent    = parent,
+                    min       = row.min,
+                    max       = row.max,
+                    step      = row.step,
+                    value     = current,
+                    onChanged = function(value)
+                        -- Opening the panel sets each slider clamped to its range, which must not overwrite a value set outside it.
+                        local now = current()
+                        if (now < row.min or now > row.max) and (value == row.min or value == row.max) then return end
+                        FG.Set(cvar, value)
+                    end,
+                })
+            else
+                local options, listed = {}, false
+                for i, choice in ipairs(row.choices) do
+                    options[i] = { key = choice[1], label = SG.levels[choice[2]] }
+                    listed = listed or choice[1] == current()
+                end
+                if not listed then
+                    options[#options + 1] = { key = current(), label = SG.levels.custom:format(current()) }
+                end
+                g:Select({
+                    SG.cvars[cvar],
+                    parent   = parent,
+                    width    = 150,
+                    options  = options,
+                    value    = current,
+                    onSelect = function(value) FG.Set(cvar, value) end,
+                })
+            end
+        end
+
+        for _, section in ipairs(FG.SECTIONS) do
+            g:Section(SG.sections[section.key])
+            for _, row in ipairs(section.rows) do
+                if FG.IsKnown(row.cvar) then addRow(row) end
+            end
+        end
+
+        g:Button({
+            SG.restore,
+            onClick = function()
+                FG.Restore()
+                panel:Refresh()
+            end,
+        })
+    end
+
     addUnavailableGroup()
     panel:Finalize()
 

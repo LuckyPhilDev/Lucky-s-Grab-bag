@@ -74,4 +74,5 @@ features/RankPriceCheck.lua
 features/VendorShoppingList.lua
 features/BulkBuy.lua
 features/Reminders.lua
+features/ForeverGraphics.lua
 Core.lua

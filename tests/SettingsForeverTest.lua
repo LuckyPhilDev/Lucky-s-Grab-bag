@@ -1,5 +1,5 @@
 -- luacheck: globals C_AddOns LuckyGrabbag LuckyStrings LuckyUtils LuckySettings LuckyDeps LuckyReminders
--- luacheck: globals LuckyBankRun LuckyPromo SlashCmdList SLASH_LUCKYGB1 SLASH_LUCKYGB2 strtrim print
+-- luacheck: globals LuckyBankRun LuckyPromo SlashCmdList SLASH_LUCKYGB1 SLASH_LUCKYGB2 strtrim print C_CVar
 --
 -- Builds the settings panel against a recording fake, as retail and as WoW
 -- Forever, to check where the rows for systems Forever lacks end up.
@@ -18,6 +18,7 @@ LuckyStrings = { New = function(_, strings) return strings end }
 LuckyDeps = { Check = function() return true end, IsEnabled = function() return false end }
 LuckyReminders, LuckyBankRun, LuckyPromo = anything(), anything(), anything()
 SlashCmdList = {}
+C_CVar = { GetCVarDefault = function(name) return name ~= "rippleDetail" and "1" or nil end, GetCVar = function() return "1" end }
 
 local function newGroup(title)
     local group = { title = title, rows = {}, byLabel = {} }
@@ -25,7 +26,8 @@ local function newGroup(title)
         return function(self, opts)
             local row = { kind = kind, opts = opts }
             self.rows[#self.rows + 1] = row
-            if type(opts) == "table" and opts.label then self.byLabel[opts.label] = row end
+            local label = type(opts) == "table" and (opts.label or (opts[1] and opts[1].label))
+            if label then self.byLabel[label] = row end
             return self
         end
     end
@@ -53,6 +55,7 @@ local function build(mainline)
     LuckyGrabbag.AutoDepositUtils = { StockistOwnsBank = function() return false end }
     LuckyGrabbag.BonusRoll = { HandedOff = function() return false end }
     LuckyGrabbag.EnchantStats = anything()
+    dofile("src/features/ForeverGraphics.lua")
     dofile("src/Settings.lua")
     local db = setmetatable({ ahQualityIcons = "off", remindEnchantsIgnore = {} }, { __index = LuckyGrabbag.DB_DEFAULTS })
     LuckyGrabbag.Settings:Init(db, {})
@@ -66,6 +69,7 @@ local retail = build(true)
 SS = LuckyGrabbag.Strings.settings
 assert(groups[#groups].title == SS.groups.interface, "retail ends on Interface")
 assert(not retail[SS.groups.notOnForever], "retail has no Forever group")
+assert(not retail[SS.groups.graphics], "nor the Forever graphics group")
 assert(retail[SS.groups.delves].byLabel[SS.delveMap.label], "retail keeps delves in their own group")
 assert(retail[SS.groups.crafting].byLabel[SS.concentrationView.label], "and modern professions in Professions")
 
@@ -79,6 +83,25 @@ assert(not forever[SS.groups.crafting].byLabel[SS.concentrationView.label], "Con
 assert(forever[SS.groups.crafting].byLabel[SS.cookingButtons.label], "while cooking buttons stay")
 assert(not forever[SS.groups.reminders].byLabel[SS.remindTradingPost.label], "the Trading Post reminder moves")
 assert(forever[SS.groups.reminders].byLabel[SS.remindBags.label], "the bags reminder stays")
+
+local graphics = forever[SS.groups.graphics]
+local SG = SS.foreverGraphics
+assert(graphics and groups[#groups - 1] == graphics, "Forever shows Graphics just above the unavailable group")
+for _, section in ipairs(LuckyGrabbag.ForeverGraphics.SECTIONS) do
+    assert(SG.sections[section.key], section.key .. " section has a heading")
+    for _, row in ipairs(section.rows) do
+        local strings = SG.cvars[row.cvar]
+        assert(strings and strings.label and strings.desc, row.cvar .. " has a label and description")
+        for _, choice in ipairs(row.choices or {}) do
+            assert(SG.levels[choice[2]], row.cvar .. " choice " .. choice[2] .. " has a label")
+        end
+        if row.cvar ~= "rippleDetail" then
+            assert(graphics.byLabel[strings.label].kind == row.kind, row.cvar .. " is offered as a " .. row.kind)
+        end
+    end
+end
+assert(not graphics.byLabel[SG.cvars.rippleDetail.label], "a CVar the client does not know gets no row")
+assert(graphics.byLabel[SG.restore.label], "and the page can be put back")
 
 local headings, labels = {}, {}
 for _, row in ipairs(unavailable.rows) do

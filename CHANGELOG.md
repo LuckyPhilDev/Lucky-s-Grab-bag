@@ -2,6 +2,7 @@
 
 ### Added
 - **WoW Forever support** Grab-bag loads on WoW Forever. Features built on systems Forever lacks, such as delves, housing and the Trading Post, are switched off and listed last in settings under Not on WoW Forever.
+- **Graphics** On WoW Forever, a settings page for engine options the game's Graphics menu leaves out, including far view distance, fog, grass density, shadow cascades and HDR brightness. Your choices go back on at every login, and Restore Previous Values puts the old ones back.
 
 ## [1.39.4] - 2026-11-04
 
