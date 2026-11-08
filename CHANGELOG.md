@@ -1,3 +1,8 @@
+## [1.40.1] - 2026-11-08
+
+### Fixed
+- Grab-bag loads again. In 1.40.0 it stopped at login with a Lua error and none of its features started.
+
 ## [1.40.0] - 2026-11-08
 
 ### Added
