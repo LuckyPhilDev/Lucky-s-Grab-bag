@@ -125,6 +125,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     remindTradingPostFullTrack = true,
     remindBags               = true,
     remindMail               = true,
+    foreverGraphics          = {},
 }
 
 LuckyGrabbag.CHAR_DB_DEFAULTS = {

@@ -1,5 +1,5 @@
--- luacheck: globals C_DelvesUI C_Spell C_Timer C_Traits CreateFrame Enum GetSpecialization
--- luacheck: globals GetSpecializationInfo GetSpecializationInfoByID InCombatLockdown LuckyGrabbag
+-- luacheck: globals C_DelvesUI C_Spell C_Timer C_Traits CreateFrame Enum C_SpecializationInfo
+-- luacheck: globals GetSpecializationInfoByID InCombatLockdown LuckyGrabbag
 -- luacheck: globals LuckyStrings print
 --
 -- Covers the delve companion loadout memory. The shape that has to survive is a
@@ -63,8 +63,10 @@ C_Traits = {
 C_Spell = { GetSpellLink = function() return nil end }
 C_Timer = { After = function(_, fn) fn() end }
 InCombatLockdown = function() return false end
-GetSpecialization = function() return specIndex end
-GetSpecializationInfo = function(index) return 250 + index end
+C_SpecializationInfo = {
+    GetSpecialization = function() return specIndex end,
+    GetSpecializationInfo = function(index) return 250 + index end,
+}
 GetSpecializationInfoByID = function(id) return id, "Spec " .. id end
 
 local fired

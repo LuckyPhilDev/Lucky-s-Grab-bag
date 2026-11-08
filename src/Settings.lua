@@ -33,6 +33,48 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     self.category = panel.category
     self.panel = panel
 
+    -- On WoW Forever, rows for systems it lacks are held back and shown greyed
+    -- out in one group at the bottom, under a heading naming their usual group.
+    local forever = not LuckyUtils.IsMainline()
+    local unavailableRows = {}
+    local unavailableByTitle = {}
+
+    local function mainlineOnly(g, title)
+        if not forever then return g end
+        if not unavailableByTitle[title] then
+            unavailableRows[#unavailableRows + 1] = { "Section", title }
+            -- Each original group's own sections are dropped; its heading is enough.
+            unavailableByTitle[title] = setmetatable({}, { __index = function(_, method)
+                return function(_, opts)
+                    if method ~= "Section" then unavailableRows[#unavailableRows + 1] = { method, opts } end
+                end
+            end })
+        end
+        return unavailableByTitle[title]
+    end
+
+    local function mainlineGroup(title)
+        return forever and mainlineOnly(nil, title) or panel:Group(title)
+    end
+
+    -- Only Toggle and Select rows can be locked on their own; the rest are left
+    -- out unless they sit under a locked row that locks them.
+    local function addUnavailableGroup()
+        if #unavailableRows == 0 then return end
+        local g = panel:Group(SS.groups.notOnForever)
+        for _, entry in ipairs(unavailableRows) do
+            local method, opts = entry[1], entry[2]
+            if method == "Section" then
+                g:Section(opts)
+            elseif opts.parent and g.byLabel[opts.parent] then
+                g[method](g, opts)
+            elseif method == "Toggle" or method == "Select" then
+                opts.parent, opts.disabled = nil, true
+                g[method](g, opts)
+            end
+        end
+    end
+
     SLASH_LUCKYGB1 = "/grabbag"
     SLASH_LUCKYGB2 = "/gb"
     SlashCmdList["LUCKYGB"] = function(msg)
@@ -41,7 +83,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         local itemsSubcommand, itemsArgs = args:match("^(%S*)%s*(.-)$")
         if command == "items" and LuckyGrabbag.UseItems:HandleCustomCommand(itemsSubcommand:lower(), itemsArgs) then
             return
-        elseif command == "decor" then
+        elseif command == "decor" and not forever then
             LuckyGrabbag.DecorTracking:OpenList()
         elseif command == "disenchant" then
             LuckyGrabbag.MassDisenchant:Open()
@@ -191,7 +233,9 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        g:Toggle({
+        local retail = mainlineOnly(g, SS.groups.vendors)
+
+        retail:Toggle({
             label    = SS.highlightTrackedDecor.label,
             desc     = SS.highlightTrackedDecor.desc,
             checked  = db.highlightTrackedDecor,
@@ -202,7 +246,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.decorAutoBuy.label,
             desc     = SS.decorAutoBuy.desc,
             checked  = db.decorAutoBuy,
@@ -214,7 +258,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.decorVendorPreview.label,
             desc     = SS.decorVendorPreview.desc,
             checked  = db.decorVendorPreview,
@@ -231,6 +275,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     ---------------------------------------------------------------------------
     do
         local g = panel:Group(SS.groups.auctionHouse)
+        local retail = mainlineOnly(g, SS.groups.auctionHouse)
 
         g:Toggle({
             label     = SS.quickbuy.label,
@@ -246,7 +291,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        questShoppingToggles(g)
+        questShoppingToggles(retail)
 
         g:Toggle({
             label    = SS.testflightBuy.label,
@@ -272,11 +317,13 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             setting.image, setting.imageSize = unpack(qualityIconImages[db.ahQualityIcons])
         end
 
-        g:Select({
-            label    = SS.ahQualityIcons.label,
-            desc     = SS.ahQualityIcons.desc,
-            since    = "1.34.0",
-            newLine  = true,
+        retail:Select({
+            label     = SS.ahQualityIcons.label,
+            desc      = SS.ahQualityIcons.desc,
+            image     = qualityIconImages[db.ahQualityIcons][1],
+            imageSize = qualityIconImages[db.ahQualityIcons][2],
+            since     = "1.34.0",
+            newLine   = true,
             options  = {
                 { key = "off",   label = SS.ahQualityIcons.off },
                 { key = "left",  label = SS.ahQualityIcons.left },
@@ -289,9 +336,8 @@ function LuckyGrabbag.Settings:Init(db, charDB)
                 LuckyGrabbag.EnchantStats:ApplySetting()
             end,
         })
-        showQualityIconImage()
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.rankPriceFlag.label,
             desc     = SS.rankPriceFlag.desc,
             checked  = db.rankPriceFlag,
@@ -302,7 +348,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.rankPriceConfirm.label,
             desc     = SS.rankPriceConfirm.desc,
             checked  = db.rankPriceConfirm,
@@ -316,10 +362,11 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     ---------------------------------------------------------------------------
     do
         local g = panel:Group(SS.groups.crafting)
+        local retail = mainlineOnly(g, SS.groups.crafting)
 
-        g:Section(SS.sections.quests)
+        retail:Section(SS.sections.quests)
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.professionQuestAutoAccept.label,
             desc     = SS.professionQuestAutoAccept.desc,
             checked  = db.professionQuestAutoAccept,
@@ -328,7 +375,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked) db.professionQuestAutoAccept = checked end,
         })
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.professionQuestAutoTurnIn.label,
             desc     = SS.professionQuestAutoTurnIn.desc,
             checked  = db.professionQuestAutoTurnIn,
@@ -337,7 +384,8 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked) db.professionQuestAutoTurnIn = checked end,
         })
 
-        questShoppingToggles(g)
+        -- The Auction House group already holds these rows on Forever.
+        if not forever then questShoppingToggles(g) end
 
         g:Section(SS.sections.craftingWindow)
 
@@ -350,7 +398,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle  = function(checked) db.showCookingButtons = checked end,
         })
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.recipeSearchFilter.label,
             desc     = SS.recipeSearchFilter.desc,
             checked  = db.searchSelectedExpansionOnly,
@@ -358,7 +406,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked) db.searchSelectedExpansionOnly = checked end,
         })
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.concentrationView.label,
             desc     = SS.concentrationView.desc,
             checked   = db.showConcentration,
@@ -371,7 +419,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.spendToNextPerk.label,
             desc     = SS.spendToNextPerk.desc,
             checked  = db.spendToNextPerk,
@@ -389,12 +437,12 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked) db.massDisenchantAutoOpen = checked end,
         })
 
-        g:Section(SS.sections.altsWarband)
+        retail:Section(SS.sections.altsWarband)
 
         if stockistBank then
-            g:Notice({ text = SH.treatiseNotice })
+            retail:Notice({ text = SH.treatiseNotice })
         else
-            g:Toggle({
+            retail:Toggle({
                 label    = SS.treatise.label,
                 desc     = SS.treatise.desc,
                 checked  = db.showTreatise,
@@ -403,7 +451,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             })
         end
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.autoTipAlt.label,
             desc     = SS.autoTipAlt.desc,
             checked  = db.autoTipAlt,
@@ -411,7 +459,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked) db.autoTipAlt = checked end,
         })
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.craftingOrderAlts.label,
             desc     = SS.craftingOrderAlts.desc,
             checked  = db.craftingOrderAlts,
@@ -424,7 +472,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     -- Auto-Deposit
     ---------------------------------------------------------------------------
     if not stockistBank then
-        local g = panel:Group("Auto-Deposit")
+        local g = mainlineGroup("Auto-Deposit")
 
         g:Section("Reagents")
 
@@ -523,6 +571,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     ---------------------------------------------------------------------------
     do
         local g = panel:Group(SS.groups.inventory)
+        local retail = mainlineOnly(g, SS.groups.inventory)
 
         g:Toggle({
             label     = SS.useItems.label,
@@ -560,7 +609,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        g:Toggle({
+        retail:Toggle({
             label     = SS.useItemsShowDecor.label,
             desc      = SS.useItemsShowDecor.desc,
             checked   = db.useItemsShowDecor,
@@ -649,11 +698,13 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked) db.mailSendAll = checked end,
         })
 
-        g:Section(SS.sections.itemIcons)
+        retail:Section(SS.sections.itemIcons)
 
-        LuckyGrabbag.EnchantStats:BuildPreview(g:Frame(LuckyGrabbag.EnchantStats:PreviewHeight()), SS.itemIconPreview)
+        if not forever then
+            LuckyGrabbag.EnchantStats:BuildPreview(g:Frame(LuckyGrabbag.EnchantStats:PreviewHeight()), SS.itemIconPreview)
+        end
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.enchantSlotIcons.label,
             desc     = SS.enchantSlotIcons.desc,
             checked  = db.showEnchantSlotIcons,
@@ -664,7 +715,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.enchantBadges.label,
             desc     = SS.enchantBadges.desc,
             checked  = db.showEnchantBadges,
@@ -677,7 +728,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        g:Toggle({
+        retail:Toggle({
             label    = SS.enchantBadgesAH.label,
             desc     = SS.enchantBadgesAH.desc,
             checked  = db.enchantBadgesAH,
@@ -905,7 +956,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onClick = function() LuckyGrabbag.KickMacro:Create() end,
         })
 
-        g:Toggle({
+        mainlineOnly(g, SS.groups.combat):Toggle({
             label    = SS.omniumFolio.label,
             desc     = SS.omniumFolio.desc,
             checked  = db.omniumFolioPerSpec,
@@ -921,7 +972,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     -- Delves
     ---------------------------------------------------------------------------
     do
-        local g = panel:Group(SS.groups.delves)
+        local g = mainlineGroup(SS.groups.delves)
         self.delvesGroup = g
 
         g:Toggle({
@@ -1028,7 +1079,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     -- Housing
     ---------------------------------------------------------------------------
     do
-        local g = panel:Group(SS.groups.housing)
+        local g = mainlineGroup(SS.groups.housing)
 
         g:Toggle({
             label    = SS.blueprintTrackMissing.label,
@@ -1064,9 +1115,11 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     ---------------------------------------------------------------------------
     do
         local g = panel:Group(SS.groups.reminders)
+        local retail = mainlineOnly(g, SS.groups.reminders)
 
-        local function reminderToggle(key)
-            g:Toggle({
+        local function reminderToggle(key, target)
+            target = target or g
+            target:Toggle({
                 label    = SS[key].label,
                 desc     = SS[key].desc,
                 checked  = db[key],
@@ -1101,8 +1154,8 @@ function LuckyGrabbag.Settings:Init(db, charDB)
 
         g:Section(SS.sections.remindersRewards)
         reminderToggle("remindGreatVault")
-        reminderToggle("remindTradingPost")
-        g:Toggle({
+        reminderToggle("remindTradingPost", retail)
+        retail:Toggle({
             label    = SS.remindTradingPostFullTrack.label,
             desc     = SS.remindTradingPostFullTrack.desc,
             checked  = db.remindTradingPostFullTrack,
@@ -1114,8 +1167,8 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             end,
         })
 
-        g:Section(SS.sections.remindersHousing)
-        reminderToggle("remindHouseUpgrade")
+        retail:Section(SS.sections.remindersHousing)
+        reminderToggle("remindHouseUpgrade", retail)
 
         g:Section(SS.sections.remindersInventory)
         reminderToggle("remindBags")
@@ -1126,7 +1179,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     -- Interface
     ---------------------------------------------------------------------------
     do
-        local g = panel:Group(SS.groups.interface)
+        local g = mainlineGroup(SS.groups.interface)
 
         g:Section(SS.sections.tradingPost)
 
@@ -1253,6 +1306,79 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         })
     end
 
+    ---------------------------------------------------------------------------
+    -- Graphics (WoW Forever only)
+    ---------------------------------------------------------------------------
+    if forever then
+        local FG = LuckyGrabbag.ForeverGraphics
+        local SG = SS.foreverGraphics
+        local g = panel:Group(SS.groups.graphics)
+
+        g:Notice({ text = SG.notice })
+
+        local function addRow(row)
+            local cvar = row.cvar
+            local parent = row.parent and SG.cvars[row.parent].label
+            local function current() return FG.Get(cvar) end
+            if row.kind == "Toggle" then
+                g:Toggle({
+                    SG.cvars[cvar],
+                    parent   = parent,
+                    checked  = function() return current() == 1 end,
+                    onToggle = function(checked) FG.Set(cvar, checked and 1 or 0) end,
+                })
+            elseif row.kind == "Slider" then
+                g:Slider({
+                    SG.cvars[cvar],
+                    parent    = parent,
+                    min       = row.min,
+                    max       = row.max,
+                    step      = row.step,
+                    value     = current,
+                    onChanged = function(value)
+                        -- Opening the panel sets each slider clamped to its range, which must not overwrite a value set outside it.
+                        local now = current()
+                        if (now < row.min or now > row.max) and (value == row.min or value == row.max) then return end
+                        FG.Set(cvar, value)
+                    end,
+                })
+            else
+                local options, listed = {}, false
+                for i, choice in ipairs(row.choices) do
+                    options[i] = { key = choice[1], label = SG.levels[choice[2]] }
+                    listed = listed or choice[1] == current()
+                end
+                if not listed then
+                    options[#options + 1] = { key = current(), label = SG.levels.custom:format(current()) }
+                end
+                g:Select({
+                    SG.cvars[cvar],
+                    parent   = parent,
+                    width    = 150,
+                    options  = options,
+                    value    = current,
+                    onSelect = function(value) FG.Set(cvar, value) end,
+                })
+            end
+        end
+
+        for _, section in ipairs(FG.SECTIONS) do
+            g:Section(SG.sections[section.key])
+            for _, row in ipairs(section.rows) do
+                if FG.IsKnown(row.cvar) then addRow(row) end
+            end
+        end
+
+        g:Button({
+            SG.restore,
+            onClick = function()
+                FG.Restore()
+                panel:Refresh()
+            end,
+        })
+    end
+
+    addUnavailableGroup()
     panel:Finalize()
 
     local target = panel.whatsNewGroup

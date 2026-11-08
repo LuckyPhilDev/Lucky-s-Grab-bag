@@ -403,6 +403,8 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             housing      = "Housing",
             reminders    = "Reminders",
             interface    = "Interface",
+            graphics     = "Graphics",
+            notOnForever = "Not on WoW Forever",
         },
         sections = {
             automation     = "Automation",
@@ -887,6 +889,124 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         bonusRollKeepInHunts = {
             label = "Keep in Hunts",
             desc  = "Show the Bonus Roll popup after completing hunts.",
+        },
+        foreverGraphics = {
+            notice = "Engine settings WoW Forever has but its Graphics menu leaves out. Blizzard's own Graphics sliders rewrite several of them, so your choices here go back on at every login. Higher values cost frame rate.",
+            restore = {
+                label = "Restore Previous Values",
+                desc  = "Puts every setting on this page back to what it was before you first changed it here, and stops reapplying them at login.",
+            },
+            sections = {
+                distance = "View Distance & Fog",
+                grass    = "Grass",
+                lighting = "Lighting & Shadows",
+                water    = "Water",
+                image    = "Weather & Image",
+            },
+            levels = {
+                off      = "Off",
+                low      = "Low",
+                medium   = "Medium",
+                high     = "High",
+                ultra    = "Ultra",
+                standard = "Standard (1024)",
+                sharp    = "High (2048)",
+                custom   = "Custom (%s)",
+                hdrNone     = "None (1.0)",
+                hdrSubtle   = "Subtle (1.2)",
+                hdrMedium   = "Medium (1.5)",
+                hdrBlizzard = "Blizzard (2.0)",
+            },
+            cvars = {
+                farclip = {
+                    label = "Far View Distance",
+                    desc  = "How far away terrain, buildings and trees are drawn, in yards. Blizzard's View Distance slider stops well short of the top of this one. Costs frame rate in big open zones.",
+                },
+                horizonStart = {
+                    label = "Fog Start Distance",
+                    desc  = "Where the distance haze begins. Pushing it out keeps far hills clear and colourful instead of fading into grey.",
+                },
+                horizonClip = {
+                    label = "Horizon Distance",
+                    desc  = "How far the low-detail skyline of distant mountains is drawn. Keep it at or above Far View Distance so the horizon does not pop in as you travel.",
+                },
+                disableHorizonStart = {
+                    label = "Remove the Fog Wall",
+                    desc  = "Turns off the band of solid fog at the edge of your view distance, a setting new to WoW Forever. Distant land stays visible instead of disappearing into a flat wall of fog.",
+                },
+                groundEffectDensity = {
+                    label = "Grass Density",
+                    desc  = "How thickly grass and small plants grow. Blizzard's Ground Clutter slider stops at 48; going higher gives lush, carpet-like fields. Heavy on the graphics card in grassy zones.",
+                },
+                groundEffectDist = {
+                    label = "Grass Draw Distance",
+                    desc  = "How far from you grass is drawn, in yards. Raising it removes the ring of grass that visibly follows you across bare ground.",
+                },
+                groundEffectFade = {
+                    label = "Grass Fade Distance",
+                    desc  = "How far out grass starts fading away, in yards. Set it close to Grass Draw Distance for a soft edge instead of grass popping in and out as you move.",
+                },
+                sunShafts = {
+                    label = "God Rays",
+                    desc  = "Beams of sunlight streaming through trees, clouds and doorways.",
+                },
+                volumeFogLevel = {
+                    label = "Volumetric Fog Quality",
+                    desc  = "Detail of the fog hanging in the air, which catches torchlight and god rays. Higher settings are smoother, with fewer blocky edges around lights.",
+                },
+                shadowTextureSize = {
+                    label = "Shadow Resolution",
+                    desc  = "Sharpness of the shadows the sun casts. High gives crisp shadow edges on characters, trees and buildings instead of blurry, jagged ones.",
+                },
+                shadowNumCascades = {
+                    label = "Shadow Cascades",
+                    desc  = "How many layers of shadow are drawn at increasing distances from the camera. More layers keep shadows sharp further away; 4 puts shadows on distant hills and forests.",
+                },
+                shadowBlendCascades = {
+                    label = "Blend Shadow Cascades",
+                    desc  = "Fades from one shadow layer to the next instead of switching sharply, hiding the line on the ground where shadows suddenly turn blurry.",
+                },
+                shadowSoft = {
+                    label = "Soft Shadows",
+                    desc  = "Softens shadow edges so they blur naturally the further they fall from whatever casts them.",
+                },
+                waterDetail = {
+                    label = "Water Surface Detail",
+                    desc  = "Shape and detail of the waves on lakes and seas. Ultra has been reported to crash the game in crowded cities; drop to High if that happens.",
+                },
+                reflectionMode = {
+                    label = "Water Reflections",
+                    desc  = "How much of the world water mirrors. Higher settings reflect buildings, trees and characters as well as the sky and land.",
+                },
+                refraction = {
+                    label = "Water Refraction",
+                    desc  = "Light bending through water and heat haze, so whatever lies under the surface or behind a fire ripples as it should.",
+                },
+                rippleDetail = {
+                    label = "Water Ripples",
+                    desc  = "Detail of the ripples left by rain, swimming and wading through water.",
+                },
+                weatherDensity = {
+                    label = "Weather Density",
+                    desc  = "How heavy rain, snow and sandstorms look. Off removes weather particles entirely.",
+                },
+                ResampleAlwaysSharpen = {
+                    label = "Always Sharpen",
+                    desc  = "Runs the sharpening pass even at 100% render scale, where the game normally skips it. The strength comes from the Sharpness slider in Blizzard's Graphics settings.",
+                },
+                ffxGlow = {
+                    label = "Full-Screen Glow",
+                    desc  = "The soft glow laid over the whole picture. Turn it off for a crisper, less hazy image.",
+                },
+                HDRFactor = {
+                    label = "HDR Brightness Boost",
+                    desc  = "How far HDR pushes bright areas above normal brightness. Blizzard's default of 2.0 doubles it without real tone mapping, so sunlit roads and water can look blown out like glass. 1.0 keeps the richer colour and contrast without the extra glare; 1.2 is a gentle middle ground.",
+                },
+                HDROutput = {
+                    label = "HDR Output",
+                    desc  = "Sends a high dynamic range picture to an HDR monitor, for brighter highlights and richer colour. Needs HDR turned on in Windows, and may only take effect after restarting the game.",
+                },
+            },
         },
     },
 })

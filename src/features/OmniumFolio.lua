@@ -17,8 +17,8 @@ local restoring = false
 local DevLog = LuckyGrabbag.Logger("OmniumFolio")
 
 local function CurrentSpecID()
-    local specIndex = GetSpecialization()
-    return specIndex and GetSpecializationInfo(specIndex) or nil
+    local specIndex = C_SpecializationInfo.GetSpecialization()
+    return specIndex and C_SpecializationInfo.GetSpecializationInfo(specIndex) or nil
 end
 
 local function ReadSelections(configID)

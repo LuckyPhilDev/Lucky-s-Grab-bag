@@ -19,8 +19,8 @@ local MACRO_BODY = table.concat({
 
 local function GetInterruptSpell()
     local _, classToken = UnitClass("player")
-    local specIndex = GetSpecialization()
-    local specID = specIndex and select(1, GetSpecializationInfo(specIndex))
+    local specIndex = C_SpecializationInfo.GetSpecialization()
+    local specID = specIndex and select(1, C_SpecializationInfo.GetSpecializationInfo(specIndex))
 
     if classToken == "HUNTER" then
         -- Survival (255) uses Muzzle; Beast Mastery (253) and Marksmanship (254) use Counter Shot
