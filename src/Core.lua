@@ -96,6 +96,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         LuckyGrabbag.MailSendAll:Init(db)
         LuckyGrabbag.MassDelete:Init(db)
         LuckyGrabbag.MassDisenchant:Init(db)
+        LuckyGrabbag.AltClickSpells:Init(db)
         if mainline then
             LuckyGrabbag.QuestShopping:Init(db)
             LuckyGrabbag.RankPriceCheck:Init(db)

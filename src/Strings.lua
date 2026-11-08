@@ -332,6 +332,13 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         hitLimit        = "Stopped at the %d mail limit. Alt-right-click the category to carry on.",
     },
 
+    altClickSpells = {
+        tooltipHint      = "Alt Right-Click to cast %s",
+        tooltipHintBound = "Alt Right-Click or %s to cast %s",
+        bindingHeader    = "Lucky's Grab-bag",
+        bindingName      = "Disenchant or Comprehend Hovered Bag Item",
+    },
+
     massDelete = {
         openButton  = "Mass Delete",
         openTooltip = "Puts this delete on hold and opens a list instead. Click items in your bags to queue them, then delete the lot from the list.",
@@ -641,6 +648,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             label = "Mass Delete",
             desc  = "Adds a Mass Delete button beside the popup that confirms deleting an item. It opens a list you fill by clicking items in your bags, then the Delete button clears the list, one item per click or mouse wheel notch, which is as fast as the game allows.",
         },
+        comprehendScroll = {
+            label = "Alt Right-Click to Comprehend Scrolls",
+            desc  = "Mages only. Hold Alt and right-click an untranslated scroll in your bags to cast Comprehend Scroll on it. Does nothing in combat.",
+        },
         mailSendAll = {
             label = "Send a whole category by mail",
             desc  = "Right-clicking a Baganator category at the mailbox loads 12 items into the post, which is one mail's worth. Hold Alt while you right-click and it keeps refilling and sending until the category is empty. Fill in the To field first. Alt-right-click the category again to stop a run part way.",
@@ -833,6 +844,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         concentrationView = {
             label = "Concentration on Profession Book",
             desc  = "Adds a Concentration bar above each profession's skill bar in the Profession Book, so you can see your Concentration for both at a glance without opening each one.",
+        },
+        altClickDisenchant = {
+            label = "Alt Right-Click to Disenchant",
+            desc  = "Hold Alt and right-click an uncommon, rare or epic weapon or armor piece in your bags to disenchant it. Does nothing in combat.",
         },
         massDisenchantAutoOpen = {
             label = "Open Mass Disenchant Automatically",

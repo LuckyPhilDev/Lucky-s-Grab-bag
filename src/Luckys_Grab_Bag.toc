@@ -69,6 +69,7 @@ features/BlueprintImportHistory.lua
 features/MailSendAll.lua
 features/MassDelete.lua
 features/MassDisenchant.lua
+features/AltClickSpells.lua
 features/QuestShopping.lua
 features/RankPriceCheck.lua
 features/VendorShoppingList.lua

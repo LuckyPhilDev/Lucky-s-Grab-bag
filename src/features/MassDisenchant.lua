@@ -22,10 +22,10 @@ local db
 
 local function S() return LuckyGrabbag.Strings.massDisenchant end
 
-local function IsCandidate(info)
+function LuckyGrabbag.MassDisenchant:IsCandidate(info, includeEpic)
     if not info or not info.hyperlink then return false end
     local quality = C_Item.GetItemQualityByID(info.hyperlink)
-    if quality ~= 2 and quality ~= 3 then return false end
+    if quality ~= 2 and quality ~= 3 and not (includeEpic and quality == 4) then return false end
     local _, _, _, _, _, classID = C_Item.GetItemInfoInstant(info.hyperlink)
     return classID == 2 or classID == 4
 end
@@ -35,7 +35,7 @@ function LuckyGrabbag.MassDisenchant:Scan()
     for _, bag in ipairs(LuckyGrabbag.GetPlayerBagIDs()) do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local info = C_Container.GetContainerItemInfo(bag, slot)
-            if IsCandidate(info) and not omitted[info.hyperlink] then
+            if self:IsCandidate(info) and not omitted[info.hyperlink] then
                 table.insert(items, {
                     bag = bag,
                     slot = slot,

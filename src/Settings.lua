@@ -430,6 +430,14 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         g:Section(SS.sections.disenchanting)
 
         g:Toggle({
+            label    = SS.altClickDisenchant.label,
+            desc     = SS.altClickDisenchant.desc,
+            checked  = db.altClickDisenchant,
+            since    = "1.40.0",
+            onToggle = function(checked) db.altClickDisenchant = checked end,
+        })
+
+        g:Toggle({
             label    = SS.massDisenchantAutoOpen.label,
             desc     = SS.massDisenchantAutoOpen.desc,
             checked  = db.massDisenchantAutoOpen,
@@ -687,6 +695,14 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             imageSize = { 782, 445 },
             since     = "1.22.0",
             onToggle  = function(checked) db.massDelete = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.comprehendScroll.label,
+            desc     = SS.comprehendScroll.desc,
+            checked  = db.comprehendScroll,
+            since    = "1.40.0",
+            onToggle = function(checked) db.comprehendScroll = checked end,
         })
 
         g:Toggle({
