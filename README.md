@@ -107,6 +107,14 @@ Lists uncommon and rare weapons or armor in your bags, so you can disenchant thr
 - Run `/grabbag disenchant`, select an item, then press Disenchant Next. Right-click an item to leave it out for this session.
 - An optional setting under **Professions > Disenchanting** opens the window after you successfully disenchant an item in a rested area.
 
+### Alt Right-Click Spells
+Casts a spell on a bag item without dragging it onto your action bar.
+
+- Hold Alt and right-click an uncommon, rare or epic weapon or armor piece to disenchant it.
+- As a Mage, hold Alt and right-click an untranslated scroll to cast Comprehend Scroll on it.
+- The item's tooltip names the spell. Controller players can bind a button to it under **Key Bindings > Lucky's Grab-bag**.
+- Does nothing in combat. Each spell has its own toggle in settings.
+
 ### Send a Whole Category by Mail
 Mails an entire Baganator category to one recipient, refilling the attachment slots and sending again until the category is empty.
 
@@ -431,6 +439,11 @@ Creates a class-appropriate interrupt macro in one of your character macro slots
 - Handles specs with different interrupts (e.g. Survival Hunter uses Muzzle, others use Counter Shot).
 - Triggered via the **Create Kick Macro** button in settings under Combat.
 
+### WoW Forever
+Grab-bag loads on WoW Forever. Features built on systems Forever lacks, such as delves, housing and the Trading Post, are switched off and listed last in settings under **Not on WoW Forever**.
+
+A **Graphics** settings page, on Forever only, sets engine options the game's Graphics menu leaves out: far view distance, fog, grass density, shadow cascades, water detail, HDR brightness and more. Your choices go back on at every login, and **Restore Previous Values** puts the old ones back.
+
 ### Minimap Button
 A minimap button for quick access to the addon.
 
@@ -492,6 +505,7 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Spend to Next Perk* — When Shift-clicking a profession specialisation node, spends knowledge points up to the next 5-rank perk threshold.
 - *Concentration on Profession Book* — Shows a Concentration bar above each profession's skill bar in the Profession Book, with a hover tooltip for the refill time.
 - *Search Selected Expansion Only* — When searching recipes, only shows results from the expansion selected in the Filter dropdown. An All Expansions option in that dropdown searches everything at once.
+- *Alt Right-Click to Disenchant*: Hold Alt and right-click an uncommon, rare or epic weapon or armor piece in your bags to disenchant it.
 - *1s Tip on Alt Work Orders* — Automatically sets the tip to 1 silver when sending a personal work order to one of your own characters.
 - *Alt Crafter Buttons*: Lists your characters with the profession for the item beside the Crafting Orders window; click one to send them a Personal order.
 - *Reagent Mains* — When the warband bank opens, deposits reagents whose category is assigned to a different character.
@@ -531,6 +545,7 @@ The panel opens on a **What's New** list of the settings added in recent release
   - *Scale*: Size of the bar, 50% to 200%.
   - *Buttons shown*: Most buttons the bar shows at once, 1 to 24. Default 12.
   - *Your items…*: Opens a list where you add your own items by ID or by dragging them in, with how many you need before each button shows.
+- *Alt Right-Click to Comprehend Scrolls*: Mages only. Hold Alt and right-click an untranslated scroll in your bags to cast Comprehend Scroll on it.
 
 **Rotation Glow**
 - *Rotation Glow* — Animates the suggested next-cast spell on the Essential Cooldown Viewer, using Blizzard's assisted combat data.
