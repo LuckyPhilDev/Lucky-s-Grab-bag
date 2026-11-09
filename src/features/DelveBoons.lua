@@ -201,8 +201,8 @@ end
 
 local function UpdateTimers()
     local now = GetTime()
-    for i, conduit in ipairs(conduits) do
-        rows[#stats + i].value:SetText(FormatRemaining(math.max(0, conduit.expires - now)))
+    for _, conduit in ipairs(conduits) do
+        conduit.row.value:SetText(FormatRemaining(math.max(0, conduit.expires - now)))
     end
 end
 
@@ -224,7 +224,7 @@ local function Layout()
     end
     for _, conduit in ipairs(conduits) do
         count = count + 1
-        SetRow(count, conduit.name, C.goldPrimary)
+        conduit.row = SetRow(count, conduit.name, C.goldPrimary)
     end
     for i = count + 1, #rows do
         rows[i]:Hide()
