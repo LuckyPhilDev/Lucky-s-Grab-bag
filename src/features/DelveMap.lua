@@ -9,6 +9,10 @@ local BOUNTY_MAP_ITEM_IDS = {
 local FLUTE_ITEM_IDS = {
     [275910] = true, -- Scalebound Herald's Flute (Midnight Season 2)
 }
+local FLARE_GUN_TOY_ID = 264414
+local COFFER_KEY_CURRENCY_ID = 3028
+local KEYS_WANTED = 2
+local BRANN_KEY_QUEST_IDS = { 93882, 93883 }
 local BOUNTY_LOOTED_QUEST_ID = 86371
 local DELVE_DIFFICULTY_ID = 208
 local BUTTON_SIZE = 42
@@ -18,7 +22,7 @@ local BUTTON_SIZE = 42
 local DELVE_WIDGET_IDS = { 6183, 6184, 6185 }
 
 local db
-local mapButton, fluteButton
+local mapButton, fluteButton, flareButton
 local reachedRespawnPoint = false
 
 local DevLog = LuckyGrabbag.Logger("DelveMap")
@@ -95,6 +99,37 @@ local function ShowItem(btn, item)
     btn:Show()
 end
 
+local function ShowToy(btn, toyID)
+    if not toyID then
+        btn:Hide()
+        return
+    end
+    btn.itemID = toyID
+    btn:SetAttribute("type", "toy")
+    btn:SetAttribute("toy", toyID)
+    btn:SetNormalTexture(C_Item.GetItemIconByID(toyID))
+    btn:Show()
+end
+
+local function NeedsBrannKeys()
+    local keys = C_CurrencyInfo.GetCurrencyInfo(COFFER_KEY_CURRENCY_ID)
+    if keys and keys.quantity >= KEYS_WANTED then return false end
+    for _, questID in ipairs(BRANN_KEY_QUEST_IDS) do
+        if not C_QuestLog.IsQuestFlaggedCompleted(questID) then return true end
+    end
+    return false
+end
+
+local function IsFlareGunUsable()
+    if UnitLevel("player") < GetMaxLevelForPlayerExpansion() then return false end
+    local start, duration = C_Item.GetItemCooldown(FLARE_GUN_TOY_ID)
+    if start and start > 0 and duration > 0 then
+        C_Timer.After(start + duration - GetTime() + 0.1, LuckyGrabbag.DelveMap.ApplySetting)
+        return false
+    end
+    return true
+end
+
 local function Refresh()
     -- Show, Hide and anchoring are protected on secure buttons; PLAYER_REGEN_ENABLED re-runs this.
     if InCombatLockdown() then return end
@@ -107,12 +142,15 @@ local function Refresh()
 
     local map = active and db.showDelveMap and FindBagItem(BOUNTY_MAP_ITEM_IDS)
     local flute = active and db.showDelveFlute and flutePending and FindBagItem(FLUTE_ITEM_IDS)
+    local flare = inDelve and db.showDelveFlareGun and PlayerHasToy(FLARE_GUN_TOY_ID) and NeedsBrannKeys()
+        and IsFlareGunUsable()
 
     DevLog("Refresh: active=%s tier=%d minLevel=%d respawn=%s map=%s flute=%s",
         tostring(active), tier, minLevel, tostring(reachedRespawnPoint), tostring(map and true), tostring(flute and true))
 
     ShowItem(mapButton, map)
     ShowItem(fluteButton, flute)
+    ShowToy(flareButton, flare and FLARE_GUN_TOY_ID)
     LuckyGrabbag.DelveBar:Layout()
 end
 
@@ -127,6 +165,7 @@ function LuckyGrabbag.DelveMap:Init(database)
 
     mapButton = CreateButton("LGB_DelveMapButton")
     fluteButton = CreateButton("LGB_DelveFluteButton")
+    flareButton = CreateButton("LGB_DelveFlareGunButton")
 
     local eventFrame = CreateFrame("Frame")
     eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -135,6 +174,9 @@ function LuckyGrabbag.DelveMap:Init(database)
     eventFrame:RegisterEvent("BAG_UPDATE_DELAYED")
     eventFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
     eventFrame:RegisterEvent("DISPLAY_EVENT_TOAST_LINK")
+    eventFrame:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
+    eventFrame:RegisterEvent("QUEST_TURNED_IN")
+    eventFrame:RegisterEvent("SPELL_UPDATE_COOLDOWN")
     eventFrame:SetScript("OnEvent", function(_, event)
         if event == "DISPLAY_EVENT_TOAST_LINK" then
             -- ponytail: any toast inside a delve counts as the midway respawn point; match the link text if other toasts show up.

@@ -787,6 +787,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             label = "Nemesis Flute Reminder",
             desc  = "Shows your Scalebound Herald's Flute once you reach a delve's respawn point, if you haven't looted a Trovehunter's Bounty this week. Right-click and drag to reposition.",
         },
+        delveFlareGun = {
+            label = "Delver's Flare Gun for Keys",
+            desc  = "Shows your Midnight Delver's Flare Gun in a delve when you hold fewer than 2 Restored Coffer Keys and haven't bought both of this week's keys from Brann. Right-click and drag to reposition.",
+        },
         blueprintTrackMissing = {
             label = "Track Missing Decor Button",
             desc  = "Adds a Track Missing button to a blueprint's item list. It puts every decor piece you are short of onto your shopping list, with the number the blueprint wants.",
