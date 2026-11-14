@@ -112,7 +112,7 @@ Casts a spell on a bag item without dragging it onto your action bar.
 
 - Hold Alt and right-click an uncommon, rare or epic weapon or armor piece to disenchant it.
 - As a Mage, hold Alt and right-click an untranslated scroll to cast Comprehend Scroll on it.
-- The item's tooltip names the spell. Controller players can bind a button to it under **Key Bindings > Lucky's Grab-bag**.
+- The item's tooltip names the spell. On a controller, highlight the item and press RT to cast. You can rebind the button under **Key Bindings > Lucky's Grab-bag**.
 - Does nothing in combat. Each spell has its own toggle in settings.
 
 ### Send a Whole Category by Mail
