@@ -581,6 +581,18 @@ function LuckyGrabbag.Settings:Init(db, charDB)
         local g = panel:Group(SS.groups.inventory)
         local retail = mainlineOnly(g, SS.groups.inventory)
 
+        if LuckyUtils.IsForever() then
+            g:Toggle({
+                label = SS.controllerBags.label,
+                desc = SS.controllerBags.desc,
+                checked = db.controllerBags,
+                onToggle = function(checked)
+                    db.controllerBags = checked
+                    LuckyGrabbag.ControllerBags.ApplySetting()
+                end,
+            })
+        end
+
         g:Toggle({
             label     = SS.useItems.label,
             desc      = SS.useItems.desc,

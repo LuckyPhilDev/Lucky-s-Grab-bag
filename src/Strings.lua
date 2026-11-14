@@ -399,6 +399,10 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
     },
 
     settings = {
+        controllerBags = {
+            label = "Controller Bag Navigation",
+            desc = "On WoW Forever, move between adjacent slots and bag buttons in the combined bags while using a controller.",
+        },
         groups = {
             general      = "General",
             vendors      = "Vendors",
