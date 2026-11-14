@@ -1,4 +1,5 @@
 -- luacheck: globals GetCVarBool IsPlayerSpell IsAltKeyDown GetBindingKey GetBindingText
+-- luacheck: globals ClearOverrideBindings SetOverrideBindingClick IsUsingGamepad
 
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.AltClickSpells = {}
@@ -7,6 +8,7 @@ local COMPREHEND_SCROLL_SPELL_ID = 1296017
 local DISENCHANT_SPELL_ID = 13262
 
 local BINDING = "CLICK LGB_AltClickSpellButton:RightButton"
+local DEFAULT_GAMEPAD_KEY = "PADRTRIGGER"
 local DISENCHANT_PURPLE = { 0.8, 0.6, 1 }
 
 local PROC_LOOP = {
@@ -59,11 +61,17 @@ local function HideOverlay()
 end
 
 -- The key binding clicks the overlay even while it is hidden, so it always targets the hovered item or nothing.
+local function CastKey()
+    return GetBindingKey(BINDING) or DEFAULT_GAMEPAD_KEY
+end
+
 local function SetTarget(target)
     if InCombatLockdown() then return end
     hovered = target
     local macro = target and LuckyGrabbag.AltClickSpells:Macro(target.spellID, target.bag, target.slot) or ""
     overlay:SetAttribute("*macrotext2", macro)
+    ClearOverrideBindings(overlay)
+    if target then SetOverrideBindingClick(overlay, true, CastKey(), overlay:GetName(), "RightButton") end
 end
 
 -- A secure button only takes the click while Alt is held, so ordinary bag clicks still reach the slot.
@@ -96,7 +104,8 @@ local function OnItemTooltip(tooltip, data)
         if spell.enabled() and IsPlayerSpell(spell.spellID) and spell.matches(data, bag, slot) then
             local strings = LuckyGrabbag.Strings.altClickSpells
             local spellName = C_Spell.GetSpellName(spell.spellID)
-            local key = GetBindingKey(BINDING)
+            local key = CastKey()
+            if key:find("^PAD") and not IsUsingGamepad() then key = nil end
             local hint = key and strings.tooltipHintBound:format(GetBindingText(key), spellName)
                 or strings.tooltipHint:format(spellName)
             tooltip:AddLine(hint, 0.1, 1, 0.1)

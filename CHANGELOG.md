@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Added
+- **Controller cast button** On a controller, press RT on a bag item you can disenchant, or an untranslated scroll as a Mage, to cast on it. The tooltip names the button, and you can rebind it under Key Bindings, Lucky's Grab-bag.
+
 ## [1.41.0] - 2026-11-14
 
 ### Added
