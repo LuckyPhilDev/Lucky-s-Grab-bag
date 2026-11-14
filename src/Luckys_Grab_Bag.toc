@@ -76,4 +76,5 @@ features/VendorShoppingList.lua
 features/BulkBuy.lua
 features/Reminders.lua
 features/ForeverGraphics.lua
+features/ControllerBags.lua
 Core.lua

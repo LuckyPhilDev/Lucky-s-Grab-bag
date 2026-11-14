@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Fixed
+- On WoW Forever, controller navigation in combined bags moves to adjacent items and bag buttons instead of jumping to another part of the window.
+
 ## [1.40.1] - 2026-11-08
 
 ### Fixed

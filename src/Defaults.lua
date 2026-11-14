@@ -128,6 +128,7 @@ LuckyGrabbag.DB_DEFAULTS = {
     remindBags               = true,
     remindMail               = true,
     foreverGraphics          = {},
+    controllerBags           = true,
 }
 
 LuckyGrabbag.CHAR_DB_DEFAULTS = {
