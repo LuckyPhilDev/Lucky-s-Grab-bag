@@ -255,6 +255,13 @@ Shows a clickable button when you're inside a delve that meets the configured mi
 - Respects combat lockdown, so the button won't change mid-combat.
 - Can be toggled in the addon settings.
 
+### Delver's Flare Gun for Keys
+Shows a button for your Midnight Delver's Flare Gun inside a delve when you hold fewer than 2 Restored Coffer Keys, so you can call Brann and buy this week's keys.
+
+- Hides once you've bought both keys, and while you're below max level or the gun is on cooldown.
+- Shares the delve button row with the Trovehunter's Bounty; right-click drag to move it.
+- Can be toggled in the addon settings.
+
 ### Nemesis Flute Reminder
 Shows your Scalebound Herald's Flute once you reach a delve's respawn point, if you haven't looted a Trovehunter's Bounty this week, so you remember to summon the Nemesis.
 

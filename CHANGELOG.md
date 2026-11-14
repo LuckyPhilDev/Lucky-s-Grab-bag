@@ -1,9 +1,10 @@
-## [Unreleased]
+## [1.41.0] - 2026-11-14
 
 ### Added
 - **Delver's Flare Gun for Keys** In a delve, when you hold fewer than 2 Restored Coffer Keys, a button appears for your Midnight Delver's Flare Gun so you can call Brann and buy this week's keys. It hides once you've bought both, and while you're below max level or the gun is on cooldown. (Thanks for the suggestion Halliday)
 
 ### Fixed
+- The Boons Panel no longer errors every second while a Loa-Spirit conduit buff is active and one of your Boon stats is at 0%.
 - On WoW Forever, controller navigation in combined bags moves to adjacent items and bag buttons instead of jumping to another part of the window.
 
 ## [1.40.1] - 2026-11-08
