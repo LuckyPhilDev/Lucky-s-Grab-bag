@@ -40,6 +40,7 @@ local function SellJunk()
         or string.format(S.soldMany, soldCount, FormatCost(soldValue))
     print(LuckyGrabbag.PREFIX .. " " .. msg)
     DevLog("Sold " .. soldCount .. " items for " .. FormatCost(soldValue))
+    LuckyGrabbag.AutoSortBags:SortAfterSell()
 end
 
 function LuckyGrabbag.AutoSellJunk:Init(database)

@@ -48,6 +48,7 @@ eventFrame:SetScript("OnEvent", function(_, event, addonLoaded)
         local mainline = LuckyUtils.IsMainline()
         LuckyGrabbag.AutoRepair:Init(db)
         LuckyGrabbag.AutoSellJunk:Init(db)
+        LuckyGrabbag.AutoSortBags:Init(db)
         LuckyGrabbag.Quickbuy:Init(db)
         LuckyGrabbag.TestflightBuy:Init(db)
         if mainline then

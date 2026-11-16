@@ -500,6 +500,18 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             label = "Auto Sell Junk",
             desc  = "Automatically sells grey-quality junk items when you open a vendor, and reports the total earned in chat.",
         },
+        autoSortBags = {
+            label = "Auto Sort Bags",
+            desc  = "Sorts your bags after Auto Sell Junk finishes and when you close a vendor window.",
+        },
+        autoSortBagsForeverOnly = {
+            label = "Only on WoW Forever",
+            desc  = "Skips sorting on other versions of the game.",
+        },
+        autoSortBagsControllerOnly = {
+            label = "Only When Using a Controller",
+            desc  = "Skips sorting while you are playing with a keyboard and mouse.",
+        },
         confirmPurchase = {
             label = "Easy Confirm Purchase",
             desc  = "Shows a large tick button on vendor currency, sell, 'no longer refundable', and 'bind on equip' popups, anchored on the item where possible.",

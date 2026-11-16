@@ -19,6 +19,7 @@ Settings.lua
 MerchantBuyQueue.lua
 features/AutoRepair.lua
 features/AutoSellJunk.lua
+features/AutoSortBags.lua
 features/AuctionHouse.lua
 features/TreatiseData.lua
 features/Treatise.lua
