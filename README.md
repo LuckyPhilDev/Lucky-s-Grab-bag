@@ -41,6 +41,12 @@ Automatically sells all grey-quality junk items from your bags whenever you open
 - Skips items with no sell value and anything currently locked.
 - Off by default; enable it in settings under Vendors.
 
+### Auto Sort Bags
+Sorts your bags after Auto Sell Junk finishes and when you close a vendor window, so they stay tidy after buying and selling.
+
+- Can be limited to WoW Forever, or to when you are playing with a controller.
+- Off by default; enable it in settings under Vendors.
+
 ### Decor Shopping List
 Keeps a list of the housing decor a blueprint is missing, and flags those pieces when a vendor sells them.
 
@@ -501,6 +507,9 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Auto Repair* — Automatically repairs all gear when you open a repair vendor.
   - *Use Guild Funds* — Pays repair costs from the guild bank if your guild allows it, falling back to your own gold if not.
 - *Auto Sell Junk* — Automatically sells grey-quality junk items when you open a vendor, and reports the total earned in chat.
+- *Auto Sort Bags*: Sorts your bags after Auto Sell Junk finishes and when you close a vendor window.
+  - *Only on WoW Forever*: Skips sorting on other versions of the game.
+  - *Only When Using a Controller*: Skips sorting while you play with a keyboard and mouse.
 
 **Auctionator Enhancements**
 - *Show Quickbuy button* — Places a shortcut button next to the Auction House window. Each click purchases one row of items from your CraftSim crafting queue's shopping list.

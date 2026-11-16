@@ -1,10 +1,11 @@
-## [Unreleased]
+## [1.41.2] - 2026-11-16
 
 ### Added
-- **Auto Sort Bags** Your bags sort after Auto Sell Junk finishes and when you close a vendor window, so you no longer have to sort them by hand after buying and selling. Off by default, in the Vendors settings, with options to sort only on WoW Forever or only while using a controller.
+- **Auto Sort Bags** Your bags sort after Auto Sell Junk finishes and when you close a vendor window, so you no longer have to sort them by hand after buying and selling. You can limit it to WoW Forever or to playing with a controller.
 
 ### Fixed
 - Crafting at a profession table no longer leaves your action bar cooldowns throwing errors in combat, and TradeSkillMaster's crafting window fills again. (Thanks for the report Zelion)
+- The Pierre button beside the Cooking window no longer errors while the game has not yet loaded your pet journal.
 
 ## [1.41.1] - 2026-11-14
 
