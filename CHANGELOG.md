@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### Fixed
+- Crafting at a profession table no longer leaves your action bar cooldowns throwing errors in combat, and TradeSkillMaster's crafting window fills again. (Thanks for the report Zelion)
+
 ## [1.41.1] - 2026-11-14
 
 ### Added

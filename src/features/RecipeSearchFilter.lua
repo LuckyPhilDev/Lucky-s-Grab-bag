@@ -1,10 +1,5 @@
--- Lucky's Grab-bag: Limit recipe search results to the selected expansion.
--- While a search is active, Blizzard's recipe list ignores the expansion
--- selected in the Filter dropdown and shows matches from every expansion.
--- Wrapping the shared list builder restores the expansion check that the
--- search path skips, for both the crafting page and the crafting orders page.
--- An "All Expansions" radio injected at the top of the dropdown's expansion
--- list brings back the search-everything behaviour on demand.
+-- While searching, Blizzard's recipe list ignores the Filter dropdown's
+-- expansion and shows matches from every expansion; this restores that check.
 LuckyGrabbag = LuckyGrabbag or {}
 LuckyGrabbag.RecipeSearchFilter = {}
 
@@ -53,41 +48,55 @@ local function InjectAllExpansionsRadio(owner, rootDescription)
     rootDescription:Insert(radio, firstExpansionIndex)
 end
 
+local function ShouldRestrict(recipeList)
+    -- NPC crafting and Runeforging deliberately show everything, and
+    -- Runeforging swaps in its own profession ID; leave both alone.
+    return db.searchSelectedExpansionOnly and not db.searchAllExpansions
+        and recipeList.SearchBox:HasText()
+        and not C_TradeSkillUI.IsNPCCrafting() and not C_TradeSkillUI.IsRuneforging()
+end
+
+local function PruneOtherExpansions(node, skillLineID)
+    local keptAny = false
+    local children = node:GetNodes()
+    for i = #children, 1, -1 do
+        local child = children[i]
+        local data = child:GetData()
+        local keep = true
+        if data.recipeInfo then
+            keep = C_TradeSkillUI.IsRecipeInSkillLine(data.recipeInfo.recipeID, skillLineID)
+        elseif data.categoryInfo then
+            keep = PruneOtherExpansions(child, skillLineID)
+        end
+        if not keep then
+            node:Remove(child, true)
+        elseif data.recipeInfo or data.categoryInfo then
+            keptAny = true
+        end
+    end
+    return keptAny
+end
+
+-- Prune the list Blizzard built rather than replacing Blizzard's functions:
+-- a replaced C_TradeSkillUI or Professions function taints every caller,
+-- which spread to the action bars and broke cooldowns in combat.
+local function HookRecipeList(page, recipeList)
+    hooksecurefunc(recipeList.ScrollBox, "SetDataProvider", function(_, dataProvider)
+        if not (page.professionInfo and ShouldRestrict(recipeList)) then return end
+        PruneOtherExpansions(dataProvider:GetRootNode(), page.professionInfo.professionID)
+        dataProvider:Invalidate()
+    end)
+end
+
 local function InstallHook()
     if installed then return end
-    if not (Professions and Professions.GenerateCraftingDataProvider) then return end
+    if not ProfessionsFrame then return end
 
-    local origGenerate = Professions.GenerateCraftingDataProvider
-    local origGetIDs = C_TradeSkillUI.GetFilteredRecipeIDs
-    local restrictTo -- child skill line ID, set only while a searching rebuild runs
-
-    C_TradeSkillUI.GetFilteredRecipeIDs = function()
-        local recipeIDs = origGetIDs()
-        if not restrictTo then return recipeIDs end
-        local filtered = {}
-        for _, recipeID in ipairs(recipeIDs) do
-            if C_TradeSkillUI.IsRecipeInSkillLine(recipeID, restrictTo) then
-                filtered[#filtered + 1] = recipeID
-            end
-        end
-        return filtered
-    end
-
-    Professions.GenerateCraftingDataProvider = function(professionID, searching, ...)
-        -- NPC crafting and Runeforging deliberately show everything, and
-        -- Runeforging swaps in its own profession ID; leave both alone.
-        if db.searchSelectedExpansionOnly and not db.searchAllExpansions and searching
-            and not C_TradeSkillUI.IsNPCCrafting() and not C_TradeSkillUI.IsRuneforging() then
-            restrictTo = professionID
-        end
-        local ok, result = pcall(origGenerate, professionID, searching, ...)
-        restrictTo = nil
-        if not ok then error(result, 0) end
-        return result
-    end
+    HookRecipeList(ProfessionsFrame.CraftingPage, ProfessionsFrame.CraftingPage.RecipeList)
+    HookRecipeList(ProfessionsFrame.OrdersPage, ProfessionsFrame.OrdersPage.BrowseFrame.RecipeList)
 
     installed = true
-    DevLog("Wrapped Professions.GenerateCraftingDataProvider")
+    DevLog("Hooked recipe list data providers")
 end
 
 function LuckyGrabbag.RecipeSearchFilter:Init(database)
