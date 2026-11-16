@@ -60,7 +60,7 @@ end
 -- Looked up by the name the client gives the species, so it works in any language.
 local function PierreGUID()
     local name = C_PetJournal.GetPetInfoBySpeciesID(PIERRE_SPECIES_ID)
-    return name and select(2, C_PetJournal.FindPetIDByName(name))
+    return type(name) == "string" and select(2, C_PetJournal.FindPetIDByName(name)) or nil
 end
 
 local function UpdatePierreButton()
