@@ -177,6 +177,32 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             onToggle = function(checked) db.autoSellJunk = checked end,
         })
 
+        g:Toggle({
+            label    = SS.autoSortBags.label,
+            desc     = SS.autoSortBags.desc,
+            checked  = db.autoSortBags,
+            since    = "1.42.0",
+            onToggle = function(checked) db.autoSortBags = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.autoSortBagsForeverOnly.label,
+            desc     = SS.autoSortBagsForeverOnly.desc,
+            checked  = db.autoSortBagsForeverOnly,
+            parent   = SS.autoSortBags.label,
+            since    = "1.42.0",
+            onToggle = function(checked) db.autoSortBagsForeverOnly = checked end,
+        })
+
+        g:Toggle({
+            label    = SS.autoSortBagsControllerOnly.label,
+            desc     = SS.autoSortBagsControllerOnly.desc,
+            checked  = db.autoSortBagsControllerOnly,
+            parent   = SS.autoSortBags.label,
+            since    = "1.42.0",
+            onToggle = function(checked) db.autoSortBagsControllerOnly = checked end,
+        })
+
         g:Section(SS.sections.purchasing)
 
         g:Toggle({
