@@ -181,7 +181,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             label    = SS.autoSortBags.label,
             desc     = SS.autoSortBags.desc,
             checked  = db.autoSortBags,
-            since    = "1.42.0",
+            since    = "1.41.2",
             onToggle = function(checked) db.autoSortBags = checked end,
         })
 
@@ -190,7 +190,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             desc     = SS.autoSortBagsForeverOnly.desc,
             checked  = db.autoSortBagsForeverOnly,
             parent   = SS.autoSortBags.label,
-            since    = "1.42.0",
+            since    = "1.41.2",
             onToggle = function(checked) db.autoSortBagsForeverOnly = checked end,
         })
 
@@ -199,7 +199,7 @@ function LuckyGrabbag.Settings:Init(db, charDB)
             desc     = SS.autoSortBagsControllerOnly.desc,
             checked  = db.autoSortBagsControllerOnly,
             parent   = SS.autoSortBags.label,
-            since    = "1.42.0",
+            since    = "1.41.2",
             onToggle = function(checked) db.autoSortBagsControllerOnly = checked end,
         })
 
