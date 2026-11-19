@@ -452,6 +452,18 @@ Creates a class-appropriate interrupt macro in one of your character macro slots
 - Handles specs with different interrupts (e.g. Survival Hunter uses Muzzle, others use Counter Shot).
 - Triggered via the **Create Kick Macro** button in settings under Combat.
 
+### Friends Overlay
+Lists your online friends on screen as plain text, with no window or background, so you can see who is on without opening the friends list. Works on Retail and WoW Forever.
+
+- Each line shows the friend's name, then any of level, class, faction, location and the game they are playing. Battle.net friends show their Battle.net name before their character.
+- The game is shown when a friend is playing something other than your version of WoW.
+- Show Battle.net friends, character friends or both, and choose which kind comes first. Friends who are only in the Battle.net app are hidden unless you turn on *Out of Game Friends*.
+- **Most Friends Shown** caps the list (6 by default). When more are online, your Battle.net favourites keep their places first.
+- Pick the font, including any from SharedMedia, its size, the overlay's opacity, the text colour and an optional drop shadow.
+- Colour character names and classes by class, or a friend's whole line. Faction letters can show blue for Alliance and red for Horde, and levels can take quest difficulty colours so friends near your level stand out.
+- Turn on *Unlock to Move* to drag it into place, then click the lock button beside it to lock it again. While locked the mouse passes straight through it.
+- Hides in combat unless you turn that off. Off by default; turn it on in settings under Social.
+
 ### WoW Forever
 Grab-bag loads on WoW Forever. Features built on systems Forever lacks, such as delves, housing and the Trading Post, are switched off and listed last in settings under **Not on WoW Forever**.
 
@@ -585,6 +597,17 @@ The panel opens on a **What's New** list of the settings added in recent release
 - *Rewards*: Great Vault and Trading Post reminders, plus holding the Trading Post reminder until the Collector's Cache is full.
 - *Housing*: House Upgrade Reminder.
 - *Inventory*: Full Bags and Mail reminders.
+
+**Social**
+- *Friends Overlay*: Lists your online friends on screen as plain text.
+  - *Unlock to Move*: Lets you drag the overlay; a lock button beside it locks it again.
+  - *Hide in Combat*: Hides the overlay while you are in combat.
+  - *Battle.net Friends*, *Out of Game Friends* and *Character Friends*: Which friends are listed.
+  - *Order*: Whether Battle.net or character friends come first.
+  - *Most Friends Shown*: The longest the list gets (1 to 40), keeping Battle.net favourites first.
+  - *Show*: Level, class, faction, location and game.
+  - *Font*, *Font Size*, *Opacity*, *Drop Shadow* and *Text Colour*: How the text looks.
+  - *Class Colours*, *Whole Line in Class Colour*, *Faction Colours* and *Level Difficulty Colours*: Optional colouring.
 
 **Interface**
 - *Remember Trading Post Animations*: Keeps your Combat Animation and Mount Special checkbox choices between items and visits to the Trading Post.

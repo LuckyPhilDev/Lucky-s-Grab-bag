@@ -1176,6 +1176,82 @@ function LuckyGrabbag.Settings:Init(db, charDB)
     end
 
     ---------------------------------------------------------------------------
+    -- Social
+    ---------------------------------------------------------------------------
+    do
+        local g = panel:Group(SS.groups.social)
+        local SF = SS.friendsOverlay
+        local FO = LuckyGrabbag.FriendsOverlay
+        local since = "1.42.0"
+        local function apply() FO:Apply() end
+        local function child(strings, opts)
+            opts[1], opts.db, opts.parent = strings, db, SF.enabled
+            opts.onToggle, opts.onChanged, opts.onSelect = apply, apply, apply
+            return opts
+        end
+
+        g:Toggle({ SF.enabled, key = "friendsOverlay", db = db, since = since, onToggle = apply })
+        g:Toggle(child(SF.unlocked, { key = "friendsOverlayUnlocked" }))
+        g:Toggle(child(SF.hideInCombat, { key = "friendsOverlayHideInCombat" }))
+        g:Toggle(child(SF.showBNet, { key = "friendsOverlayShowBNet" }))
+        g:Toggle(child(SF.showOutOfGame, { key = "friendsOverlayShowOutOfGame" }))
+        g:Toggle(child(SF.showCharacter, { key = "friendsOverlayShowCharacter" }))
+        g:Select(child(SF.order, {
+            key      = "friendsOverlayOrder",
+            width    = 160,
+            options  = {
+                { key = "bnetFirst",      label = SF.order.bnetFirst },
+                { key = "characterFirst", label = SF.order.characterFirst },
+            },
+        }))
+        g:Slider(child(SF.max, { key = "friendsOverlayMax", min = 1, max = 40 }))
+        g:MultiSelect(child(SF.fields, {
+            options = {
+                { key = "level",    label = SF.fields.level },
+                { key = "class",    label = SF.fields.class },
+                { key = "faction",  label = SF.fields.faction },
+                { key = "location", label = SF.fields.location },
+                { key = "game",     label = SF.fields.game },
+            },
+            keys = {
+                level    = "friendsOverlayShowLevel",
+                class    = "friendsOverlayShowClass",
+                faction  = "friendsOverlayShowFaction",
+                location = "friendsOverlayShowLocation",
+                game     = "friendsOverlayShowGame",
+            },
+        }))
+        g:Select(child(SF.font, {
+            key      = "friendsOverlayFont",
+            width    = 160,
+            options  = FO.FontOptions(),
+            onSelect = apply,
+        }))
+        g:Slider(child(SF.size, { key = "friendsOverlaySize", min = 8, max = 32 }))
+        g:Slider(child(SF.opacity, { key = "friendsOverlayOpacity", min = 10, max = 100, step = 5, suffix = "%" }))
+        g:Toggle(child(SF.shadow, { key = "friendsOverlayShadow" }))
+        g:Button(child(SF.color, {
+            onClick = function()
+                local c = db.friendsOverlayColor
+                local before = { r = c.r, g = c.g, b = c.b }
+                local function setColor(r, gr, b)
+                    c.r, c.g, c.b = r, gr, b
+                    apply()
+                end
+                ColorPickerFrame:SetupColorPickerAndShow({
+                    r = c.r, g = c.g, b = c.b,
+                    swatchFunc = function() setColor(ColorPickerFrame:GetColorRGB()) end,
+                    cancelFunc = function() setColor(before.r, before.g, before.b) end,
+                })
+            end,
+        }))
+        g:Toggle(child(SF.classColors, { key = "friendsOverlayClassColors" }))
+        g:Toggle(child(SF.wholeLineClass, { key = "friendsOverlayWholeLineClass" }))
+        g:Toggle(child(SF.factionColors, { key = "friendsOverlayFactionColors" }))
+        g:Toggle(child(SF.levelColors, { key = "friendsOverlayLevelColors" }))
+    end
+
+    ---------------------------------------------------------------------------
     -- Reminders
     ---------------------------------------------------------------------------
     do

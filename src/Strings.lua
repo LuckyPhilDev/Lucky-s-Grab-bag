@@ -384,6 +384,24 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         customWindowEmpty = "No items added yet.",
     },
 
+    friendsOverlay = {
+        placeholder = "Friends Overlay: drag to move",
+        lock        = "Lock Position",
+        lockDesc    = "Locks the overlay in place so the mouse passes through it. Unlock it again in settings under Social.",
+        alliance    = "A",
+        horde       = "H",
+        games = {
+            [1]   = "Retail",
+            [2]   = "Classic",
+            [5]   = "TBC Classic",
+            [11]  = "Wrath Classic",
+            [14]  = "Cata Classic",
+            [18]  = "Forever",
+            [19]  = "Mists Classic",
+            other = "Other WoW",
+        },
+    },
+
     reminders = {
         repair       = "Repair your gear",
         repairDetail = "%d%%",
@@ -413,6 +431,7 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
             delves       = "Delves",
             housing      = "Housing",
             reminders    = "Reminders",
+            social       = "Social",
             interface    = "Interface",
             graphics     = "Graphics",
             notOnForever = "Not on WoW Forever",
@@ -483,6 +502,87 @@ LuckyGrabbag.Strings = LuckyStrings.New("LuckyGrabbag.Strings", {
         remindBags = {
             label = "Full Bags Reminder",
             desc  = "Adds a line to the Reminders window while you have fewer than 5 free bag slots. Reagent and profession bags are not counted.",
+        },
+        friendsOverlay = {
+            enabled = {
+                label = "Friends Overlay",
+                desc  = "Lists your online friends on screen as plain text, with no window or background, so you can see who is on at a glance without opening the friends list.",
+            },
+            unlocked = {
+                label = "Unlock to Move",
+                desc  = "Shows a dark backing behind the overlay so you can drag it, with a lock button beside it to lock it again. While locked, the mouse passes straight through it.",
+            },
+            hideInCombat = {
+                label = "Hide in Combat",
+                desc  = "Hides the overlay while you are in combat.",
+            },
+            showBNet = {
+                label = "Battle.net Friends",
+                desc  = "Lists your online Battle.net friends, including those playing other games.",
+            },
+            showOutOfGame = {
+                label = "Out of Game Friends",
+                desc  = "Also lists Battle.net friends who are signed in to the Battle.net app or mobile app but not playing a game.",
+            },
+            showCharacter = {
+                label = "Character Friends",
+                desc  = "Lists your online character friends.",
+            },
+            order = {
+                label = "Order",
+                desc  = "Which kind of friend is listed first.",
+                bnetFirst      = "Battle.net first",
+                characterFirst = "Character first",
+            },
+            max = {
+                label = "Most Friends Shown",
+                desc  = "The most friends the overlay lists. When more are online, your Battle.net favourites are kept first.",
+            },
+            fields = {
+                label    = "Show",
+                desc     = "What each line shows after the friend's name. Game appears when a friend is playing something other than your version of WoW.",
+                level    = "Level",
+                class    = "Class",
+                faction  = "Faction",
+                location = "Location",
+                game     = "Game",
+            },
+            font = {
+                label = "Font",
+                desc  = "The overlay's font. Fonts from SharedMedia are listed too when you have it installed.",
+            },
+            size = {
+                label = "Font Size",
+                desc  = "How large the overlay's text is.",
+            },
+            opacity = {
+                label = "Opacity",
+                desc  = "How see-through the whole overlay is.",
+            },
+            shadow = {
+                label = "Drop Shadow",
+                desc  = "Adds a soft shadow behind the text so it stays readable over bright scenery.",
+            },
+            color = {
+                label = "Text Colour",
+                desc  = "The colour of any text not coloured by the options below.",
+            },
+            classColors = {
+                label = "Class Colours",
+                desc  = "Colours each character name and class in its class colour.",
+            },
+            wholeLineClass = {
+                label = "Whole Line in Class Colour",
+                desc  = "Colours a friend's entire line in their class colour.",
+            },
+            factionColors = {
+                label = "Faction Colours",
+                desc  = "Colours the faction letter blue for Alliance and red for Horde.",
+            },
+            levelColors = {
+                label = "Level Difficulty Colours",
+                desc  = "Colours each level the way quest levels are coloured, so friends near your level stand out.",
+            },
         },
         remindMail = {
             label = "Mail Reminder",
